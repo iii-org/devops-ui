@@ -182,11 +182,11 @@ export default {
       this.isLoading = true
       await addIssue(data)
         .then(() => {
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Added'),
-            type: 'success'
-          })
+          // this.$message({
+          //   title: this.$t('general.Success'),
+          //   message: this.$t('Notify.Added'),
+          //   type: 'success'
+          // })
           this.formData = getDefaultFormData()
           this.$emit('update')
         })

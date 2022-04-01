@@ -782,12 +782,12 @@ export default {
     },
     setSocketListener() {
       const _this = this
-      this.socket.on('connect', () => {
-        this.$message({
-          message: this.$t('Notify.ConnectSocket'),
-          type: 'success'
-        })
-      })
+      // this.socket.on('connect', () => {
+      //   this.$message({
+      //     message: this.$t('Notify.ConnectSocket'),
+      //     type: 'success'
+      //   })
+      // })
       this.socket.on('update_issue', async (data) => {
         for (const idx in data) {
           // console.log('update_issue', data[idx])
@@ -806,7 +806,6 @@ export default {
       })
       this.socket.on('add_issue', async data => {
         for (const idx in data) {
-          // console.log('add_issue', data[idx])
           data[idx] = _this.socketDataFormat(data[idx])
           const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
           if (findChangeIndex !== -1) {

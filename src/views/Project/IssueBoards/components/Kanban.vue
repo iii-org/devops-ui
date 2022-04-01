@@ -441,17 +441,18 @@ export default {
       return isPriorityUnchanged
     },
     isAssigned(toClassObj, fromClassObj, element) {
-      let isAssigned = this.checkAssigned(toClassObj, element)
+      const isAssigned = this.checkAssigned(toClassObj, element)
       if (!isAssigned) {
         const error = 'unassignedError'
         this.handleErrorAlert(error)
-      } else if (isAssigned && toClassObj.name === 'Active') {
-        if (fromClassObj === null || fromClassObj.name === 'Assigned') {
-          const error = 'assignedError'
-          this.handleErrorAlert(error)
-          isAssigned = !isAssigned
-        }
-      }
+      } 
+      // else if (isAssigned && toClassObj.name === 'Active') {
+      //   if (fromClassObj === null || fromClassObj.name !== 'Active') {
+      //     const error = 'assignedError'
+      //     this.handleErrorAlert(error)
+      //     isAssigned = !isAssigned
+      //   }
+      // }
       return isAssigned
     },
     isChildrenIssuesClosed(element) {

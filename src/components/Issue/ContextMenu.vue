@@ -369,7 +369,7 @@ export default {
       }
     },
     async onUpdate(column, item) {
-      if (this.row.assigned_to.name && item.id === 1) {
+      if (this.row.assigned_to.name && item.name === 'Active') {
         const error = 'assignedError'
         this.handleErrorAlert(error)
         this.showErrorAlert(this.errorMsg)
@@ -384,11 +384,6 @@ export default {
           data = this.setStatusId(column, item.id, data)
         }
         await updateIssue(this.row.id, data)
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
         this.$emit('update')
       } catch (e) {
         console.error(e)
@@ -526,11 +521,11 @@ export default {
     async saveIssue(data) {
       this.LoadingConfirm = true
       const res = await addIssue(data)
-      this.$message({
-        title: this.$t('general.Success'),
-        message: this.$t('Notify.Added'),
-        type: 'success'
-      })
+      // this.$message({
+      //   title: this.$t('general.Success'),
+      //   message: this.$t('Notify.Added'),
+      //   type: 'success'
+      // })
       this.$emit('backToFirstPage')
       this.$emit('update')
       this.addTopicDialogVisible = false

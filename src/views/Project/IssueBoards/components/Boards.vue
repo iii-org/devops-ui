@@ -145,7 +145,7 @@ export default {
       await addIssue(data)
         .then((res) => {
           // noinspection JSCheckFunctionSignatures
-          this.showSuccessMessage()
+          // this.showSuccessMessage()
           this.addTopicDialogVisible = false
           this.$refs['quickAddIssue'].form.name = ''
           return res
@@ -258,7 +258,7 @@ export default {
         }
         const contextmenuWidth = contextmenu.$el.clientWidth
         const contextmenuHeight = contextmenu.$el.clientHeight
-        if (contextmenuWidth <= 50 && contextmenuWidth <= 50) {
+        if (contextmenuWidth <= 50) {
           this.handleContextMenu({ row, column, event })
         }
         if (contextmenuHeight + eventY >= window.innerHeight) {
@@ -367,7 +367,7 @@ $tag-options: (
 
 .slide-fade-enter-active {
   transition: all .5s ease-in-out;
-  
+
 }
 .slide-fade-leave-active {
   transition: all .5s ease-in-out;
