@@ -106,12 +106,34 @@
         <el-table-column
           :label="$t('Release.Tags')"
           sortable
-          width="300"
+          width="250"
         >
           <template slot-scope="scope">
             <div id="release-tag">
+              <div v-if="scope.row.image_tags.length > 1 && !isExpand">
+                <div slot="reference">
+                  <el-tooltip placement="top">
+                    <div slot="content">
+                      {{ getImageTagsTooltip(scope.row.image_tags[0]) }}
+                    </div>
+                    <div class="cursor-pointer">
+                      <el-tag>
+                        {{ getImageTags(scope.row.image_tags[0]) }}
+                      </el-tag>
+                      <span
+                        :style="getStyle('menuActiveText')"
+                        class="small"
+                        @click="isExpand = true"
+                      >
+                        +{{ $t('general.SeeMore') }}
+                      </span>
+                    </div>
+                  </el-tooltip>
+                </div>
+              </div>
               <div
                 v-for="(tag, idx) in scope.row.image_tags"
+                v-else-if="isExpand"
                 :key="idx"
                 placement="top"
                 width="400"
@@ -131,14 +153,15 @@
                           v-if="isEditTag"
                           class="el-icon-error cursor-pointer button"
                           :style="getStyle('danger')"
-                          @click="deleteTag"
+                          @click="deleteTag(scope.row, tag)"
                         />
                       </el-tag>
                     </div>
                   </el-tooltip>
                 </div>
               </div>
-            </div></template>
+            </div>
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
@@ -170,7 +193,7 @@
 </template>
 
 <script>
-import { getReleaseVersion } from '@/api_v2/release'
+import { getReleaseVersion, deleteReleaseTag } from '@/api_v2/release'
 import { BasicData, Pagination, SearchBar } from '@/newMixins'
 import { UTCtoLocalTime } from '@/filters'
 import variables from '@/styles/theme/variables.scss'
@@ -194,12 +217,11 @@ export default {
   },
   data() {
     return {
+      isExpand: false,
       isEditTag: false,
       listLoading: false,
       searchKeys: ['commit', 'tag_name'],
       activeNames: []
-      // isEdit: false,
-      // defaultEditValue: ''
     }
   },
   watch: {
@@ -235,10 +257,6 @@ export default {
       const [[value]] = Object.values(tag)
       return value
     },
-    // editImageTags(tag) {
-    //   this.isEdit = true
-    //   this.defaultEditValue = tag
-    // },
     getStyle(colorCode) {
       const color = variables[`${colorCode}`]
       return {
@@ -248,8 +266,16 @@ export default {
     onEditTag(isEditTag) {
       this.isEditTag = isEditTag
     },
-    async deleteTag() {
-      console.log('delete tag')
+    async deleteTag(row, tag) {
+      await deleteReleaseTag(this.selectedProjectId, row.id, Object.keys(tag)[0])
+        .then(() => {
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Deleted'),
+            type: 'success'
+          })
+          this.loadData()
+        })
     }
   }
 }
@@ -258,5 +284,8 @@ export default {
 <style lang="scss" scoped>
 .el-link {
   font-size: 16px;
+}
+.small {
+  font-size: 10px;
 }
 </style>

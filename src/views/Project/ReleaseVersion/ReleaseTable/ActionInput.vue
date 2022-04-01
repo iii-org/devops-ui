@@ -88,6 +88,7 @@ export default {
       }
     },
     async saveTag() {
+      if (!this.inputValue) return
       const formData = new FormData()
       formData.append('tags', this.inputValue)
       await addReleaseTag(this.projectId, this.releaseId, formData)
