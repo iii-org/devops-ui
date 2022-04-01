@@ -384,11 +384,6 @@ export default {
           data = this.setStatusId(column, item.id, data)
         }
         await updateIssue(this.row.id, data)
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
         this.$emit('update')
       } catch (e) {
         console.error(e)

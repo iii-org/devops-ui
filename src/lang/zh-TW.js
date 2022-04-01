@@ -273,7 +273,7 @@ export default {
     pluginRepeatMessage: '紅底為同分支有重複項目設定，請確認其設置為一致(如同為開或關)，以確保 Pipeline 運作正常。',
     ChangeProjectManager: '確認是否要變更專案經理人。',
     ConnectSocket: '看板正在連接 Socket...',
-    UpdateKanban: '{issueName} 正在更新...'
+    UpdateKanban: '{issueName} 已更新'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
