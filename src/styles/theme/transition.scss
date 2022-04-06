@@ -35,16 +35,16 @@
 /* swing */
 @keyframes swing {
   10% {
-    transform: rotate(-15deg);
+    transform: rotate(-15deg) scale(1.025);
   }
   20% {
-    transform: rotate(10deg);
+    transform: rotate(10deg) scale(1.1);
   }
   30% {
-    transform: rotate(-5deg);
+    transform: rotate(-5deg) scale(1.05);
   }
   40% {
-    transform: rotate(5deg);
+    transform: rotate(5deg) scale(1.075);
   }
   50%, 100% {
     transform: rotate(0deg);

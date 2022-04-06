@@ -9,6 +9,7 @@ const asyncLangs = langFiles.keys().reduce((plugins, langPath) => {
 export default {
   route: {
     myWork: '我的工作',
+    inbox: '收件匣',
     dashboard: '儀表板',
     projectOverview: '專案概述',
     projectList: '專案列表',
@@ -1232,6 +1233,17 @@ export default {
     TaskListWidth: '左側寬度',
     TimelineLength: '時間軸長度',
     DisplayTaskList: '顯示議題列表'
+  },
+  Inbox: {
+    No: '項次',
+    Title: '標題',
+    Type: '訊息類型',
+    Date: '日期',
+    Sender: '公告者',
+    Info: '資訊',
+    Warning: '警告',
+    Error: '錯誤',
+    Critical: '嚴重'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

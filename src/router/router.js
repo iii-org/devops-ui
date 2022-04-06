@@ -344,6 +344,26 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/inbox',
+    component: Layout,
+    redirect: { name: 'inbox' },
+    meta: {
+      icon: 'el-icon-message'
+      // roles: ['Administrator', 'Project Manager']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/Inbox'),
+        name: 'inbox',
+        meta: { 
+          title: 'inbox'
+          // roles: ['Administrator', 'Project Manager'] 
+        }
+      }
+    ]
+  },
+  {
     path: '/project-list',
     component: Layout,
     meta: { roles: ['Project Manager', 'Engineer'] },

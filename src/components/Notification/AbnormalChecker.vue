@@ -37,6 +37,14 @@
           </div>
           <el-divider class="divider" />
         </el-dropdown-item>
+        <el-dropdown-item>
+          <router-link
+            :to="'/inbox/'"
+            class="linkTextColor"
+          >
+            <el-button class="w-full" type="text">View All</el-button>
+          </router-link>
+        </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
     <el-dialog
@@ -86,7 +94,7 @@ export default {
       this.$emit('read', msg.id)
     },
     iconColor(alert_level) {
-      // alert level = { WARNING, 3: ERROR, 4: CRITICAL }
+      // alert level = { 2: WARNING, 3: ERROR, 4: CRITICAL }
       return (alert_level === 2) ? '#e6d53c' : (alert_level === 3) ? '#e6a23c' : '#f56c6c'
     },
     UTCtoLocalTime(value) {
@@ -101,7 +109,7 @@ export default {
 
 <style lang="scss" scoped>
 .swing {
-  animation: swing 2s infinite;
+  animation: swing 1.5s infinite;
 }
 .filter-list {
   max-height: 80vh;

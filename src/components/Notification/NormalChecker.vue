@@ -35,6 +35,14 @@
           </div>
           <el-divider class="divider" />
         </el-dropdown-item>
+        <el-dropdown-item>
+          <router-link
+            :to="'/inbox/'"
+            class="linkTextColor"
+          >
+            <el-button class="w-full" type="text">View All</el-button>
+          </router-link>
+        </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
     <el-dialog

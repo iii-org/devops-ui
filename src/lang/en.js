@@ -9,6 +9,7 @@ const asyncLangs = langFiles.keys().reduce((plugins, langPath) => {
 export default {
   route: {
     myWork: 'My Work',
+    inbox: 'Inbox',
     dashboard: 'Dashboard',
     projectOverview: 'Project Overview',
     projectList: 'Project List',
@@ -1241,6 +1242,17 @@ export default {
     TaskListWidth: 'Task list width',
     TimelineLength: 'Before/After',
     DisplayTaskList: 'Display task list'
+  },
+  Inbox: {
+    No: 'No.',
+    Title: 'Title',
+    Type: 'Message Type',
+    Date: 'Date',
+    Sender: 'Sender',
+    Info: 'Info',
+    Warning: 'Warning',
+    Error: 'Error',
+    Critical: 'Critical'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }
