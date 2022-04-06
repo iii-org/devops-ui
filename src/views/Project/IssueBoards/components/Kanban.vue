@@ -269,6 +269,7 @@
             :project-id="selectedProjectId"
             :save-data="addIssue"
             :board-object="boardObject"
+            :is-parent-project="isParentProject"
             @after-add="showDialog = !showDialog"
           />
         </transition>
@@ -331,6 +332,10 @@ export default {
     addIssue: {
       type: Function,
       default: () => ({})
+    },
+    isParentProject: {
+      type: [Boolean, Object],
+      default: false
     }
   },
   data() {
@@ -445,7 +450,7 @@ export default {
       if (!isAssigned) {
         const error = 'unassignedError'
         this.handleErrorAlert(error)
-      } 
+      }
       // else if (isAssigned && toClassObj.name === 'Active') {
       //   if (fromClassObj === null || fromClassObj.name !== 'Active') {
       //     const error = 'assignedError'

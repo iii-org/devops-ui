@@ -197,6 +197,7 @@
             :parent="parent"
             :relations="relations"
             :children-issue="children.length"
+            :is-parent-project="isParentProject"
           />
         </el-col>
       </el-row>
@@ -327,6 +328,10 @@ export default {
     isFromBoard: {
       type: Boolean,
       default: false
+    },
+    isParentProject: {
+      type: [Boolean, Object],
+      default: false
     }
   },
   data() {
@@ -451,7 +456,8 @@ export default {
     },
     isButtonDisabled() {
       // return this.userRole === 'QA'
-      return this.$route.params.disableButton
+      return this.userRole && this.$route.params.disableButton
+      // return this.$route.params.disableButton
     }
   },
   watch: {

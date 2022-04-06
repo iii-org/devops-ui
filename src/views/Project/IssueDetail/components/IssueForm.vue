@@ -8,6 +8,16 @@
     label-position="top"
     :disabled="isButtonDisabled"
   >
+    <el-form-item v-if="isParentProject" :label="$t('Project.Project')">
+      <el-select v-model="selectedProject">
+        <el-option
+          v-for="project in allRelation"
+          :key="project.id"
+          :label="project.name"
+          :value="project.id"
+        />
+      </el-select>
+    </el-form-item>
     <Tags ref="tags" :form.sync="form" />
     <el-form-item prop="parent_id">
       <template slot="label">
@@ -243,6 +253,7 @@ import Status from '@/components/Issue/Status'
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
 import Tags from '@/components/Issue/Tags'
+import { getAllRelation } from '@/api_v2/projects'
 
 const relationIssueFilter = { Feature: 'Test Plan', 'Test Plan': 'Feature', 'Fail Management': 'Test Plan' }
 
@@ -272,6 +283,10 @@ export default {
     },
     isButtonDisabled: {
       type: Boolean,
+      default: false
+    },
+    isParentProject: {
+      type: [Boolean, Object],
       default: false
     }
   },
@@ -316,7 +331,9 @@ export default {
             return time.getTime() < new Date(startDate).getTime()
           }
         }
-      }
+      },
+      allRelation: [],
+      selectedProject: ''
     }
   },
   computed: {
@@ -391,6 +408,17 @@ export default {
     'form.assigned_to_id'() {
       if (this.form.assigned_to_id && this.form.status_id === 1) this.form.status_id = 2
       if (!this.form.assigned_to_id) this.form.status_id = 1
+    },
+    isParentProject: {
+      handler(val) {
+        if (val) this.getAllRelation(val)
+      },
+      immediate: true
+    },
+    selectedProject(val) {
+      console.log(val)
+      if (val) this.fetchData(val)
+      // if (val) this.$emit('onSelectedProject', val)
     }
   },
   mounted() {
@@ -402,15 +430,16 @@ export default {
     }
   },
   methods: {
-    async fetchData() {
+    async fetchData(pId) {
       this.isLoading = true
-      if (this.form.project_id) {
+      const projectId = pId || this.form.project_id
+      if (projectId) {
         await Promise.all([
-          getProjectAssignable(this.form.project_id)
+          getProjectAssignable(projectId)
         ]).then(res => {
           this.getAssignedTo(res)
         })
-        await this.loadVersionList()
+        await this.loadVersionList(pId)
       }
       if (this.issueId > 0) {
         await this.getClosable()
@@ -430,13 +459,28 @@ export default {
         }, ...assigned_to.user_list
       ]
     },
-    async loadVersionList() {
+    async loadVersionList(pId) {
+      const projectId = pId || this.form.project_id
       const params = { status: 'open,locked' }
       if (this.form.fixed_version_id) {
         params['force_id'] = this.form.fixed_version_id
       }
-      const versionList = await getProjectVersion(this.form.project_id, params)
+      const versionList = await getProjectVersion(projectId, params)
       this.fixed_version = versionList.data.versions
+    },
+    async getAllRelation(project) {
+      const { display, id, name } = project
+      const parentIssue = {
+        display, id, name
+      }
+      let allRelation = []
+      await getAllRelation(project.id)
+        .then((res) => {
+          allRelation = res.data
+          allRelation.unshift(parentIssue)
+          this.allRelation = allRelation
+          this.selectedProject = id
+        })
     },
     async getClosable() {
       let result = true

@@ -144,7 +144,8 @@ export const getRootProjectId = (project_id) => request.get(`/v2/project/${proje
 export const getHasSon = (project_id) => request.get(`/v2/project/${project_id}/has_son`)
 export const getProjectRelation = (project_id) => request.get(`/v2/project/${project_id}/relation`)
 
-export const forceDeleteProject = (project_id) => 
+export const forceDeleteProject = (project_id) =>
   request.delete(`/v2/project/${project_id}?force_delete_project=true`)
-export const syncProject = (project_id) => 
+export const syncProject = (project_id) =>
   request.patch(`/v2/sync_projects/${project_id}`)
+export const getAllRelation = (project_id) => request.get(`/v2/project/${project_id}/all_relation`)

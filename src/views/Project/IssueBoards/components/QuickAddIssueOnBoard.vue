@@ -67,7 +67,6 @@
       </el-form>
     </el-col>
     <el-dialog
-      :title="$t('Issue.AddIssue')"
       :visible.sync="addTopicDialogVisible"
       width="50%"
       top="5px"
@@ -76,12 +75,34 @@
       append-to-body
       @close="handleClose"
     >
+      <template slot="title">
+        <div class="flex items-center">
+          <div>{{ $t('Issue.AddIssue') }}</div>
+          <div
+            v-if="isParentProject"
+            style="margin-left: 10px;"
+          >
+            <el-select v-model="selectedProject">
+              <template slot="prefix">
+                <div>{{ $t('Project.Project') }}</div>
+              </template>
+              <el-option
+                v-for="project in allRelation"
+                :key="project.id"
+                :label="project.name"
+                :value="project.id"
+              />
+            </el-select>
+          </div>
+        </div>
+      </template>
       <AddIssue
         ref="AddIssue"
         :project-id="selectedProjectId"
         :parent-id="parentId"
         :prefill="form"
         :save-data="saveData"
+        :selected-project="selectedProject"
         import-from="board"
         @loading="loadingUpdate"
         @add-topic-visible="handleCloseDialog"
@@ -113,6 +134,7 @@ import Tracker from '@/components/Issue/Tracker'
 import { getProjectAssignable } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import AddIssue from '@/components/Issue/AddIssue'
+import { getAllRelation } from '@/api_v2/projects'
 
 export default {
   name: 'QuickAddIssueOnBoard',
@@ -134,6 +156,10 @@ export default {
     boardObject: {
       type: Object,
       default: () => ({})
+    },
+    isParentProject: {
+      type: [Boolean, Object],
+      default: false
     }
   },
   data() {
@@ -161,7 +187,9 @@ export default {
         name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
         tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
         assigned_to_id: [{ validator: validateAssignedTo, trigger: 'blur' }]
-      }
+      },
+      allRelation: [],
+      selectedProject: ''
     }
   },
   computed: {
@@ -185,6 +213,13 @@ export default {
       handler() {
         this.setFilterValue()
       }
+    },
+    isParentProject: {
+      handler(val) {
+        if (val) this.getAllRelation(val)
+      },
+      immediate: true,
+      deep: true
     }
   },
   mounted() {
@@ -205,6 +240,21 @@ export default {
           ...assigned_to.user_list
         ]
       })
+    },
+    async getAllRelation(project) {
+      const { display, id, name } = project
+      const parentIssue = {
+        display, id, name
+      }
+      let allRelation = []
+      await getAllRelation(project.id)
+        .then((res) => {
+          allRelation = res.data
+          allRelation.unshift(parentIssue)
+          console.log(allRelation)
+          this.allRelation = allRelation
+          this.selectedProject = id
+        })
     },
     setFilterValue() {
       this.form = {
