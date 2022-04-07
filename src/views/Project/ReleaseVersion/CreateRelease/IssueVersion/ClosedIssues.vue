@@ -60,7 +60,7 @@
 export default {
   name: 'ClosedIssues',
   components: {
-    IssueListDialog: () => import('./IssueListDialog')
+    IssueListDialog: () => import('../IssueListDialog')
   },
   props: {
     allIssues: {
