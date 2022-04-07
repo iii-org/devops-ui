@@ -239,7 +239,9 @@ export default {
     ForceDelete: 'Force Delete',
     Fix: 'Fix',
     Connected: 'Connected',
-    Disconnected: 'Disconnected'
+    Disconnected: 'Disconnected',
+    Parent: 'P',
+    Child: 'C'
   },
   Notify: {
     Updated: 'update successful',

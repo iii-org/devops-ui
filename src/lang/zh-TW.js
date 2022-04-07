@@ -239,7 +239,9 @@ export default {
     ForceDelete: '刪除',
     Fix: '修復',
     Connected: '連線成功',
-    Disconnected: '連線失敗'
+    Disconnected: '連線失敗',
+    Parent: '父',
+    Child: '子'
   },
   Notify: {
     Updated: '已更新',

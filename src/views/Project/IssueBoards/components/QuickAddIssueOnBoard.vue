@@ -91,7 +91,15 @@
                 :key="project.id"
                 :label="project.name"
                 :value="project.id"
-              />
+              >
+                <div>{{ project.name }}</div>
+                <div v-if="project.type === 'father'" class="round father">
+                  {{ $t('general.Parent') }}
+                </div>
+                <div v-if="project.type === 'son'" class="round son">
+                  {{ $t('general.Child') }}
+                </div>
+              </el-option>
             </el-select>
           </div>
         </div>
@@ -251,7 +259,6 @@ export default {
         .then((res) => {
           allRelation = res.data
           allRelation.unshift(parentIssue)
-          console.log(allRelation)
           this.allRelation = allRelation
           this.selectedProject = id
         })
@@ -350,5 +357,19 @@ export default {
   box-sizing: border-box;
   border: 1px solid #e9e9e9;
   box-shadow: 1px 3px 3px 0 rgba(0, 0, 0, 0.2);
+}
+.round {
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 8px;
+  &.father {
+    background-color: #f56c6c;
+  }
+  &.son {
+    background-color: #409eff;
+  }
 }
 </style>

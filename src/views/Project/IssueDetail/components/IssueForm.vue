@@ -15,7 +15,15 @@
           :key="project.id"
           :label="project.name"
           :value="project.id"
-        />
+        >
+          <div>{{ project.name }}</div>
+          <div v-if="project.type === 'father'" class="round father">
+            {{ $t('general.Parent') }}
+          </div>
+          <div v-if="project.type === 'son'" class="round son">
+            {{ $t('general.Child') }}
+          </div>
+        </el-option>
       </el-select>
     </el-form-item>
     <Tags ref="tags" :form.sync="form" />
@@ -416,9 +424,7 @@ export default {
       immediate: true
     },
     selectedProject(val) {
-      console.log(val)
       if (val) this.fetchData(val)
-      // if (val) this.$emit('onSelectedProject', val)
     }
   },
   mounted() {
@@ -622,5 +628,19 @@ export default {
 /* noinspection CssUnusedSymbol */
 >>> .el-form-item {
   margin-bottom: 10px;
+}
+.round {
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 8px;
+  &.father {
+    background-color: #f56c6c;
+  }
+  &.son {
+    background-color: #409eff;
+  }
 }
 </style>
