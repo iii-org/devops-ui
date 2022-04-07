@@ -99,6 +99,7 @@ stages:
       - userlist
       - messagebubble
       - packrelease
+      - parentchildproject
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -139,6 +140,7 @@ stages:
       - userlist
       - messagebubble
       - packrelease
+      - parentchildproject
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -190,6 +192,7 @@ stages:
       - userlist
       - messagebubble
       - packrelease
+      - parentchildproject
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -234,6 +237,7 @@ stages:
       - userlist
       - messagebubble
       - packrelease
+      - parentchildproject
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -277,6 +281,7 @@ stages:
       - userlist
       - messagebubble
       - packrelease
+      - parentchildproject
 - name: Test--ZAP
   iiidevops: zap
   steps:
