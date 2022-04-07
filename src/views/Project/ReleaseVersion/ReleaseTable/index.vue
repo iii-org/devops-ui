@@ -173,6 +173,7 @@
               :scope="scope"
               @onEditTag="onEditTag"
               @onUpdated="loadData"
+              @onShowAll="isExpand = true"
             />
           </template>
         </el-table-column>

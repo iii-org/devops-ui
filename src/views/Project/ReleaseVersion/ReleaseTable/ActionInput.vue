@@ -80,6 +80,7 @@ export default {
     showInput(state) {
       this.isShowInput = true
       this.inputState = state
+      this.$emit('onShowAll')
     },
     getStyle(colorCode) {
       const color = variables[`${colorCode}`]
