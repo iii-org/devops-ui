@@ -585,6 +585,7 @@ export default {
           return false
         }
       })
+      if (this.parentId) this.$emit('has-children')
       return result
     },
     handleExceed() {

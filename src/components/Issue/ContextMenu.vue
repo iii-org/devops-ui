@@ -123,6 +123,7 @@
         :parent-name="parentName"
         :prefill="form"
         :save-data="saveIssue"
+        @has-children="hasChildren"
         @loading="loadingUpdate"
         @add-topic-visible="handleCloseDialog"
       />
@@ -389,6 +390,9 @@ export default {
       } catch (e) {
         console.error(e)
       }
+    },
+    hasChildren() {
+      this.row.has_children = true
     },
     handleErrorAlert(key) {
       const { title, content } = this[key]
