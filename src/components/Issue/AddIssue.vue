@@ -373,7 +373,7 @@ export default {
       type: Array,
       default: () => []
     },
-    selectedProject: {
+    pId: {
       type: Number,
       default: 0
     }
@@ -438,7 +438,7 @@ export default {
         this.setFilterValue()
       }
     },
-    selectedProject(val) {
+    pId(val) {
       if (val) this.fetchData(val)
     }
   },

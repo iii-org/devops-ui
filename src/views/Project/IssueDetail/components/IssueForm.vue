@@ -293,10 +293,6 @@ export default {
       type: Boolean,
       default: false
     }
-    // isParentProject: {
-    //   type: [Boolean, Object],
-    //   default: false
-    // }
   },
   data() {
     const validateParentId = (rule, value, callback) => {
@@ -343,7 +339,6 @@ export default {
       allRelation: [],
       selectedProjectId: '',
       isParentProject: false
-      // selectedProject: ''
     }
   },
   computed: {
@@ -419,12 +414,6 @@ export default {
       if (this.form.assigned_to_id && this.form.status_id === 1) this.form.status_id = 2
       if (!this.form.assigned_to_id) this.form.status_id = 1
     },
-    // isParentProject: {
-    //   handler(val) {
-    //     if (val) this.getAllRelation(val)
-    //   },
-    //   immediate: true
-    // }
     selectedProjectId(val) {
       if (val) this.fetchData(val)
     }
@@ -476,20 +465,6 @@ export default {
       }
       const versionList = await getProjectVersion(projectId, params)
       this.fixed_version = versionList.data.versions
-    },
-    async getAllRelation(project) {
-      const { display, id, name } = project
-      const parentIssue = {
-        display, id, name
-      }
-      let allRelation = []
-      await getAllRelation(project.id)
-        .then((res) => {
-          allRelation = res.data
-          allRelation.unshift(parentIssue)
-          this.allRelation = allRelation
-          this.selectedProjectId = id
-        })
     },
     async getClosable() {
       let result = true
@@ -630,6 +605,20 @@ export default {
             this.isParentProject = project
             this.getAllRelation(project)
           } else this.isParentProject = false
+        })
+    },
+    async getAllRelation(project) {
+      const { display, id, name } = project
+      const parentIssue = {
+        display, id, name
+      }
+      let allRelation = []
+      await getAllRelation(project.id)
+        .then((res) => {
+          allRelation = res.data
+          allRelation.unshift(parentIssue)
+          this.allRelation = allRelation
+          this.selectedProjectId = id
         })
     }
   }

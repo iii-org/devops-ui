@@ -269,7 +269,6 @@
             :project-id="selectedProjectId"
             :save-data="addIssue"
             :board-object="boardObject"
-            :is-parent-project="isParentProject"
             @after-add="showDialog = !showDialog"
           />
         </transition>
@@ -332,10 +331,6 @@ export default {
     addIssue: {
       type: Function,
       default: () => ({})
-    },
-    isParentProject: {
-      type: [Boolean, Object],
-      default: false
     }
   },
   data() {

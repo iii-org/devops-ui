@@ -82,7 +82,7 @@
             v-if="isParentProject"
             style="margin-left: 10px;"
           >
-            <el-select v-model="selectedProject">
+            <el-select v-model="pId">
               <template slot="prefix">
                 <div>{{ $t('Project.Project') }}</div>
               </template>
@@ -110,7 +110,7 @@
         :parent-id="parentId"
         :prefill="form"
         :save-data="saveData"
-        :selected-project="selectedProject"
+        :p-id="pId"
         import-from="board"
         @loading="loadingUpdate"
         @add-topic-visible="handleCloseDialog"
@@ -142,7 +142,7 @@ import Tracker from '@/components/Issue/Tracker'
 import { getProjectAssignable } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import AddIssue from '@/components/Issue/AddIssue'
-import { getAllRelation } from '@/api_v2/projects'
+import { getAllRelation, getHasSon } from '@/api_v2/projects'
 
 export default {
   name: 'QuickAddIssueOnBoard',
@@ -164,10 +164,6 @@ export default {
     boardObject: {
       type: Object,
       default: () => ({})
-    },
-    isParentProject: {
-      type: [Boolean, Object],
-      default: false
     }
   },
   data() {
@@ -197,11 +193,12 @@ export default {
         assigned_to_id: [{ validator: validateAssignedTo, trigger: 'blur' }]
       },
       allRelation: [],
-      selectedProject: ''
+      isParentProject: false,
+      pId: ''
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'groupBy', 'issueFilter', 'tracker'])
+    ...mapGetters(['selectedProject', 'selectedProjectId', 'userId', 'groupBy', 'issueFilter', 'tracker'])
   },
   watch: {
     boardObject: {
@@ -221,16 +218,10 @@ export default {
       handler() {
         this.setFilterValue()
       }
-    },
-    isParentProject: {
-      handler(val) {
-        if (val) this.getAllRelation(val)
-      },
-      immediate: true,
-      deep: true
     }
   },
   mounted() {
+    this.getHasSon(this.selectedProject)
     this.setFilterValue()
     this.fetchSelection()
   },
@@ -249,6 +240,15 @@ export default {
         ]
       })
     },
+    async getHasSon(project) {
+      await getHasSon(project.id)
+        .then((res) => {
+          if (res.has_child) {
+            this.isParentProject = project
+            this.getAllRelation(project)
+          } else this.isParentProject = false
+        })
+    },
     async getAllRelation(project) {
       const { display, id, name } = project
       const parentIssue = {
@@ -260,7 +260,7 @@ export default {
           allRelation = res.data
           allRelation.unshift(parentIssue)
           this.allRelation = allRelation
-          this.selectedProject = id
+          this.pId = id
         })
     },
     setFilterValue() {

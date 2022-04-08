@@ -55,7 +55,6 @@ import { addIssue, updateIssue } from '@/api/issue'
 import { Kanban } from '@/views/Project/IssueBoards/components'
 import { ContextMenu } from '@/components/Issue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
-// import { getHasSon } from '@/api_v2/projects'
 
 const contextMenu = {
   row: {
@@ -128,17 +127,6 @@ export default {
       return sort
     }
   },
-  // watch: {
-  //   selectedProject: {
-  //     handler(val) {
-  //       this.getHasSon(val)
-  //     },
-  //     deep: true
-  //   }
-  // },
-  // mounted() {
-  //   this.getHasSon(this.selectedProject)
-  // },
   methods: {
     loadData() {
       this.$emit('loadData')
@@ -299,13 +287,6 @@ export default {
       this.$set(this.relationIssue, 'id', id)
       this.scrollTo(element)
     },
-    // async getHasSon(project) {
-    //   await getHasSon(project.id)
-    //     .then((res) => {
-    //       if (res.has_child) this.isParentProject = project
-    //       else this.isParentProject = false
-    //     })
-    // },
     handleRelationDelete() {
       this.$set(this.relationIssue, 'visible', false)
       this.$set(this.relationIssue, 'id', null)
