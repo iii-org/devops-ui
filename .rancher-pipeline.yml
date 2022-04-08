@@ -56,6 +56,7 @@ stages:
       include:
       - master
       - develop
+      - packrelease
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
   steps:
@@ -295,7 +296,7 @@ stages:
   when:
     branch:
       include:
-      - skip
+      - packrelease
 - name: Test--WebInspect
   iiidevops: webinspect
   steps:
@@ -337,6 +338,7 @@ stages:
     branch:
       include:
       - develop
+      - packrelease
 - name: Test--SideeX
   iiidevops: sideex
   steps:
@@ -359,3 +361,4 @@ stages:
       include:
       - GitGraph
       - develop
+      - packrelease
