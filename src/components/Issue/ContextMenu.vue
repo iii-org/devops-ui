@@ -383,7 +383,8 @@ export default {
         if (column === 'assigned_to_id') {
           data = this.setStatusId(column, item.id, data)
         }
-        await updateIssue(this.row.id, data)
+        const res = await updateIssue(this.row.id, data)
+        this.row[column.replace('_id', '')] = res.data[column.replace('_id', '')]
         this.$emit('update')
       } catch (e) {
         console.error(e)
