@@ -35,6 +35,7 @@ stages:
       - projectfilter
       - sysconfig
       - messagebubble
+      - packrelease
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
