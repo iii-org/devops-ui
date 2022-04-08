@@ -6,7 +6,13 @@
           <el-col :span="24">
             <el-form-item :label="$t('Release.IssueVersion')">
               <span>{{ $t('Release.issueCount') }}</span>
-              <span style="color: #409eff;">{{ updateData.issues.length }}</span>
+              <span
+                style="color: #409eff;"
+                class="cursor-pointer"
+                @click="openIssueDialog"
+              >
+                {{ updateData.issues.length }}
+              </span>
               <span>{{ $t('Issue.Issue') }}</span>
             </el-form-item>
           </el-col>
@@ -51,7 +57,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="16">
-            <el-form-item :label="$t('Release.ImagePath')" class="flex cursor-pointer">
+            <el-form-item
+              v-if="updateData.image !== 'noImage'"
+              :label="$t('Release.ImagePath')"
+              class="flex cursor-pointer"
+            >
               <el-tooltip placement="top">
                 <template slot="content">
                   <span>project</span>
@@ -100,6 +110,7 @@
         {{ $t('Release.startRelease') }}
       </el-button>
     </div>
+    <IssueListDialog ref="issueDialog" />
   </el-card>
 </template>
 
@@ -109,6 +120,9 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'PackageVersion',
+  components: {
+    IssueListDialog: () => import('./IssueListDialog')
+  },
   props: {
     releaseData: {
       type: Object,
@@ -214,6 +228,12 @@ export default {
           })
         }
       }
+    },
+    openIssueDialog() {
+      const com = this.$refs.issueDialog
+      com.setData(this.updateData.issues, null)
+      com.adjustTable(5)
+      com.visible = true
     }
   }
 }
