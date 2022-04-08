@@ -15,7 +15,6 @@
         :group="group"
         :dimension="groupBy.dimension"
         :add-issue="saveIssue"
-        :is-parent-project="isParentProject"
         @relationIssueId="onRelationIssueDialog($event, classObj.id)"
         @update="updateIssueStatus"
         @update-board="updateIssueBoard"
@@ -36,7 +35,6 @@
           :props-issue-id="relationIssue.id"
           :is-in-dialog="true"
           :is-from-board="true"
-          :is-parent-project="isParentProject"
           @delete="handleRelationDelete"
         />
       </div>
@@ -57,7 +55,7 @@ import { addIssue, updateIssue } from '@/api/issue'
 import { Kanban } from '@/views/Project/IssueBoards/components'
 import { ContextMenu } from '@/components/Issue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
-import { getHasSon } from '@/api_v2/projects'
+// import { getHasSon } from '@/api_v2/projects'
 
 const contextMenu = {
   row: {
@@ -112,8 +110,7 @@ export default {
       relationIssue: {
         visible: false,
         id: null
-      },
-      isParentProject: false
+      }
     }
   },
   computed: {
@@ -131,17 +128,17 @@ export default {
       return sort
     }
   },
-  watch: {
-    selectedProject: {
-      handler(val) {
-        this.getHasSon(val)
-      },
-      deep: true
-    }
-  },
-  mounted() {
-    this.getHasSon(this.selectedProject)
-  },
+  // watch: {
+  //   selectedProject: {
+  //     handler(val) {
+  //       this.getHasSon(val)
+  //     },
+  //     deep: true
+  //   }
+  // },
+  // mounted() {
+  //   this.getHasSon(this.selectedProject)
+  // },
   methods: {
     loadData() {
       this.$emit('loadData')
@@ -302,13 +299,13 @@ export default {
       this.$set(this.relationIssue, 'id', id)
       this.scrollTo(element)
     },
-    async getHasSon(project) {
-      await getHasSon(project.id)
-        .then((res) => {
-          if (res.has_child) this.isParentProject = project
-          else this.isParentProject = false
-        })
-    },
+    // async getHasSon(project) {
+    //   await getHasSon(project.id)
+    //     .then((res) => {
+    //       if (res.has_child) this.isParentProject = project
+    //       else this.isParentProject = false
+    //     })
+    // },
     handleRelationDelete() {
       this.$set(this.relationIssue, 'visible', false)
       this.$set(this.relationIssue, 'id', null)

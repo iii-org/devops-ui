@@ -9,7 +9,7 @@
     :disabled="isButtonDisabled"
   >
     <el-form-item v-if="isParentProject" :label="$t('Project.Project')">
-      <el-select v-model="selectedProject">
+      <el-select v-model="selectedProjectId" style="width: 100%">
         <el-option
           v-for="project in allRelation"
           :key="project.id"
@@ -261,7 +261,7 @@ import Status from '@/components/Issue/Status'
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
 import Tags from '@/components/Issue/Tags'
-import { getAllRelation } from '@/api_v2/projects'
+import { getAllRelation, getHasSon } from '@/api_v2/projects'
 
 const relationIssueFilter = { Feature: 'Test Plan', 'Test Plan': 'Feature', 'Fail Management': 'Test Plan' }
 
@@ -292,11 +292,11 @@ export default {
     isButtonDisabled: {
       type: Boolean,
       default: false
-    },
-    isParentProject: {
-      type: [Boolean, Object],
-      default: false
     }
+    // isParentProject: {
+    //   type: [Boolean, Object],
+    //   default: false
+    // }
   },
   data() {
     const validateParentId = (rule, value, callback) => {
@@ -341,11 +341,13 @@ export default {
         }
       },
       allRelation: [],
-      selectedProject: ''
+      selectedProjectId: '',
+      isParentProject: false
+      // selectedProject: ''
     }
   },
   computed: {
-    ...mapGetters(['userId', 'tracker', 'status', 'priority']),
+    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'selectedProject']),
     isParentIssueClosed() {
       if (Object.keys(this.parent).length <= 0) return false
       return this.parent.status.name === 'Closed'
@@ -417,17 +419,18 @@ export default {
       if (this.form.assigned_to_id && this.form.status_id === 1) this.form.status_id = 2
       if (!this.form.assigned_to_id) this.form.status_id = 1
     },
-    isParentProject: {
-      handler(val) {
-        if (val) this.getAllRelation(val)
-      },
-      immediate: true
-    },
-    selectedProject(val) {
+    // isParentProject: {
+    //   handler(val) {
+    //     if (val) this.getAllRelation(val)
+    //   },
+    //   immediate: true
+    // }
+    selectedProjectId(val) {
       if (val) this.fetchData(val)
     }
   },
   mounted() {
+    this.getHasSon(this.selectedProject)
     this.fetchData()
     if (this.form.project_id > 0) {
       this.$refs.tags.getSearchTags()
@@ -485,7 +488,7 @@ export default {
           allRelation = res.data
           allRelation.unshift(parentIssue)
           this.allRelation = allRelation
-          this.selectedProject = id
+          this.selectedProjectId = id
         })
     },
     async getClosable() {
@@ -619,6 +622,15 @@ export default {
       return value.replace(reg, function(str) {
         return '<span class=\'bg-yellow-200 text-danger p-1\'><strong>' + str + '</strong></span>'
       })
+    },
+    async getHasSon(project) {
+      await getHasSon(project.id)
+        .then((res) => {
+          if (res.has_child) {
+            this.isParentProject = project
+            this.getAllRelation(project)
+          } else this.isParentProject = false
+        })
     }
   }
 }
