@@ -33,8 +33,11 @@
       <el-table-column
         header-align="center"
         :label="$t('Inbox.Title')"
-        prop="message"
-      />
+      >
+        <template slot-scope="scope">
+          {{ scope.row.title ? scope.row.title : 'No Title' }}
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         :label="$t('Inbox.Type')"
@@ -155,7 +158,6 @@ export default {
   },
   methods: {
     async fetchData() {
-      console.log(this.params)
       const res = await getMessageList(this.params)
       this.messageList = res.data.notification_message_list
       const start_id = res.data.page.limit * (res.data.page.current - 1) + 1

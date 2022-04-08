@@ -5,7 +5,7 @@
     width="30%"
   >
     <template slot="title" style="padding: 0">
-      <div class="dialog-title">Message</div>
+      <h3>{{ message.title ? message.title : 'No Title' }}</h3>
       <div style="color: #45474b">{{ UTCtoLocalTime(message.created_at) }}</div>
     </template>
     <el-input
@@ -17,7 +17,7 @@
       :autosize="{ minRows: 2, maxRows: 5}"
     />
     <span slot="footer" class="dialog-footer">
-      <el-button class="buttonSecondaryReverse" @click="dialogVisible = false">Close</el-button>
+      <el-button class="buttonSecondaryReverse" @click="dialogVisible = false">{{ $t('general.Close') }}</el-button>
     </span>
   </el-dialog>
 </template>

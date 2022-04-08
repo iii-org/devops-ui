@@ -348,6 +348,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: { name: 'inbox' },
     meta: {
+      title: 'inbox',
       icon: 'el-icon-message'
       // roles: ['Administrator', 'Project Manager']
     },

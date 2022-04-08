@@ -1243,7 +1243,14 @@ export default {
     Info: '資訊',
     Warning: '警告',
     Error: '錯誤',
-    Critical: '嚴重'
+    Critical: '嚴重',
+    GroupReceiver: {
+      Project: '專案名稱',
+      User: '使用者',
+      Role: '角色',
+      ProjectOwner: '專案經理',
+      All: '全部'
+    }
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

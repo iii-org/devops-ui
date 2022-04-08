@@ -31,7 +31,7 @@
               :style="{color: iconColor(msg.alert_level)}"
             />
             <span style="">
-              <div class="msg-text">{{ msg.message }}</div>
+              <div class="msg-text">{{ msg.title ? msg.title : 'No Title' }}</div>
               <div style="color: #909399; line-height: 25px"> {{ relativeTime(msg.created_at) }} </div>
             </span>
           </div>

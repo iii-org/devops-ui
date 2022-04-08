@@ -1252,7 +1252,14 @@ export default {
     Info: 'Info',
     Warning: 'Warning',
     Error: 'Error',
-    Critical: 'Critical'
+    Critical: 'Critical',
+    GroupReceiver: {
+      Project: 'Project',
+      User: 'User',
+      Role: 'Role',
+      ProjectOwner: 'Project Owner',
+      All: 'All'
+    }
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

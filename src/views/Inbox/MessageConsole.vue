@@ -23,7 +23,7 @@
         :options="options"
         :is-message-console="true"
         :keyword.sync="keyword"
-        @changeFilter="fetchData"
+        @changeFilter="changeFilter"
       />
     </div>
     <el-divider />
@@ -33,7 +33,6 @@
       :element-loading-text="$t('Loading')"
       height="calc(100vh - 300px)"
       fit
-      @row-click="showMessage"
     >
       <el-table-column
         align="center"
@@ -44,8 +43,11 @@
       <el-table-column
         header-align="center"
         :label="$t('Inbox.Title')"
-        prop="message"
-      />
+      >
+        <template slot-scope="scope">
+          {{ scope.row.title ? scope.row.title : 'No Title' }}
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         :label="$t('Inbox.Type')"
@@ -75,11 +77,16 @@
       />
       <el-table-column
         align="center"
-        label="Receiver"
+        label="Group Receiver"
         prop="creator.name"
         width="200px"
-      />
+      >
+        <template slot-scope="scope">
+          {{ receiverName(scope.row.types[0].type_id) }}
+        </template>
+      </el-table-column>
       <el-table-column
+        fixed="right"
         align="center"
         label="Action"
         width="210px"
@@ -93,15 +100,22 @@
           >
             {{ $t('general.Edit') }}
           </el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            class="text-error"
-            icon="el-icon-delete"
-            @click.stop="handleDelete(scope.row)"
+          <el-popconfirm
+            :confirm-button-text="$t('general.Delete')"
+            :cancel-button-text="$t('general.Cancel')"
+            icon="el-icon-info"
+            icon-color="red"
+            :title="$t('Notify.confirmDelete')"
+            @confirm="handleDelete(scope.row)"
           >
-            {{ $t('general.Delete') }}
-          </el-button>
+            <el-button
+              slot="reference"
+              size="mini"
+              type="danger"
+            >
+              <em class="el-icon-delete" /> {{ $t('general.Delete') }}
+            </el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
       <template slot="empty">
@@ -124,15 +138,22 @@
     >
       * The system only keeps 7 days messages. Pelase save the message in local if it's important.
     </el-row>
-    <CreateMessage ref="createDialog" :alert-list="options" />
+    <CreateMessage 
+      ref="createDialog" 
+      :alert-list="options"
+      :is-edit="isEdit"
+      :message-data="messageData"
+      @edit="isEdit = false"
+      @load-data="fetchData" 
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import SearchFilter from './components/SearchFilter.vue'
-import CreateMessage from './components/CreateMessage.vue'
-import { getMessageListAdmin } from '@/api/monitoring'
+// import CreateMessage from './components/CreateMessage.vue'
+import { getMessageListAdmin, deleteMessage } from '@/api/monitoring'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { BasicData, Pagination } from '@/newMixins'
 
@@ -143,7 +164,11 @@ const params = () => ({
 
 export default {
   name: 'Inbox',
-  components: { SearchFilter, ElTableColumnTime, CreateMessage },
+  components: { 
+    SearchFilter, 
+    ElTableColumnTime, 
+    CreateMessage: () => import('./components/CreateMessage.vue')
+  },
   mixins: [BasicData, Pagination],
   data() {
     return {
@@ -153,7 +178,9 @@ export default {
       params: params(),
       listQuery: {},
       timeoutId: -1,
-      message: {}
+      message: {},
+      isEdit: false,
+      messageData: {}
     }
   },
   computed: {
@@ -179,7 +206,25 @@ export default {
         label: this.$t('Inbox.Critical'),
         color: '#f56c6c'
       }]
-    } 
+    },
+    groupReceiver() {
+      return [{
+        id: 1,
+        label: this.$t('Inbox.GroupReceiver.All')
+      }, {
+        id: 2,
+        label: this.$t('Inbox.GroupReceiver.Project')
+      }, {
+        id: 3,
+        label: this.$t('Inbox.GroupReceiver.User')
+      }, {
+        id: 4,
+        label: this.$t('Inbox.GroupReceiver.Role')
+      }, {
+        id: 5,
+        label: this.$t('Inbox.GroupReceiver.ProjectOwner')
+      }]
+    }
   },
   watch: {
     keyword: {
@@ -204,6 +249,7 @@ export default {
         item.row_id = start_id + i
       })
       this.listQuery = Object.assign({}, res.data.page)
+      this.edit = false
     },
     async onSearch(keyword) {
       this.params.search = keyword
@@ -211,8 +257,10 @@ export default {
       await this.loadData()
       this.initParams()
     },
-    async onFilter(filter) {
-      console.log(filter)
+    async changeFilter(filter) {
+      this.params = { ...this.params, ...filter }
+      await this.loadData()
+      this.initParams()
     },
     async onPagination(listQuery) {
       const { limit, page } = listQuery
@@ -232,16 +280,31 @@ export default {
     tagColor(level) {
       return this.options.find(x => x.id === level.id).color
     },
-    showMessage(msg) {
-      this.$refs.messageDialog.dialogVisible = true
-      this.message = msg
-    },
-    setReadMessage(idx) {
-      this.message.read = true
-      this.$set(this.messageList, idx, this.message)
+    receiverName(group_id) {
+      return this.groupReceiver.find(x => x.id === group_id).label
     },
     createMessage() {
       this.$refs.createDialog.showDialog = true
+    },
+    handleEdit(msg) {
+      this.$refs.createDialog.showDialog = true
+      this.messageData = msg
+      this.isEdit = true
+    },
+    async handleDelete(row) {
+      this.listLoading = true
+      try {
+        await deleteMessage(row.id)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Deleted'),
+          type: 'success'
+        })
+        await this.fetchData()
+      } catch (error) {
+        console.error(error)
+      }
+      this.listLoading = false
     },
     handleBack() {
       this.$router.push({ name: 'inbox' })
