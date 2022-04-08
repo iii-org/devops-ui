@@ -343,6 +343,7 @@ export default {
     handleClick() {
       this.showClosedChildrenIssueWarning = false
       this.notClosedChildrenIssueList = []
+      this.$emit('onInit')
     },
     updateIssueForm(sendForm) {
       this.isLoading = true
@@ -392,7 +393,6 @@ export default {
         await this.listData[index].close()
       }
       this.multipleSelection = []
-      if (!this.showClosedChildrenIssueWarning) this.$emit('onInit')
       this.listLoading = false
     },
     async batchMove() {

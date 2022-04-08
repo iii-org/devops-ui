@@ -123,6 +123,7 @@
         :parent-name="parentName"
         :prefill="form"
         :save-data="saveIssue"
+        @has-children="hasChildren"
         @loading="loadingUpdate"
         @add-topic-visible="handleCloseDialog"
       />
@@ -383,11 +384,15 @@ export default {
         if (column === 'assigned_to_id') {
           data = this.setStatusId(column, item.id, data)
         }
-        await updateIssue(this.row.id, data)
+        const res = await updateIssue(this.row.id, data)
+        this.row[column.replace('_id', '')] = res.data[column.replace('_id', '')]
         this.$emit('update')
       } catch (e) {
         console.error(e)
       }
+    },
+    hasChildren() {
+      this.row.has_children = true
     },
     handleErrorAlert(key) {
       const { title, content } = this[key]
