@@ -1,18 +1,29 @@
 <template>
   <div class="app-container">
     <div class="flex justify-between">
-      <el-button 
-        v-if="userId === 1"
-        class="buttonPrimary"
-        @click="messageConsole"
-      >
-        Message Console
-      </el-button>
+      <div>
+        <el-button
+          type="text"
+          size="medium"
+          icon="el-icon-arrow-left"
+          class="text-title linkTextColor"
+          @click="handleBack"
+        >
+          {{ $t('general.Back') }}
+        </el-button>
+        <el-button 
+          class="buttonSecondary"
+          @click="createMessage"
+        >
+          Create Message
+        </el-button>
+      </div>
       <SearchFilter
         ref="filter"
         :options="options"
+        :is-message-console="true"
         :keyword.sync="keyword"
-        @changeFilter="changeFilter"
+        @changeFilter="fetchData"
       />
     </div>
     <el-divider />
@@ -20,7 +31,7 @@
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      :row-class-name="tableRowStyle"
+      height="calc(100vh - 300px)"
       fit
       @row-click="showMessage"
     >
@@ -62,6 +73,37 @@
         prop="creator.name"
         width="200px"
       />
+      <el-table-column
+        align="center"
+        label="Receiver"
+        prop="creator.name"
+        width="200px"
+      />
+      <el-table-column
+        align="center"
+        label="Action"
+        width="210px"
+      >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            class="buttonPrimaryReverse"
+            icon="el-icon-edit"
+            @click.stop="handleEdit(scope.row)"
+          >
+            {{ $t('general.Edit') }}
+          </el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            class="text-error"
+            icon="el-icon-delete"
+            @click.stop="handleDelete(scope.row)"
+          >
+            {{ $t('general.Delete') }}
+          </el-button>
+        </template>
+      </el-table-column>
       <template slot="empty">
         <el-empty :description="$t('general.NoData')" />
       </template>
@@ -82,17 +124,17 @@
     >
       * The system only keeps 7 days messages. Pelase save the message in local if it's important.
     </el-row>
-    <MessageDialog ref="messageDialog" :message="message" />
+    <CreateMessage ref="createDialog" :alert-list="options" />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import SearchFilter from './components/SearchFilter.vue'
-import { getMessageList, setReadMessage } from '@/api/monitoring'
+import CreateMessage from './components/CreateMessage.vue'
+import { getMessageListAdmin } from '@/api/monitoring'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { BasicData, Pagination } from '@/newMixins'
-import MessageDialog from '@/components/Notification/components/MessageDialog.vue'
 
 const params = () => ({
   limit: 10,
@@ -101,7 +143,7 @@ const params = () => ({
 
 export default {
   name: 'Inbox',
-  components: { SearchFilter, ElTableColumnTime, MessageDialog },
+  components: { SearchFilter, ElTableColumnTime, CreateMessage },
   mixins: [BasicData, Pagination],
   data() {
     return {
@@ -155,8 +197,7 @@ export default {
   },
   methods: {
     async fetchData() {
-      console.log(this.params)
-      const res = await getMessageList(this.params)
+      const res = await getMessageListAdmin(this.params)
       this.messageList = res.data.notification_message_list
       const start_id = res.data.page.limit * (res.data.page.current - 1) + 1
       this.messageList.forEach((item, i) => {
@@ -170,10 +211,8 @@ export default {
       await this.loadData()
       this.initParams()
     },
-    async changeFilter(filter) {
-      this.params = { ...this.params, ...filter }
-      await this.loadData()
-      this.initParams()
+    async onFilter(filter) {
+      console.log(filter)
     },
     async onPagination(listQuery) {
       const { limit, page } = listQuery
@@ -193,37 +232,19 @@ export default {
     tagColor(level) {
       return this.options.find(x => x.id === level.id).color
     },
-    tableRowStyle({ row }) {
-      if (row.read === false) {
-        return 'readRow'
-      }
-      return ''
-    },
     showMessage(msg) {
       this.$refs.messageDialog.dialogVisible = true
       this.message = msg
-      this.readMessage(msg)
-    },
-    async readMessage(msg) {
-      if (msg.read === false) {
-        try {
-          await setReadMessage(this.userId, { message_ids: [msg.id] }).then(() => {
-            const findChangeIndex = this.messageList.findIndex(item => parseInt(msg.id) === parseInt(item.id))
-            this.setReadMessage(findChangeIndex)
-          })
-        } catch (err) {
-          console.error(err)
-        }
-        // const findChangeIndex = this.messageList.findIndex(msg => parseInt(msg_id) === parseInt(msg.id))
-        // this.setReadMessage(findChangeIndex)
-      }
     },
     setReadMessage(idx) {
       this.message.read = true
       this.$set(this.messageList, idx, this.message)
     },
-    messageConsole() {
-      this.$router.push({ name: 'message-console' })
+    createMessage() {
+      this.$refs.createDialog.showDialog = true
+    },
+    handleBack() {
+      this.$router.push({ name: 'inbox' })
     }
   }
 }
@@ -233,8 +254,5 @@ export default {
 .ps {
   /* color: #e66262;  */
   margin-top: 12px 
-}
-.readRow {
-  font-weight: bold !important;
 }
 </style>

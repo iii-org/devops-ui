@@ -57,8 +57,20 @@ export default {
       await this.socket.emit('get_message', { user_id: this.userId })
     },
     setSocketListener() {
-      this.socket.on('system_message', async (data) => {
+      this.socket.on('create_message', async (data) => {
         this.setNotificationList(data)
+        console.log(data)
+      })
+      this.socket.on('read_message', async (msg_id) => {
+        console.log(msg_id)
+        const findChangeIndex = this.msgList.findIndex(msg => parseInt(msg_id) === parseInt(msg.id))
+        this.$delete(this.msgList, findChangeIndex)
+        this.filterMsg()
+      })
+      this.socket.on('delete_message', async (msg_id) => {
+        const findChangeIndex = this.msgList.findIndex(msg => parseInt(msg_id) === parseInt(msg.id))
+        this.$delete(this.msgList, findChangeIndex)
+        this.filterMsg()
       })
       this.socket.on('disconnect', (reason) => {
         if (reason !== 'io client disconnect') {
@@ -80,9 +92,9 @@ export default {
       this.filterMsg()
     },
     filterMsg() {
-      this.alert = this.msgList.filter((item) => item.alert_level !== 1)
-      this.info = this.msgList.filter((item) => item.alert_level === 1)
-      this.update = this.msgList.filter((item) => item.alert_level === 101)
+      this.alert = this.msgList.filter((item) => item.alert_level.id !== 1)
+      this.info = this.msgList.filter((item) => item.alert_level.id === 1)
+      this.update = this.msgList.filter((item) => item.alert_level.id === 101)
     },
     async readMessage(msg_id) {
       try {

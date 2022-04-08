@@ -2,44 +2,46 @@
   <div>
     <el-popover placement="bottom" trigger="click">
       <h3 style="margin: 0">Absolute time range</h3>
-      <el-form>
+      <el-form :model="filter">
         <el-form-item>
           <div slot="label">From</div>
           <el-date-picker
-            v-model="dateFrom"
+            v-model="filter.from_date"
             type="date"
             clearable
             align="right"
             placeholder="Pick a day"
             value-format="yyyy-MM-dd"
-            :picker-options="pickerOptions(dateTo)"
+            :picker-options="pickerOptions(filter.to_date)"
           />
         </el-form-item>
         <el-form-item>
           <div slot="label">To</div>
           <el-date-picker
-            v-model="dateTo"
+            v-model="filter.to_date"
             type="date"
             clearable
             align="right"
             placeholder="Pick a day"
             value-format="yyyy-MM-dd"
-            :picker-options="pickerOptions(dateFrom)"
+            :picker-options="pickerOptions(filter.from_date)"
           />
         </el-form-item>
         <el-form-item>
           <div slot="label">{{ $t('general.Type') }}</div>
           <el-select
-            v-model="typeList"
+            v-model="filter.alert_ids"
             multiple
             placeholder="Select Type"
-            @change="onChangeFilter"
           >
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+            <el-option v-for="item in options" :key="item.id" :label="item.label" :value="item.id" />
           </el-select>
         </el-form-item>
+        <el-form-item v-if="isMessageConsole === false">
+          <el-checkbox v-model="filter.unread">Unread</el-checkbox>
+        </el-form-item>
       </el-form>
-      <el-button class="w-full buttonPrimary">Apply</el-button>
+      <el-button class="w-full buttonPrimary" @click="onChangeFilter">Apply</el-button>
       <el-button slot="reference" icon="el-icon-s-operation" class="headerTextColor" type="text"> {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" />
       </el-button>
@@ -67,34 +69,44 @@
 </template>
 
 <script>
+
+const defaultFilter = () => ({
+  from_date: '',
+  to_date: '',
+  unread: false,
+  alert_ids: []
+})
+
 export default {
   name: 'SearchFilter',
   props: {
     options: {
       type: Array,
       default: () => []
+    },
+    isMessageConsole: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      typeList: [],
-      keyword: '',
       searchVisible: false,
-      dateFrom: '',
-      dateTo: ''
+      keyword: '',
+      filter: defaultFilter()
     }
   },
   computed: {
     displayFilterValue() {
       const list = []
-      this.typeList.forEach(item => {
-        list.push(this.options[item].label)
+      this.filter.alert_ids.forEach(item => {
+        list.push(this.options.find(x => x.id === item).label)
       })
       const listJoined = list.join(', ')
       return list.length > 0 ? `${this.$t('general.Filter')}: ${listJoined}` : `${this.$t('general.Filter')}`
     },
     isFilterChanged() {
-      return !!this.keyword || this.typeList.length > 0
+      return !!this.keyword || this.filter.alert_ids.length > 0
     }
   },
   watch: {
@@ -104,11 +116,19 @@ export default {
   },
   methods: {
     async onChangeFilter() {
-      this.$emit('changeFilter')
+      const cleanFilter = {}
+      for (const [key, value] of Object.entries(this.filter)) {
+        if (key === 'alert_ids' && this.filter.alert_ids.length > 0) {
+          cleanFilter.alert_ids = JSON.stringify(this.filter.alert_ids)
+        } else if (key !== 'alert_ids' && value !== defaultFilter()[key]) {
+          cleanFilter[key] = this.filter[key]
+        }
+      }
+      this.$emit('changeFilter', cleanFilter)
     },
     cleanFilter() {
-      this.typeList = []
       this.keyword = ''
+      this.filter = defaultFilter()
       this.onChangeFilter()
     },
     pickerOptions() {

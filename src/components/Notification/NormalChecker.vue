@@ -45,35 +45,17 @@
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-    <el-dialog
-      :show-close="false"
-      :visible.sync="dialogVisible"
-      width="30%"
-    >
-      <template slot="title" style="padding: 0">
-        <div class="dialog-title">Message</div>
-        <div style="color: #45474b">{{ UTCtoLocalTime(message.created_at) }}</div>
-      </template>
-      <el-input
-        style="padding: 0"
-        type="textarea"
-        :value="message.message"
-        readonly
-        resize="none"
-        :autosize="{ minRows: 2, maxRows: 5}"
-      />
-      <span slot="footer" class="dialog-footer">
-        <el-button class="buttonSecondaryReverse" @click="dialogVisible = false">Close</el-button>
-      </span>
-    </el-dialog>
+    <MessageDialog ref="messageDialog" :message="message" />
   </div>
 </template>
 
 <script>
-import { UTCtoLocalTime, relativeTime } from '@/filters'
+import { relativeTime } from '@/filters'
+import MessageDialog from './components/MessageDialog.vue'
 
 export default {
-  name: 'AbnormalChecker',
+  name: 'NormalChecker',
+  components: { MessageDialog },
   props: {
     msgs: {
       type: Array,
@@ -82,18 +64,14 @@ export default {
   },
   data() {
     return {
-      message: {},
-      dialogVisible: false
+      message: {}
     }
   },
   methods: {
     showMessage(msg) {
-      this.dialogVisible = true
+      this.$refs.messageDialog.dialogVisible = true
       this.message = msg
       this.$emit('read', msg.id)
-    },
-    UTCtoLocalTime(value) {
-      return UTCtoLocalTime(value)
     },
     relativeTime(value) {
       return relativeTime(value)

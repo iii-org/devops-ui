@@ -360,6 +360,16 @@ export const asyncRoutes = [
           title: 'inbox'
           // roles: ['Administrator', 'Project Manager'] 
         }
+      },
+      {
+        path: 'message-console',
+        name: 'message-console',
+        hidden: true,
+        component: () => import('@/views/Inbox/MessageConsole'),
+        meta: {
+          title: 'Message Console',
+          roles: ['Administrator']
+        }
       }
     ]
   },
