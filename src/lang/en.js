@@ -1021,7 +1021,8 @@ export default {
     Tags: 'Tags',
     CustomPath: 'Custom Path',
     StopReleaseWarning: 'Please check if the image file path matches the format.',
-    StopAddingPathWarning: 'Please check if the input image file is in line with format.'
+    StopAddingPathWarning: 'Please check if the input image file is in line with the following format.',
+    FormatWarning: '(Primary name): (Tag) EX. Branch: Version'
   },
   SystemVersion: {
     Source: 'Source',

@@ -1014,7 +1014,8 @@ export default {
     Tags: '備註標籤',
     CustomPath: '自定義路徑',
     StopReleaseWarning: '請檢查映像檔路徑是否符合格式。',
-    StopAddingPathWarning: '請檢查輸入的映像檔路徑是否符合格式。'
+    StopAddingPathWarning: '請檢查輸入的映像檔路徑是否符合以下格式。',
+    FormatWarning: '(主要名稱):(標籤) ex. branch:version'
   },
   SystemVersion: {
     Source: '系統模組',
