@@ -3,6 +3,7 @@
     :title="$t('Project.EditProject')"
     :visible.sync="showDialog"
     width="70vw"
+    top="3vh"
     :close-on-click-modal="false"
     @closed="onDialogClosed"
   >
@@ -60,6 +61,14 @@
               />
             </el-form-item>
           </el-col>
+          <el-col
+            v-if="form.base_example && baseExampleInfo"
+            :span="24"
+          >
+            <el-form-item :label="$t('Project.OriginalTemplate')">
+              <p v-html="baseExampleInfo" />
+            </el-form-item>
+          </el-col>
         </el-col>
 
         <el-col :span="24">
@@ -88,6 +97,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { getProjectAssignable } from '@/api/projects'
+import { getTemplateList } from '@/api/template'
 import i18n from '@/lang'
 
 const formTemplate = () => ({
@@ -98,6 +108,7 @@ const formTemplate = () => ({
   start_date: '',
   due_date: '',
   owner_id: '',
+  base_example: '',
   disabled: false
 })
 
@@ -137,6 +148,7 @@ export default {
         ]
       },
       assignableList: [],
+      baseExampleInfo: '',
       pickerOptions(startDate) {
         return {
           disabledDate(time) {
@@ -163,6 +175,7 @@ export default {
         this.form[item] = this.editProjectObj[item] === 'None' ? '' : this.editProjectObj[item]
       })
       this.fetchProjectAssignableList(this.editProjectObj.id)
+      this.getExampleInfo()
       this.form.owner_id = this.editProjectObj.owner_id
     }
   },
@@ -170,6 +183,19 @@ export default {
     ...mapActions('projects', ['editProject']),
     fetchProjectAssignableList(projectId) {
       getProjectAssignable(projectId).then(res => (this.assignableList = res.data.user_list))
+    },
+    async getExampleInfo() {
+      if (this.userRole !== 'Engineer') {
+        await getTemplateList().then((res) => {
+          res.data.forEach((item) => {
+            item.options.forEach((element) => {
+              if (element.path === this.form.base_example) {
+                this.baseExampleInfo = element.description
+              }
+            })
+          })
+        })
+      }
     },
     onDialogClosed() {
       this.showDialog = false

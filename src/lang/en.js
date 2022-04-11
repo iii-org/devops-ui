@@ -788,6 +788,7 @@ export default {
     Template: 'Template',
     TemplateName: 'Template Name',
     TemplateDescription: 'Template Description',
+    OriginalTemplate: 'Original Template',
     Version: 'Version',
     IssueStatus: 'Issue Status',
     IssueProgress: 'Progress',

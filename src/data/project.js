@@ -29,6 +29,7 @@ function Project(project) {
   this.redmine_url = project.redmine_url
   this.repository_ids = project.repository_ids
   this.harbor_url = project.harbor_url
+  this.base_example = project.base_example
 
   // PM project list fields
   this.updated_time = project.updated_time

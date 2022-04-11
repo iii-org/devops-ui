@@ -406,7 +406,6 @@ export default {
         })
       }
       this.listData = merged
-      console.log(this.listData)
     },
     async onPagination(listQuery) {
       const { limit, page } = listQuery

@@ -783,6 +783,7 @@ export default {
     Template: '開發範本',
     TemplateName: '開發範本名稱',
     TemplateDescription: '開發範本敘述',
+    OriginalTemplate: '原始範本',
     Version: '版本',
     IssueStatus: '議題狀態',
     IssueProgress: '議題執行進度',
