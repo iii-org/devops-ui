@@ -175,6 +175,7 @@ export default {
     StartTime: '開始時間',
     UpdateTime: '更新時間',
     PleaseInput: '請輸入',
+    Input: '請輸入{item}',
     Close: '關閉',
     Disable: '停用',
     Enable: '啟用',
@@ -239,7 +240,10 @@ export default {
     ForceDelete: '刪除',
     Fix: '修復',
     Connected: '連線成功',
-    Disconnected: '連線失敗'
+    Disconnected: '連線失敗',
+    Tag: '標籤',
+    Path: '路徑',
+    Format: '格式'
   },
   Notify: {
     Updated: '已更新',

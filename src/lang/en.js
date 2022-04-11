@@ -175,6 +175,7 @@ export default {
     StartTime: 'Start Time',
     UpdateTime: 'Update Time',
     PleaseInput: 'Please Input',
+    Input: 'Please Input {item}',
     Close: 'Close',
     Disable: 'Disable',
     Enable: 'Enable',
@@ -239,7 +240,10 @@ export default {
     ForceDelete: 'Force Delete',
     Fix: 'Fix',
     Connected: 'Connected',
-    Disconnected: 'Disconnected'
+    Disconnected: 'Disconnected',
+    Tag: 'Tag',
+    Path: 'Path',
+    Format: 'Format'
   },
   Notify: {
     Updated: 'update successful',
