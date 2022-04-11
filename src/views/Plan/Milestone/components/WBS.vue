@@ -263,7 +263,7 @@
         <contextmenu-item
           v-permission="permission"
           class="menu-remove"
-          @click="handleRemoveIssue(contextMenu.row)"
+          @click="handleRemoveIssue(contextMenu.row, 'Delete', false)"
         >
           <em class="el-icon-delete">{{ $t('general.Delete') }}</em>
         </contextmenu-item>
@@ -328,7 +328,9 @@ export default {
     ContextmenuItem,
     ContextmenuSubmenu,
     ProjectIssueDetail,
-    IssueMatrix
+    IssueMatrix,
+    // eslint-disable-next-line vue/no-unused-components
+    Tracker, Status
   },
   directives: {
     contextmenu: directive
@@ -602,51 +604,77 @@ export default {
         this.listData.splice(row_index, 1)
       }
     },
-    async handleRemoveIssue(row) {
-      await this.$msgbox({
-        title: this.$t('general.Delete'),
-        type: 'warning',
-        message: this.$t('Issue.DeleteIssue', { issueName: `#${row.id} - ${row.name}` }),
-        showCancelButton: true,
-        confirmButtonClass: 'el-button--danger',
+    async handleRemoveIssue(row, msg, force, detail) {
+      const h = this.$createElement
+      const issueName = { issueName: row.name }
+      const messageList = [h('span', null, this.$t(`Issue.${msg}Issue`, issueName))]
+      if (detail) {
+        messageList.push(h('ul', null,
+          detail.map(issue => {
+            let tags = ''
+            if (issue.tags && issue.tags.length > 0) {
+              tags = issue.tags.map(tag => h('el-tag', { class: { 'mx-1': true }, props: { type: 'mini' }}, tag.name))
+            }
+            return h('li', null, [
+              h('Status', { class: { 'mx-1': true }, props: { name: this.$t(`Issue.${issue.status.name}`), size: 'mini' }}, ''),
+              h('Tracker', { props: { name: this.$t(`Issue.${issue.tracker.name}`), size: 'mini' }}, ''),
+              h('span', null, [
+                h('span', null, `#${issue.id} - `),
+                ...tags,
+                h('span', null, `${issue.name} ${(Object.keys(issue.assigned_to).length > 0 ? `(${this.$t(`Issue.assigned_to`)}: ${issue.assigned_to.name}
+             -  ${issue.assigned_to.login})` : '')}`)
+              ])
+            ])
+          })
+        ))
+      }
+      const message = h('p', null, messageList)
+      const deleteRequest = await this.$confirm(message, this.$t('general.Delete'), {
         confirmButtonText: this.$t('general.Delete'),
         cancelButtonText: this.$t('general.Cancel'),
-        beforeClose: async (action, instance, done) => {
-          if (action === 'confirm') {
-            this.updateLoading = true
-            this.$emit('update-loading', true)
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = this.$t('Updating')
-            try {
-              const res = await deleteIssue(row.id)
-              this.$emit('update-status', {
-                time: res.datetime
-              })
-              this.$notify({
-                title: this.$t('general.Success').toString(),
-                type: 'success',
-                message: this.$t('Notify.Deleted').toString()
-              })
-            } catch (e) {
-              this.$emit('update-status', {
-                error: e
-              })
-              this.$notify({
-                title: this.$t('general.Error').toString(),
-                type: 'error',
-                message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString()
-              })
-            }
-            this.updateLoading = false
-            this.$emit('update-loading', false)
-            instance.confirmButtonLoading = false
-            done()
-            await this.removeIssue(row)
+        type: 'error',
+        confirmButtonClass: 'el-button--danger'
+      }).catch(err => console.error(err))
+      if (deleteRequest === 'confirm') {
+        this.updateLoading = true
+        this.$emit('update-loading', true)
+        try {
+          await this.deleteIssueAPI(force, row)
+        } catch (err) {
+          const errorRes = err.response.data
+          if (errorRes && errorRes.error.code === 1013) {
+            await this.handleRemoveIssue(row, 'ConfirmDelete', true, errorRes.error.details)
           } else {
-            done()
+            this.$emit('update-status', {
+              error: err
+            })
+            this.$message({
+              title: this.$t('general.Error').toString(),
+              type: 'error',
+              message: this.$t(`errorMessage.${err.response.data.error.code}`, err.response.data.error.details).toString()
+            })
           }
         }
+        this.updateLoading = false
+      }
+    },
+    async deleteIssueAPI(force, row) {
+      let params = {}
+      if (force) {
+        params = { force: force }
+      }
+      const res = await deleteIssue(row.id, params)
+      this.$emit('update-status', {
+        time: res.datetime
       })
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Deleted'),
+        type: 'success'
+      })
+      this.updateLoading = false
+      this.$emit('update-loading', false)
+      await this.removeIssue(row)
     },
     handleCellClick(row, column) {
       if (!this.isButtonDisabled) {

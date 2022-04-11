@@ -430,12 +430,12 @@ export default {
           status_id: 2
         }
       }
-      if (id === 'null') { // change status back to active if user delete assignee
-        data = {
-          [column]: id,
-          status_id: 1
-        }
-      }
+      // if (id === 'null') { // change status back to active if user delete assignee
+      //   data = {
+      //     [column]: id,
+      //     status_id: 1
+      //   }
+      // }
       return data
     },
     toggleRelationDialog(target) {
