@@ -13,10 +13,10 @@
         <el-option
           v-for="project in allRelation"
           :key="project.id"
-          :label="project.name"
+          :label="project.display"
           :value="project.id"
         >
-          <div>{{ project.name }}</div>
+          <div>{{ project.display }}</div>
           <div v-if="project.type === 'father'" class="round father">
             {{ $t('general.Parent') }}
           </div>
