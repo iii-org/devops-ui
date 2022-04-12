@@ -23,7 +23,14 @@
         :title="$t('Issue.RemoveIssueRelation')"
         @confirm="removeConfirm(issue)"
       >
-        <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove" :disabled="isButtonDisabled">
+        <el-button
+          slot="reference"
+          v-permission="['Administrator', 'Project Manager', 'Engineer']"
+          type="danger"
+          size="mini"
+          icon="el-icon-remove"
+          :disabled="isButtonDisabled"
+        >
           {{ $t('Issue.Unlink') }}
         </el-button>
       </el-popconfirm>
