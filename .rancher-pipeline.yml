@@ -36,6 +36,7 @@ stages:
       - sysconfig
       - messagebubble
       - packrelease
+      - sonarqubelogs
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
