@@ -40,6 +40,9 @@
         <el-form-item v-if="isMessageConsole === false">
           <el-checkbox v-model="filter.unread">Unread</el-checkbox>
         </el-form-item>
+        <el-form-item v-else-if="isMessageConsole === true">
+          <el-checkbox v-model="filter.include_system_message">Include System Message</el-checkbox>
+        </el-form-item>
       </el-form>
       <el-button class="w-full buttonPrimary" @click="onChangeFilter">Apply</el-button>
       <el-button slot="reference" icon="el-icon-s-operation" class="headerTextColor" type="text"> {{ displayFilterValue }}
@@ -74,6 +77,7 @@ const defaultFilter = () => ({
   from_date: '',
   to_date: '',
   unread: false,
+  include_system_message: false,
   alert_ids: []
 })
 

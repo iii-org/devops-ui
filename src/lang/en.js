@@ -1251,8 +1251,10 @@ export default {
     Sender: 'Sender',
     Info: 'Info',
     Warning: 'Warning',
-    Error: 'Error',
-    Critical: 'Critical',
+    Urgent: 'Urgent',
+    NewVersion: 'New Version',
+    SystemAlert: 'System Alert',
+    SystemWarning: 'System Warning',
     GroupReceiver: {
       Project: 'Project',
       User: 'User',

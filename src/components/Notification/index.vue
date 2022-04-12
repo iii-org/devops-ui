@@ -79,7 +79,7 @@ export default {
       })
     },
     setNotificationList(data) {
-      // alert level = {1: INFO, 2: WARNING, 3: ERROR, 4: CRITICAL, 101: VERSION UPDATE}
+      // alert level = {1: INFO, 2: WARNING, 3: URGENT, 101: VERSION UPDATE, 102: SYSTEM ALERT, 103: SYSTEM WARNING}
       // type id = {1: ALL, 2: AM, 3: PROJECT, 4: USER}
       const findChangeIndex = this.msgList.findIndex(msg => parseInt(data.id) === parseInt(msg.id))
       if (findChangeIndex !== -1) {
@@ -92,19 +92,21 @@ export default {
       this.filterMsg()
     },
     filterMsg() {
-      this.alert = this.msgList.filter((item) => item.alert_level.id !== 1)
+      this.alert = this.msgList.filter((item) => item.alert_level.id !== 1 && item.alert_level.id !== 101)
       this.info = this.msgList.filter((item) => item.alert_level.id === 1)
       this.update = this.msgList.filter((item) => item.alert_level.id === 101)
     },
-    async readMessage(msg_id) {
-      try {
-        await setReadMessage(this.userId, { message_ids: [msg_id] }).then(() => {
-          const findChangeIndex = this.msgList.findIndex(msg => parseInt(msg_id) === parseInt(msg.id))
-          this.$delete(this.msgList, findChangeIndex)
-          this.filterMsg()
-        })
-      } catch (err) {
-        console.error(err)
+    async readMessage(msg) {
+      if (msg.users_can_read === true) {
+        try {
+          await setReadMessage(this.userId, { message_ids: [msg.id] }).then(() => {
+            const findChangeIndex = this.msgList.findIndex(item => parseInt(msg.id) === parseInt(item.id))
+            this.$delete(this.msgList, findChangeIndex)
+            this.filterMsg()
+          })
+        } catch (err) {
+          console.error(err)
+        }
       }
     }
   }

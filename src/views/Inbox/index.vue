@@ -133,12 +133,20 @@ export default {
         color: '#e6d53c'
       }, {
         id: 3,
-        label: this.$t('Inbox.Error'),
+        label: this.$t('Inbox.Urgent'),
         color: '#e6a23c'
       }, {
-        id: 4,
-        label: this.$t('Inbox.Critical'),
+        id: 101,
+        label: this.$t('Inbox.NewVersion'),
+        color: ''
+      }, {
+        id: 102,
+        label: this.$t('Inbox.SystemAlert'),
         color: '#f56c6c'
+      }, {
+        id: 103,
+        label: this.$t('Inbox.SystemWarning'),
+        color: '#e6d53c'
       }]
     } 
   },
@@ -207,7 +215,7 @@ export default {
       this.readMessage(msg)
     },
     async readMessage(msg) {
-      if (msg.read === false) {
+      if (msg.users_can_read === true && msg.read === false) {
         try {
           await setReadMessage(this.userId, { message_ids: [msg.id] }).then(() => {
             const findChangeIndex = this.messageList.findIndex(item => parseInt(msg.id) === parseInt(item.id))

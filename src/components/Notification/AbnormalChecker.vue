@@ -73,11 +73,13 @@ export default {
     showMessage(msg) {
       this.$refs.messageDialog.dialogVisible = true
       this.message = msg
-      this.$emit('read', msg.id)
+      this.$emit('read', msg)
     },
     iconColor(alert_level) {
-      // alert level = { 2: WARNING, 3: ERROR, 4: CRITICAL }
-      return (alert_level === 2) ? '#e6d53c' : (alert_level === 3) ? '#e6a23c' : '#f56c6c'
+      // alert level = { 2: WARNING, 3: URGENT, 102: SYSTEM ALERT, 103: SYSTEM WARNING }
+      return (alert_level === 2 || alert_level === 103) ? '#e6d53c' 
+        : (alert_level === 3) ? '#e6a23c' 
+          : '#f56c6c'
     },
     relativeTime(value) {
       return relativeTime(value)

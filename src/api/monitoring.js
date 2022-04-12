@@ -13,3 +13,4 @@ export const getMessageList = (params) => request.get(`/notification_message_lis
 export const getMessageListAdmin = (params) => request.get(`/notification_message_list/admin`, { params })
 export const createMessage = (params) => request.post(`/notification_message`, params)
 export const deleteMessage = (msg_id) => request.delete(`/notification_message/${msg_id}`)
+export const closeMessage = (msg_id) => request.post(`/notification_message/${msg_id}/close`)

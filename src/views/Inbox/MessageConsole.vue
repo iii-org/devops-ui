@@ -67,7 +67,7 @@
       <el-table-column-time
         prop="created_at"
         :label="$t('Inbox.Date')"
-        width="300px"
+        width="200px"
       />
       <el-table-column
         align="center"
@@ -79,20 +79,36 @@
         align="center"
         label="Group Receiver"
         prop="creator.name"
-        width="200px"
+        width="150px"
       >
         <template slot-scope="scope">
           {{ receiverName(scope.row.types[0].type_id) }}
         </template>
       </el-table-column>
       <el-table-column
-        fixed="right"
         align="center"
+        label="Status"
+        prop="creator.name"
+        width="150px"
+      >
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.close ? 'info' : 'success'"
+          >
+            {{ scope.row.close ? $t('Version.closed') : $t('Version.open') }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        fixed="right"
+        header-align="center"
         label="Action"
-        width="210px"
+        width="300px"
       >
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.alert_level.id < 100"
+            :disabled="scope.row.close"
             size="mini"
             class="buttonPrimaryReverse"
             icon="el-icon-edit"
@@ -116,6 +132,16 @@
               <em class="el-icon-delete" /> {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
+          <el-button
+            v-if="scope.row.alert_level.id < 100"
+            :disabled="scope.row.close"
+            size="mini"
+            class="buttonTertiaryReverse"
+            icon="el-icon-circle-close"
+            @click.stop="handleClose(scope.row)"
+          >
+            {{ $t('general.Close') }}
+          </el-button>
         </template>
       </el-table-column>
       <template slot="empty">
@@ -136,7 +162,7 @@
       class="ps"
       justify="end"
     >
-      * The system only keeps 7 days messages. Pelase save the message in local if it's important.
+      * The system only keeps 7 days messages. Please save the message in local if it's important.
     </el-row>
     <CreateMessage 
       ref="createDialog" 
@@ -152,8 +178,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import SearchFilter from './components/SearchFilter.vue'
-// import CreateMessage from './components/CreateMessage.vue'
-import { getMessageListAdmin, deleteMessage } from '@/api/monitoring'
+import { getMessageListAdmin, deleteMessage, closeMessage } from '@/api/monitoring'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { BasicData, Pagination } from '@/newMixins'
 
@@ -199,12 +224,20 @@ export default {
         color: '#e6d53c'
       }, {
         id: 3,
-        label: this.$t('Inbox.Error'),
+        label: this.$t('Inbox.Urgent'),
         color: '#e6a23c'
       }, {
-        id: 4,
-        label: this.$t('Inbox.Critical'),
+        id: 101,
+        label: this.$t('Inbox.NewVersion'),
+        color: ''
+      }, {
+        id: 102,
+        label: this.$t('Inbox.SystemAlert'),
         color: '#f56c6c'
+      }, {
+        id: 103,
+        label: this.$t('Inbox.SystemWarning'),
+        color: '#e6d53c'
       }]
     },
     groupReceiver() {
@@ -242,6 +275,7 @@ export default {
   },
   methods: {
     async fetchData() {
+      this.listLoading = true
       const res = await getMessageListAdmin(this.params)
       this.messageList = res.data.notification_message_list
       const start_id = res.data.page.limit * (res.data.page.current - 1) + 1
@@ -250,6 +284,7 @@ export default {
       })
       this.listQuery = Object.assign({}, res.data.page)
       this.edit = false
+      this.listLoading = false
     },
     async onSearch(keyword) {
       this.params.search = keyword
@@ -303,8 +338,25 @@ export default {
         await this.fetchData()
       } catch (error) {
         console.error(error)
+        this.listLoading = false
       }
-      this.listLoading = false
+    },
+    async handleClose(row) {
+      console.log(row)
+      this.listLoading = true
+      await closeMessage(row.id)
+        .then(async () => {
+          this.$message({
+            title: this.$t('general.Success'),
+            message: 'Message closed successfully',
+            type: 'success'
+          })
+          this.fetchData()
+        })
+        .catch((err) => {
+          console.error(err)
+          this.isLoading = false
+        })
     },
     handleBack() {
       this.$router.push({ name: 'inbox' })

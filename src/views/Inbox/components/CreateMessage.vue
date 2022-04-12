@@ -46,7 +46,7 @@
             </el-form-item>
           </el-col>
           <el-col v-if="form.type_id === 2 || form.type_id === 5" :span="24">
-            <el-form-item label="Project" prop="project_ids">
+            <el-form-item :label="$t('Inbox.GroupReceiver.Project')" prop="project_ids">
               <el-select v-model="form.project_ids" multiple collapse-tags style="width: 100%">
                 <el-option v-for="item in projectList" :key="item.id" :label="item.name" :value="item.id">
                   {{ item.name }}
@@ -55,7 +55,7 @@
             </el-form-item>
           </el-col>
           <el-col v-if="form.type_id === 3" :span="24">
-            <el-form-item label="User" prop="user_ids">
+            <el-form-item :label="$t('Inbox.GroupReceiver.User')" prop="user_ids">
               <el-select v-model="form.user_ids" multiple collapse-tags style="width: 100%">
                 <el-option v-for="item in userList" :key="item.id" :label="item.name" :value="item.id">
                   {{ item.name }}
@@ -64,7 +64,7 @@
             </el-form-item>
           </el-col>
           <el-col v-if="form.type_id === 4" :span="24">
-            <el-form-item label="Role" prop="role_ids">
+            <el-form-item :label="$t('Inbox.GroupReceiver.Role')" prop="role_ids">
               <el-select v-model="form.role_ids" multiple style="width: 100%">
                 <el-option v-for="item in roleList" :key="item.id" :label="item.name" :value="item.id">
                   {{ item.name }}
@@ -75,7 +75,7 @@
           <el-col :span="24">
             <el-form-item label="Alert Level" prop="alert_level">
               <el-select v-model="form.alert_level" style="width: 100%">
-                <el-option v-for="item in alertList" :key="item.id" :label="item.label" :value="item.id">
+                <el-option v-for="item in filteredAlert" :key="item.id" :label="item.label" :value="item.id">
                   {{ item.label }}
                 </el-option>
               </el-select>
@@ -164,6 +164,9 @@ export default {
         { id: 4, label: this.$t('Inbox.GroupReceiver.Role') },
         { id: 5, label: this.$t('Inbox.GroupReceiver.ProjectOwner') }
       ]
+    },
+    filteredAlert() {
+      return this.alertList.slice(0, 3)
     }
   },
   watch: {
@@ -245,12 +248,13 @@ export default {
           }
         }
         await createMessage(sendData)
-          .then(() => {
+          .then(async () => {
+            if (this.isEdit) await deleteMessage(this.messageData.id)
+            const message = this.isEdit ? this.$t('Notify.Updated') : this.$t('Notify.Created')
             this.$message({
-              message: this.$t('Notify.Created'),
+              message: message,
               type: 'success'
             })
-            if (this.isEdit) deleteMessage(this.messageData.id)
             this.$emit('load-data')
             this.onDialogClosed()
             this.isLoading = false

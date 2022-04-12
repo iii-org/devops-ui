@@ -71,7 +71,7 @@ export default {
     showMessage(msg) {
       this.$refs.messageDialog.dialogVisible = true
       this.message = msg
-      this.$emit('read', msg.id)
+      this.$emit('read', msg)
     },
     relativeTime(value) {
       return relativeTime(value)
