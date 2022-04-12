@@ -57,13 +57,32 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-tag
+      <el-table-column
         prop="status"
         :label="$t('general.Status')"
         min-width="130"
-        location="cmas"
-        i18n-key="Cmas"
-      />
+        align="center"
+      >
+        <template slot-scope="scope">
+          <el-tooltip 
+            :disabled="scope.row.logs === null" 
+            placement="bottom"
+          >
+            <template slot="content">
+              <p class="tooltip">{{ scope.row.logs }}</p>
+            </template>
+            <el-tag
+              v-if="scope.row.status"
+              :type="handleType(scope.row.status)"
+              class="el-tag--circle"
+              :effect="getTagEffect(scope.row.status)"
+            >
+              <span>{{ $t(`Cmas.${scope.row.status}`) }}</span>
+            </el-tag>
+            <span v-else>-</span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         :label="$t('Cmas.MOEA')"
@@ -127,12 +146,12 @@ import {
   getCmasScansStatus,
   getCmasReport
 } from '@/api/cmas'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import * as elementTagType from '@/utils/element-tag-type'
 
 export default {
   name: 'Cmas',
-  components: { ElTableColumnTag, ElTableColumnTime },
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   data() {
     this.levels = ['High', 'Medium', 'Low']
@@ -209,7 +228,22 @@ export default {
         this.$t('general.Medium'),
         this.$t('general.Low')
       ]
+    },
+    handleType(prop) {
+      return elementTagType['cmas'][prop] || 'default'
+    },
+    getTagEffect(status) {
+      const tagMap = { Building: 'light' }
+      return tagMap[status] || 'dark'
     }
   }
 }
 </script>
+
+<style scoped>
+.tooltip {
+  max-width: 500px; 
+  margin: 0; 
+  text-align: center;
+}
+</style>
