@@ -110,7 +110,8 @@ export default {
       if (this.assignableUserList.length <= 0) return []
       if (this.keyword.length <= 0) return this.assignableUserList
       const fuse = new Fuse(this.assignableUserList, {
-        includeScore: true,
+        // includeScore: true,
+        threshold: 0.35,
         keys: ['name', 'login', 'department', 'title']
       })
       const res = fuse.search('!' + this.keyword)
