@@ -4,6 +4,16 @@
     style="overflow: hidden;"
   >
     <ProjectListSelector>
+      <el-button
+        v-if="pod.has_pod"
+        slot="button"
+        class="buttonPrimary"
+        :disabled="selectedProjectId === -1"
+        @click="handleLogClick"
+      >
+        <em class="ri-computer-line mr-1" />
+        {{ $t('SonarQube.ScanLogs') }}
+      </el-button>
       <el-input
         v-model="keyword"
         class="mr-3"
@@ -149,22 +159,30 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
+    <PodLog
+      ref="podLogDialog"
+      :pod-name="pod.pod_name"
+      :container-name="pod.container_name"
+    />
   </el-row>
 </template>
 
 <script>
 import { getWebInspectScans, getWebInspectStats, getWebInspectStatus } from '@/api/webInspect'
+import { getWebInspectPod } from '@/api_v2/webInspect'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanWebInspect',
-  components: { ElTableColumnTime },
+  components: { ElTableColumnTime, PodLog },
   mixins: [MixinElTableWithAProject],
   data() {
     return {
       confirmLoading: false,
-      searchKeys: ['commit_id']
+      searchKeys: ['commit_id'],
+      pod: {}
     }
   },
   watch: {
@@ -176,6 +194,7 @@ export default {
     async fetchData() {
       let scansData = []
       this.listLoading = true
+      this.pod = (await getWebInspectPod(this.selectedProjectId)).data
       try {
         const rName = this.selectedProject.name
         if (!rName) return []
@@ -244,6 +263,10 @@ export default {
         Interrupted: 'danger'
       }
       return mapKey[status] || 'slow'
+    },
+    handleLogClick() {
+      this.$refs.podLogDialog.fetchData(this.pod.pod_name, this.pod.container_name)
+      this.$refs.podLogDialog.dialogVisible = true
     }
   }
 }

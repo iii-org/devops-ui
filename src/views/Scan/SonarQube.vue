@@ -120,7 +120,7 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-    <pod-log
+    <PodLog
       ref="podLogDialog"
       :pod-name="focusPodName"
       :container-name="focusContainerName"
@@ -130,9 +130,10 @@
 
 <script>
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
-import { getSonarQubeData, getSonarQubePod } from '@/api/sonarQube'
+import { getSonarQubeData } from '@/api/sonarQube'
+import { getSonarQubePod } from '@/api_v2/sonarQube'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog.vue'
+import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanSonarQube',

@@ -1,6 +1,16 @@
 <template>
   <el-row class="app-container">
     <ProjectListSelector>
+      <el-button
+        v-if="pod.has_pod"
+        slot="button"
+        class="buttonPrimary"
+        :disabled="selectedProjectId === -1"
+        @click="handleLogClick"
+      >
+        <em class="ri-computer-line mr-1" />
+        {{ $t('SonarQube.ScanLogs') }}
+      </el-button>
       <el-input
         v-model="keyword"
         :placeholder="$t('general.SearchBranch')"
@@ -117,6 +127,11 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
+    <PodLog
+      ref="podLogDialog"
+      :pod-name="pod.pod_name"
+      :container-name="pod.container_name"
+    />
   </el-row>
 </template>
 
@@ -127,19 +142,26 @@ import {
   getCmasScansStatus,
   getCmasReport
 } from '@/api/cmas'
+import { getCmasPod } from '@/api_v2/cmas'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
 
 export default {
   name: 'Cmas',
-  components: { ElTableColumnTag, ElTableColumnTime },
+  components: {
+    ElTableColumnTag,
+    ElTableColumnTime,
+    PodLog
+  },
   mixins: [MixinElTableWithAProject],
   data() {
     this.levels = ['High', 'Medium', 'Low']
     this.MOEA = ['L3', 'L2', 'L1']
     this.OWASP = [this.$t('general.High'), this.$t('general.Medium'), this.$t('general.Low')]
     return {
-      searchKeys: ['branch']
+      searchKeys: ['branch'],
+      pod: {}
     }
   },
   computed: {
@@ -167,6 +189,7 @@ export default {
     async fetchData() {
       if (this.selectedRepositoryId === -1) return
       const res = await getCmasScans(this.selectedRepositoryId)
+      this.pod = (await getCmasPod(this.selectedProjectId)).data
       return res.data
     },
     updateCmasScanStatus(listData) {
@@ -209,6 +232,10 @@ export default {
         this.$t('general.Medium'),
         this.$t('general.Low')
       ]
+    },
+    handleLogClick() {
+      this.$refs.podLogDialog.fetchData(this.pod.pod_name, this.pod.container_name)
+      this.$refs.podLogDialog.dialogVisible = true
     }
   }
 }
