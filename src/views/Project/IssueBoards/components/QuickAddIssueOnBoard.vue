@@ -79,7 +79,7 @@
         <div class="flex items-center">
           <div>{{ $t('Issue.AddIssue') }}</div>
           <div
-            v-if="isParentProject"
+            v-if="hasRelations"
             style="margin-left: 10px;"
           >
             <el-select v-model="pId">
@@ -142,7 +142,7 @@ import Tracker from '@/components/Issue/Tracker'
 import { getProjectAssignable } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import AddIssue from '@/components/Issue/AddIssue'
-import { getAllRelation, getHasSon } from '@/api_v2/projects'
+import { getAllRelation, getHasRelation } from '@/api_v2/projects'
 
 export default {
   name: 'QuickAddIssueOnBoard',
@@ -193,7 +193,7 @@ export default {
         assigned_to_id: [{ validator: validateAssignedTo, trigger: 'blur' }]
       },
       allRelation: [],
-      isParentProject: false,
+      hasRelations: false,
       pId: ''
     }
   },
@@ -221,7 +221,7 @@ export default {
     }
   },
   mounted() {
-    this.getHasSon(this.selectedProject)
+    this.getHasRelation(this.selectedProject)
     this.setFilterValue()
     this.fetchSelection()
   },
@@ -239,29 +239,6 @@ export default {
           ...assigned_to.user_list
         ]
       })
-    },
-    async getHasSon(project) {
-      await getHasSon(project.id)
-        .then((res) => {
-          if (res.has_child) {
-            this.isParentProject = project
-            this.getAllRelation(project)
-          } else this.isParentProject = false
-        })
-    },
-    async getAllRelation(project) {
-      const { display, id, name } = project
-      const parentIssue = {
-        display, id, name
-      }
-      let allRelation = []
-      await getAllRelation(project.id)
-        .then((res) => {
-          allRelation = res.data
-          allRelation.unshift(parentIssue)
-          this.allRelation = allRelation
-          this.pId = id
-        })
     },
     setFilterValue() {
       this.form = {
@@ -340,6 +317,29 @@ export default {
     loadingUpdate(value) {
       this.LoadingConfirm = value
       if (value) this.$emit('after-add')
+    },
+    async getHasRelation() {
+      await getHasRelation(this.selectedProject.id)
+        .then((res) => {
+          if (res.has_relations) {
+            this.getAllRelation()
+          }
+          this.hasRelations = res.has_relations
+        })
+    },
+    async getAllRelation() {
+      const { display, id, name } = this.selectedProject
+      const selectedProject = {
+        display, id, name
+      }
+      let allRelation = []
+      await getAllRelation(this.selectedProject.id)
+        .then((res) => {
+          allRelation = res.data
+          allRelation.unshift(selectedProject)
+          this.allRelation = allRelation
+          this.pId = id
+        })
     }
   }
 }

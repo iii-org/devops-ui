@@ -84,6 +84,10 @@ export default {
     projectRelationList: {
       type: Array,
       default: () => []
+    },
+    isButtonDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
@@ -93,10 +97,6 @@ export default {
           this.$emit('collapse-expend-row', value.id)
         }
       }
-    },
-    isButtonDisabled: {
-      type: Boolean,
-      default: false
     }
   },
   methods: {

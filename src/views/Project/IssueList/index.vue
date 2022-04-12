@@ -344,7 +344,7 @@ import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api/projects'
 import { getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
 import XLSX from 'xlsx'
-import { getHasSon, getProjectRelation } from '@/api_v2/projects'
+import { getHasRelation, getProjectRelation } from '@/api_v2/projects'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -670,7 +670,7 @@ export default {
       this.refTable.toggleRowExpansion(row, false)
     },
     async isProjectHasSon() {
-      const hasSon = await getHasSon(this.selectedProjectId)
+      const hasSon = await getHasRelation(this.selectedProjectId)
       if (hasSon.has_child) {
         this.filterOptionsWithProject = [{
           id: 7,

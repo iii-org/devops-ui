@@ -8,8 +8,8 @@
     label-position="top"
     :disabled="isButtonDisabled"
   >
-    <el-form-item v-if="isParentProject" :label="$t('Project.Project')">
-      <el-select v-model="selectedProjectId" style="width: 100%">
+    <el-form-item v-if="hasRelations" :label="$t('Project.Project')">
+      <el-select v-model="form.project_id" style="width: 100%">
         <el-option
           v-for="project in allRelation"
           :key="project.id"
@@ -261,7 +261,7 @@ import Status from '@/components/Issue/Status'
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
 import Tags from '@/components/Issue/Tags'
-import { getAllRelation, getHasSon } from '@/api_v2/projects'
+import { getAllRelation, getHasRelation } from '@/api_v2/projects'
 
 const relationIssueFilter = { Feature: 'Test Plan', 'Test Plan': 'Feature', 'Fail Management': 'Test Plan' }
 
@@ -337,8 +337,7 @@ export default {
         }
       },
       allRelation: [],
-      selectedProjectId: '',
-      isParentProject: false
+      hasRelations: false
     }
   },
   computed: {
@@ -413,13 +412,10 @@ export default {
     'form.assigned_to_id'() {
       if (this.form.assigned_to_id && this.form.status_id === 1) this.form.status_id = 2
       if (!this.form.assigned_to_id) this.form.status_id = 1
-    },
-    selectedProjectId(val) {
-      if (val) this.fetchData(val)
     }
   },
   mounted() {
-    this.getHasSon(this.selectedProject)
+    this.getHasRelation()
     this.fetchData()
     if (this.form.project_id > 0) {
       this.$refs.tags.getSearchTags()
@@ -598,27 +594,26 @@ export default {
         return '<span class=\'bg-yellow-200 text-danger p-1\'><strong>' + str + '</strong></span>'
       })
     },
-    async getHasSon(project) {
-      await getHasSon(project.id)
+    async getHasRelation() {
+      await getHasRelation(this.selectedProject.id)
         .then((res) => {
-          if (res.has_child) {
-            this.isParentProject = project
-            this.getAllRelation(project)
-          } else this.isParentProject = false
+          if (res.has_relations) {
+            this.getAllRelation()
+          }
+          this.hasRelations = res.has_relations
         })
     },
-    async getAllRelation(project) {
-      const { display, id, name } = project
-      const parentIssue = {
+    async getAllRelation() {
+      const { display, id, name } = this.selectedProject
+      const selectedProject = {
         display, id, name
       }
       let allRelation = []
-      await getAllRelation(project.id)
+      await getAllRelation(this.selectedProject.id)
         .then((res) => {
           allRelation = res.data
-          allRelation.unshift(parentIssue)
+          allRelation.unshift(selectedProject)
           this.allRelation = allRelation
-          this.selectedProjectId = id
         })
     }
   }
