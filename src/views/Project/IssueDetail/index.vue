@@ -292,7 +292,6 @@ import getPageTitle from '@/utils/get-page-title'
 import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
 import { getIssueFamily } from '@/api/issue'
-import { getIssueForceTracker } from '@/api_v2/issue'
 
 const commitLimit = 10
 
