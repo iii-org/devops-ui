@@ -179,7 +179,7 @@ const actions = {
       console.error(error.toString())
     }
   },
-  setSelectedProject({ commit }, project) {
+  setSelectedProject({ commit, dispatch }, project) {
     const { id } = project
     if (localStorage.getItem('projectId') !== id.toString()) {
       sessionStorage.removeItem('issueFilter')
@@ -191,6 +191,7 @@ const actions = {
     commit('SET_FILTER', {})
     commit('SET_GROUP_BY', { dimension: 'status', value: [] })
     commit('SET_DISPLAY_CLOSED', {})
+    dispatch('getSelectionOptions')
   },
   getIssueFilter({ commit, state }) {
     const getSessionValue = sessionStorage.getItem('issueFilter')
