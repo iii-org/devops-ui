@@ -6,7 +6,7 @@
         class="buttonPrimary"
         @click="messageConsole"
       >
-        Message Console
+        {{ $t('Inbox.MessageConsole') }}
       </el-button>
       <SearchFilter
         ref="filter"
@@ -83,7 +83,7 @@
       class="ps"
       justify="end"
     >
-      * The system only keeps 7 days messages. Pelase save the message in local if it's important.
+      {{ $t('Inbox.MessageNote') }}
     </el-row>
     <MessageDialog ref="messageDialog" :message="message" />
   </div>

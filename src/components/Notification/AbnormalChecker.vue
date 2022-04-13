@@ -42,7 +42,7 @@
             :to="'/inbox/'"
             class="linkTextColor"
           >
-            <el-button class="w-full" type="text">View All</el-button>
+            <el-button class="w-full" type="text">{{ $t('Inbox.ViewAll') }}</el-button>
           </router-link>
         </el-dropdown-item>
       </el-dropdown-menu>

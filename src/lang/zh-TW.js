@@ -1252,7 +1252,28 @@ export default {
       Role: '角色',
       ProjectOwner: '專案經理',
       All: '全部'
-    }
+    },
+    ViewAll: '全部',
+    TimeRange: '訊息區間',
+    From: '自',
+    To: '到',
+    SelectDate: '選擇日期',
+    SelectMessageType: '選擇訊息種類',
+    Unread: '僅顯示未讀訊息',
+    IncludeSystemMessage: '含系統訊息',
+    Apply: '確認',
+    MessageConsole: '推播管理',
+    MessageNote: '* 平台僅保留7天內訊息，如有重要資訊請另行儲存。',
+    CreateMessage: '新增推播',
+    EditMessage: '編輯推播',
+    MessageContent: '訊息內容',
+    Public: '公開',
+    Private: '指定',
+    GroupReceiverTitle: '推播對象',
+    AlertLevel: '訊息類別',
+    Send: '傳送',
+    NotifyClosed: '訊息已關閉',
+    SearchLabel: '搜尋訊息標題或寄送者'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

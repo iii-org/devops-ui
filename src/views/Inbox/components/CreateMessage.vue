@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="isEdit ? 'Edit Message' : 'Create Message'"
+    :title="isEdit ? $t('Inbox.EditMessage') : $t('Inbox.CreateMessage')"
     :show-close="false"
     :visible.sync="showDialog"
     :close-on-click-modal="false"
@@ -11,20 +11,20 @@
       <el-row :gutter="10">
         <el-col :span="24" :sm="16">
           <el-col :span="24">
-            <el-form-item label="Title" prop="title">
+            <el-form-item :label="$t('Inbox.Title')" prop="title">
               <el-input 
                 v-model="form.title" 
-                :placeholder="$t('general.PleaseInput') + ' Title'"
+                :placeholder="$t('general.PleaseInput') + $t('Inbox.Title')"
               />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="Content" prop="content">
+            <el-form-item :label="$t('Inbox.MessageContent')" prop="content">
               <el-input
                 v-model="form.content"
                 type="textarea"
                 :autosize="{ minRows: 6, maxRows: 6}"
-                :placeholder="$t('general.PleaseInput') + ' Message Content'"
+                :placeholder="$t('general.PleaseInput') + $t('Inbox.MessageContent')"
               />
             </el-form-item>
           </el-col>
@@ -32,12 +32,12 @@
         <el-col :span="24" :sm="8">
           <el-col>
             <el-radio-group v-model="messageType" size="mini">
-              <el-radio-button label="Public" />
-              <el-radio-button label="Private" />
+              <el-radio-button label="Public">{{ $t('Inbox.Public') }}</el-radio-button>
+              <el-radio-button label="Private">{{ $t('Inbox.Private') }}</el-radio-button>
             </el-radio-group>
           </el-col>
           <el-col v-if="messageType === 'Private'" :span="24">
-            <el-form-item label="Group Receiver" prop="type_id">
+            <el-form-item :label="$t('Inbox.GroupReceiverTitle')" prop="type_id">
               <el-select v-model="form.type_id" style="width: 100%">
                 <el-option v-for="item in groupReceiver" :key="item.id" :label="item.label" :value="item.id">
                   {{ item.label }}
@@ -73,7 +73,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="Alert Level" prop="alert_level">
+            <el-form-item :label="$t('Inbox.AlertLevel')" prop="alert_level">
               <el-select v-model="form.alert_level" style="width: 100%">
                 <el-option v-for="item in filteredAlert" :key="item.id" :label="item.label" :value="item.id">
                   {{ item.label }}
@@ -86,7 +86,7 @@
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button class="buttonSecondaryReverse" :disabled="isLoading" @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
-      <el-button class="buttonPrimary" :loading="isLoading" @click="onSend">Send</el-button>
+      <el-button class="buttonPrimary" :loading="isLoading" @click="onSend">{{ $t('Inbox.Send') }}</el-button>
     </span>
   </el-dialog>
 </template>

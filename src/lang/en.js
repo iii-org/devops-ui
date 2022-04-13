@@ -1261,7 +1261,28 @@ export default {
       Role: 'Role',
       ProjectOwner: 'Project Owner',
       All: 'All'
-    }
+    },
+    ViewAll: 'View All',
+    TimeRange: 'Time Range',
+    From: 'From',
+    To: 'To',
+    SelectDate: 'Select Date',
+    SelectMessageType: 'Select Message Type',
+    Unread: 'Show  Unread Message Only',
+    IncludeSystemMessage: 'Include System Message',
+    Apply: 'Apply',
+    MessageConsole: 'Message Console',
+    MessageNote: '* The system only keeps 7 days messages. Pelase save the message in local if it\'s important.',
+    CreateMessage: 'Create Message',
+    EditMessage: 'Edit Message',
+    MessageContent: 'Message Content',
+    Public: 'Public',
+    Private: 'Private',
+    GroupReceiverTitle: 'Group Receiver',
+    AlertLevel: 'Alert Level',
+    Send: 'Send',
+    NotifyClosed: 'Message closed successfully',
+    SearchLabel: 'Search Title or Sender'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

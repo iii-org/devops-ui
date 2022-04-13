@@ -15,7 +15,7 @@
           class="buttonSecondary"
           @click="createMessage"
         >
-          Create Message
+          {{ $t('Inbox.CreateMessage') }}
         </el-button>
       </div>
       <SearchFilter
@@ -162,7 +162,7 @@
       class="ps"
       justify="end"
     >
-      * The system only keeps 7 days messages. Please save the message in local if it's important.
+      {{ $t('Inbox.MessageNote') }}
     </el-row>
     <CreateMessage 
       ref="createDialog" 
@@ -348,7 +348,7 @@ export default {
         .then(async () => {
           this.$message({
             title: this.$t('general.Success'),
-            message: 'Message closed successfully',
+            message: this.$t('Inbox.NotifyClosed'),
             type: 'success'
           })
           this.fetchData()

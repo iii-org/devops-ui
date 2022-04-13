@@ -1,28 +1,28 @@
 <template>
   <div>
     <el-popover placement="bottom" trigger="click">
-      <h3 style="margin: 0">Absolute time range</h3>
+      <h3 style="margin: 0">{{ $t('Inbox.TimeRange') }}</h3>
       <el-form :model="filter">
         <el-form-item>
-          <div slot="label">From</div>
+          <div slot="label">{{ $t('Inbox.From') }}</div>
           <el-date-picker
             v-model="filter.from_date"
             type="date"
             clearable
             align="right"
-            placeholder="Pick a day"
+            :placeholder="$t('Inbox.SelectDate')"
             value-format="yyyy-MM-dd"
             :picker-options="pickerOptions(filter.to_date)"
           />
         </el-form-item>
         <el-form-item>
-          <div slot="label">To</div>
+          <div slot="label">{{ $t('Inbox.To') }}</div>
           <el-date-picker
             v-model="filter.to_date"
             type="date"
             clearable
             align="right"
-            placeholder="Pick a day"
+            :placeholder="$t('Inbox.SelectDate')"
             value-format="yyyy-MM-dd"
             :picker-options="pickerOptions(filter.from_date)"
           />
@@ -32,19 +32,19 @@
           <el-select
             v-model="filter.alert_ids"
             multiple
-            placeholder="Select Type"
+            :placeholder="$t('Inbox.SelectMessageType')"
           >
             <el-option v-for="item in options" :key="item.id" :label="item.label" :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item v-if="isMessageConsole === false">
-          <el-checkbox v-model="filter.unread">Unread</el-checkbox>
+          <el-checkbox v-model="filter.unread">{{ $t('Inbox.Unread') }}</el-checkbox>
         </el-form-item>
         <el-form-item v-else-if="isMessageConsole === true">
-          <el-checkbox v-model="filter.include_system_message">Include System Message</el-checkbox>
+          <el-checkbox v-model="filter.include_system_message">{{ $t('Inbox.IncludeSystemMessage') }}</el-checkbox>
         </el-form-item>
       </el-form>
-      <el-button class="w-full buttonPrimary" @click="onChangeFilter">Apply</el-button>
+      <el-button class="w-full buttonPrimary" @click="onChangeFilter">{{ $t('Inbox.Apply') }}</el-button>
       <el-button slot="reference" icon="el-icon-s-operation" class="headerTextColor" type="text"> {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" />
       </el-button>
@@ -54,7 +54,7 @@
       v-if="searchVisible"
       v-model="keyword"
       style="width: 250px"
-      :placeholder="$t('Project.SearchProjectNameOrIdOrManager')"
+      :placeholder="$t('Inbox.SearchLabel')"
       prefix-icon="el-icon-search"
       clearable
       @blur="searchVisible=!searchVisible"
