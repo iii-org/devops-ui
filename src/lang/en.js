@@ -280,7 +280,8 @@ export default {
       'The red background indicates that there are duplicate project settings in the same branch. Please make sure that the settings are consistent (as on or off) to ensure that the Pipeline operates normally.',
     ChangeProjectManager: 'Confirming if you want to change the project manager?',
     ConnectSocket: 'Kanban is connecting Socket...',
-    UpdateKanban: '{issueName} is updated'
+    UpdateKanban: '{issueName} is updated',
+    NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',

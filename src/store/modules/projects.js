@@ -9,7 +9,7 @@ import {
 } from '@/api/projects'
 import { forceDeleteProject } from '@/api_v2/projects'
 import { getIssuePriority, getIssueStatus, getIssueTracker } from '@/api/issue'
-import { getIssueStrictTracker } from '@/api_v2/issue'
+import { getIssueStrictTracker, getIssueForceTracker } from '@/api_v2/issue'
 
 const getDefaultState = () => {
   return {
@@ -22,6 +22,7 @@ const getDefaultState = () => {
     status: [],
     priority: [],
     strictTracker: [],
+    forceTracker: [],
 
     issueFilter: JSON.parse(sessionStorage.getItem('issueFilter')) || {},
     keyword: JSON.parse(sessionStorage.getItem('keyword')) || {},
@@ -59,6 +60,9 @@ const mutations = {
   },
   SET_STRICT_TRACKER: (state, value) => {
     state.strictTracker = value
+  },
+  SET_FORCE_TRACKER: (state, value) => {
+    state.forceTracker = value
   },
   SET_FILTER: (state, value) => {
     state.issueFilter = value
@@ -129,6 +133,14 @@ const actions = {
     try {
       const tracker = await getIssueStrictTracker(params)
       commit('SET_STRICT_TRACKER', tracker.data)
+    } catch (error) {
+      console.error(error.toString())
+    }
+  },
+  async getIssueForceTracker({ commit }) {
+    try {
+      const tracker = await getIssueForceTracker(state.selectedProject.id)
+      commit('SET_FORCE_TRACKER', tracker.data.need_fatherissue_trackers)
     } catch (error) {
       console.error(error.toString())
     }

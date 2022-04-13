@@ -87,7 +87,8 @@ const actions = {
       } else {
         commit('projects/SET_SELECTED_PROJECT', myProjects[0], { root: true })
       }
-      await dispatch('projects/getIssueStrictTracker', null, { root: true})
+      await dispatch('projects/getIssueStrictTracker', null, { root: true })
+      await dispatch('projects/getIssueForceTracker', null, { root: true })
     }
   },
 
