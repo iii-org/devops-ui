@@ -135,6 +135,7 @@ export default {
     7007: `$arg should begin with 'ghp_'.`,
     8001: '{service_name} error: {response}',
     9001: 'Internal exception: {type}: {exception}',
+    9002: 'An invalid code path happens: {message}',
     9003: 'An unexpected database error has occurred: {message}',
     9999: 'An unknown error has occurred.',
     20001: 'Token is invalid.',

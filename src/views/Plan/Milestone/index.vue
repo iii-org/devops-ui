@@ -2,7 +2,7 @@
   <el-row class="app-container">
     <ProjectListSelector>
       <el-row slot="button">
-        <el-col class="text-right">
+        <el-col>
           <el-button
             icon="el-icon-refresh"
             size="small"
@@ -22,15 +22,16 @@
             <em class="el-icon-check" />
             <strong>{{ $t('Milestone.Success') }}: </strong>{{ lastUpdated.time|relativeTime }}
           </span>
-          <span
+          <div
             v-else-if="lastUpdated && lastUpdated.error"
             class="text-danger"
+            style="max-width: 500px"
           >
             <em class="el-icon-check" />
             <strong>{{ $t('Milestone.Error') }}: </strong>
             {{ $t(`errorMessage.${lastUpdated.error.response.data.error.code}`,
                   lastUpdated.error.response.data.error.details) }}
-          </span>
+          </div>
         </el-col>
       </el-row>
       <SearchFilter

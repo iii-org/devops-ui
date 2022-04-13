@@ -6,7 +6,7 @@
                    @keyup.enter.native="handlerCreate(row, $index)"
                    @keyup.esc.native="handlerResetCreate(row, $index)"
         >
-          <el-option v-for="item in options" :key="(item.login)?item.login:item.id" :value="item.id"
+          <el-option v-for="item in createDynamicOptions" :key="(item.login)?item.login:item.id" :value="item.id"
                      :label="$te(`Issue.${item.name}`)?$t(`Issue.${item.name}`):item.name"
                      :class="item.class"
                      :disabled="item.status&&!(item.status==='open'||item.status==='enable')"
@@ -88,10 +88,17 @@ export default {
       type: Array,
       default: () => []
     },
+    strictOptions: {
+      type: Array,
+      default: () => []
+    },
+    isParentExist: {
+      type: Boolean,
+      default: false
+    },
     components: {
       type: Object,
-      default: () => {
-      }
+      default: () => {}
     },
     required: {
       type: Boolean,
@@ -113,11 +120,20 @@ export default {
   data() {
     return {
       dynamicStatusList: this.options
+      // strictOptions: [{
+      //   id: 1,
+      //   name: 'Epic'
+      // }]
     }
   },
   computed: {
     editDynamicOptions() {
-      return (this.propKey === 'status') ? this.dynamicStatusList : this.options
+      return (this.propKey === 'status') ? this.dynamicStatusList 
+        : (this.propKey === 'tracker' && this.isParentExist === false) ? this.strictOptions 
+          : this.options
+    },
+    createDynamicOptions() {
+      return (this.propKey === 'tracker' && this.isParentExist === false) ? this.strictOptions : this.options
     }
   },
   watch: {

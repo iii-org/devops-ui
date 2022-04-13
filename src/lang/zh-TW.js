@@ -135,6 +135,7 @@ export default {
     7007: `參數 $arg 需要以 'ghp_'做開為開頭。`,
     8001: '{service_name} 回報錯誤：{response}',
     9001: '內部錯誤：{type}: {exception}',
+    9002: '出現無效的代碼路徑: {message}',
     9003: '發生未被預期的資料庫錯誤：{message}',
     9999: '發生未知錯誤。',
     20001: 'Token 是無效的。',
