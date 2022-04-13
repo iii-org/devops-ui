@@ -165,7 +165,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'groupBy', 'issueFilter', 'tracker'])
+    ...mapGetters(['selectedProjectId', 'userId', 'groupBy', 'issueFilter', 'tracker', 'strictTracker'])
   },
   watch: {
     boardObject: {

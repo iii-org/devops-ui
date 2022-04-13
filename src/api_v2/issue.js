@@ -3,6 +3,7 @@ import request from '@/utils/request'
 export const getIssue = (issue_id) => request.get(`/v2/issues/${issue_id}`)
 export const getIssueStatus = () => request.get(`/v2/issues_status`)
 export const getIssueTracker = () => request.get(`/v2/issues_tracker`)
+export const getIssueStrictTracker = (params) => request.get(`/v2/issues_tracker`, { params })
 export const getIssuePriority = () => request.get(`/v2/issues_priority`)
 export const updateIssue = (issue_id, data) => request.put(`/v2/issues/${issue_id}`, data)
 export const deleteIssue = (issue_id, params) => request.delete(`/v2/issues/${issue_id}`, { params })

@@ -74,7 +74,6 @@ const actions = {
     }
     commit('SET_USER_NAME', user.name)
 
-    await dispatch('projects/getSelectionOptions', null, { root: true })
     await dispatch('projects/getMyProjectOptions', null, { root: true })
 
     dispatch('app/setRoleList', null, { root: true })
@@ -87,6 +86,7 @@ const actions = {
       } else {
         commit('projects/SET_SELECTED_PROJECT', myProjects[0], { root: true })
       }
+      await dispatch('projects/getSelectionOptions', null, { root: true })
     }
   },
 

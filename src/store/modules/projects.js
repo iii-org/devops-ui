@@ -9,6 +9,7 @@ import {
 } from '@/api/projects'
 import { forceDeleteProject } from '@/api_v2/projects'
 import { getIssuePriority, getIssueStatus, getIssueTracker } from '@/api/issue'
+import { getIssueStrictTracker } from '@/api_v2/issue'
 
 const getDefaultState = () => {
   return {
@@ -20,6 +21,7 @@ const getDefaultState = () => {
     tracker: [],
     status: [],
     priority: [],
+    strictTracker: [],
 
     issueFilter: JSON.parse(sessionStorage.getItem('issueFilter')) || {},
     keyword: JSON.parse(sessionStorage.getItem('keyword')) || {},
@@ -54,6 +56,7 @@ const mutations = {
     state.tracker = list[0]
     state.status = list[1]
     state.priority = list[2]
+    state.strictTracker = list[3]
   },
   SET_FILTER: (state, value) => {
     state.issueFilter = value
@@ -110,7 +113,11 @@ const actions = {
     }
   },
   async getSelectionOptions({ commit }) {
-    let selections = await Promise.all([getIssueTracker(), getIssueStatus(), getIssuePriority()])
+    const params = {
+      new: true,
+      project_id: state.selectedProject.id
+    }
+    let selections = await Promise.all([getIssueTracker(), getIssueStatus(), getIssuePriority(), getIssueStrictTracker(params)])
     commit(
       'SET_SELECTION_OPTIONS',
       selections.map((item) => item.data)
