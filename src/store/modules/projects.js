@@ -56,7 +56,9 @@ const mutations = {
     state.tracker = list[0]
     state.status = list[1]
     state.priority = list[2]
-    state.strictTracker = list[3]
+  },
+  SET_STRICT_TRACKER: (state, value) => {
+    state.strictTracker = value
   },
   SET_FILTER: (state, value) => {
     state.issueFilter = value
@@ -112,16 +114,25 @@ const actions = {
       console.error(error.toString())
     }
   },
-  async getSelectionOptions({ commit }) {
-    const params = {
-      new: true,
-      project_id: state.selectedProject.id
-    }
-    let selections = await Promise.all([getIssueTracker(), getIssueStatus(), getIssuePriority(), getIssueStrictTracker(params)])
+  async getSelectionOptions({ commit, dispatch }) {
+    let selections = await Promise.all([getIssueTracker(), getIssueStatus(), getIssuePriority()])
     commit(
       'SET_SELECTION_OPTIONS',
       selections.map((item) => item.data)
     )
+    dispatch('getIssueStrictTracker')
+  },
+  async getIssueStrictTracker({ commit }) {
+    const params = {
+      new: true,
+      project_id: state.selectedProject.id
+    }
+    try {
+      const tracker = await getIssueStrictTracker(params)
+      commit('SET_STRICT_TRACKER', tracker.data)
+    } catch (error) {
+      console.error(error.toString())
+    }
   },
   async addNewProject({ commit, dispatch }, data) {
     try {
@@ -191,7 +202,7 @@ const actions = {
     commit('SET_FILTER', {})
     commit('SET_GROUP_BY', { dimension: 'status', value: [] })
     commit('SET_DISPLAY_CLOSED', {})
-    dispatch('getSelectionOptions')
+    dispatch('getIssueStrictTracker')
   },
   getIssueFilter({ commit, state }) {
     const getSessionValue = sessionStorage.getItem('issueFilter')
