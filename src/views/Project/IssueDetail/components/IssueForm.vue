@@ -158,9 +158,27 @@
       </el-select>
     </el-form-item>
     <el-form-item :label="$t('Issue.tracker')" prop="tracker_id">
-      <el-select v-model="form.tracker_id" style="width: 100%">
+      <el-select
+        v-if="form.parent_id && form.parent_id > 0"
+        v-model="form.tracker_id"
+        style="width: 100%"
+      >
         <el-option
           v-for="option in tracker"
+          :key="option.id"
+          :label="$t('Issue.' + option.name)"
+          :value="option.id"
+        >
+          <Tracker :name="$t(`Issue.${option.name}`)" :type="option.name" />
+        </el-option>
+      </el-select>
+      <el-select
+        v-else
+        v-model="form.tracker_id"
+        style="width: 100%"
+      >
+        <el-option
+          v-for="option in strictTracker"
           :key="option.id"
           :label="$t('Issue.' + option.name)"
           :value="option.id"
@@ -320,7 +338,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'tracker', 'status', 'priority']),
+    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'strictTracker']),
     isParentIssueClosed() {
       if (Object.keys(this.parent).length <= 0) return false
       return this.parent.status.name === 'Closed'

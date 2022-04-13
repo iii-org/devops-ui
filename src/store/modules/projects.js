@@ -120,7 +120,6 @@ const actions = {
       'SET_SELECTION_OPTIONS',
       selections.map((item) => item.data)
     )
-    dispatch('getIssueStrictTracker')
   },
   async getIssueStrictTracker({ commit }) {
     const params = {
