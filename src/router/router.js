@@ -401,6 +401,7 @@ export const asyncRoutes = [
         path: 'settings',
         component: parentBlank,
         name:'Project Settings',
+        redirect: { name: 'project-settings' },
         meta: { title: 'Project Settings', roles: ['Administrator', 'Project Manager'] },
         children: [
           {
