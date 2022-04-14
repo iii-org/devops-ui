@@ -214,6 +214,7 @@ const actions = {
     commit('SET_GROUP_BY', { dimension: 'status', value: [] })
     commit('SET_DISPLAY_CLOSED', {})
     dispatch('getIssueStrictTracker')
+    dispatch('getIssueForceTracker')
   },
   getIssueFilter({ commit, state }) {
     const getSessionValue = sessionStorage.getItem('issueFilter')
