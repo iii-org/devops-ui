@@ -17,7 +17,7 @@
         </el-form-item>
       </el-form>
       <el-col v-else>
-        <Viewer :initial-value="value" />
+        <div style="margin-bottom: 12px; font-size: small;">{{ value }}</div>
         <el-button :class="isButtonDisabled? 'buttonInfoReverse': 'buttonSecondaryReverse'" :disabled="isButtonDisabled" icon="el-icon-edit" size="mini" @click="edit=true">{{ $t('general.Edit') }}</el-button>
       </el-col>
     </el-col>
@@ -26,11 +26,9 @@
 
 <script>
 import '@toast-ui/editor/dist/toastui-editor-viewer.css'
-import { Viewer } from '@toast-ui/vue-editor'
 
 export default {
   name: 'IssueDescription',
-  components: { Viewer },
   props: {
     value: {
       type: String,
@@ -76,6 +74,9 @@ export default {
     cancelInput() {
       this.newValue = this.oldValue
       this.edit = !this.issueId
+    },
+    getHtml() {
+      this.$refs.toastuiEditor.invoke('getHtml')
     }
   }
 }
