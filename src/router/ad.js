@@ -3,7 +3,7 @@ const adRoute = [
   // 首頁
   {
     path: '/',
-    redirect: { name: 'dashboard-admin' },
+    redirect: { name: 'Dashboard' },
     meta: {
       roles: ['Administrator']
     },
@@ -22,7 +22,7 @@ const adRoute = [
     children: [
       {
         path: 'dashboard',
-        name: 'dashboard-admin',
+        name: 'Dashboard',
         component: 'views/Overview/Dashboard/roles/admin',
         meta: {
           title: 'dashboard',
@@ -30,8 +30,8 @@ const adRoute = [
         }
       },
       {
-        path: 'project-list',
-        name: 'project-list',
+        path: 'projectList',
+        name: 'ProjectList',
         component: 'views/Overview/ProjectList/ProjectListPM',
         meta: {
           title: 'projectList',
@@ -59,18 +59,18 @@ const adRoute = [
       },
       {
         path: 'milestone',
-        name: 'milestone',
+        name: 'Milstone',
         component: 'views/Plan/Milestone',
         meta: { title: 'milestone', roles: ['Administrator'] }
       },
       {
-        path: 'traceability-matrix',
-        name: 'TraceMatrix',
+        path: 'traceabilityMatrix',
+        name: 'TraceabilityMatrix',
         component: 'views/Plan/TraceabilityMatrix',
         meta: { title: 'traceabilityMatrix', roles: ['Administrator'] }
       },
       {
-        path: 'settings',
+        path: 'projectSettings',
         component: 'layout/components/parentBlank',
         meta: { title: 'Project Settings', roles: ['Administrator'] },
         children: [
@@ -81,12 +81,12 @@ const adRoute = [
             children: [
               {
                 path: '',
-                name: 'Project Settings',
+                name: 'ProjectSettings',
                 component: 'views/Plan/Settings/index',
                 meta: { roles: ['Administrator'] }
               },
               {
-                path: 'participate-project/:user_id',
+                path: 'participateProject/:user_id',
                 name: 'ParticipateProject',
                 hidden: true,
                 component: 'views/SystemSettings/AccountManage/components/ParticipateProject',
@@ -95,15 +95,15 @@ const adRoute = [
             ]
           },
           {
-            path: 'advance-branch-settings',
-            name: 'advance-branch-settings',
+            path: 'advanceBranchSettings',
+            name: 'AdvanceBranchSettings',
             hidden: true,
             component: 'views/Plan/Settings/components/AdvanceBranchSettings',
             meta: { title: 'advanceBranchSettings', roles: ['Administrator'] }
           },
           {
-            path: 'issue-transfer/:userId',
-            name: 'Issue Transfer',
+            path: 'issueTransfer/:userId',
+            name: 'IssueTransfer',
             hidden: true,
             component: 'views/Plan/Settings/ProjectIssueTransfer',
             meta: { title: 'Issue Transfer', roles: ['Administrator'] }
@@ -124,8 +124,8 @@ const adRoute = [
     },
     children: [
       {
-        path: 'issue-boards',
-        name: 'issue-boards',
+        path: 'issueBoards',
+        name: 'IssueBoards',
         component: 'views/Project/IssueBoards',
         meta: { title: 'kanban', roles: ['Administrator'] }
       },
@@ -136,7 +136,7 @@ const adRoute = [
         children: [
           {
             path: '',
-            name: 'issue-list',
+            name: 'IssueList',
             hidden: true,
             component: 'views/Project/IssueList',
             meta: {
@@ -145,7 +145,7 @@ const adRoute = [
           },
           {
             path: ':issueId',
-            name: 'issue-detail',
+            name: 'IssueDetail',
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
@@ -159,31 +159,31 @@ const adRoute = [
       },
       {
         path: 'notes',
-        name: 'wiki-list',
+        name: 'WikiList',
         component: 'views/Project/Wiki',
         meta: { title: 'wikiList', roles: ['Administrator'] }
       },
       {
         path: 'files',
-        name: 'file-list',
+        name: 'FileList',
         component: 'views/Project/Files',
         meta: { title: 'fileList', roles: ['Administrator'] }
       },
       {
         path: 'roadmap',
-        name: 'Project Roadmap',
+        name: 'ProjectRoadmap',
         component: 'views/Project/Roadmap',
         meta: { title: 'Project Roadmap', roles: ['Administrator'] }
       },
       {
-        path: 'release-version',
-        redirect: { name: 'release-version' },
+        path: 'releaseVersion',
+        redirect: { name: 'ReleaseVersion' },
         component: 'layout/components/parentBlank',
         meta: { title: 'releaseVersion', roles: ['Administrator'] },
         children: [
           {
             path: '',
-            name: 'release-version',
+            name: 'ReleaseVersion',
             component: 'views/Project/ReleaseVersion',
             hidden: true,
             meta: {
@@ -192,7 +192,7 @@ const adRoute = [
           },
           {
             path: ':issueTag',
-            name: 'closed-issue-list',
+            name: 'ClosedIssueList',
             hidden: true,
             component: 'views/Project/ReleaseVersion/ClosedIssueList',
             meta: {
@@ -205,13 +205,13 @@ const adRoute = [
       },
       {
         path: 'deploy',
-        redirect: { name: 'deploy' },
+        redirect: { name: 'Deploy' },
         component: 'layout/components/parentBlank',
         meta: { title: 'deploy', roles: ['Administrator'] },
         children: [
           {
             path: '',
-            name: 'deploy',
+            name: 'Deploy',
             component: 'views/Project/Deploy',
             meta: {
               title: 'deploy',
@@ -226,8 +226,8 @@ const adRoute = [
   {
     path: '/progress/:projectName?/',
     component: 'layout',
-    name: 'progress',
-    redirect: { name: 'dev-environment' },
+    name: 'Progress',
+    redirect: { name: 'DevEnvironment' },
     meta: {
       title: 'devProgress',
       icon: 'el-icon-odometer',
@@ -235,14 +235,14 @@ const adRoute = [
     },
     children: [
       {
-        path: 'dev-branch',
-        name: 'dev-branch',
+        path: 'devBranch',
+        name: 'DevBranch',
         component: 'views/Progress/DevBranch',
         meta: { title: 'devBranch', roles: ['Administrator'] }
       },
       // {
-      //   path: 'git-graph',
-      //   name: 'git-graph',
+      //   path: 'GitGraph',
+      //   name: 'GitGraph',
       //   component: 'views/Progress/GitGraph',
       //   meta: { title: 'gitGraph', roles: ['Administrator'] }
       // },
@@ -259,7 +259,7 @@ const adRoute = [
             meta: { roles: ['Administrator'] }
           },
           {
-            path: 'test-report/:commitId',
+            path: 'testReport/:commitId',
             name: 'TestReport',
             hidden: true,
             component: 'views/Progress/Pipelines/components/TestReport',
@@ -268,13 +268,13 @@ const adRoute = [
         ]
       },
       {
-        path: 'dev-environment',
-        name: 'dev-environment',
+        path: 'devEnvironment',
+        name: 'DevEnvironment',
         component: 'views/Progress/DevEnvironment',
         meta: { title: 'devEnvironment', roles: ['Administrator'] }
       },
       {
-        path: 'kubernetes-resources',
+        path: 'kubernetesResources',
         component: 'layout/components/parentBlank',
         meta: {
           title: 'kubernetesResources',
@@ -283,25 +283,25 @@ const adRoute = [
         children: [
           {
             path: '',
-            name: 'Kubernetes-resources',
+            name: 'KubernetesResources',
             component: 'views/Progress/KubernetesResources',
             hidden: true
           },
           {
-            path: 'pods-list',
+            path: 'podsList',
             hidden: true,
             component: 'layout/components/parentBlank',
             meta: { title: 'Pods List', roles: ['Administrator'] },
             children: [
               {
                 path: '',
-                name: 'Pods List',
+                name: 'PodsList',
                 hidden: true,
                 component: 'views/Progress/KubernetesResources/components/PodsList'
               },
               {
-                path: 'pod-execute-shell',
-                name: 'Pod Execute Shell',
+                path: 'podExecuteShell',
+                name: 'PodExecuteShell',
                 hidden: true,
                 component: 'views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell',
                 meta: { title: 'Pod Execute Shell', roles: ['Administrator'] }
@@ -309,8 +309,8 @@ const adRoute = [
             ]
           },
           {
-            path: 'service-list',
-            name: 'Service List',
+            path: 'serviceList',
+            name: 'ServiceList',
             hidden: true,
             component: 'views/Progress/KubernetesResources/components/ServiceList',
             meta: {
@@ -319,8 +319,8 @@ const adRoute = [
             }
           },
           {
-            path: 'secret-list',
-            name: 'Secret List',
+            path: 'secretList',
+            name: 'SecretList',
             hidden: true,
             component: 'views/Progress/KubernetesResources/components/SecretList',
             meta: {
@@ -329,8 +329,8 @@ const adRoute = [
             }
           },
           {
-            path: 'configmaps-list',
-            name: 'ConfigMaps List',
+            path: 'configmapsList',
+            name: 'ConfigMapsList',
             hidden: true,
             component: 'views/Progress/KubernetesResources/components/ConfigMapsList',
             meta: {
@@ -339,8 +339,8 @@ const adRoute = [
             }
           },
           {
-            path: 'deployment-list',
-            name: 'Deployment List',
+            path: 'deploymentList',
+            name: 'DeploymentList',
             hidden: true,
             component: 'views/Progress/KubernetesResources/components/DeploymentList',
             meta: {
@@ -349,8 +349,8 @@ const adRoute = [
             }
           },
           {
-            path: 'ingresses-list',
-            name: 'Ingresses List',
+            path: 'ingressesList',
+            name: 'IngressesList',
             hidden: true,
             component: 'views/Progress/KubernetesResources/components/IngressesList',
             meta: {
@@ -365,9 +365,9 @@ const adRoute = [
   // 測試管理
   {
     path: '/test/:projectName?/',
-    name: 'test',
+    name: 'Test',
     component: 'layout',
-    redirect: { name: 'test-plan' },
+    redirect: { name: 'TestPlan' },
     meta: {
       title: 'testManagement',
       icon: 'el-icon-finished',
@@ -375,8 +375,8 @@ const adRoute = [
     },
     children: [
       {
-        path: 'test-file',
-        name: 'test-file',
+        path: 'testFile',
+        name: 'TestFile',
         component: 'views/Test/TestFile',
         meta: {
           title: 'testFile',
@@ -384,8 +384,8 @@ const adRoute = [
         }
       },
       {
-        path: 'test-plan',
-        redirect: '/test/test-plan',
+        path: 'testPlan',
+        redirect: '/test/testPlan',
         component: 'layout/components/parentBlank',
         meta: {
           roles: ['Administrator']
@@ -393,7 +393,7 @@ const adRoute = [
         children: [
           {
             path: '',
-            name: 'test-plan',
+            name: 'TestPlan',
             component: 'views/Test/TestPlan',
             meta: {
               title: 'testPlan',
@@ -402,7 +402,7 @@ const adRoute = [
           },
           {
             path: 'create',
-            name: 'create-test-plan',
+            name: 'CreateTestPlan',
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
@@ -413,7 +413,7 @@ const adRoute = [
           },
           {
             path: ':issueId',
-            name: 'test-plan-detail',
+            name: 'TestPlanDetail',
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
@@ -430,55 +430,55 @@ const adRoute = [
   {
     path: '/scan/:projectName?/',
     component: 'layout',
-    name: 'scan',
+    name: 'Scan',
     alwaysShow: true,
     meta: {
       title: 'autoTesting',
       icon: 'el-icon-circle-check',
       roles: ['Administrator']
     },
-    redirect: { name: 'postman' },
+    redirect: { name: 'Postman' },
     children: [
       {
         path: 'sonarqube',
-        name: 'sonarqube',
+        name: 'Sonarqube',
         component: 'views/Scan/SonarQube',
         meta: { title: 'sonarQube', roles: ['Administrator'] }
       },
       {
-        name: 'checkmarx',
+        name: 'Checkmarx',
         path: 'checkmarx',
         component: 'views/Scan/Checkmarx',
         meta: { title: 'checkMarx', roles: ['Administrator'] }
       },
       {
         path: 'zap',
-        name: 'zap',
+        name: 'Zap',
         component: 'views/Scan/Zap',
         meta: { title: 'zap', roles: ['Administrator'] }
       },
       {
         path: 'cmas',
-        name: 'cmas',
+        name: 'Cmas',
         component: 'views/Scan/Cmas',
         meta: { title: 'cmas', roles: ['Administrator'] }
       },
       {
         path: 'webinspect',
-        name: 'webinspect',
+        name: 'Webinspect',
         component: 'layout/components/parentBlank',
-        redirect: { name: 'webinspect' },
+        redirect: { name: 'Webinspect' },
         meta: { title: 'webInspect', roles: ['Administrator'] },
         children: [
           {
             path: '',
-            name: 'webinspect-scans',
+            name: 'WebinspectScans',
             hidden: true,
             component: 'views/Scan/WebInspect'
           },
           {
             path: 'report/:scan_id',
-            name: 'webinspect-report',
+            name: 'WebinspectReport',
             component: 'views/Scan/WIEReportViewer',
             hidden: true,
             meta: { title: 'webInspectReport', roles: ['Administrator'] }
@@ -487,9 +487,9 @@ const adRoute = [
       },
       {
         path: 'postman',
-        name: 'postman',
+        name: 'Postman',
         component: 'layout/components/parentBlank',
-        redirect: { name: 'postman-test' },
+        redirect: { name: 'PostmanTest' },
         meta: {
           title: 'postman',
           roles: ['Administrator']
@@ -497,13 +497,13 @@ const adRoute = [
         children: [
           {
             path: '',
-            name: 'postman-test',
+            name: 'PostmanTest',
             hidden: true,
             component: 'views/Scan/Postman'
           },
           {
             path: 'devops/:id',
-            name: 'devops-test-case',
+            name: '',
             hidden: true,
             component: 'views/Scan/TestCaseDevOps',
             meta: {
@@ -513,7 +513,7 @@ const adRoute = [
           },
           {
             path: 'postman/:id',
-            name: 'postman-test-case',
+            name: 'PostmanTestCase',
             hidden: true,
             component: 'views/Scan/TestCasePostman',
             meta: {
@@ -525,7 +525,7 @@ const adRoute = [
       },
       {
         path: 'sideex',
-        name: 'sideex',
+        name: 'Sideex',
         component: 'views/Scan/Sideex',
         meta: { title: 'sideex', roles: ['Administrator'] }
       }
@@ -533,10 +533,10 @@ const adRoute = [
   },
   // 系統資源
   {
-    path: '/system-resource',
+    path: '/systemResource',
     component: 'layout',
-    name: 'System Resource',
-    redirect: { name: 'Plugin Resource' },
+    name: 'SystemResource',
+    redirect: { name: 'PluginResource' },
     meta: {
       title: 'System Resource',
       icon: 'el-icon-pie-chart',
@@ -544,13 +544,13 @@ const adRoute = [
     },
     children: [
       {
-        path: ':projectName?/plugin-resource',
+        path: ':projectName?/pluginResource',
         component: 'layout/components/parentBlank',
         meta: { title: 'Plugin Resource', roles: ['Administrator'] },
         children: [
           {
             path: '',
-            name: 'Plugin Resource',
+            name: 'PluginResource',
             hidden: true,
             component: 'views/SystemResource/PluginResource'
           },
@@ -584,8 +584,8 @@ const adRoute = [
         ]
       },
       {
-        path: 'service-monitoring',
-        name: 'Service Monitoring',
+        path: 'serviceMonitoring',
+        name: 'ServiceMonitoring',
         component: 'views/SystemResource/ServiceMonitoring',
         meta: { title: 'Service Monitoring', roles: ['Administrator'] }
       }
@@ -593,7 +593,7 @@ const adRoute = [
   },
   // 操作記錄
   {
-    path: '/project-activities/:projectName?',
+    path: '/projectActivities/:projectName?',
     component: 'layout',
     redirect: { name: 'ProjectActivities' },
     meta: {
@@ -611,14 +611,14 @@ const adRoute = [
   },
   // 系統設定
   {
-    path: '/system-settings',
+    path: '/systemSettings',
     component: 'layout',
     name: 'Admin',
     redirect: { name: 'AccountManage' },
     meta: { title: 'Admin', icon: 'el-icon-setting', roles: ['Administrator'] },
     children: [
       {
-        path: 'account-manage',
+        path: 'accountManage',
         component: 'layout/components/parentBlank',
         meta: { title: 'Account Manage', roles: ['Administrator'] },
         children: [
@@ -634,8 +634,8 @@ const adRoute = [
                 meta: { roles: ['Administrator'] }
               },
               {
-                path: 'participate-project/:user_id',
-                name: 'SystemParticipateProject',
+                path: 'participateProject/:user_id',
+                name: 'ParticipateProject',
                 hidden: true,
                 component: 'views/SystemSettings/AccountManage/components/ParticipateProject',
                 meta: { title: 'Participate Project', roles: ['Administrator'] }
@@ -645,32 +645,32 @@ const adRoute = [
         ]
       },
       {
-        path: 'system-activities',
+        path: 'systemActivities',
         name: 'SystemActivities',
         component: 'views/SystemSettings/SystemActivities',
         meta: { title: 'System Activities', roles: ['Administrator'] }
       },
       {
-        path: 'system-arguments',
-        name: 'System Arguments',
+        path: 'systemArguments',
+        name: 'SystemArguments',
         component: 'views/SystemSettings/SystemArguments',
         meta: { title: 'System Arguments', roles: ['Administrator'] }
       },
       {
-        path: 'system-deploy-settings',
-        name: 'System Deploy Settings',
+        path: 'systemDeploySettings',
+        name: 'SystemDeploySettings',
         component: 'views/SystemSettings/SystemDeploySettings',
         meta: { title: 'System Deploy Settings', roles: ['Administrator'] }
       },
       {
-        path: 'sub-admin-projects',
-        name: 'Sub Admin Projects',
+        path: 'subAdminProjects',
+        name: 'SubAdminProjects',
         component: 'views/SystemSettings/SubAdminProjects',
         meta: { title: 'Project Settings (QA)', roles: ['Administrator'] }
       },
       {
-        path: 'system-plugin-manage',
-        name: 'System Plugin Manage',
+        path: 'systemPluginManage',
+        name: 'SystemPluginManage',
         component: 'views/SystemSettings/SystemPluginManage',
         meta: { title: 'System Plugin Manage', roles: ['Administrator'] }
       }

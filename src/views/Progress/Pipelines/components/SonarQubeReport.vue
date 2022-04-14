@@ -2,12 +2,12 @@
   <div>
     <ToolBar>
       <span slot="toolName">SonarQube</span>
-      <el-button 
-        slot="link" 
-        type="text" 
-        icon="el-icon-position" 
+      <el-button
+        slot="link"
+        type="text"
+        icon="el-icon-position"
         :class="sonarQubeLink ? 'linkTextColor' : ''"
-        :disabled="!sonarQubeLink" 
+        :disabled="!sonarQubeLink"
         @click="openSonarQube"
       >
         {{ $t('TestReport.DetailReport') }}
@@ -56,7 +56,7 @@ import { mapGetters } from 'vuex'
 import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
 
 export default {
-  name: 'SonarQube',
+  name: 'Sonarqube',
   components: { ToolBar },
   props: {
     sonarqube: {

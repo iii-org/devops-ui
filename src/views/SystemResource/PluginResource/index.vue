@@ -1,7 +1,7 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <project-list-selector />
+      <ProjectListSelector />
       <el-divider />
       <el-row :gutter="12">
         <el-empty

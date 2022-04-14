@@ -64,8 +64,8 @@
         align="center"
       >
         <template slot-scope="scope">
-          <el-tooltip 
-            :disabled="scope.row.logs === null" 
+          <el-tooltip
+            :disabled="scope.row.logs === null"
             placement="bottom"
           >
             <template slot="content">
@@ -242,8 +242,8 @@ export default {
 
 <style scoped>
 .tooltip {
-  max-width: 500px; 
-  margin: 0; 
+  max-width: 500px;
+  margin: 0;
   text-align: center;
 }
 </style>

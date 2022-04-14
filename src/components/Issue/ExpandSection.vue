@@ -141,7 +141,7 @@ export default {
     },
     handleEdit(issueId) {
       if (!this.popup) {
-        this.$router.push({ name: 'issue-detail', params: {
+        this.$router.push({ name: 'IssueDetail', params: {
           issueId,
           projectRelationList: this.projectRelationList
         }})

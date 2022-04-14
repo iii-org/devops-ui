@@ -735,7 +735,7 @@ export default {
       this.test_files = []
       this.relations = []
       if (!this.issueId) {
-        this.$router.push({ name: 'issue-detail', params: { issueId: issue_id }})
+        this.$router.push({ name: 'IssueDetail', params: { issueId: issue_id }})
       } else {
         await this.$refs.IssueForm.getClosable()
       }
@@ -751,7 +751,7 @@ export default {
         this.$router.push(this.$route.query.prev_page)
       } else {
         this.$router.push({
-          name: 'issue-list',
+          name: 'IssueList',
           params: {
             projectName: this.selectedProject.name
           }

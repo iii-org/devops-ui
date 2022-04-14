@@ -445,7 +445,7 @@ export default {
       if (!isAssigned) {
         const error = 'unassignedError'
         this.handleErrorAlert(error)
-      } 
+      }
       // else if (isAssigned && toClassObj.name === 'Active') {
       //   if (fromClassObj === null || fromClassObj.name !== 'Active') {
       //     const error = 'assignedError'
@@ -518,7 +518,7 @@ export default {
       this.$emit('update-board', sendData)
     },
     handleClick(id) {
-      // this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      // this.$router.push({ name: 'IssueDetail', params: { issueId: id }})
       this.$emit('relationIssueId', id)
     },
     showErrorAlert(errorMsg) {

@@ -25,7 +25,7 @@ const qaRoute = [
     children: [
       {
         path: 'dashboard',
-        name: 'dashboard-admin',
+        name: 'Dashboard',
         component: 'views/Overview/Dashboard/roles/admin',
         meta: {
           title: 'dashboard',
@@ -33,8 +33,8 @@ const qaRoute = [
         }
       },
       {
-        path: 'project-list',
-        name: 'project-list',
+        path: 'projectList',
+        name: 'ProjectList',
         component: 'views/Overview/ProjectList/ProjectListQA',
         meta: {
           title: 'projectList',
@@ -47,7 +47,7 @@ const qaRoute = [
   {
     path: '/project/:projectName?/',
     component: 'layout',
-    redirect: { name: 'milestone' },
+    redirect: { name: 'Milstone' },
     meta: {
       title: 'singleProject',
       icon: 'el-icon-data-analysis',
@@ -56,13 +56,13 @@ const qaRoute = [
     children: [
       {
         path: 'milestone',
-        name: 'milestone',
+        name: 'Milstone',
         component: 'views/Plan/Milestone',
         meta: { title: 'milestone', roles: ['QA'] }
       },
       {
         path: 'issues',
-        redirect: { name: 'issue-list' },
+        redirect: { name: 'IssueList' },
         component: 'layout/components/parentBlank',
         meta: {
           title: 'issueList',
@@ -71,14 +71,14 @@ const qaRoute = [
         children: [
           {
             path: '',
-            name: 'issue-list',
+            name: 'IssueList',
             hidden: true,
             component: 'views/Project/IssueList',
             meta: { roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
           },
           {
             path: ':issueId',
-            name: 'issue-detail',
+            name: 'IssueDetail',
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
@@ -92,7 +92,7 @@ const qaRoute = [
       },
       {
         path: 'track',
-        name: 'track',
+        name: 'Track',
         component: 'views/Project/TrackManagement',
         meta: {
           title: 'changeManagement',
@@ -101,7 +101,7 @@ const qaRoute = [
       },
       {
         path: 'exception',
-        name: 'exception-management',
+        name: 'ExceptionManagement',
         component: 'views/Project/ExceptionManagement',
         meta: {
           title: 'Fail Management',
@@ -109,13 +109,13 @@ const qaRoute = [
         }
       },
       {
-        path: 'traceability-matrix',
-        name: 'TraceMatrix',
+        path: 'traceabilityMatrix',
+        name: 'TraceabilityMatrix',
         component: 'views/Plan/TraceabilityMatrix',
         meta: { title: 'traceabilityMatrix', roles: ['QA'] }
       },
       {
-        path: 'settings',
+        path: 'projectSettings',
         component: 'layout/components/parentBlank',
         meta: { title: 'Project Settings', roles: ['QA'] },
         children: [
@@ -126,12 +126,12 @@ const qaRoute = [
             children: [
               {
                 path: '',
-                name: 'Project Settings',
+                name: 'ProjectSettings',
                 component: 'views/Plan/Settings/roles/QA',
                 meta: { roles: ['QA'] }
               },
               {
-                path: 'participate-project/:user_id',
+                path: 'participateProject/:user_id',
                 name: 'ParticipateProject',
                 hidden: true,
                 component: 'views/SystemSettings/AccountManage/components/ParticipateProject',
@@ -140,8 +140,8 @@ const qaRoute = [
             ]
           },
           {
-            path: 'issue-transfer/:userId',
-            name: 'Issue Transfer',
+            path: 'issueTransfer/:userId',
+            name: 'IssueTransfer',
             hidden: true,
             component: 'views/Plan/Settings/components/ProjectIssueTransfer',
             meta: { title: 'Issue Transfer', roles: ['QA'] }
@@ -153,9 +153,9 @@ const qaRoute = [
   // 測試報告
   {
     path: '/test/:projectName?/',
-    name: 'test',
+    name: 'Test',
     component: 'layout',
-    redirect: { name: 'test-plan' },
+    redirect: { name: 'TestPlan' },
     meta: {
       title: 'test-report',
       icon: 'el-icon-finished',
@@ -163,8 +163,8 @@ const qaRoute = [
     },
     children: [
       {
-        path: 'test-plan',
-        redirect: '/test/test-plan',
+        path: 'testPlan',
+        redirect: '/test/testPlan',
         component: 'layout/components/parentBlank',
         meta: {
           roles: ['QA']
@@ -172,7 +172,7 @@ const qaRoute = [
         children: [
           {
             path: '',
-            name: 'test-plan',
+            name: 'TestPlan',
             component: 'views/Test/TestPlan',
             meta: {
               title: 'test-case',
@@ -181,7 +181,7 @@ const qaRoute = [
           },
           {
             path: 'create',
-            name: 'create-test-plan',
+            name: 'CreateTestPlan',
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
@@ -192,7 +192,7 @@ const qaRoute = [
           },
           {
             path: ':issueId',
-            name: 'test-plan-detail',
+            name: 'TestPlanDetail',
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
@@ -202,7 +202,7 @@ const qaRoute = [
             }
           },
           {
-            path: 'test-report/:commitId',
+            path: 'testReport/:commitId',
             name: 'TestReport',
             hidden: true,
             component: 'views/Progress/Pipelines/components/TestReport',
@@ -211,14 +211,14 @@ const qaRoute = [
         ]
       },
       {
-        path: 'release-version',
-        redirect: { name: 'release-version' },
+        path: 'releaseVersion',
+        redirect: { name: 'ReleaseVersion' },
         component: 'layout/components/parentBlank',
         meta: { title: 'test-result', roles: ['QA'] },
         children: [
           {
             path: '',
-            name: 'release-version',
+            name: 'ReleaseVersion',
             component: 'views/Project/ReleaseVersion',
             hidden: true,
             meta: {
@@ -227,7 +227,7 @@ const qaRoute = [
           },
           {
             path: ':issueTag',
-            name: 'closed-issue-list',
+            name: 'ClosedIssueList',
             hidden: true,
             component: 'views/Project/ReleaseVersion/ClosedIssueList',
             meta: {
@@ -244,55 +244,55 @@ const qaRoute = [
   {
     path: '/scan/:projectName?/',
     component: 'layout',
-    name: 'scan',
+    name: 'Scan',
     alwaysShow: true,
     meta: {
       title: 'autoTesting',
       icon: 'el-icon-circle-check',
       roles: ['QA']
     },
-    redirect: { name: 'postman' },
+    redirect: { name: 'Postman' },
     children: [
       {
         path: 'sonarqube',
-        name: 'sonarqube',
+        name: 'Sonarqube',
         component: 'views/Scan/SonarQube',
         meta: { title: 'sonarQube', roles: ['QA'] }
       },
       {
-        name: 'checkmarx',
+        name: 'Checkmarx',
         path: 'checkmarx',
         component: 'views/Scan/Checkmarx',
         meta: { title: 'checkMarx', roles: ['QA'] }
       },
       {
         path: 'zap',
-        name: 'zap',
+        name: 'Zap',
         component: 'views/Scan/Zap',
         meta: { title: 'zap', roles: ['QA'] }
       },
       {
         path: 'cmas',
-        name: 'cmas',
+        name: 'Cmas',
         component: 'views/Scan/Cmas',
         meta: { title: 'cmas', roles: ['QA'] }
       },
       {
         path: 'webinspect',
-        name: 'webinspect',
+        name: 'Webinspect',
         component: 'layout/components/parentBlank',
-        redirect: { name: 'webinspect' },
+        redirect: { name: 'Webinspect' },
         meta: { title: 'webInspect', roles: ['QA'] },
         children: [
           {
             path: '',
-            name: 'webinspect-scans',
+            name: 'WebinspectScans',
             hidden: true,
             component: 'views/Scan/WebInspect'
           },
           {
             path: 'report/:scan_id',
-            name: 'webinspect-report',
+            name: 'WebinspectReport',
             component: 'views/Scan/WIEReportViewer',
             hidden: true,
             meta: { title: 'webInspectReport', roles: ['QA'] }
@@ -301,9 +301,9 @@ const qaRoute = [
       },
       {
         path: 'postman',
-        name: 'postman',
+        name: 'Postman',
         component: 'layout/components/parentBlank',
-        redirect: { name: 'postman-test' },
+        redirect: { name: 'PostmanTest' },
         meta: {
           title: 'postman',
           roles: ['QA']
@@ -311,13 +311,13 @@ const qaRoute = [
         children: [
           {
             path: '',
-            name: 'postman-test',
+            name: 'PostmanTest',
             hidden: true,
             component: 'views/Scan/Postman'
           },
           {
             path: 'devops/:id',
-            name: 'devops-test-case',
+            name: '',
             hidden: true,
             component: 'views/Scan/TestCaseDevOps',
             meta: {
@@ -327,7 +327,7 @@ const qaRoute = [
           },
           {
             path: 'postman/:id',
-            name: 'postman-test-case',
+            name: 'PostmanTestCase',
             hidden: true,
             component: 'views/Scan/TestCasePostman',
             meta: {
@@ -339,7 +339,7 @@ const qaRoute = [
       },
       {
         path: 'sideex',
-        name: 'sideex',
+        name: 'Sideex',
         component: 'views/Scan/Sideex',
         meta: { title: 'sideex', roles: ['QA'] }
       }

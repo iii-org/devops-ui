@@ -598,7 +598,7 @@ export default {
   Test: {
     TestPlan: {
       no: 'No',
-      name: 'Test Plan',
+      name: 'TestPlan',
       relations: 'Purpose',
       software_name: 'Tool',
       file_name: 'Test File',

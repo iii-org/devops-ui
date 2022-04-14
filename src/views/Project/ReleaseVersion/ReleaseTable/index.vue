@@ -243,7 +243,7 @@ export default {
     },
     showClosedIssue(tag_name) {
       this.$router.push({
-        name: 'closed-issue-list',
+        name: 'ClosedIssueList',
         params: { issueTag: tag_name, projectName: this.selectedProject.name }
       })
     },

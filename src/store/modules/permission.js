@@ -55,7 +55,7 @@ export function filterAsyncRoutes(routes, roles) {
 
 export function filterAsyncPluginRoutes(accessedRoutes, disabledPluginRoutes) {
   const result = accessedRoutes.map(item => item)
-  const idx = result.findIndex(item => item.name === 'scan')
+  const idx = result.findIndex(item => item.name === 'Scan')
   result[idx].children = result[idx].children.filter(item => !disabledPluginRoutes.includes(item.name))
   if (result[idx].children.length === 0) result.splice(idx, 1)
   return result

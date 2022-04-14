@@ -453,7 +453,7 @@ export default {
       })[0]
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
-      this.$router.push({ name: 'issue-list', params: { projectName: selectedProject.name }})
+      this.$router.push({ name: 'IssueList', params: { projectName: selectedProject.name }})
     },
     handleClickQA(projectObj) {
       const { id } = projectObj
@@ -462,7 +462,7 @@ export default {
       })[0]
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
-      this.$router.push({ name: 'milestone', params: { projectName: selectedProject.name }})
+      this.$router.push({ name: 'Milstone', params: { projectName: selectedProject.name }})
     },
     copyUrl(id) {
       const target = document.getElementById(id)
@@ -543,7 +543,7 @@ export default {
       })[0]
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
-      this.$router.push({ name: 'Project Settings', params: { projectName: selectedProject.name }})
+      this.$router.push({ name: 'ProjectSettings', params: { projectName: selectedProject.name }})
     },
     async setStar(id, star) {
       if (star) {

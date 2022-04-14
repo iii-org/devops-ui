@@ -131,7 +131,7 @@ export default {
     },
     handleIssueClick(row) {
       const { owner_id, name } = row
-      this.$router.push({ name: 'Issue Transfer', params: { userId: owner_id, userName: name }})
+      this.$router.push({ name: 'IssueTransfer', params: { userId: owner_id, userName: name }})
     }
   }
 }

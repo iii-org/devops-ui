@@ -151,7 +151,7 @@ export default {
       this.branch = ''
     },
     handleClick() {
-      this.$router.push({ name: 'advance-branch-settings', params: { projectName: this.selectedProject.name }})
+      this.$router.push({ name: 'AdvanceBranchSettings', params: { projectName: this.selectedProject.name }})
     },
     handleStageChange(stage) {
       const { key, has_default_branch } = stage

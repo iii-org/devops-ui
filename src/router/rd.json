@@ -2,7 +2,7 @@
   {
     "path": "/",
     "redirect": {
-      "name": "my-works"
+      "name": "MyWork"
     },
     "meta": {
       "roles": [
@@ -12,7 +12,7 @@
     "hidden": true
   },
   {
-    "path": "/my-work/:projectName?",
+    "path": "/myWork/:projectName?",
     "component": "layout",
     "meta": {
       "roles": [
@@ -22,7 +22,7 @@
     "children": [
       {
         "path": "",
-        "name": "my-works",
+        "name": "MyWork",
         "component": "views/MyWork",
         "meta": {
           "title": "myWork",
@@ -35,7 +35,7 @@
     ]
   },
   {
-    "path": "/project-list",
+    "path": "/projectList",
     "component": "layout",
     "meta": {
       "roles": [
@@ -45,7 +45,7 @@
     "children": [
       {
         "path": "",
-        "name": "project-list",
+        "name": "projectList",
         "component": "views/Overview/ProjectList/ProjectListRD",
         "meta": {
           "title": "projectList",
@@ -72,8 +72,8 @@
     },
     "children": [
       {
-        "path": "issue-boards",
-        "name": "issue-boards",
+        "path": "issueBoards",
+        "name": "issueBoards",
         "component": "views/Project/IssueBoards",
         "meta": {
           "title": "kanban",
@@ -91,7 +91,7 @@
         "children": [
           {
             "path": "",
-            "name": "issue-list",
+            "name": "issueList",
             "hidden": true,
             "component": "views/Project/IssueList",
             "meta": {
@@ -102,7 +102,7 @@
           },
           {
             "path": ":issueId",
-            "name": "issue-detail",
+            "name": "issueDetail",
             "hidden": true,
             "component": "views/Project/IssueDetail",
             "meta": {
@@ -118,7 +118,7 @@
       },
       {
         "path": "notes",
-        "name": "wiki-list",
+        "name": "wikiList",
         "component": "views/Project/Wiki",
         "meta": {
           "title": "wikiList",
@@ -129,7 +129,7 @@
       },
       {
         "path": "files",
-        "name": "file-list",
+        "name": "fileList",
         "component": "views/Project/Files",
         "meta": {
           "title": "fileList",
@@ -150,9 +150,9 @@
         }
       },
       {
-        "path": "release-version",
+        "path": "releaseVersion",
         "redirect": {
-          "name": "release-version"
+          "name": "releaseVersion"
         },
         "component": "layout/components/parentBlank",
         "meta": {
@@ -164,7 +164,7 @@
         "children": [
           {
             "path": "",
-            "name": "release-version",
+            "name": "releaseVersion",
             "component": "views/Project/ReleaseVersion",
             "hidden": true,
             "meta": {
@@ -175,7 +175,7 @@
           },
           {
             "path": ":issueTag",
-            "name": "closed-issue-list",
+            "name": "closedIssueList",
             "hidden": true,
             "component": "views/Project/ReleaseVersion/ClosedIssueList",
             "meta": {
@@ -221,7 +221,7 @@
     "component": "layout",
     "name": "progress",
     "redirect": {
-      "name": "dev-environment"
+      "name": "devEnvironment"
     },
     "meta": {
       "title": "devProgress",
@@ -232,8 +232,8 @@
     },
     "children": [
       {
-        "path": "dev-branch",
-        "name": "dev-branch",
+        "path": "devBranch",
+        "name": "DevBranch",
         "component": "views/Progress/DevBranch",
         "meta": {
           "title": "devBranch",
@@ -264,7 +264,7 @@
             }
           },
           {
-            "path": "test-report/:commitId",
+            "path": "testReport/:commitId",
             "name": "TestReport",
             "hidden": true,
             "component": "views/Progress/Pipelines/components/TestReport",
@@ -278,8 +278,8 @@
         ]
       },
       {
-        "path": "dev-environment",
-        "name": "dev-environment",
+        "path": "devEnvironment",
+        "name": "devEnvironment",
         "component": "views/Progress/DevEnvironment",
         "meta": {
           "title": "devEnvironment",
@@ -289,7 +289,7 @@
         }
       },
       {
-        "path": "kubernetes-resources",
+        "path": "kubernetesResources",
         "component": "layout/components/parentBlank",
         "meta": {
           "title": "kubernetesResources",
@@ -300,12 +300,12 @@
         "children": [
           {
             "path": "",
-            "name": "Kubernetes-resources",
+            "name": "kubernetesResources",
             "component": "views/Progress/KubernetesResources",
             "hidden": true
           },
           {
-            "path": "pods-list",
+            "path": "podsList",
             "hidden": true,
             "component": "layout/components/parentBlank",
             "meta": {
@@ -322,7 +322,7 @@
                 "component": "views/Progress/KubernetesResources/components/PodsList"
               },
               {
-                "path": "pod-execute-shell",
+                "path": "podExecuteShell",
                 "name": "Pod Execute Shell",
                 "hidden": true,
                 "component": "views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell",
@@ -336,7 +336,7 @@
             ]
           },
           {
-            "path": "service-list",
+            "path": "serviceList",
             "name": "Service List",
             "hidden": true,
             "component": "views/Progress/KubernetesResources/components/ServiceList",
@@ -348,7 +348,7 @@
             }
           },
           {
-            "path": "secret-list",
+            "path": "secretList",
             "name": "Secret List",
             "hidden": true,
             "component": "views/Progress/KubernetesResources/components/SecretList",
@@ -360,7 +360,7 @@
             }
           },
           {
-            "path": "configmaps-list",
+            "path": "configmapsList",
             "name": "ConfigMaps List",
             "hidden": true,
             "component": "views/Progress/KubernetesResources/components/ConfigMapsList",
@@ -372,7 +372,7 @@
             }
           },
           {
-            "path": "deployment-list",
+            "path": "deploymentList",
             "name": "Deployment List",
             "hidden": true,
             "component": "views/Progress/KubernetesResources/components/DeploymentList",
@@ -384,7 +384,7 @@
             }
           },
           {
-            "path": "ingresses-list",
+            "path": "ingressesList",
             "name": "Ingresses List",
             "hidden": true,
             "component": "views/Progress/KubernetesResources/components/IngressesList",
@@ -400,7 +400,7 @@
     ]
   },
   {
-    "path": "/commit_list/:rId/:branchName/:projectName",
+    "path": "/commitList/:rId/:branchName/:projectName",
     "component": "layout",
     "hidden": true,
     "meta": {
@@ -429,7 +429,7 @@
     "name": "test",
     "component": "layout",
     "redirect": {
-      "name": "test-plan"
+      "name": "testPlan"
     },
     "meta": {
       "title": "testManagement",
@@ -440,8 +440,8 @@
     },
     "children": [
       {
-        "path": "test-file",
-        "name": "test-file",
+        "path": "testFile",
+        "name": "testFile",
         "component": "views/Test/TestFile",
         "meta": {
           "title": "testFile",
@@ -451,8 +451,8 @@
         }
       },
       {
-        "path": "test-plan",
-        "redirect": "/test/test-plan",
+        "path": "testPlan",
+        "redirect": "/test/testPlan",
         "component": "layout/components/parentBlank",
         "meta": {
           "roles": [
@@ -462,7 +462,7 @@
         "children": [
           {
             "path": "",
-            "name": "test-plan",
+            "name": "testPlan",
             "component": "views/Test/TestPlan",
             "meta": {
               "title": "testPlan",
@@ -473,7 +473,7 @@
           },
           {
             "path": "create",
-            "name": "create-test-plan",
+            "name": "createTestPlan",
             "hidden": true,
             "component": "views/Project/IssueDetail",
             "meta": {
@@ -486,7 +486,7 @@
           },
           {
             "path": ":issueId",
-            "name": "test-plan-detail",
+            "name": "testPlanDetail",
             "hidden": true,
             "component": "views/Project/IssueDetail",
             "meta": {
@@ -577,13 +577,13 @@
         "children": [
           {
             "path": "",
-            "name": "webinspect-scans",
+            "name": "webinspectScans",
             "hidden": true,
             "component": "views/Scan/WebInspect"
           },
           {
             "path": "report/:scan_id",
-            "name": "webinspect-report",
+            "name": "webinspectReport",
             "component": "views/Scan/WIEReportViewer",
             "hidden": true,
             "meta": {
@@ -600,7 +600,7 @@
         "name": "postman",
         "component": "layout/components/parentBlank",
         "redirect": {
-          "name": "postman-test"
+          "name": "postmanTest"
         },
         "meta": {
           "title": "postman",
@@ -611,13 +611,13 @@
         "children": [
           {
             "path": "",
-            "name": "postman-test",
+            "name": "postmanTest",
             "hidden": true,
             "component": "views/Scan/Postman"
           },
           {
             "path": "devops/:id",
-            "name": "devops-test-case",
+            "name": "",
             "hidden": true,
             "component": "views/Scan/TestCaseDevOps",
             "meta": {
@@ -629,7 +629,7 @@
           },
           {
             "path": "postman/:id",
-            "name": "postman-test-case",
+            "name": "postmanTestCase",
             "hidden": true,
             "component": "views/Scan/TestCasePostman",
             "meta": {

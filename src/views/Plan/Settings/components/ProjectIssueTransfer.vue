@@ -325,7 +325,7 @@ export default {
       this.$router.go(-1)
     },
     onTransferClick(issueId) {
-      this.$router.push({ name: 'issue-detail', params: { issueId }})
+      this.$router.push({ name: 'IssueDetail', params: { issueId }})
     },
     onCloseClick(issueId) {
       const sendData = new FormData()
@@ -417,4 +417,3 @@ export default {
   }
 }
 </script>
-

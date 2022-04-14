@@ -301,7 +301,7 @@ export default {
       this.fetchPipelineBranch()
     },
     handleBack() {
-      this.$router.push({ name: 'Project Settings', params: { projectName: this.selectedProject.name }})
+      this.$router.push({ name: 'ProjectSettings', params: { projectName: this.selectedProject.name }})
     },
     showWarningMessage() {
       this.$message({
@@ -322,4 +322,3 @@ export default {
   }
 }
 </script>
-

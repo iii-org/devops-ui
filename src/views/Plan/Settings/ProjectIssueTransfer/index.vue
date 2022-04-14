@@ -390,10 +390,10 @@ export default {
       this.handleSinglePageChecked()
     },
     onBackClick() {
-      this.$router.push({ name: 'Project Settings', params: { projectName: this.selectedProject.name }})
+      this.$router.push({ name: 'ProjectSettings', params: { projectName: this.selectedProject.name }})
     },
     onTransferClick(issueId) {
-      this.$router.push({ name: 'issue-detail', params: { issueId }})
+      this.$router.push({ name: 'IssueDetail', params: { issueId }})
     },
     onCloseClick(issueId) {
       const sendData = new FormData()

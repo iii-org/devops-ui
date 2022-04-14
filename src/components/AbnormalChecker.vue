@@ -48,7 +48,7 @@ export default {
       })
     },
     toPage() {
-      this.$router.push({ name: 'Service Monitoring' })
+      this.$router.push({ name: 'ServiceMonitoring' })
     }
   }
 }

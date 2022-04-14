@@ -45,7 +45,7 @@
       :visible.sync="detailDialog"
       :title="$t('Dashboard.ADMIN.ProjectList.NAME')"
     >
-      <admin-project-list
+      <AdminProjectList
         ref="projectList"
         :data="getProjectListDetailData"
         :in-dialog="true"

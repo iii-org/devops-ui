@@ -26,7 +26,7 @@
     "children": [
       {
         "path": "dashboard",
-        "name": "dashboard-admin",
+        "name": "Dashboard",
         "component": "views/Overview/Dashboard/roles/admin",
         "meta": {
           "title": "dashboard",
@@ -36,8 +36,8 @@
         }
       },
       {
-        "path": "project-list",
-        "name": "project-list",
+        "path": "projectList",
+        "name": "projectList",
         "component": "views/Overview/ProjectList/ProjectListQA",
         "meta": {
           "title": "projectList",
@@ -76,7 +76,7 @@
       {
         "path": "issues",
         "redirect": {
-          "name": "issue-list"
+          "name": "issueList"
         },
         "component": "layout/components/parentBlank",
         "meta": {
@@ -91,7 +91,7 @@
         "children": [
           {
             "path": "",
-            "name": "issue-list",
+            "name": "issueList",
             "hidden": true,
             "component": "views/Project/IssueList",
             "meta": {
@@ -105,7 +105,7 @@
           },
           {
             "path": ":issueId",
-            "name": "issue-detail",
+            "name": "issueDetail",
             "hidden": true,
             "component": "views/Project/IssueDetail",
             "meta": {
@@ -135,7 +135,7 @@
       },
       {
         "path": "exception",
-        "name": "exception-management",
+        "name": "exceptionManagement",
         "component": "views/Project/ExceptionManagement",
         "meta": {
           "title": "Fail Management",
@@ -145,8 +145,8 @@
         }
       },
       {
-        "path": "traceability-matrix",
-        "name": "TraceMatrix",
+        "path": "traceabilityMatrix",
+        "name": "traceabilityMatrix",
         "component": "views/Plan/TraceabilityMatrix",
         "meta": {
           "title": "traceabilityMatrix",
@@ -156,7 +156,7 @@
         }
       },
       {
-        "path": "settings",
+        "path": "projectSettings",
         "component": "layout/components/parentBlank",
         "meta": {
           "title": "Project Settings",
@@ -172,7 +172,7 @@
             "children": [
               {
                 "path": "",
-                "name": "Project Settings",
+                "name": "projectSettings",
                 "component": "views/Plan/Settings/roles/QA",
                 "meta": {
                   "roles": [
@@ -181,8 +181,8 @@
                 }
               },
               {
-                "path": "participate-project/:user_id",
-                "name": "ParticipateProject",
+                "path": "participateProject/:user_id",
+                "name": "participateProject",
                 "hidden": true,
                 "component": "views/SystemSettings/AccountManage/components/ParticipateProject",
                 "meta": {
@@ -195,7 +195,7 @@
             ]
           },
           {
-            "path": "issue-transfer/:userId",
+            "path": "issueTransfer/:userId",
             "name": "Issue Transfer",
             "hidden": true,
             "component": "views/Plan/Settings/components/ProjectIssueTransfer",
@@ -215,7 +215,7 @@
     "name": "test",
     "component": "layout",
     "redirect": {
-      "name": "test-plan"
+      "name": "testPlan"
     },
     "meta": {
       "title": "test-report",
@@ -226,8 +226,8 @@
     },
     "children": [
       {
-        "path": "test-plan",
-        "redirect": "/test/test-plan",
+        "path": "testPlan",
+        "redirect": "/test/testPlan",
         "component": "layout/components/parentBlank",
         "meta": {
           "roles": [
@@ -237,7 +237,7 @@
         "children": [
           {
             "path": "",
-            "name": "test-plan",
+            "name": "testPlan",
             "component": "views/Test/TestPlan",
             "meta": {
               "title": "test-case",
@@ -248,7 +248,7 @@
           },
           {
             "path": "create",
-            "name": "create-test-plan",
+            "name": "createTestPlan",
             "hidden": true,
             "component": "views/Project/IssueDetail",
             "meta": {
@@ -261,7 +261,7 @@
           },
           {
             "path": ":issueId",
-            "name": "test-plan-detail",
+            "name": "testPlanDetail",
             "hidden": true,
             "component": "views/Project/IssueDetail",
             "meta": {
@@ -276,7 +276,7 @@
             }
           },
           {
-            "path": "test-report/:commitId",
+            "path": "testReport/:commitId",
             "name": "TestReport",
             "hidden": true,
             "component": "views/Progress/Pipelines/components/TestReport",
@@ -290,9 +290,9 @@
         ]
       },
       {
-        "path": "release-version",
+        "path": "releaseVersion",
         "redirect": {
-          "name": "release-version"
+          "name": "releaseVersion"
         },
         "component": "layout/components/parentBlank",
         "meta": {
@@ -304,7 +304,7 @@
         "children": [
           {
             "path": "",
-            "name": "release-version",
+            "name": "releaseVersion",
             "component": "views/Project/ReleaseVersion",
             "hidden": true,
             "meta": {
@@ -315,7 +315,7 @@
           },
           {
             "path": ":issueTag",
-            "name": "closed-issue-list",
+            "name": "closedIssueList",
             "hidden": true,
             "component": "views/Project/ReleaseVersion/ClosedIssueList",
             "meta": {
@@ -406,13 +406,13 @@
         "children": [
           {
             "path": "",
-            "name": "webinspect-scans",
+            "name": "webinspectScans",
             "hidden": true,
             "component": "views/Scan/WebInspect"
           },
           {
             "path": "report/:scan_id",
-            "name": "webinspect-report",
+            "name": "webinspectReport",
             "component": "views/Scan/WIEReportViewer",
             "hidden": true,
             "meta": {
@@ -429,7 +429,7 @@
         "name": "postman",
         "component": "layout/components/parentBlank",
         "redirect": {
-          "name": "postman-test"
+          "name": "postmanTest"
         },
         "meta": {
           "title": "postman",
@@ -440,13 +440,13 @@
         "children": [
           {
             "path": "",
-            "name": "postman-test",
+            "name": "postmanTest",
             "hidden": true,
             "component": "views/Scan/Postman"
           },
           {
             "path": "devops/:id",
-            "name": "devops-test-case",
+            "name": "",
             "hidden": true,
             "component": "views/Scan/TestCaseDevOps",
             "meta": {
@@ -458,7 +458,7 @@
           },
           {
             "path": "postman/:id",
-            "name": "postman-test-case",
+            "name": "postmanTestCase",
             "hidden": true,
             "component": "views/Scan/TestCasePostman",
             "meta": {

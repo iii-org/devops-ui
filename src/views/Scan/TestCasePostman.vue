@@ -286,7 +286,7 @@ export default {
           return this.formatData(report.json_file)
         })
         .catch(() => {
-          this.$router.push({ name: 'postman' })
+          this.$router.push({ name: 'Postman' })
         })
     },
     formatData(rowData) {
@@ -330,7 +330,7 @@ export default {
       return mapping[status]
     },
     handleBack() {
-      this.$router.push({ name: 'postman-test', params: { projectName: this.selectedProject.name }})
+      this.$router.push({ name: 'PostmanTest', params: { projectName: this.selectedProject.name }})
     },
     countRequest(assertions, result) {
       if (result === 'pass') return assertions.total - assertions.failed

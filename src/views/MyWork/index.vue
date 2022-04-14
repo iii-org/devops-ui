@@ -47,7 +47,7 @@
     <CreateProjectDialog
       ref="createProjectDialog"
       v-permission="['Administrator', 'Project Manager']"
-      @update="$router.push({name: 'project-list'})"
+      @update="$router.push({name: 'ProjectList'})"
     />
   </div>
 </template>
