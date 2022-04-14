@@ -103,6 +103,8 @@ stages:
       - messagebubble
       - packrelease
       - parentchildproject
+      - tracker
+      - routeset
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -143,6 +145,8 @@ stages:
       - messagebubble
       - packrelease
       - parentchildproject
+      - tracker
+      - routeset
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -194,6 +198,8 @@ stages:
       - messagebubble
       - packrelease
       - parentchildproject
+      - tracker
+      - routeset
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -238,6 +244,8 @@ stages:
       - messagebubble
       - packrelease
       - parentchildproject
+      - tracker
+      - routeset
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -281,6 +289,8 @@ stages:
       - messagebubble
       - packrelease
       - parentchildproject
+      - tracker
+      - routeset
 - name: Test--ZAP
   iiidevops: zap
   steps:
