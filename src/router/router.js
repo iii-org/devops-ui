@@ -13,11 +13,11 @@ import ParentBlank from '@/layout/components/parentBlank'
 
 /**
  * @summary route naming rules
- * 1. Upper Camel case if component variables, ex. UpperCamelCase
+ * 1. Upper Camel case if component and name, ex. UpperCamelCase
  * 2. Lower Camel case if other conditions ex. lowerCamelCase
  */
 
-/* TODO: 1. check title
+/* TODO: 1. i18n and title
   2. name the same as path
   3. component
 */
@@ -360,7 +360,7 @@ export const asyncRoutes = [
     path: '/projectList',
     component: Layout,
     name: 'ProjectList',
-    redirect: { name: 'projectList-list' },
+    redirect: { name: 'ProjectList' },
     meta: {
       icon: 'list',
       roles: ['Project Manager', 'Engineer'] },
