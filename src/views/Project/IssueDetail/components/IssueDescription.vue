@@ -17,7 +17,7 @@
         </el-form-item>
       </el-form>
       <el-col v-else>
-        <div style="margin-bottom: 12px; font-size: small;">{{ value }}</div>
+        <pre style="margin-bottom: 12px; font-size: small;white-space: pre-line;">{{ value }}</pre>
         <el-button :class="isButtonDisabled? 'buttonInfoReverse': 'buttonSecondaryReverse'" :disabled="isButtonDisabled" icon="el-icon-edit" size="mini" @click="edit=true">{{ $t('general.Edit') }}</el-button>
       </el-col>
     </el-col>
