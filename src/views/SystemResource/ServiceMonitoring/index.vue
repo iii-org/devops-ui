@@ -3,7 +3,7 @@
     <el-col>
       <div>
         <span class="ml-2 text-xl">
-          <span>{{ $t('route.monitoring') }}</span>
+          <span>{{ $t('route.Monitoring') }}</span>
         </span>
       </div>
       <el-divider />

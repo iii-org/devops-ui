@@ -18,23 +18,25 @@ const allRoutes = [
   },
   {
     path: '/',
-    component: 'layout',
+    component: 'Layout',
     redirect: '/overview',
     meta: {
       icon: 'list',
-      title: 'overview',
+      title: 'Overview',
       roles: ['QA']
     },
     hidden: true
   },
+
   // QA
+
   {
     path: '/overview',
-    component: 'layout',
+    component: 'Layout',
     redirect: '/overview/dashboard',
     meta: {
       icon: 'dashboard',
-      title: 'overview',
+      title: 'Overview',
       roles: ['QA']
     },
     children: [
@@ -43,7 +45,7 @@ const allRoutes = [
         name: 'Dashboard',
         component: 'views/Overview/Dashboard/roles/admin',
         meta: {
-          title: 'dashboard',
+          title: 'Dashboard',
           roles: ['QA']
         }
       },
@@ -52,7 +54,7 @@ const allRoutes = [
         name: 'ProjectList',
         component: 'views/Overview/ProjectList/ProjectListQA',
         meta: {
-          title: 'projectList',
+          title: 'ProjectList',
           roles: ['QA']
         }
       }
@@ -60,10 +62,10 @@ const allRoutes = [
   },
   {
     path: '/project/:projectName?/',
-    component: 'layout',
+    component: 'Layout',
     redirect: { name: 'Milstone' },
     meta: {
-      title: 'singleProject',
+      title: 'SingleProject',
       icon: 'el-icon-data-analysis',
       roles: ['QA']
     },
@@ -72,14 +74,14 @@ const allRoutes = [
         path: 'milestone',
         name: 'Milstone',
         component: 'views/Plan/Milestone',
-        meta: { title: 'milestone', roles: ['QA'] }
+        meta: { title: 'Milestone', roles: ['QA'] }
       },
       {
         path: 'issues',
+        component: 'ParentBlank',
         redirect: { name: 'IssueList' },
-        component: 'layout/components/parentBlank',
         meta: {
-          title: 'issueList',
+          title: 'IssueList',
           roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
         },
         children: [
@@ -96,10 +98,10 @@ const allRoutes = [
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
-              title: 'Issue Detail',
-              roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
-              rolePage: false,
-              subject: ''
+              title: 'IssueDetail',
+              roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
+              // rolePage: false,
+              // subject: ''
             }
           }
         ]
@@ -109,16 +111,16 @@ const allRoutes = [
         name: 'Track',
         component: 'views/Project/TrackManagement',
         meta: {
-          title: 'changeManagement',
+          title: 'ChangeManagement',
           roles: ['QA']
         }
       },
       {
-        path: 'exception',
+        path: 'exceptionManagement',
         name: 'ExceptionManagement',
         component: 'views/Project/ExceptionManagement',
         meta: {
-          title: 'Fail Management',
+          title: 'FailManagement',
           roles: ['QA']
         }
       },
@@ -126,16 +128,16 @@ const allRoutes = [
         path: 'traceabilityMatrix',
         name: 'TraceabilityMatrix',
         component: 'views/Plan/TraceabilityMatrix',
-        meta: { title: 'traceabilityMatrix', roles: ['QA'] }
+        meta: { title: 'TraceabilityMatrix', roles: ['QA'] }
       },
       {
         path: 'projectSettings',
-        component: 'layout/components/parentBlank',
-        meta: { title: 'Project Settings', roles: ['QA'] },
+        component: 'ParentBlank',
+        meta: { title: 'ProjectSettings', roles: ['QA'] },
         children: [
           {
             path: '',
-            component: 'layout/components/parentBlank',
+            component: 'ParentBlank',
             hidden: true,
             children: [
               {
@@ -149,7 +151,7 @@ const allRoutes = [
                 name: 'ParticipateProject',
                 hidden: true,
                 component: 'views/SystemSettings/AccountManage/components/ParticipateProject',
-                meta: { title: 'Participate Project', roles: ['QA'] }
+                meta: { title: 'ParticipateProject', roles: ['QA'] }
               }
             ]
           },
@@ -158,7 +160,7 @@ const allRoutes = [
             name: 'IssueTransfer',
             hidden: true,
             component: 'views/Plan/Settings/components/ProjectIssueTransfer',
-            meta: { title: 'Issue Transfer', roles: ['QA'] }
+            meta: { title: 'IssueTransfer', roles: ['QA'] }
           }
         ]
       }
@@ -167,10 +169,10 @@ const allRoutes = [
   {
     path: '/test/:projectName?/',
     name: 'Test',
-    component: 'layout',
+    component: 'Layout',
     redirect: { name: 'TestPlan' },
     meta: {
-      title: 'test-report',
+      title: 'TestReport',
       icon: 'el-icon-finished',
       roles: ['QA']
     },
@@ -178,7 +180,7 @@ const allRoutes = [
       {
         path: 'testPlan',
         redirect: '/test/testPlan',
-        component: 'layout/components/parentBlank',
+        component: 'ParentBlank',
         meta: {
           roles: ['QA']
         },
@@ -188,7 +190,7 @@ const allRoutes = [
             name: 'TestPlan',
             component: 'views/Test/TestPlan',
             meta: {
-              title: 'test-case',
+              title: 'TestCase',
               roles: ['QA']
             }
           },
@@ -198,9 +200,9 @@ const allRoutes = [
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
-              title: 'Issue Detail',
-              roles: ['QA'],
-              rolePage: false
+              title: 'IssueDetail',
+              roles: ['QA']
+              // rolePage: false
             }
           },
           {
@@ -209,9 +211,9 @@ const allRoutes = [
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
-              title: 'Issue Detail',
-              roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
-              rolePage: false
+              title: 'IssueDetail',
+              roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
+              // rolePage: false
             }
           },
           {
@@ -219,15 +221,15 @@ const allRoutes = [
             name: 'TestReport',
             hidden: true,
             component: 'views/Progress/Pipelines/components/TestReport',
-            meta: { title: 'testReport', roles: ['QA'] }
+            meta: { title: 'TestReport', roles: ['QA'] }
           }
         ]
       },
       {
         path: 'releaseVersion',
         redirect: { name: 'ReleaseVersion' },
-        component: 'layout/components/parentBlank',
-        meta: { title: 'test-result', roles: ['QA'] },
+        component: 'ParentBlank',
+        meta: { title: 'TestResult', roles: ['QA'] },
         children: [
           {
             path: '',
@@ -244,9 +246,9 @@ const allRoutes = [
             hidden: true,
             component: 'views/Project/ReleaseVersion/ClosedIssueList',
             meta: {
-              title: 'Issue Detail',
-              roles: ['QA'],
-              rolePage: false
+              title: 'IssueDetail',
+              roles: ['QA']
+              // rolePage: false
             }
           }
         ]
@@ -258,11 +260,11 @@ const allRoutes = [
 
   {
     path: '/overview',
-    component: 'layout',
+    component: 'Layout',
     redirect: '/overview/dashboard',
     meta: {
       icon: 'dashboard',
-      title: 'overview',
+      title: 'Overview',
       roles: ['Administrator']
     },
     children: [
@@ -271,7 +273,7 @@ const allRoutes = [
         name: 'Dashboard',
         component: 'views/Overview/Dashboard/roles/admin',
         meta: {
-          title: 'dashboard',
+          title: 'Dashboard',
           roles: ['Administrator']
         }
       },
@@ -280,7 +282,7 @@ const allRoutes = [
         name: 'ProjectList',
         component: 'views/Overview/ProjectList/ProjectListPM',
         meta: {
-          title: 'projectList',
+          title: 'ProjectList',
           roles: ['Administrator']
         }
       }
@@ -288,8 +290,11 @@ const allRoutes = [
   },
   {
     path: '/myWork/:projectName?',
-    component: 'layout',
+    component: 'Layout',
+    name: 'MyWork',
+    redirect: { name: 'MyWork' },
     meta: {
+      icon: 'el-icon-s-home',
       roles: ['Project Manager', 'Engineer']
     },
     children: [
@@ -298,8 +303,7 @@ const allRoutes = [
         name: 'MyWork',
         component: 'views/MyWork',
         meta: {
-          title: 'myWork',
-          icon: 'el-icon-s-home',
+          title: 'MyWork',
           roles: ['Project Manager', 'Engineer']
         }
       }
@@ -307,29 +311,34 @@ const allRoutes = [
   },
   {
     path: '/projectList',
-    component: 'layout',
-    meta: { roles: ['Project Manager', 'Engineer'] },
+    component: 'Layout',
+    name: 'ProjectList',
+    redirect: { name: 'ProjectList' },
+    meta: {
+      icon: 'list',
+      roles: ['Project Manager', 'Engineer'] },
     children: [
       {
         path: '',
         name: 'ProjectList',
         component: 'views/Overview/ProjectList/ProjectListPM',
-        meta: { title: 'projectList', icon: 'list', roles: ['Project Manager'] }
+        meta: { title: 'ProjectList', roles: ['Project Manager'] }
       },
       {
         path: '',
         name: 'ProjectList',
         component: 'views/Overview/ProjectList/ProjectListRD',
-        meta: { title: 'projectList', icon: 'list', roles: ['Engineer'] }
+        meta: { title: 'ProjectList', roles: ['Engineer'] }
       }
     ]
   },
   {
     path: '/plan/:projectName?/',
-    component: 'layout',
+    component: 'Layout',
+    name: 'ProjectManagement',
     redirect: { name: 'Overview' },
     meta: {
-      title: 'project-management',
+      title: 'ProjectManagement',
       icon: 'el-icon-edit-outline',
       roles: ['Administrator', 'Project Manager']
     },
@@ -338,58 +347,54 @@ const allRoutes = [
         path: 'overview',
         name: 'Overview',
         component: 'views/Plan/Overview',
-        meta: { title: 'projectOverview', roles: ['Administrator', 'Project Manager'] }
+        meta: { title: 'ProjectOverview', roles: ['Administrator', 'Project Manager'] }
       },
       {
         path: 'milestone',
         name: 'Milstone',
         component: 'views/Plan/Milestone',
-        meta: { title: 'milestone', roles: ['Administrator', 'Project Manager'] }
+        meta: { title: 'Milestone', roles: ['Administrator', 'Project Manager'] }
       },
       {
         path: 'traceabilityMatrix',
         name: 'TraceabilityMatrix',
         component: 'views/Plan/TraceabilityMatrix',
-        meta: { title: 'traceabilityMatrix', roles: ['Administrator', 'Project Manager'] }
+        meta: { title: 'TraceabilityMatrix', roles: ['Administrator', 'Project Manager'] }
       },
       {
         path: 'projectSettings',
-        component: 'layout/components/parentBlank',
-        meta: { title: 'Project Settings', roles: ['Administrator', 'Project Manager'] },
+        component: 'ParentBlank',
+        name: 'ProjectSettings',
+        redirect: { name: 'ProjectSettings' },
+        meta: { title: 'ProjectSettings', roles: ['Administrator', 'Project Manager'] },
         children: [
           {
-            path: '',
-            component: 'layout/components/parentBlank',
             hidden: true,
-            children: [
-              {
-                path: '',
-                name: 'ProjectSettings',
-                component: 'views/Plan/Settings/index',
-                meta: { roles: ['Administrator', 'Project Manager'] }
-              },
-              {
-                path: 'participateProject/:user_id',
-                name: 'ParticipateProject',
-                hidden: true,
-                component: 'views/SystemSettings/AccountManage/components/ParticipateProject',
-                meta: { title: 'Participate Project', roles: ['Administrator', 'Project Manager'] }
-              }
-            ]
+            path: '',
+            name: 'ProjectSettings',
+            component: 'views/Plan/Settings/index',
+            meta: { roles: ['Administrator', 'Project Manager'] }
+          },
+          {
+            path: 'participateProject/:user_id',
+            name: 'ParticipateProject',
+            hidden: true,
+            component: 'views/SystemSettings/AccountManage/components/ParticipateProject',
+            meta: { title: 'ParticipateProject', roles: ['Administrator', 'Project Manager'] }
           },
           {
             path: 'advanceBranchSettings',
             name: 'AdvanceBranchSettings',
             hidden: true,
             component: 'views/Plan/Settings/components/AdvanceBranchSettings',
-            meta: { title: 'advanceBranchSettings', roles: ['Administrator', 'Project Manager'] }
+            meta: { title: 'AdvanceBranchSettings', roles: ['Administrator', 'Project Manager'] }
           },
           {
             path: 'issueTransfer/:userId',
             name: 'IssueTransfer',
             hidden: true,
             component: 'views/Plan/Settings/ProjectIssueTransfer',
-            meta: { title: 'Issue Transfer', roles: ['Administrator', 'Project Manager'] }
+            meta: { title: 'IssueTransfer', roles: ['Administrator', 'Project Manager'] }
           }
         ]
       }
@@ -397,10 +402,11 @@ const allRoutes = [
   },
   {
     path: '/project/:projectName?/',
-    component: 'layout',
+    component: 'Layout',
+    name: 'Works',
     redirect: { name: 'Overview' },
     meta: {
-      title: 'works',
+      title: 'Works',
       icon: 'el-icon-s-cooperation',
       roles: ['Administrator', 'Project Manager', 'Engineer']
     },
@@ -409,12 +415,12 @@ const allRoutes = [
         path: 'issueBoards',
         name: 'IssueBoards',
         component: 'views/Project/IssueBoards',
-        meta: { title: 'kanban', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+        meta: { title: 'Kanban', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       {
         path: 'issues',
-        component: 'layout/components/parentBlank',
-        meta: { title: 'issueList' },
+        component: 'ParentBlank',
+        meta: { title: 'IssueList' },
         children: [
           {
             path: '',
@@ -431,10 +437,10 @@ const allRoutes = [
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
-              title: 'Issue Detail',
-              roles: ['Administrator', 'Project Manager', 'Engineer'],
-              rolePage: false,
-              subject: ''
+              title: 'IssueDetail',
+              roles: ['Administrator', 'Project Manager', 'Engineer']
+              // rolePage: false,
+              // subject: ''
             }
           }
         ]
@@ -443,25 +449,26 @@ const allRoutes = [
         path: 'notes',
         name: 'WikiList',
         component: 'views/Project/Wiki',
-        meta: { title: 'wikiList', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+        meta: { title: 'WikiList', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       {
         path: 'files',
         name: 'FileList',
         component: 'views/Project/Files',
-        meta: { title: 'fileList', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+        meta: { title: 'FileList', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       {
         path: 'roadmap',
         name: 'ProjectRoadmap',
         component: 'views/Project/Roadmap',
-        meta: { title: 'Project Roadmap', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+        meta: { title: 'ProjectRoadmap', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       {
         path: 'releaseVersion',
+        name: 'ReleaseVersion',
         redirect: { name: 'ReleaseVersion' },
-        component: 'layout/components/parentBlank',
-        meta: { title: 'releaseVersion', roles: ['Administrator', 'Project Manager', 'Engineer'] },
+        component: 'ParentBlank',
+        meta: { title: 'ReleaseVersion', roles: ['Administrator', 'Project Manager', 'Engineer'] },
         children: [
           {
             path: '',
@@ -478,9 +485,9 @@ const allRoutes = [
             hidden: true,
             component: 'views/Project/ReleaseVersion/ClosedIssueList',
             meta: {
-              title: 'Issue Detail',
-              roles: ['Administrator', 'Project Manager', 'Engineer'],
-              rolePage: false
+              title: 'IssueDetail',
+              roles: ['Administrator', 'Project Manager', 'Engineer']
+              // rolePage: false
             }
           }
         ]
@@ -488,15 +495,16 @@ const allRoutes = [
       {
         path: 'deploy',
         redirect: { name: 'Deploy' },
-        component: 'layout/components/parentBlank',
-        meta: { title: 'deploy', roles: ['Administrator', 'Project Manager', 'Engineer'] },
+        name: 'RemoteDeploy',
+        component: 'ParentBlank',
+        meta: { title: 'Deploy', roles: ['Administrator', 'Project Manager', 'Engineer'] },
         children: [
           {
             path: '',
             name: 'Deploy',
             component: 'views/Project/Deploy',
             meta: {
-              title: 'deploy',
+              title: 'Deploy',
               roles: ['Administrator', 'Project Manager', 'Engineer']
             }
           }
@@ -507,11 +515,11 @@ const allRoutes = [
 
   {
     path: '/progress/:projectName?/',
-    component: 'layout',
+    component: 'Layout',
     name: 'Progress',
     redirect: { name: 'DevEnvironment' },
     meta: {
-      title: 'devProgress',
+      title: 'DevProgress',
       icon: 'el-icon-odometer',
       roles: ['Administrator', 'Project Manager', 'Engineer']
     },
@@ -520,18 +528,19 @@ const allRoutes = [
         path: 'devBranch',
         name: 'DevBranch',
         component: 'views/Progress/DevBranch',
-        meta: { title: 'devBranch', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+        meta: { title: 'DevBranch', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       // {
       //   path: 'GitGraph',
       //   name: 'GitGraph',
-      //   component: 'views/Progress/GitGraph',
-      //   meta: { title: 'gitGraph', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+      //   component:'views/Progress/GitGraph',
+      //   meta: { title: 'GitGraph', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       // },
       {
         path: 'pipelines',
-        component: 'layout/components/parentBlank',
-        meta: { title: 'pipelines', roles: ['Administrator', 'Project Manager', 'Engineer'] },
+        component: 'ParentBlank',
+        name: 'PiplelineInfo',
+        meta: { title: 'Pipelines', roles: ['Administrator', 'Project Manager', 'Engineer'] },
         children: [
           {
             path: '',
@@ -545,7 +554,7 @@ const allRoutes = [
             name: 'TestReport',
             hidden: true,
             component: 'views/Progress/Pipelines/components/TestReport',
-            meta: { title: 'testReport', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+            meta: { title: 'TestReport', roles: ['Administrator', 'Project Manager', 'Engineer'] }
           }
         ]
       },
@@ -553,13 +562,14 @@ const allRoutes = [
         path: 'devEnvironment',
         name: 'DevEnvironment',
         component: 'views/Progress/DevEnvironment',
-        meta: { title: 'devEnvironment', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+        meta: { title: 'DevEnvironment', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       {
         path: 'kubernetesResources',
-        component: 'layout/components/parentBlank',
+        component: 'ParentBlank',
+        name: 'KubernetesResources',
         meta: {
-          title: 'kubernetesResources',
+          title: 'KubernetesResources',
           roles: ['Administrator', 'Project Manager', 'Engineer']
         },
         children: [
@@ -572,8 +582,9 @@ const allRoutes = [
           {
             path: 'podsList',
             hidden: true,
-            component: 'layout/components/parentBlank',
-            meta: { title: 'Pods List', roles: ['Administrator', 'Project Manager', 'Engineer'] },
+            component: 'ParentBlank',
+            name: 'PodDetails',
+            meta: { title: 'PodsList', roles: ['Administrator', 'Project Manager', 'Engineer'] },
             children: [
               {
                 path: '',
@@ -596,7 +607,7 @@ const allRoutes = [
             hidden: true,
             component: 'views/Progress/KubernetesResources/components/ServiceList',
             meta: {
-              title: 'Service List',
+              title: 'ServiceList',
               roles: ['Administrator', 'Project Manager', 'Engineer']
             }
           },
@@ -606,7 +617,7 @@ const allRoutes = [
             hidden: true,
             component: 'views/Progress/KubernetesResources/components/SecretList',
             meta: {
-              title: 'Secret List',
+              title: 'SecretList',
               roles: ['Administrator', 'Project Manager', 'Engineer']
             }
           },
@@ -616,7 +627,7 @@ const allRoutes = [
             hidden: true,
             component: 'views/Progress/KubernetesResources/components/ConfigMapsList',
             meta: {
-              title: 'ConfigMaps List',
+              title: 'ConfigMapsList',
               roles: ['Administrator', 'Project Manager', 'Engineer']
             }
           },
@@ -626,7 +637,7 @@ const allRoutes = [
             hidden: true,
             component: 'views/Progress/KubernetesResources/components/DeploymentList',
             meta: {
-              title: 'Deployment List',
+              title: 'DeploymentList',
               roles: ['Administrator', 'Project Manager', 'Engineer']
             }
           },
@@ -647,7 +658,7 @@ const allRoutes = [
 
   {
     path: '/commitList/:rId/:branchName/:projectName',
-    component: 'layout',
+    component: 'Layout',
     hidden: true,
     meta: { roles: ['Engineer'] },
     children: [
@@ -663,10 +674,10 @@ const allRoutes = [
   {
     path: '/test/:projectName?/',
     name: 'Test',
-    component: 'layout',
+    component: 'Layout',
     redirect: { name: 'TestPlan' },
     meta: {
-      title: 'testManagement',
+      title: 'TestManagement',
       icon: 'el-icon-finished',
       roles: ['Administrator', 'Project Manager', 'Engineer']
     },
@@ -676,14 +687,15 @@ const allRoutes = [
         name: 'TestFile',
         component: 'views/Test/TestFile',
         meta: {
-          title: 'testFile',
+          title: 'TestFile',
           roles: ['Administrator', 'Project Manager', 'Engineer']
         }
       },
       {
         path: 'testPlan',
         redirect: '/test/testPlan',
-        component: 'layout/components/parentBlank',
+        name: 'TestPlan',
+        component: 'ParentBlank',
         meta: {
           roles: ['Administrator', 'Project Manager', 'Engineer']
         },
@@ -693,7 +705,7 @@ const allRoutes = [
             name: 'TestPlan',
             component: 'views/Test/TestPlan',
             meta: {
-              title: 'testPlan',
+              title: 'TestPlan',
               roles: ['Administrator', 'Project Manager', 'Engineer']
             }
           },
@@ -703,9 +715,9 @@ const allRoutes = [
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
-              title: 'Issue Detail',
-              roles: ['Administrator', 'Project Manager', 'Engineer'],
-              rolePage: false
+              title: 'IssueDetail',
+              roles: ['Administrator', 'Project Manager', 'Engineer']
+              // rolePage: false
             }
           },
           {
@@ -714,9 +726,9 @@ const allRoutes = [
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
-              title: 'Issue Detail',
-              roles: ['Administrator', 'Project Manager', 'Engineer'],
-              rolePage: false
+              title: 'IssueDetail',
+              roles: ['Administrator', 'Project Manager', 'Engineer']
+              // rolePage: false
             }
           }
         ]
@@ -725,11 +737,11 @@ const allRoutes = [
   },
   {
     path: '/scan/:projectName?/',
-    component: 'layout',
+    component: 'Layout',
     name: 'Scan',
     alwaysShow: true,
     meta: {
-      title: 'autoTesting',
+      title: 'AutoTesting',
       icon: 'el-icon-circle-check',
       roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
     },
@@ -739,32 +751,32 @@ const allRoutes = [
         path: 'sonarqube',
         name: 'Sonarqube',
         component: 'views/Scan/SonarQube',
-        meta: { title: 'sonarQube', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+        meta: { title: 'SonarQube', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
       },
       {
-        name: 'Checkmarx',
         path: 'checkmarx',
+        name: 'Checkmarx',
         component: 'views/Scan/Checkmarx',
-        meta: { title: 'checkMarx', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+        meta: { title: 'CheckMarx', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
       },
       {
         path: 'zap',
         name: 'Zap',
         component: 'views/Scan/Zap',
-        meta: { title: 'zap', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+        meta: { title: 'Zap', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
       },
       {
         path: 'cmas',
         name: 'Cmas',
         component: 'views/Scan/Cmas',
-        meta: { title: 'cmas', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+        meta: { title: 'Cmas', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
       },
       {
         path: 'webinspect',
         name: 'Webinspect',
-        component: 'layout/components/parentBlank',
+        component: 'ParentBlank',
         redirect: { name: 'Webinspect' },
-        meta: { title: 'webInspect', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
+        meta: { title: 'WebInspect', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
         children: [
           {
             path: '',
@@ -777,17 +789,17 @@ const allRoutes = [
             name: 'WebinspectReport',
             component: 'views/Scan/WIEReportViewer',
             hidden: true,
-            meta: { title: 'webInspectReport', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+            meta: { title: 'WebInspectReport', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
           }
         ]
       },
       {
         path: 'postman',
         name: 'Postman',
-        component: 'layout/components/parentBlank',
+        component: 'ParentBlank',
         redirect: { name: 'PostmanTest' },
         meta: {
-          title: 'postman',
+          title: 'Postman',
           roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
         },
         children: [
@@ -803,7 +815,7 @@ const allRoutes = [
             hidden: true,
             component: 'views/Scan/TestCaseDevOps',
             meta: {
-              title: 'fromDevops',
+              title: 'FromDevops',
               roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
             }
           },
@@ -813,7 +825,7 @@ const allRoutes = [
             hidden: true,
             component: 'views/Scan/TestCasePostman',
             meta: {
-              title: 'fromCollection',
+              title: 'FromCollection',
               roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
             }
           }
@@ -823,26 +835,27 @@ const allRoutes = [
         path: 'sideex',
         name: 'Sideex',
         component: 'views/Scan/Sideex',
-        meta: { title: 'sideex', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+        meta: { title: 'Sideex', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
       }
     ]
   },
 
   {
     path: '/systemResource',
-    component: 'layout',
+    component: 'Layout',
     name: 'SystemResource',
     redirect: { name: 'PluginResource' },
     meta: {
-      title: 'System Resource',
+      title: 'SystemResource',
       icon: 'el-icon-pie-chart',
       roles: ['Administrator', 'Project Manager']
     },
     children: [
       {
         path: ':projectName?/pluginResource',
-        component: 'layout/components/parentBlank',
-        meta: { title: 'Plugin Resource', roles: ['Administrator', 'Project Manager'] },
+        component: 'ParentBlank',
+        name: 'PluginResources',
+        meta: { title: 'PluginResource', roles: ['Administrator', 'Project Manager'] },
         children: [
           {
             path: '',
@@ -853,7 +866,7 @@ const allRoutes = [
           {
             path: 'harbor',
             hidden: true,
-            component: 'layout/components/parentBlank',
+            component: 'ParentBlank',
             meta: {
               title: 'Harbor',
               roles: ['Administrator', 'Project Manager']
@@ -883,14 +896,15 @@ const allRoutes = [
         path: 'serviceMonitoring',
         name: 'ServiceMonitoring',
         component: 'views/SystemResource/ServiceMonitoring',
-        meta: { title: 'Service Monitoring', roles: ['Administrator', 'Project Manager'] }
+        meta: { title: 'ServiceMonitoring', roles: ['Administrator', 'Project Manager'] }
       }
     ]
   },
 
   {
     path: '/projectActivities/:projectName?',
-    component: 'layout',
+    component: 'Layout',
+    name: 'ProjectActivities',
     redirect: { name: 'ProjectActivities' },
     meta: {
       icon: 'el-icon-s-order',
@@ -901,26 +915,26 @@ const allRoutes = [
         path: '',
         component: 'views/Activities/ProjectActivities',
         name: 'ProjectActivities',
-        meta: { title: 'Project Activities', roles: ['Administrator', 'Project Manager'] }
+        meta: { title: 'ProjectActivities', roles: ['Administrator', 'Project Manager'] }
       }
     ]
   },
 
   {
     path: '/systemSettings',
-    component: 'layout',
+    component: 'Layout',
     name: 'Admin',
     redirect: { name: 'AccountManage' },
     meta: { title: 'Admin', icon: 'el-icon-setting', roles: ['Administrator'] },
     children: [
       {
         path: 'accountManage',
-        component: 'layout/components/parentBlank',
-        meta: { title: 'Account Manage', roles: ['Administrator'] },
+        component: 'ParentBlank',
+        meta: { title: 'AccountManage', roles: ['Administrator'] },
         children: [
           {
             path: '',
-            component: 'layout/components/parentBlank',
+            component: 'ParentBlank',
             hidden: true,
             children: [
               {
@@ -934,7 +948,7 @@ const allRoutes = [
                 name: 'ParticipateProject',
                 hidden: true,
                 component: 'views/SystemSettings/AccountManage/components/ParticipateProject',
-                meta: { title: 'Participate Project', roles: ['Administrator'] }
+                meta: { title: 'ParticipateProject', roles: ['Administrator'] }
               }
             ]
           }
@@ -944,38 +958,39 @@ const allRoutes = [
         path: 'systemActivities',
         name: 'SystemActivities',
         component: 'views/SystemSettings/SystemActivities',
-        meta: { title: 'System Activities', roles: ['Administrator'] }
+        meta: { title: 'SystemActivities', roles: ['Administrator'] }
       },
       {
         path: 'systemArguments',
         name: 'SystemArguments',
         component: 'views/SystemSettings/SystemArguments',
-        meta: { title: 'System Arguments', roles: ['Administrator'] }
+        meta: { title: 'SystemArguments', roles: ['Administrator'] }
       },
       {
         path: 'systemDeploySettings',
         name: 'SystemDeploySettings',
         component: 'views/SystemSettings/SystemDeploySettings',
-        meta: { title: 'System Deploy Settings', roles: ['Administrator'] }
+        meta: { title: 'SystemDeploySettings', roles: ['Administrator'] }
       },
       {
         path: 'subAdminProjects',
         name: 'SubAdminProjects',
         component: 'views/SystemSettings/SubAdminProjects',
-        meta: { title: 'Project Settings (QA)', roles: ['Administrator'] }
+        meta: { title: 'ProjectSettingsQA', roles: ['Administrator'] }
       },
       {
         path: 'systemPluginManage',
         name: 'SystemPluginManage',
         component: 'views/SystemSettings/SystemPluginManage',
-        meta: { title: 'System Plugin Manage', roles: ['Administrator'] }
+        meta: { title: 'SystemPluginManage', roles: ['Administrator'] }
       }
     ]
   },
 
   {
     path: '/profile',
-    component: 'layout',
+    component: 'Layout',
+    name: 'UserProfile',
     redirect: { name: 'Profile' },
     hidden: true,
     meta: { roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
@@ -987,7 +1002,7 @@ const allRoutes = [
         meta: {
           title: 'Profile',
           icon: 'user',
-          noCache: true,
+          // noCache: true,
           roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
         }
       }
@@ -995,7 +1010,8 @@ const allRoutes = [
   },
   {
     path: '/SystemVersion',
-    component: 'layout',
+    component: 'Layout',
+    name: 'SystemVersion',
     redirect: { name: 'SystemVersion' },
     hidden: true,
     meta: { roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
@@ -1005,9 +1021,9 @@ const allRoutes = [
         component: 'views/SystemVersion',
         name: 'SystemVersion',
         meta: {
-          title: 'System Version',
+          title: 'SystemVersion',
           icon: 'user',
-          noCache: true,
+          // noCache: true,
           roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
         }
       }
