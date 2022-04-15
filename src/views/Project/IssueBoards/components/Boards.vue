@@ -43,6 +43,7 @@
       ref="contextmenu"
       :visible="contextMenu.visible"
       :row="contextMenu.row"
+      :list-data="projectIssueList"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
     />

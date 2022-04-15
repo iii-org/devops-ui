@@ -8,7 +8,7 @@
           :key="column.id"
           v-permission="permission"
           :title="column.label"
-          :disabled="column.value === 'priority' ? row.has_children : false"
+          :disabled="(column.value === 'priority' ? row.has_children : false) || isForceParent"
         >
           <contextmenu-item
             v-for="item in getOptionsData(column.value)"
@@ -22,7 +22,11 @@
             {{ getSelectionLabel(item) }} {{ item.message }}
           </contextmenu-item>
         </contextmenu-submenu>
-        <contextmenu-submenu v-permission="permission" :title="$t('Issue.DoneRatio')" :disabled="row.has_children">
+        <contextmenu-submenu
+          v-permission="permission"
+          :title="$t('Issue.DoneRatio')"
+          :disabled="row.has_children || isForceParent"
+        >
           <contextmenu-item
             v-for="item in done_ratio"
             :key="item.id"
@@ -38,7 +42,11 @@
         <contextmenu-item v-permission="permission" @click="toggleRelationDialog('Parent')">{{
           $t('Issue.ParentIssue')
         }}</contextmenu-item>
-        <contextmenu-submenu v-permission="permission" :title="$t('Issue.ChildrenIssue')">
+        <contextmenu-submenu
+          v-permission="permission"
+          :title="$t('Issue.ChildrenIssue')"
+          :disabled="isForceParent"
+        >
           <contextmenu-item @click="toggleRelationDialog('Children')">{{
             $t('general.Settings', { name: $t('Issue.ChildrenIssue') })
           }}</contextmenu-item>
@@ -143,6 +151,7 @@ import 'v-contextmenu/dist/index.css'
 import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
 import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import { addIssue, getCheckIssueClosable, updateIssue } from '@/api/issue'
+import { getIssueHasFather } from '@/api_v2/issue'
 import { getProjectUserList, getProjectVersion, getTagsByProject } from '@/api/projects'
 import { cloneDeep } from 'lodash'
 import { mapGetters } from 'vuex'
@@ -173,6 +182,10 @@ export default {
     row: {
       type: Object,
       default: () => ({ fixed_version: { id: 'null' }, assigned_to: { id: 'null' }})
+    },
+    listData: {
+      type: Array,
+      default: () => []
     },
     visible: {
       type: Boolean,
@@ -211,11 +224,12 @@ export default {
       form: {},
       originForm: {},
       showAlert: false,
-      errorMsg: []
+      errorMsg: [],
+      hasFatherData: {}
     }
   },
   computed: {
-    ...mapGetters(['tracker', 'status', 'priority', 'fixedVersionShowClosed', 'selectedProjectId']),
+    ...mapGetters(['tracker', 'status', 'priority', 'fixedVersionShowClosed', 'selectedProjectId', 'strictTracker', 'forceTracker']),
     done_ratio() {
       const result = []
       for (let num = 0; num <= 100; num += 10) {
@@ -233,6 +247,9 @@ export default {
     },
     permission() {
       return ['Administrator', 'Project Manager', 'Engineer']
+    },
+    isForceParent() {
+      return this.forceTracker.findIndex((tracker) => tracker.id === this.row.tracker.id) !== -1 && !this.hasFatherData[this.row.id]
     }
   },
   watch: {
@@ -248,6 +265,22 @@ export default {
         if (Object.keys(this.row).length > 2) {
           await this.getClosable()
         }
+      }
+    },
+    listData: {
+      deep: true,
+      async handler(value) {
+        if (this.forceTracker.length === 0) return
+        value.forEach(async(item) => {
+          if (item === undefined) return
+          if (item.family) {
+            await getIssueHasFather(item.id).then((res) => {
+              this.hasFatherData[item.id] = res.data.has_father
+            })
+          } else {
+            this.hasFatherData[item.id] = false
+          }
+        })
       }
     }
   },
@@ -271,6 +304,7 @@ export default {
     },
     getOptionsData(option_name) {
       if (option_name === 'status') return this.getDynamicStatusList()
+      if (option_name === 'tracker' && !this.hasFatherData[this.row.id]) return this.strictTracker
       return this[option_name]
     },
     async loadSelectionList() {

@@ -156,6 +156,7 @@
       ref="contextmenu"
       :visible="contextMenu.visible"
       :row="contextMenu.row"
+      :list-data="listData"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
       @update="fetchData"
