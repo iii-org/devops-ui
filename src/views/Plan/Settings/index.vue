@@ -46,7 +46,11 @@
           <TagSettings ref="tagSettings" />
         </el-card>
       </el-tab-pane>
-      <el-tab-pane :label="$t('ProjectSettings.ParentIssueRequired')" name="trackerSettings">
+      <el-tab-pane 
+        v-if="userId === selectedProject.owner_id || userRole === 'Administrator'"
+        :label="$t('ProjectSettings.ParentIssueRequired')" 
+        name="trackerSettings"
+      >
         <el-card>
           <TrackerSettings ref="trackerSettings" />
         </el-card>
@@ -81,7 +85,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
+    ...mapGetters(['selectedProject', 'userId', 'userRole']),
     hasUnsavedChanges() {
       return this.$refs.alertSettings.hasUnsavedChanges
     }
@@ -124,7 +128,7 @@ export default {
       })
     },
     async fetchData() {
-      if (this.selectedProjectId === -1) {
+      if (this.selectedProject.id === -1) {
         this.showNoProjectWarning()
         return []
       }
