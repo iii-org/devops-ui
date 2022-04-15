@@ -47,7 +47,7 @@
           </el-col>
           <el-col v-if="form.type_id === 2 || form.type_id === 5" :span="24">
             <el-form-item :label="$t('Inbox.GroupReceiver.Project')" prop="project_ids">
-              <el-select v-model="form.project_ids" multiple collapse-tags style="width: 100%">
+              <el-select v-model="form.project_ids" multiple filterable collapse-tags style="width: 100%">
                 <el-option v-for="item in projectList" :key="item.id" :label="item.name" :value="item.id">
                   {{ item.name }}
                 </el-option>
@@ -56,7 +56,7 @@
           </el-col>
           <el-col v-if="form.type_id === 3" :span="24">
             <el-form-item :label="$t('Inbox.GroupReceiver.User')" prop="user_ids">
-              <el-select v-model="form.user_ids" multiple collapse-tags style="width: 100%">
+              <el-select v-model="form.user_ids" multiple filterable collapse-tags style="width: 100%">
                 <el-option v-for="item in userList" :key="item.id" :label="item.name" :value="item.id">
                   {{ item.name }}
                 </el-option>
@@ -65,7 +65,7 @@
           </el-col>
           <el-col v-if="form.type_id === 4" :span="24">
             <el-form-item :label="$t('Inbox.GroupReceiver.Role')" prop="role_ids">
-              <el-select v-model="form.role_ids" multiple style="width: 100%">
+              <el-select v-model="form.role_ids" multiple filterable style="width: 100%">
                 <el-option v-for="item in roleList" :key="item.id" :label="item.name" :value="item.id">
                   {{ item.name }}
                 </el-option>
@@ -94,7 +94,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getAllUser } from '@/api/user'
-import { createMessage, deleteMessage } from '@/api/monitoring'
+import { createMessage, deleteMessage } from '@/api_v2/monitoring'
 
 const formTemplate = () => ({
   title: '',

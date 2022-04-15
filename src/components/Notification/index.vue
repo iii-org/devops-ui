@@ -20,7 +20,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { io } from 'socket.io-client'
-import { setReadMessage } from '@/api/monitoring'
+import { setReadMessage } from '@/api_v2/monitoring'
 
 export default {
   name: 'Notification',
@@ -35,7 +35,7 @@ export default {
       alert: [],
       info: [],
       update: [],
-      socket: io(`/get_notification_message`, {
+      socket: io(`/v2/get_notification_message`, {
         reconnectionAttempts: 5
       })
     }

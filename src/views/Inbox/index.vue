@@ -1,6 +1,9 @@
 <template>
   <div class="app-container">
-    <div class="flex justify-between">
+    <div 
+      :class="userId === 1 ? 'flex justify-between' : ''"
+      :style="userId === 1 ? '' : 'text-align: right'"
+    >
       <el-button 
         v-if="userId === 1"
         class="buttonPrimary"
@@ -33,6 +36,7 @@
       <el-table-column
         header-align="center"
         :label="$t('Inbox.Title')"
+        width="500px"
       >
         <template slot-scope="scope">
           {{ scope.row.title ? scope.row.title : 'No Title' }}
@@ -41,7 +45,6 @@
       <el-table-column
         align="center"
         :label="$t('Inbox.Type')"
-        width="150px"
       >
         <template slot-scope="scope">
           <el-tag
@@ -57,13 +60,11 @@
       <el-table-column-time
         prop="created_at"
         :label="$t('Inbox.Date')"
-        width="300px"
       />
       <el-table-column
         align="center"
         :label="$t('Inbox.Sender')"
         prop="creator.name"
-        width="200px"
       />
       <template slot="empty">
         <el-empty :description="$t('general.NoData')" />
@@ -92,7 +93,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import SearchFilter from './components/SearchFilter.vue'
-import { getMessageList, setReadMessage } from '@/api/monitoring'
+import { getMessageList, setReadMessage } from '@/api_v2/monitoring'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { BasicData, Pagination } from '@/newMixins'
 import MessageDialog from '@/components/Notification/components/MessageDialog.vue'

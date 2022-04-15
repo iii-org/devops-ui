@@ -43,6 +43,7 @@
       <el-table-column
         header-align="center"
         :label="$t('Inbox.Title')"
+        width="500px"
       >
         <template slot-scope="scope">
           {{ scope.row.title ? scope.row.title : 'No Title' }}
@@ -51,7 +52,6 @@
       <el-table-column
         align="center"
         :label="$t('Inbox.Type')"
-        width="150px"
       >
         <template slot-scope="scope">
           <el-tag
@@ -67,19 +67,16 @@
       <el-table-column-time
         prop="created_at"
         :label="$t('Inbox.Date')"
-        width="200px"
       />
       <el-table-column
         align="center"
         :label="$t('Inbox.Sender')"
         prop="creator.name"
-        width="200px"
       />
       <el-table-column
         align="center"
         label="Group Receiver"
         prop="creator.name"
-        width="150px"
       >
         <template slot-scope="scope">
           {{ receiverName(scope.row.types[0].type_id) }}
@@ -89,7 +86,6 @@
         align="center"
         label="Status"
         prop="creator.name"
-        width="150px"
       >
         <template slot-scope="scope">
           <el-tag
@@ -100,7 +96,6 @@
         </template>
       </el-table-column>
       <el-table-column
-        fixed="right"
         header-align="center"
         label="Action"
         width="300px"
@@ -178,7 +173,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import SearchFilter from './components/SearchFilter.vue'
-import { getMessageListAdmin, deleteMessage, closeMessage } from '@/api/monitoring'
+import { getMessageListAdmin, deleteMessage, closeMessage } from '@/api_v2/monitoring'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { BasicData, Pagination } from '@/newMixins'
 
