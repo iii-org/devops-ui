@@ -19,6 +19,7 @@
     <div v-show="isToggle">
       <el-table
         ref="multipleTable"
+        :key="tableKey"
         v-loading="listLoading"
         :element-loading-text="$t('Loading')"
         :data="tracker"
@@ -65,13 +66,7 @@ export default {
       trackerList: [],
       newForceTrackerList: [],
       oldForceTrackerListId: [],
-      need_fatherissue_trackers: [{
-        id: 1,
-        name: 'Epic'
-      }, {
-        id: 2,
-        name: 'Audit'
-      }]
+      tableKey: 0
     }
   },
   computed: {
@@ -94,13 +89,14 @@ export default {
     this.fetchData()
   },
   methods: {
-    async fetchData(update) {
+    async fetchData() {
+      this.tableKey += 1
       this.$forceUpdate()
       const res = await getIssueForceTracker(this.selectedProject.id)
       this.isToggle = res.data.enable
       this.oldForceTrackerListId = res.data.need_fatherissue_trackers.map(object => object.id)
       const selected = this.tracker.filter(ob => this.oldForceTrackerListId.includes(ob.id))
-      if (!update) this.toggleSelection(selected)
+      this.toggleSelection(selected)
     },
     async toggleSwitch(bool) {
       this.listLoading = true
@@ -149,7 +145,7 @@ export default {
       const newForceTrackerListId = this.newForceTrackerList.map(object => object.id)
       await updateIssueForceTracker(this.selectedProject.id, { need_fatherissue_trackers: newForceTrackerListId })
         .then(async () => {
-          await this.fetchData(true)
+          await this.fetchData()
           await this.showUpdateMessage()
         })
         .catch(err => {
