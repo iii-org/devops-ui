@@ -1114,9 +1114,14 @@ export default {
     Unchange: 'The issue has not changed continuously for more than __?__ days',
     EnableMessage: 'The reminder feature has been successfully turned on',
     DisableMessage: 'The reminder feature has been successfully turned off',
+    EnableForceTracker: 'The force tracker feature has been successfully turned on',
+    DisableForceTracker: 'The force tracker feature has been successfully turned off',
     SuccessUpdateAlertSettings: 'The reminder Settings have been updated successfully',
     TagUpdateMessage: 'The task label has been updated successfully',
-    ChangeManager: 'Change Project Manager'
+    ChangeManager: 'Change Project Manager',
+    ParentIssueRequired: 'Parent Issue Required',
+    ParentIssueRequiredSettings: 'Parent Issue Required Settings',
+    IssueType: 'Issue Type'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: 'Remote Env.',

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="flex justify-between mt-3">
-      <div class="font-medium text-lg">{{ $t('ProjectSettings.IssueReminderFeature') }}</div>
+      <div class="font-medium text-lg">{{ $t('ProjectSettings.ParentIssueRequiredSettings') }}</div>
       <div>
         <el-switch
           v-model="isToggle"
@@ -27,7 +27,7 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="index" align="center" :label="$t('ProjectSettings.Index')" width="100" />
-        <el-table-column align="center" :label="$t('ProjectSettings.NotificationConditions')">
+        <el-table-column align="center" :label="$t('ProjectSettings.IssueType')">
           <template slot-scope="scope">
             {{ $t(`Issue.${scope.row.name}`) }}
           </template>
@@ -38,11 +38,6 @@
           width="200"
           property="isEnabled"
         />
-        <!-- <el-table-column label="status" width="120"> 
-          <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.isEnabled" :checked="scope.row.isEnabled" @change="handleCheckChange(scope.row)" />
-          </template>
-        </el-table-column>        -->
       </el-table>
     </div>
     <div v-if="!isToggle" class="text-center">{{ $t('ProjectSettings.NotYetEnabled') }}</div>
@@ -51,8 +46,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { changeProjectAlertSettings, updateAlertSettingsByProject } from '@/api/alert'
-import { getIssueForceTracker } from '@/api_v2/issue'
+import { 
+  getIssueForceTracker,
+  createIssueForceTracker,
+  updateIssueForceTracker,
+  deleteIssueForceTracker
+} from '@/api_v2/issue'
 
 export default {
   name: 'AlertSettings',
@@ -64,7 +63,8 @@ export default {
       alertList: [],
       originData: [],
       trackerList: [],
-      currentForceTracker: [],
+      newForceTrackerList: [],
+      oldForceTrackerListId: [],
       need_fatherissue_trackers: [{
         id: 1,
         name: 'Epic'
@@ -75,10 +75,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['tracker', 'selectedProjectId']),
-    hasUnsavedChanges() {
-      return this.isTableDataChanged(0) || this.isTableDataChanged(1)
-    }
+    ...mapGetters(['tracker', 'selectedProjectId'])
   },
   watch: {
     selectedProjectId: {
@@ -87,98 +84,81 @@ export default {
       },
       immediate: true
     }
-    // isToggle() {
-    //   this.toggleSelection(this.currentForceTracker)
-    // }
   },
   mounted() {
     this.fetchData()
   },
   methods: {
-    async fetchData() {
+    async fetchData(update) {
+      this.$forceUpdate()
       const res = await getIssueForceTracker(this.selectedProjectId)
       this.isToggle = res.data.enable
-      this.currentForceTracker = this.need_fatherissue_trackers
-      console.log(this.tracker[1])
-      console.log(this.need_fatherissue_trackers[1])
-      this.toggleSelection([this.tracker[1]])
-    },
-    getRowKeys(row) {
-      return row.id
-    },
-    setOriginData(data) {
-      this.originData = JSON.parse(JSON.stringify(data))
+      this.oldForceTrackerListId = res.data.need_fatherissue_trackers.map(object => object.id)
+      const selected = this.tracker.filter(ob => this.oldForceTrackerListId.includes(ob.id))
+      if (!update) this.toggleSelection(selected)
     },
     async toggleSwitch(bool) {
-      const param = {}
-      param.enable = bool
-      // this.listLoading = true
-      // await changeProjectAlertSettings(this.selectedProjectId, param)
-      //   .then(_ => {
-      //     this.loadData()
-      //     this.showChangeMessage(bool)
-      //   })
-      //   .catch(err => {
-      //     this.listLoading = false
-      //     return err
-      //   })
+      this.listLoading = true
+      if (bool) {
+        await createIssueForceTracker(this.selectedProjectId)
+          .then(async () => {
+            await this.fetchData()
+            this.showChangeMessage(bool)
+          })
+          .catch(err => {
+            this.listLoading = false
+            return err
+          })
+      } else {
+        await deleteIssueForceTracker(this.selectedProjectId)
+          .then(async() => {
+            await this.fetchData()
+            this.showChangeMessage(bool)
+          })
+          .catch(err => {
+            this.listLoading = false
+            return err
+          })
+      }
+      this.listLoading = false
     },
     showChangeMessage(bool) {
       this.$message({
         title: this.$t('general.Success'),
-        message: bool ? this.$t('ProjectSettings.EnableMessage') : this.$t('ProjectSettings.DisableMessage'),
+        message: bool ? this.$t('ProjectSettings.EnableForceTracker') : this.$t('ProjectSettings.DisableForceTracker'),
         type: 'success'
       })
     },
     toggleSelection(rows) {
-      console.log(rows)
-      console.log(this.$refs.multipleTable)
       if (this.$refs.multipleTable) {
         rows.forEach(row => {
-          console.log(row)
           this.$refs.multipleTable.toggleRowSelection(row)
         })
       }
     },
-    handleSelectionChange(val) {
-      // console.log(val)
+    async handleSelectionChange(val) {
+      this.newForceTrackerList = val
     },
-    handleSave() {
-      this.handleUpdateAlertTable(0)
-      this.handleUpdateAlertTable(1)
-    },
-    async handleUpdateAlertTable(index) {
-      const params = {}
-      const alertId = this.listData[index].id
-      params.disabled = this.listData[index].disabled
-      params.days = this.listData[index].days
+    async handleSave() {
       this.listLoading = true
-      await updateAlertSettingsByProject(alertId, params)
-        .then(_ => {
-          this.loadData()
-          this.showUpdateMessage()
+      const newForceTrackerListId = this.newForceTrackerList.map(object => object.id)
+      await updateIssueForceTracker(this.selectedProjectId, { need_fatherissue_trackers: newForceTrackerListId })
+        .then(async () => {
+          await this.fetchData(true)
+          await this.showUpdateMessage()
         })
         .catch(err => {
           this.listLoading = false
           return err
         })
+      this.listLoading = false
     },
     showUpdateMessage() {
       this.$message({
         title: this.$t('general.Success'),
-        message: this.$t('ProjectSettings.SuccessUpdateAlertSettings'),
+        message: this.$t('Notify.Updated'),
         type: 'success'
       })
-    },
-    isTableDataChanged(index) {
-      if (!this.listData) return false
-      for (const key in this.listData[index]) {
-        if (this.originData[index][key] !== this.listData[index][key]) return true
-      }
-      return false
-    },
-    toggleUsage(row) {
-      row.disabled = !row.disabled
     }
   }
 }

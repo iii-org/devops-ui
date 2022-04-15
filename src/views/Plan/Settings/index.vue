@@ -46,7 +46,7 @@
           <TagSettings ref="tagSettings" />
         </el-card>
       </el-tab-pane>
-      <el-tab-pane label="Tracker Settings" name="trackerSettings">
+      <el-tab-pane :label="$t('ProjectSettings.ParentIssueRequired')" name="trackerSettings">
         <el-card>
           <TrackerSettings ref="trackerSettings" />
         </el-card>

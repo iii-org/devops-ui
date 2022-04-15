@@ -1108,8 +1108,13 @@ export default {
     EnableMessage: '已成功啟用提醒功能',
     DisableMessage: '已成功停用提醒功能',
     SuccessUpdateAlertSettings: '通知設定已更新成功',
+    EnableForceTracker: '強制要求父議題設置已啟用',
+    DisableForceTracker: '強制要求父議題設置已停用',
     TagUpdateMessage: '任務標籤已更新成功',
-    ChangeManager: '變更專案經理'
+    ChangeManager: '變更專案經理',
+    ParentIssueRequired: '議題提醒',
+    ParentIssueRequiredSettings: '議題提醒功能',
+    IssueType: '議題類型'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: '遠端佈署環境',
