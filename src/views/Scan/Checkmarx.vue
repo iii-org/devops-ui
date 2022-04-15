@@ -1,6 +1,16 @@
 <template>
   <el-row class="app-container">
     <ProjectListSelector>
+      <el-button
+        v-if="pod.has_pod"
+        slot="button"
+        class="buttonPrimary"
+        :disabled="selectedProjectId === -1"
+        @click="handleLogClick"
+      >
+        <em class="ri-computer-line mr-1" />
+        {{ $t('SonarQube.ScanLogs') }}
+      </el-button>
       <el-input
         v-model="keyword"
         :placeholder="$t('CheckMarx.SearchScanId')"
@@ -147,6 +157,11 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
+    <PodLog
+      ref="podLogDialog"
+      :pod-name="pod.pod_name"
+      :container-name="pod.container_name"
+    />
   </el-row>
 </template>
 
@@ -160,17 +175,20 @@ import {
   registerCheckMarxReport,
   cancelCheckMarxScans
 } from '@/api/checkMarx'
+import { getCheckMarxPod } from '@/api_v2/checkMarx'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { ElTableColumnTime } from '@/components'
 import * as elementTagType from '@/utils/element-tag-type'
+import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanCheckmarx',
-  components: { ElTableColumnTime },
+  components: { ElTableColumnTime, PodLog },
   mixins: [MixinElTableWithAProject],
   data() {
     return {
-      searchKeys: ['scan_id']
+      searchKeys: ['scan_id'],
+      pod: {}
     }
   },
   watch: {
@@ -182,6 +200,7 @@ export default {
     async fetchData() {
       if (this.selectedProjectId === -1) return []
       const res = await getCheckMarxScans(this.selectedProjectId)
+      this.pod = (await getCheckMarxPod(this.selectedProjectId)).data
       return res.data
     },
     async updateCheckMarxScansStatus(listData) {
@@ -291,6 +310,10 @@ export default {
           })
         }
       }
+    },
+    handleLogClick() {
+      this.$refs.podLogDialog.fetchData(this.pod.pod_name, this.pod.container_name)
+      this.$refs.podLogDialog.dialogVisible = true
     },
     /**
      * all status of checkmarx's scan:

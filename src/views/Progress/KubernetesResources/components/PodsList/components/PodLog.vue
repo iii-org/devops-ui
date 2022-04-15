@@ -17,8 +17,8 @@
       <pre>{{ logData }}</pre>
     </el-card>
     <span slot="footer">
-      <el-button @click="scrollTo('top')">{{ $t('general.ScrollToTop') }}</el-button>
-      <el-button @click="scrollTo('bottom')">{{ $t('general.ScrollToBottom') }}</el-button>
+      <el-button class="buttonSecondaryReverse" @click="scrollTo('top')">{{ $t('general.ScrollToTop') }}</el-button>
+      <el-button class="buttonSecondaryReverse" @click="scrollTo('bottom')">{{ $t('general.ScrollToBottom') }}</el-button>
       <el-button class="buttonPrimary" @click="dialogVisible = false">{{ $t('general.Close') }}</el-button>
     </span>
   </el-dialog>
@@ -46,7 +46,7 @@ export default {
     return {
       dialogVisible: false,
       isUpdating: false,
-      logData: '',
+      logData: 'Loading...',
       timer: null
     }
   },
@@ -70,7 +70,7 @@ export default {
       }
     },
     handleClose() {
-      this.logData = ''
+      this.logData = 'Loading...'
       this.isUpdating = false
       this.dialogVisible = false
       this.clearTimer()

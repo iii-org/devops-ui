@@ -4,6 +4,16 @@
     style="overflow: hidden;"
   >
     <ProjectListSelector>
+      <el-button
+        v-if="pod.has_pod"
+        slot="button"
+        class="buttonPrimary"
+        :disabled="selectedProjectId === -1"
+        @click="handleLogClick"
+      >
+        <em class="ri-computer-line mr-1" />
+        {{ $t('SonarQube.ScanLogs') }}
+      </el-button>
       <el-input
         v-model="keyword"
         :placeholder="$t('Git.searchCommitId')"
@@ -132,6 +142,11 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
+    <PodLog
+      ref="podLogDialog"
+      :pod-name="pod.pod_name"
+      :container-name="pod.container_name"
+    />
   </el-row>
 </template>
 
@@ -140,20 +155,28 @@ import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getZapScans } from '@/api/zap'
+import { getZapPod } from '@/api_v2/zap'
+import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanZap',
-  components: { ElTableColumnTime, ElTableColumnTag },
+  components: {
+    ElTableColumnTime,
+    ElTableColumnTag,
+    PodLog
+  },
   mixins: [MixinElTableWithAProject],
   data() {
     return {
       confirmLoading: false,
-      searchKeys: ['commit_id']
+      searchKeys: ['commit_id'],
+      pod: {}
     }
   },
   methods: {
     async fetchData() {
       const res = await getZapScans(this.selectedProjectId)
+      this.pod = (await getZapPod(this.selectedProjectId)).data
       return this.handleScans(res.data)
     },
     handleScans(scans) {
@@ -175,6 +198,10 @@ export default {
     showFullLog(log) {
       const wnd = window.open(' ')
       wnd.document.write(log)
+    },
+    handleLogClick() {
+      this.$refs.podLogDialog.fetchData(this.pod.pod_name, this.pod.container_name)
+      this.$refs.podLogDialog.dialogVisible = true
     }
   }
 }
