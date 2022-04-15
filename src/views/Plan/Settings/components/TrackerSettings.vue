@@ -7,12 +7,12 @@
           v-model="isToggle"
           inactive-color="#ff4949"
           class="mr-5"
-          :disabled="disableSwitch"
+          :disabled="disableSwitch || permission"
           :active-text="$t('general.Enable')"
           :inactive-text="$t('general.Disable')"
           @change="toggleSwitch"
         />
-        <el-button class="buttonPrimary" :disabled="!isToggle" @click="handleSave">{{ $t('general.Save') }}</el-button>
+        <el-button class="buttonPrimary" :disabled="!isToggle || permission" @click="handleSave">{{ $t('general.Save') }}</el-button>
       </div>
     </div>
     <el-divider />
@@ -36,7 +36,7 @@
           align="center"
           type="selection"
           width="200"
-          property="isEnabled"
+          :selectable="checkboxState"
         />
       </el-table>
     </div>
@@ -75,10 +75,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['tracker', 'selectedProjectId'])
+    ...mapGetters(['tracker', 'selectedProject', 'userId', 'userRole']),
+    permission() {
+      if (this.userRole === 'Administrator') return false
+      else if (this.selectedProject.owner_id === this.userId) return false
+      else return true
+    }
   },
   watch: {
-    selectedProjectId: {
+    selectedProject: {
       handler(val) {
         this.disableSwitch = val === -1
       },
@@ -91,7 +96,7 @@ export default {
   methods: {
     async fetchData(update) {
       this.$forceUpdate()
-      const res = await getIssueForceTracker(this.selectedProjectId)
+      const res = await getIssueForceTracker(this.selectedProject.id)
       this.isToggle = res.data.enable
       this.oldForceTrackerListId = res.data.need_fatherissue_trackers.map(object => object.id)
       const selected = this.tracker.filter(ob => this.oldForceTrackerListId.includes(ob.id))
@@ -100,7 +105,7 @@ export default {
     async toggleSwitch(bool) {
       this.listLoading = true
       if (bool) {
-        await createIssueForceTracker(this.selectedProjectId)
+        await createIssueForceTracker(this.selectedProject.id)
           .then(async () => {
             await this.fetchData()
             this.showChangeMessage(bool)
@@ -110,7 +115,7 @@ export default {
             return err
           })
       } else {
-        await deleteIssueForceTracker(this.selectedProjectId)
+        await deleteIssueForceTracker(this.selectedProject.id)
           .then(async() => {
             await this.fetchData()
             this.showChangeMessage(bool)
@@ -142,7 +147,7 @@ export default {
     async handleSave() {
       this.listLoading = true
       const newForceTrackerListId = this.newForceTrackerList.map(object => object.id)
-      await updateIssueForceTracker(this.selectedProjectId, { need_fatherissue_trackers: newForceTrackerListId })
+      await updateIssueForceTracker(this.selectedProject.id, { need_fatherissue_trackers: newForceTrackerListId })
         .then(async () => {
           await this.fetchData(true)
           await this.showUpdateMessage()
@@ -159,6 +164,9 @@ export default {
         message: this.$t('Notify.Updated'),
         type: 'success'
       })
+    },
+    checkboxState() {
+      return !(this.permission)
     }
   }
 }
