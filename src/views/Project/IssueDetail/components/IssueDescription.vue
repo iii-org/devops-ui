@@ -17,7 +17,7 @@
         </el-form-item>
       </el-form>
       <el-col v-else>
-        <Viewer :initial-value="value" />
+        <Viewer :key="componentKey" :initial-value="value" />
         <el-button :class="isButtonDisabled? 'buttonInfoReverse': 'buttonSecondaryReverse'" :disabled="isButtonDisabled" icon="el-icon-edit" size="mini" @click="edit=true">{{ $t('general.Edit') }}</el-button>
       </el-col>
     </el-col>
@@ -52,12 +52,14 @@ export default {
   data() {
     return {
       edit: false,
-      newValue: this.value
+      newValue: this.value,
+      componentKey: 0
     }
   },
   watch: {
     value(newVal) {
       this.newValue = newVal
+      this.componentKey += 1
     },
     newValue(value) {
       this.$emit('input', value)
