@@ -23,6 +23,7 @@ const getDefaultState = () => {
     priority: [],
     strictTracker: [],
     forceTracker: [],
+    enableForceTracker: false,
 
     issueFilter: JSON.parse(sessionStorage.getItem('issueFilter')) || {},
     keyword: JSON.parse(sessionStorage.getItem('keyword')) || {},
@@ -60,6 +61,9 @@ const mutations = {
   },
   SET_STRICT_TRACKER: (state, value) => {
     state.strictTracker = value
+  },
+  SET_ENABLE_FORCE_TRACKER: (state, value) => {
+    state.enableForceTracker = value
   },
   SET_FORCE_TRACKER: (state, value) => {
     state.forceTracker = value
@@ -140,6 +144,7 @@ const actions = {
   async getIssueForceTracker({ commit }) {
     try {
       const tracker = await getIssueForceTracker(state.selectedProject.id)
+      commit('SET_ENABLE_FORCE_TRACKER', tracker.data.enable)
       commit('SET_FORCE_TRACKER', tracker.data.need_fatherissue_trackers)
     } catch (error) {
       console.error(error.toString())
@@ -214,6 +219,7 @@ const actions = {
     commit('SET_GROUP_BY', { dimension: 'status', value: [] })
     commit('SET_DISPLAY_CLOSED', {})
     dispatch('getIssueStrictTracker')
+    dispatch('getIssueForceTracker')
   },
   getIssueFilter({ commit, state }) {
     const getSessionValue = sessionStorage.getItem('issueFilter')

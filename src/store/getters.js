@@ -20,6 +20,7 @@ const getters = {
   userProjectList: state => state.projects.options,
   selectedProjectId: state => state.projects.selectedProject.id,
   selectedProject: state => state.projects.selectedProject,
+  enableForceTracker: state => state.projects.enableForceTracker,
   forceTracker: state => state.projects.forceTracker,
   strictTracker: state => state.projects.strictTracker,
   tracker: state => state.projects.tracker,

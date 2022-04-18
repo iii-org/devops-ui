@@ -287,9 +287,9 @@ export default {
       //     message: '尚未設定本變更議題之原由議題單(父議題），請先行設定後再存檔'
       //   })
       // } else
-      if (this.form.tracker_id > 0 && !value) {
-        const foundtracker = this.forceTracker.find((tracker) => tracker.id === this.form.tracker_id)
-        const tracker_name = this.$t(`Issue.${foundtracker.name}`)
+      const foundTracker = this.forceTracker.find((tracker) => tracker.id === this.form.tracker_id)
+      if (this.enableForceTracker && foundTracker && !value) {
+        const tracker_name = this.$t(`Issue.${foundTracker.name}`)
         callback(new Error(this.$t('Notify.NoParentIssueWarning', { tracker_name })))
       } else if (value && this.issueId && value === this.issueId) {
         callback(new Error('The parent issue is the same issue.'))
@@ -327,7 +327,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'forceTracker']),
+    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'forceTracker', 'enableForceTracker']),
     isParentIssueClosed() {
       if (Object.keys(this.parent).length <= 0) return false
       return this.parent.status.name === 'Closed'
@@ -569,7 +569,7 @@ export default {
     getObjectByName(list, name) {
       return list.find((item) => (item.name === name))
     },
-    highLight: function(value) {
+    highLight(value) {
       if (!value) return ''
       if (!this.issueQuery) return value
       const reg = new RegExp(this.issueQuery, 'gi')
