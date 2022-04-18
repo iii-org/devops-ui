@@ -12,10 +12,10 @@ const blobToJson = (blob) => {
       const { result } = res.target
       const parseResult = JSON.parse(result)
       resolve(parseResult)
-    } 
+    }
     reader.onerror = err => {
       reject(err)
-    } 
+    }
     reader.readAsText(new Blob([blob]), 'utf-8')
   })
 }
@@ -23,6 +23,22 @@ const blobToJson = (blob) => {
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API
 })
+
+const handleRedmineError = (errors) => {
+  let message = ''
+  for (const key in errors) {
+    message = errors[key]
+  }
+  return message
+}
+
+const handleRegularError = (error) => {
+  const details = {}
+  for (const key in error.details) {
+    details[key] = i18n.te(`errorDetail.${error.details[key]}`) ? i18n.t(`errorDetail.${error.details[key]}`) : error.details[key]
+  }
+  return i18n.t(`errorMessage.${error.code}`, details)
+}
 
 service.interceptors.request.use(
   config => {
@@ -52,12 +68,13 @@ service.interceptors.response.use(
     let res_msg
     if (data.error && i18n.te(`errorMessage.${data.error.code}`)) {
       const details = {}
-      if (data.error.details) {
-        for (const key in data.error.details) {
-          details[key] = i18n.te(`errorDetail.${data.error.details[key]}`) ? i18n.t(`errorDetail.${data.error.details[key]}`) : data.error.details[key]
-        }
+      if (data.error.details.response && data.error.details.response.hasOwnProperty('errors')) {
+        res_msg = handleRedmineError(data.error.details.response.errors)
+      } else if (data.error.details) {
+        res_msg = handleRegularError(data.error)
+      } else {
+        res_msg = i18n.t(`errorMessage.${error.code}`, details)
       }
-      res_msg = i18n.t(`errorMessage.${data.error.code}`, details)
     } else if (config.responseType === 'blob') {
       const errorJson = await blobToJson(data)
       return Promise.reject(errorJson)
