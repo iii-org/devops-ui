@@ -8,7 +8,7 @@
           :key="column.id"
           v-permission="permission"
           :title="column.label"
-          :disabled="column.value === 'priority' ? row.has_children : false"
+          :disabled="(column.value === 'priority' ? row.has_children : false) || isForceParent"
         >
           <contextmenu-item
             v-for="item in getOptionsData(column.value)"
@@ -22,7 +22,11 @@
             {{ getSelectionLabel(item) }} {{ item.message }}
           </contextmenu-item>
         </contextmenu-submenu>
-        <contextmenu-submenu v-permission="permission" :title="$t('Issue.DoneRatio')" :disabled="row.has_children">
+        <contextmenu-submenu
+          v-permission="permission"
+          :title="$t('Issue.DoneRatio')"
+          :disabled="row.has_children || isForceParent"
+        >
           <contextmenu-item
             v-for="item in done_ratio"
             :key="item.id"
@@ -38,7 +42,11 @@
         <contextmenu-item v-permission="permission" @click="toggleRelationDialog('Parent')">{{
           $t('Issue.ParentIssue')
         }}</contextmenu-item>
-        <contextmenu-submenu v-permission="permission" :title="$t('Issue.ChildrenIssue')">
+        <contextmenu-submenu
+          v-permission="permission"
+          :title="$t('Issue.ChildrenIssue')"
+          :disabled="isForceParent"
+        >
           <contextmenu-item @click="toggleRelationDialog('Children')">{{
             $t('general.Settings', { name: $t('Issue.ChildrenIssue') })
           }}</contextmenu-item>
@@ -215,7 +223,16 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['tracker', 'status', 'priority', 'fixedVersionShowClosed', 'selectedProjectId']),
+    ...mapGetters([
+      'tracker',
+      'status',
+      'priority',
+      'fixedVersionShowClosed',
+      'selectedProjectId',
+      'strictTracker',
+      'forceTracker',
+      'enableForceTracker'
+    ]),
     done_ratio() {
       const result = []
       for (let num = 0; num <= 100; num += 10) {
@@ -233,6 +250,10 @@ export default {
     },
     permission() {
       return ['Administrator', 'Project Manager', 'Engineer']
+    },
+    isForceParent() {
+      if (!this.enableForceTracker || !this.row.id) return false
+      return this.forceTracker.findIndex((tracker) => tracker.id === this.row.tracker.id) !== -1 && !this.row.has_father
     }
   },
   watch: {
@@ -271,6 +292,7 @@ export default {
     },
     getOptionsData(option_name) {
       if (option_name === 'status') return this.getDynamicStatusList()
+      if (option_name === 'tracker' && this.enableForceTracker && !this.row.has_father) return this.strictTracker
       return this[option_name]
     },
     async loadSelectionList() {
