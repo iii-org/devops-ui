@@ -24,6 +24,19 @@ const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API
 })
 
+const handleErrorMessage = (data) => {
+  let res_msg = ''
+  if (data.error.details && data.error.details.response && data.error.details.response.hasOwnProperty('errors')) {
+    // only for #3600 issue
+    res_msg = handleRedmineError(data.error.details.response.errors)
+  } else if (data.error.details) {
+    res_msg = handleRegularError(data.error)
+  } else {
+    res_msg = i18n.t(`errorMessage.${data.error.code}`)
+  }
+  return res_msg
+}
+
 const handleRedmineError = (errors) => {
   let message = ''
   for (const key in errors) {
@@ -67,14 +80,7 @@ service.interceptors.response.use(
     const { data, config } = error.response
     let res_msg
     if (data.error && i18n.te(`errorMessage.${data.error.code}`)) {
-      const details = {}
-      if (data.error.details.response && data.error.details.response.hasOwnProperty('errors')) {
-        res_msg = handleRedmineError(data.error.details.response.errors)
-      } else if (data.error.details) {
-        res_msg = handleRegularError(data.error)
-      } else {
-        res_msg = i18n.t(`errorMessage.${error.code}`, details)
-      }
+      res_msg = handleErrorMessage(data)
     } else if (config.responseType === 'blob') {
       const errorJson = await blobToJson(data)
       return Promise.reject(errorJson)

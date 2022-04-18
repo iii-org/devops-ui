@@ -134,6 +134,7 @@ export default {
     7006: 'Argument {arg} can not be alerted when children issue exist.',
     7007: `$arg should begin with 'ghp_'.`,
     8001: '{service_name} error: {response}',
+    8101: 'Parent issue setting error! Please confirm that the setting issue is not a sub-issue or related issue of this issue.',
     9001: 'Internal exception: {type}: {exception}',
     9003: 'An unexpected database error has occurred: {message}',
     9999: 'An unknown error has occurred.',
