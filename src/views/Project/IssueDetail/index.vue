@@ -424,7 +424,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userProjectList', 'selectedProjectId', 'test_filename', 'userRole', 'forceTracker']),
+    ...mapGetters(['userProjectList', 'selectedProjectId', 'test_filename', 'userRole', 'forceTracker', 'enableForceTracker']),
     hasRelationIssue() {
       return Object.keys(this.parent).length > 0 || this.children.length > 0
     },
@@ -464,6 +464,7 @@ export default {
     },
     propsIssueId(val) {
       this.fetchIssueLink()
+      this.$nextTick(() => this.$refs.IssueForm.$refs.form.clearValidate())
     },
     async relationVisible(val) {
       if (val === 1) {
@@ -777,7 +778,7 @@ export default {
           //   this.setWarningMessage(message)
           // } else
           const foundTracker = this.forceTracker.find((tracker) => tracker.id === this.form.tracker_id)
-          if (this.forceTracker.length > 0 && foundTracker && !this.form.parent_id) {
+          if (this.enableForceTracker && foundTracker && !this.form.parent_id) {
             const tracker_name = this.$t(`Issue.${foundTracker.name}`)
             const message = this.$t('Notify.NoParentIssueWarning', { tracker_name })
             if (foundTracker.hasOwnProperty('id')) this.setWarningMessage(message)
