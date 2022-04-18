@@ -23,6 +23,7 @@
       <div
         v-for="(element, idx) in list"
         :key="element.id"
+        :ref="element.id"
         class="board-item item"
         @drop="dropPanelLabels($event, idx)"
         @dragover="allowDrop($event, idx)"
@@ -331,6 +332,14 @@ export default {
     addIssue: {
       type: Function,
       default: () => ({})
+    },
+    updateCard: {
+      type: Boolean,
+      default: false
+    },
+    elementId: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -399,6 +408,25 @@ export default {
     findCompleteIssues() {
       return function (element) {
         return this.relativeList.find((list) => list.id === element.id)
+      }
+    }
+  },
+  watch: {
+    updateCard(value) {
+      if (value && this.$refs[this.elementId]) {
+        if (this.$refs[this.elementId].length > 0) {
+          this.$refs[this.elementId][0].style.boxShadow = '0px 0px 10px 2px rgba(255,0,0,.2)'
+          this.$refs[this.elementId][0].style.transition = 'box-shadow 0.3s ease-in-out'
+          this.$nextTick(async () => {
+            await setTimeout(() => {
+              if (this.$refs[this.elementId].length > 0) {
+                this.$refs[this.elementId][0].style.boxShadow = ''
+                this.$refs[this.elementId][0].style.transition = 'box-shadow 0.3s ease-in-out'
+              }
+            }, 1500)
+          })
+        }
+        this.$emit('update-card')
       }
     }
   },

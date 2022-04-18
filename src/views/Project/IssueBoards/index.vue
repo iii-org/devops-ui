@@ -462,6 +462,7 @@ export default {
       await this.getInitStoredData()
       await this.loadSelectionList()
       await this.loadData()
+      await this.syncLoadFilterData()
     },
     async getInitStoredData() {
       const key = 'board'
@@ -790,7 +791,6 @@ export default {
       // })
       this.socket.on('update_issue', async (data) => {
         for (const idx in data) {
-          // console.log('update_issue', data[idx])
           data[idx] = _this.socketDataFormat(data[idx])
           const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
           this.$set(this.projectIssueList, findChangeIndex, data[idx])

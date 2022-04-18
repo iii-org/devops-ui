@@ -365,6 +365,7 @@ export default {
           type: 'success'
         })
         this.$emit('update')
+        this.$emit('update-card', this.row.id)
       } catch (e) {
         console.error(e)
       }
@@ -387,6 +388,7 @@ export default {
         const res = await updateIssue(this.row.id, data)
         this.row[column.replace('_id', '')] = res.data[column.replace('_id', '')]
         this.$emit('update')
+        this.$emit('update-card', this.row.id)
       } catch (e) {
         console.error(e)
       }
@@ -466,6 +468,7 @@ export default {
     },
     handleUpdateIssue() {
       this.$emit('update')
+      this.$emit('update-card', this.row.id)
     },
     handleAdvancedClose() {
       this.$refs['AddIssue'].handleClose()
