@@ -106,6 +106,7 @@ stages:
       - parentchildproject
       - routeset
       - tracker
+      - issueboard
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -148,6 +149,7 @@ stages:
       - parentchildproject
       - routeset
       - tracker
+      - issueboard
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -201,6 +203,7 @@ stages:
       - parentchildproject
       - routeset
       - tracker
+      - issueboard
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -247,6 +250,7 @@ stages:
       - parentchildproject
       - routeset
       - tracker
+      - issueboard
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -292,6 +296,7 @@ stages:
       - parentchildproject
       - routeset
       - tracker
+      - issueboard
 - name: Test--ZAP
   iiidevops: zap
   steps:
