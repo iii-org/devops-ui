@@ -9,6 +9,7 @@ import {
 } from '@/api/projects'
 import { forceDeleteProject } from '@/api_v2/projects'
 import { getIssuePriority, getIssueStatus, getIssueTracker } from '@/api/issue'
+import { getIssueStrictTracker, getIssueForceTracker } from '@/api_v2/issue'
 
 const getDefaultState = () => {
   return {
@@ -20,6 +21,8 @@ const getDefaultState = () => {
     tracker: [],
     status: [],
     priority: [],
+    strictTracker: [],
+    forceTracker: [],
 
     issueFilter: JSON.parse(sessionStorage.getItem('issueFilter')) || {},
     keyword: JSON.parse(sessionStorage.getItem('keyword')) || {},
@@ -54,6 +57,12 @@ const mutations = {
     state.tracker = list[0]
     state.status = list[1]
     state.priority = list[2]
+  },
+  SET_STRICT_TRACKER: (state, value) => {
+    state.strictTracker = value
+  },
+  SET_FORCE_TRACKER: (state, value) => {
+    state.forceTracker = value
   },
   SET_FILTER: (state, value) => {
     state.issueFilter = value
@@ -109,12 +118,32 @@ const actions = {
       console.error(error.toString())
     }
   },
-  async getSelectionOptions({ commit }) {
+  async getSelectionOptions({ commit, dispatch }) {
     let selections = await Promise.all([getIssueTracker(), getIssueStatus(), getIssuePriority()])
     commit(
       'SET_SELECTION_OPTIONS',
       selections.map((item) => item.data)
     )
+  },
+  async getIssueStrictTracker({ commit }) {
+    const params = {
+      new: true,
+      project_id: state.selectedProject.id
+    }
+    try {
+      const tracker = await getIssueStrictTracker(params)
+      commit('SET_STRICT_TRACKER', tracker.data)
+    } catch (error) {
+      console.error(error.toString())
+    }
+  },
+  async getIssueForceTracker({ commit }) {
+    try {
+      const tracker = await getIssueForceTracker(state.selectedProject.id)
+      commit('SET_FORCE_TRACKER', tracker.data.need_fatherissue_trackers)
+    } catch (error) {
+      console.error(error.toString())
+    }
   },
   async addNewProject({ commit, dispatch }, data) {
     try {
@@ -172,7 +201,7 @@ const actions = {
       console.error(error.toString())
     }
   },
-  setSelectedProject({ commit }, project) {
+  setSelectedProject({ commit, dispatch }, project) {
     const { id } = project
     if (localStorage.getItem('projectId') !== id.toString()) {
       sessionStorage.removeItem('issueFilter')
@@ -184,6 +213,7 @@ const actions = {
     commit('SET_FILTER', {})
     commit('SET_GROUP_BY', { dimension: 'status', value: [] })
     commit('SET_DISPLAY_CLOSED', {})
+    dispatch('getIssueStrictTracker')
   },
   getIssueFilter({ commit, state }) {
     const getSessionValue = sessionStorage.getItem('issueFilter')

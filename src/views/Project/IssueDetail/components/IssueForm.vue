@@ -158,7 +158,10 @@
       </el-select>
     </el-form-item>
     <el-form-item :label="$t('Issue.tracker')" prop="tracker_id">
-      <el-select v-model="form.tracker_id" style="width: 100%">
+      <el-select
+        v-model="form.tracker_id"
+        style="width: 100%"
+      >
         <el-option
           v-for="option in tracker"
           :key="option.id"
@@ -284,7 +287,11 @@ export default {
       //     message: '尚未設定本變更議題之原由議題單(父議題），請先行設定後再存檔'
       //   })
       // } else
-      if (value && this.issueId && value === this.issueId) {
+      if (this.form.tracker_id > 0 && !value) {
+        const foundtracker = this.forceTracker.find((tracker) => tracker.id === this.form.tracker_id)
+        const tracker_name = this.$t(`Issue.${foundtracker.name}`)
+        callback(new Error(this.$t('Notify.NoParentIssueWarning', { tracker_name })))
+      } else if (value && this.issueId && value === this.issueId) {
         callback(new Error('The parent issue is the same issue.'))
       } else {
         callback()
@@ -320,7 +327,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'tracker', 'status', 'priority']),
+    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'forceTracker']),
     isParentIssueClosed() {
       if (Object.keys(this.parent).length <= 0) return false
       return this.parent.status.name === 'Closed'

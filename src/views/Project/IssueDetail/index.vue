@@ -424,7 +424,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userProjectList', 'selectedProjectId', 'test_filename', 'userRole']),
+    ...mapGetters(['userProjectList', 'selectedProjectId', 'test_filename', 'userRole', 'forceTracker']),
     hasRelationIssue() {
       return Object.keys(this.parent).length > 0 || this.children.length > 0
     },
@@ -776,7 +776,12 @@ export default {
           //   const message = '尚未設定本變更議之原由議題單(父議題），請先行設定後再存檔'
           //   this.setWarningMessage(message)
           // } else
-          if (this.form.name && this.form.name !== '') {
+          if (this.form.tracker_id > 0 && !this.form.parent_id) {
+            const foundtracker = this.forceTracker.find((tracker) => tracker.id === this.form.tracker_id)
+            const tracker_name = this.$t(`Issue.${foundtracker.name}`)
+            const message = this.$t('Notify.NoParentIssueWarning', { tracker_name })
+            if (foundtracker.hasOwnProperty('id')) this.setWarningMessage(message)
+          } else if (this.form.name && this.form.name !== '') {
             this.handleUpdateTags()
           } else {
             const message = '請輸入標題'

@@ -46,11 +46,20 @@
           <TagSettings ref="tagSettings" />
         </el-card>
       </el-tab-pane>
+      <el-tab-pane
+        :label="$t('ProjectSettings.ParentIssueRequired')" 
+        name="trackerSettings"
+      >
+        <el-card>
+          <TrackerSettings ref="trackerSettings" />
+        </el-card>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { ProjectVersions, ProjectMembers, PipelineSettings } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
@@ -63,7 +72,8 @@ export default {
     PipelineSettings,
     ProjectMembers,
     AlertSettings: () => import ('@/views/Plan/Settings/components/AlertSettings'),
-    TagSettings: () => import ('@/views/Plan/Settings/components/TagSettings')
+    TagSettings: () => import ('@/views/Plan/Settings/components/TagSettings'),
+    TrackerSettings: () => import ('@/views/Plan/Settings/components/TrackerSettings')
   },
   mixins: [MixinElTableWithAProject],
   data() {
@@ -74,6 +84,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['selectedProjectId']),
     hasUnsavedChanges() {
       return this.$refs.alertSettings.hasUnsavedChanges
     }

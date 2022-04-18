@@ -135,6 +135,7 @@ export default {
     7007: `參數 $arg 需要以 'ghp_'做開為開頭。`,
     8001: '{service_name} 回報錯誤：{response}',
     9001: '內部錯誤：{type}: {exception}',
+    9002: '出現無效的代碼路徑: {message}',
     9003: '發生未被預期的資料庫錯誤：{message}',
     9999: '發生未知錯誤。',
     20001: 'Token 是無效的。',
@@ -277,7 +278,8 @@ export default {
     pluginRepeatMessage: '紅底為同分支有重複項目設定，請確認其設置為一致(如同為開或關)，以確保 Pipeline 運作正常。',
     ChangeProjectManager: '確認是否要變更專案經理人。',
     ConnectSocket: '看板正在連接 Socket...',
-    UpdateKanban: '{issueName} 已更新'
+    UpdateKanban: '{issueName} 已更新',
+    NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -1107,8 +1109,13 @@ export default {
     EnableMessage: '已成功啟用提醒功能',
     DisableMessage: '已成功停用提醒功能',
     SuccessUpdateAlertSettings: '通知設定已更新成功',
+    EnableForceTracker: '強制要求父議題設置已啟用',
+    DisableForceTracker: '強制要求父議題設置已停用',
     TagUpdateMessage: '任務標籤已更新成功',
-    ChangeManager: '變更專案經理'
+    ChangeManager: '變更專案經理',
+    ParentIssueRequired: '議題提醒',
+    ParentIssueRequiredSettings: '議題提醒功能',
+    IssueType: '議題類型'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: '遠端佈署環境',

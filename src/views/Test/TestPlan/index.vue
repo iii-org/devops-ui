@@ -7,7 +7,7 @@
         v-permission="['Administrator','Project Manager', 'Engineer']"
         class="buttonSecondary"
         icon="el-icon-plus"
-        :disabled="selectedProjectId === -1"
+        :disabled="selectedProjectId === -1 || disableAddIssue"
         @click="handleQuickAddClose"
       >
         {{ $t('Issue.AddIssue') }}
@@ -44,7 +44,7 @@
       </SearchFilter>
     </ProjectListSelector>
     <el-divider />
-    <quick-add-issue
+    <QuickAddIssue
       ref="quickAddIssue"
       :save-data="saveIssue"
       :project-id="selectedProjectId"
@@ -222,7 +222,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed']),
+    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed', 'forceTracker']),
     refTable() {
       return this.$refs['issueList']
     },
@@ -231,6 +231,10 @@ export default {
     },
     trackerList() {
       return this.tracker.filter(item => item.name === 'Test Plan')
+    },
+    disableAddIssue () {
+      const foundTracker = this.forceTracker.find((tracker) => tracker.id === 8 && tracker.name === 'Test Plan')
+      return !!foundTracker
     }
   },
   watch: {
