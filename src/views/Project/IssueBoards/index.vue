@@ -217,6 +217,7 @@ import { Status, Tracker, Priority, CustomFilter } from '@/components/Issue'
 import axios from 'axios'
 import SaveFilterButton from '@/components/Issue/components/SaveFilterButton'
 import { io } from 'socket.io-client'
+import { getHasSon, getProjectRelation } from '@/api_v2/projects'
 
 export default {
   name: 'IssueBoards',
@@ -250,6 +251,8 @@ export default {
       relativeIssueList: [],
       searchVisible: false,
       keyword: null,
+      hasChildren: false,
+      project: [],
       socket: io(`/issues/websocket`, { // production socket
         reconnectionAttempts: 5
       })
@@ -269,7 +272,7 @@ export default {
       return result
     },
     filterOptions() {
-      return Object.freeze([
+      const filterOption = [
         {
           id: 1,
           label: this.$t('Issue.FilterDimensions.status'),
@@ -309,7 +312,15 @@ export default {
           placeholder: 'Priority',
           tag: true
         }
-      ])
+      ]
+      if (this.hasChildren) {
+        filterOption.unshift({
+          id: 7,
+          value: 'project',
+          placeholder: 'Project'
+        })
+      }
+      return filterOption
     },
     groupByOptions() {
       return this.getStatusSort.map((item, idx) => ({
@@ -459,9 +470,18 @@ export default {
     },
     async fetchInitData() {
       this.groupBy = await this.getGroupBy()
+      await this.checkProjectHasChildren()
       await this.getInitStoredData()
       await this.loadSelectionList()
       await this.loadData()
+    },
+    async checkProjectHasChildren() {
+      this.hasChildren = (await getHasSon(this.selectedProjectId)).has_child
+      if (this.hasChildren) {
+        const res = (await getProjectRelation(this.selectedProjectId)).data
+        this.project = res[0].child
+        this.project.unshift(res[0].parent)
+      }
     },
     async getInitStoredData() {
       const key = 'board'
@@ -790,7 +810,6 @@ export default {
       // })
       this.socket.on('update_issue', async (data) => {
         for (const idx in data) {
-          // console.log('update_issue', data[idx])
           data[idx] = _this.socketDataFormat(data[idx])
           const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
           this.$set(this.projectIssueList, findChangeIndex, data[idx])
