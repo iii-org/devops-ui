@@ -14,12 +14,14 @@
       v-if="update.length > 0" 
       class="mx-3"
     />
+    <MessageDialog ref="messageDialog" :message="message" />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { io } from 'socket.io-client'
+import MessageDialog from './components/MessageDialog.vue'
 import { setReadMessage } from '@/api_v2/monitoring'
 
 export default {
@@ -27,7 +29,8 @@ export default {
   components: {
     VersionChecker: () => import('@/components/Notification/VersionChecker'),
     AbnormalChecker: () => import('@/components/Notification/AbnormalChecker'),
-    NormalChecker: () => import('@/components/Notification/NormalChecker')
+    NormalChecker: () => import('@/components/Notification/NormalChecker'),
+    MessageDialog
   },
   data() {
     return {
@@ -35,6 +38,7 @@ export default {
       alert: [],
       info: [],
       update: [],
+      message: {},
       socket: io(`/v2/get_notification_message`, {
         reconnectionAttempts: 5
       })
@@ -59,10 +63,8 @@ export default {
     setSocketListener() {
       this.socket.on('create_message', async (data) => {
         this.setNotificationList(data)
-        console.log(data)
       })
       this.socket.on('read_message', async (msg_id) => {
-        console.log(msg_id)
         const findChangeIndex = this.msgList.findIndex(msg => parseInt(msg_id) === parseInt(msg.id))
         this.$delete(this.msgList, findChangeIndex)
         this.filterMsg()
@@ -97,6 +99,8 @@ export default {
       this.update = this.msgList.filter((item) => item.alert_level.id === 101)
     },
     async readMessage(msg) {
+      this.$refs.messageDialog.dialogVisible = true
+      this.message = msg
       if (msg.users_can_read === true) {
         try {
           await setReadMessage(this.userId, { message_ids: [msg.id] }).then(() => {

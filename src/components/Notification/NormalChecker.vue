@@ -45,32 +45,22 @@
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-    <MessageDialog ref="messageDialog" :message="message" />
   </div>
 </template>
 
 <script>
 import { relativeTime } from '@/filters'
-import MessageDialog from './components/MessageDialog.vue'
 
 export default {
   name: 'NormalChecker',
-  components: { MessageDialog },
   props: {
     msgs: {
       type: Array,
       default: () => []
     }
   },
-  data() {
-    return {
-      message: {}
-    }
-  },
   methods: {
     showMessage(msg) {
-      this.$refs.messageDialog.dialogVisible = true
-      this.message = msg
       this.$emit('read', msg)
     },
     relativeTime(value) {
