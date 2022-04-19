@@ -246,6 +246,21 @@
         @update-issue="handleUpdated"
       />
     </el-dialog>
+    <el-dialog
+      :visible.sync="isShowDialog"
+      append-to-body
+      destroy-on-close
+      width="30%"
+    >
+      <span>
+        <em class="el-icon-warning" :style="getStyle('danger')" />
+        {{ $t('Notify.ChangeProject') }}
+      </span>
+      <span slot="footer">
+        <el-button @click="onCancel">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" @click="onConfirm">{{ $t('general.Confirm') }}</el-button>
+      </span>
+    </el-dialog>
     <ContextMenu
       ref="contextmenu"
       :visible="contextMenu.visible"
@@ -292,6 +307,7 @@ import getPageTitle from '@/utils/get-page-title'
 import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
 import { getIssueFamily } from '@/api/issue'
+import variables from '@/styles/theme/variables.scss'
 
 const commitLimit = 10
 
@@ -386,7 +402,9 @@ export default {
       tagsString: '',
       errorMsg: [],
       showAlert: false,
-      isLoadingFamily: false
+      isLoadingFamily: false,
+      isShowDialog: false,
+      storagePId: ''
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -471,10 +489,20 @@ export default {
       if (val === 1) {
         await this.getIssueFamilyData(this.issue)
       }
+    },
+    'form.project_id': {
+      handler(newPId, oldPId) {
+        if (this.storagePId) {
+          if (newPId !== this.storagePId) {
+            this.isShowDialog = true
+          }
+        }
+      }
     }
   },
   async mounted() {
     await this.fetchIssueLink()
+    this.storagePId = this.form.project_id
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject']),
@@ -1082,6 +1110,29 @@ export default {
     },
     UTCtoLocalTime(value) {
       return UTCtoLocalTime(value)
+    },
+    onResetPId(pId) {
+      this.form.project_id = pId
+    },
+    onCancel() {
+      this.form.project_id = this.storagePId
+      this.isShowDialog = false
+    },
+    onConfirm() {
+      this.storagePId = this.form.project_id
+      this.resetForm()
+      this.isShowDialog = false
+    },
+    resetForm() {
+      this.form.tags = []
+      this.form.assigned_to_id = ''
+      this.form.fixed_version_id = ''
+    },
+    getStyle(colorCode) {
+      const color = variables[`${colorCode}`]
+      return {
+        color
+      }
     }
   }
 }

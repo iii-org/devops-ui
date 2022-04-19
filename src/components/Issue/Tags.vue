@@ -71,10 +71,12 @@ export default {
     },
     async fetchTagsData(tag_name) {
       this.isLoading = true
-      const pId = this.selectedProjectId
+      // const pId = this.selectedProjectId
       const cancelToken = this.checkToken()
-      const params = { project_id: pId, tag_name }
-      const res = tag_name === null ? await getTagsByProject(pId) : await getTagsByName(params, { cancelToken })
+      const params = { project_id: this.form.project_id, tag_name }
+      const res = tag_name === null
+        ? await getTagsByProject(this.form.project_id)
+        : await getTagsByName(params, { cancelToken })
       const tags = res.data.tags
       this.isLoading = false
       this.cancelToken = null

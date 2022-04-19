@@ -398,12 +398,11 @@ export default {
         this.getSearchIssue()
       }
     },
-    'form.project_id'(value) {
-      this.fetchData()
-      if (value > 0) {
-        this.$refs.tags.getSearchTags()
-        this.getSearchIssue()
-        this.getSearchRelationIssue()
+    'form.project_id': {
+      handler(newPId, oldPId) {
+        if (newPId > 0) {
+          this.onChangePId()
+        }
       }
     },
     'form.tags'() {
@@ -416,11 +415,8 @@ export default {
   },
   mounted() {
     this.getHasRelation()
-    this.fetchData()
     if (this.form.project_id > 0) {
-      this.$refs.tags.getSearchTags()
-      this.getSearchIssue()
-      this.getSearchRelationIssue()
+      this.onChangePId()
     }
   },
   methods: {
@@ -615,6 +611,12 @@ export default {
           allRelation.unshift(selectedProject)
           this.allRelation = allRelation
         })
+    },
+    onChangePId() {
+      this.fetchData()
+      this.$refs.tags.getSearchTags()
+      this.getSearchIssue()
+      this.getSearchRelationIssue()
     }
   }
 }

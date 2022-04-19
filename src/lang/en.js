@@ -278,7 +278,8 @@ export default {
       'The red background indicates that there are duplicate project settings in the same branch. Please make sure that the settings are consistent (as on or off) to ensure that the Pipeline operates normally.',
     ChangeProjectManager: 'Confirming if you want to change the project manager?',
     ConnectSocket: 'Kanban is connecting Socket...',
-    UpdateKanban: '{issueName} is updated'
+    UpdateKanban: '{issueName} is updated',
+    ChangeProject: `Switching a project will empty the version, label, and distributor's information, confirm the transfer?`
   },
   RuleMsg: {
     PleaseInput: 'Please input',
