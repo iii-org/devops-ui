@@ -151,6 +151,7 @@ import 'v-contextmenu/dist/index.css'
 import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
 import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import { addIssue, getCheckIssueClosable, updateIssue } from '@/api/issue'
+import { getIssueStrictTracker, getIssueForceTracker } from '@/api_v2/issue'
 import { getProjectUserList, getProjectVersion, getTagsByProject } from '@/api/projects'
 import { cloneDeep } from 'lodash'
 import { mapGetters } from 'vuex'
@@ -159,7 +160,9 @@ import AddIssue from './AddIssue'
 const getAPI = {
   fixed_version: [getProjectVersion, 'versions'],
   assigned_to: [getProjectUserList, 'user_list'],
-  tags: [getTagsByProject, 'tags']
+  tags: [getTagsByProject, 'tags'],
+  strictTracker: [getIssueStrictTracker],
+  forceTracker: [getIssueForceTracker, 'need_fatherissue_trackers']
 }
 
 const rowFormData = () => ({})
@@ -219,7 +222,10 @@ export default {
       form: {},
       originForm: {},
       showAlert: false,
-      errorMsg: []
+      errorMsg: [],
+      strictTracker: [],
+      forceTracker: [],
+      enableForceTracker: false
     }
   },
   computed: {
@@ -228,10 +234,7 @@ export default {
       'status',
       'priority',
       'fixedVersionShowClosed',
-      'selectedProjectId',
-      'strictTracker',
-      'forceTracker',
-      'enableForceTracker'
+      'selectedProjectId'
     ]),
     done_ratio() {
       const result = []
@@ -315,16 +318,25 @@ export default {
           Object.prototype.hasOwnProperty.call(this.row, 'project')
             ? this.row.project.id : this.selectedProjectId
         const res = await getAPI[column][0](projectId, params)
-        if (column === 'fixed_version') {
-          this[column] = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[getAPI[column][1]]]
-        }
-        if (column === 'assigned_to') {
-          this[column] = [
-            { name: this.$t('Issue.Unassigned'), id: 'null', login: 'null' },
-            ...res.data[getAPI[column][1]]
-          ]
-        } else {
-          this[column] = res.data[getAPI[column][1]]
+        switch (column) {
+          case 'fixed_version':
+            this[column] = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[getAPI[column][1]]]
+            break
+          case 'assigned_to':
+            this[column] = [
+              { name: this.$t('Issue.Unassigned'), id: 'null', login: 'null' },
+              ...res.data[getAPI[column][1]]
+            ]
+            break
+          case 'strictTracker':
+            this[column] = (await getAPI[column][0]({ new: true, project_id: projectId })).data
+            break
+          case 'forceTracker':
+            this[column] = [...res.data[getAPI[column][1]]]
+            this.enableForceTracker = res.data.enable
+            break
+          default:
+            this[column] = res.data[getAPI[column][1]]
         }
       }
     },
