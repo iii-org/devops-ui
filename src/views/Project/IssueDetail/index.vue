@@ -492,10 +492,8 @@ export default {
     },
     'form.project_id': {
       handler(newPId, oldPId) {
-        if (this.storagePId) {
-          if (newPId !== this.storagePId) {
-            this.isShowDialog = true
-          }
+        if (this.storagePId && newPId !== this.storagePId) {
+          this.isShowDialog = true
         }
       }
     }
@@ -636,6 +634,7 @@ export default {
       })
     },
     onProjectChange(value) {
+      if (this.isFromBoard) return
       localStorage.setItem('projectId', value)
       this.setSelectedProject(this.userProjectList.filter((elm) => elm.id === value)[0])
     },
