@@ -12,7 +12,7 @@
           :placeholder="$t('Issue.SelectType')"
         >
           <el-option
-            v-for="option in tracker"
+            v-for="option in trackerList"
             :key="option.id"
             :label="$t('Issue.' + option.name)"
             :value="option.id"
@@ -61,7 +61,7 @@
         :prefill="formData"
         :save-data="handleIssueSave"
         import-from="list"
-        :tracker-list="tracker"
+        :tracker-list="trackerList"
         @loading="loadingUpdate"
         @add-topic-visible="showDialog = false"
       />
@@ -140,7 +140,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'tracker'])
+    ...mapGetters(['userId', 'tracker', 'strictTracker', 'enableForceTracker']),
+    trackerList() {
+      if (this.enableForceTracker) return this.strictTracker
+      return this.tracker
+    }
   },
   watch: {
     projectId(val) {

@@ -8,7 +8,7 @@
           :key="column.id"
           v-permission="permission"
           :title="column.label"
-          :disabled="column.value === 'priority' ? row.has_children : false"
+          :disabled="(column.value === 'priority' ? row.has_children : false) || isForceParent"
         >
           <contextmenu-item
             v-for="item in getOptionsData(column.value)"
@@ -22,7 +22,11 @@
             {{ getSelectionLabel(item) }} {{ item.message }}
           </contextmenu-item>
         </contextmenu-submenu>
-        <contextmenu-submenu v-permission="permission" :title="$t('Issue.DoneRatio')" :disabled="row.has_children">
+        <contextmenu-submenu
+          v-permission="permission"
+          :title="$t('Issue.DoneRatio')"
+          :disabled="row.has_children || isForceParent"
+        >
           <contextmenu-item
             v-for="item in done_ratio"
             :key="item.id"
@@ -38,7 +42,11 @@
         <contextmenu-item v-permission="permission" @click="toggleRelationDialog('Parent')">{{
           $t('Issue.ParentIssue')
         }}</contextmenu-item>
-        <contextmenu-submenu v-permission="permission" :title="$t('Issue.ChildrenIssue')">
+        <contextmenu-submenu
+          v-permission="permission"
+          :title="$t('Issue.ChildrenIssue')"
+          :disabled="isForceParent"
+        >
           <contextmenu-item @click="toggleRelationDialog('Children')">{{
             $t('general.Settings', { name: $t('Issue.ChildrenIssue') })
           }}</contextmenu-item>
@@ -143,6 +151,7 @@ import 'v-contextmenu/dist/index.css'
 import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
 import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import { addIssue, getCheckIssueClosable, updateIssue } from '@/api/issue'
+import { getIssueStrictTracker, getIssueForceTracker } from '@/api_v2/issue'
 import { getProjectUserList, getProjectVersion, getTagsByProject } from '@/api/projects'
 import { cloneDeep } from 'lodash'
 import { mapGetters } from 'vuex'
@@ -151,7 +160,9 @@ import AddIssue from './AddIssue'
 const getAPI = {
   fixed_version: [getProjectVersion, 'versions'],
   assigned_to: [getProjectUserList, 'user_list'],
-  tags: [getTagsByProject, 'tags']
+  tags: [getTagsByProject, 'tags'],
+  strictTracker: [getIssueStrictTracker],
+  forceTracker: [getIssueForceTracker, 'need_fatherissue_trackers']
 }
 
 const rowFormData = () => ({})
@@ -211,11 +222,20 @@ export default {
       form: {},
       originForm: {},
       showAlert: false,
-      errorMsg: []
+      errorMsg: [],
+      strictTracker: [],
+      forceTracker: [],
+      enableForceTracker: false
     }
   },
   computed: {
-    ...mapGetters(['tracker', 'status', 'priority', 'fixedVersionShowClosed', 'selectedProjectId']),
+    ...mapGetters([
+      'tracker',
+      'status',
+      'priority',
+      'fixedVersionShowClosed',
+      'selectedProjectId'
+    ]),
     done_ratio() {
       const result = []
       for (let num = 0; num <= 100; num += 10) {
@@ -233,6 +253,10 @@ export default {
     },
     permission() {
       return ['Administrator', 'Project Manager', 'Engineer']
+    },
+    isForceParent() {
+      if (!this.enableForceTracker || !this.row.id) return false
+      return this.forceTracker.findIndex((tracker) => tracker.id === this.row.tracker.id) !== -1 && !this.row.has_father
     }
   },
   watch: {
@@ -271,6 +295,7 @@ export default {
     },
     getOptionsData(option_name) {
       if (option_name === 'status') return this.getDynamicStatusList()
+      if (option_name === 'tracker' && this.enableForceTracker && !this.row.has_father) return this.strictTracker
       return this[option_name]
     },
     async loadSelectionList() {
@@ -293,16 +318,25 @@ export default {
           Object.prototype.hasOwnProperty.call(this.row, 'project')
             ? this.row.project.id : this.selectedProjectId
         const res = await getAPI[column][0](projectId, params)
-        if (column === 'fixed_version') {
-          this[column] = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[getAPI[column][1]]]
-        }
-        if (column === 'assigned_to') {
-          this[column] = [
-            { name: this.$t('Issue.Unassigned'), id: 'null', login: 'null' },
-            ...res.data[getAPI[column][1]]
-          ]
-        } else {
-          this[column] = res.data[getAPI[column][1]]
+        switch (column) {
+          case 'fixed_version':
+            this[column] = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[getAPI[column][1]]]
+            break
+          case 'assigned_to':
+            this[column] = [
+              { name: this.$t('Issue.Unassigned'), id: 'null', login: 'null' },
+              ...res.data[getAPI[column][1]]
+            ]
+            break
+          case 'strictTracker':
+            this[column] = (await getAPI[column][0]({ new: true, project_id: projectId })).data
+            break
+          case 'forceTracker':
+            this[column] = [...res.data[getAPI[column][1]]]
+            this.enableForceTracker = res.data.enable
+            break
+          default:
+            this[column] = res.data[getAPI[column][1]]
         }
       }
     },

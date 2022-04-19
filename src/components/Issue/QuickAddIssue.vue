@@ -142,13 +142,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'strictTracker', 'issueFilter']),
+    ...mapGetters(['selectedProjectId', 'userId', 'tracker', 'strictTracker', 'issueFilter', 'enableForceTracker']),
     hasSetTracker() {
       return !!this.trackerName
     },
     trackerList() {
-      if (this.hasSetTracker) return this.strictTracker.filter((item) => item.name === this.trackerName)
-      return this.strictTracker
+      if (this.enableForceTracker) {
+        if (this.hasSetTracker) return this.strictTracker.filter((item) => item.name === this.trackerName)
+        return this.strictTracker
+      }
+      if (this.hasSetTracker) return this.tracker.filter((item) => item.name === this.trackerName)
+      return this.tracker
     }
   },
   watch: {
