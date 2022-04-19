@@ -308,7 +308,7 @@
 
 <script>
 import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu } from 'v-contextmenu'
-import { getProjectIssueList } from '@/api/projects'
+import { getProjectIssueList } from '@/api_v2/projects'
 import { mapGetters } from 'vuex'
 import { Tracker, Priority, Status } from '@/components/Issue'
 import WBSInputColumn from '@/views/Plan/Milestone/components/WBSInputColumn'
@@ -420,7 +420,8 @@ export default {
       // const tracker = this.tracker.find((item) => item.name === 'Epic')
       const result = {
         parent_id: 'null',
-        with_point: true
+        with_point: true,
+        only_superproject_issues: !!this.filterValue.project
         // tracker_id: tracker ? tracker.id : 1
       }
       if (this.sort) {
@@ -464,7 +465,7 @@ export default {
     async fetchData() {
       if (!this.selectedProjectId) return
       this.listLoading = true
-      const res = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
+      const res = await getProjectIssueList(this.filterValue.project || this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
       if (res.hasOwnProperty('data')) {
         this.listLoading = false
         return Promise.resolve(res.data.map((item) => this.issueFormatter(item)))

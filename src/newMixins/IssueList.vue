@@ -3,7 +3,8 @@ import { Priority, Status, Tracker } from '@/components/Issue'
 import { BasicData, Pagination } from '@/newMixins/index'
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
-import { getProjectIssueList, getProjectUserList, getProjectVersion, getTagsByProject } from '@/api/projects'
+import { getProjectUserList, getProjectVersion, getTagsByProject } from '@/api/projects'
+import { getProjectIssueList } from '@/api_v2/projects'
 import { addIssue, getIssueFamily } from '@/api/issue'
 
 export default {

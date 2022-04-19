@@ -8,7 +8,7 @@
       @hide="resetSaveFilterButtons"
     >
       <el-form v-loading="listLoading">
-        <template v-for="dimension in filterOptions">
+        <template v-for="dimension in filterOptionsWithProject">
           <el-form-item :key="dimension.id">
             <div slot="label">
               {{ $t(`Issue.${dimension.value}`) }}
@@ -118,6 +118,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { cloneDeep } from 'lodash'
+import { fetchHasSon, isProjectHasSon, getProjectRelationData } from '@/utils/parentsChildFilter'
 
 export default {
   name: 'SearchFilter',
@@ -143,11 +144,11 @@ export default {
     prefill: {
       type: Object,
       default: () => ({})
-    },
-    projectRelationList: {
-      type: Array,
-      default: () => []
     }
+    // projectRelationList: {
+    //   type: Array,
+    //   default: () => []
+    // }
   },
   data() {
     return {
@@ -157,11 +158,13 @@ export default {
       keyword: null,
       searchVisible: false,
       fixed_version_closed: false,
-      displayClosed: false
+      displayClosed: false,
+      filterOptionsWithProject: [],
+      projectRelationList: []
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'tracker', 'status', 'priority']),
+    ...mapGetters(['selectedProjectId', 'tracker', 'status', 'priority', 'selectedProject']),
     isFilterChanged() {
       return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword
     },
@@ -216,6 +219,12 @@ export default {
     },
     fixed_version_closed() {
       this.onChangeFixedVersionStatus()
+    }
+  },
+  async mounted() {
+    if (await fetchHasSon(this.selectedProjectId)) {
+      this.filterOptionsWithProject = await isProjectHasSon(this.filterOptions)
+      this.projectRelationList = await getProjectRelationData(this.selectedProject)
     }
   },
   methods: {
