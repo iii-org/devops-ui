@@ -1,16 +1,14 @@
 <template>
-  <el-tooltip v-if="showUpdateButton" :content="$t('SystemVersion.hasUpdate')" placement="bottom" popper-class="update-tooltip">
-    <span class="flex items-center swing-reverse" @click="toPage">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
+  <el-tooltip :content="$t('SystemVersion.hasUpdate')" placement="bottom" popper-class="update-tooltip">
+    <span class="flex items-center" @click="toPage">
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
         class="cursor-pointer"
-        style="color: #56b1e8"
-        width="30"
-        height="30"
-        viewBox="0 0 20 20"
-        fill="currentColor"
+        viewBox="0 0 24 24" 
+        width="24"
+        height="24"
       >
-        <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+        <path fill="#56b1e8" d="M22 20H2v-2h1v-6.969C3 6.043 7.03 2 12 2s9 4.043 9 9.031V18h1v2zM9.5 21h5a2.5 2.5 0 1 1-5 0z" />
       </svg>
     </span>
   </el-tooltip>
@@ -45,6 +43,6 @@ export default {
 
 <style lang="scss" scoped>
 .swing-reverse {
-  animation: swing-reverse 2s infinite;
+  animation: swing 2s infinite;
 }
 </style>

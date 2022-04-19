@@ -9,6 +9,7 @@ const asyncLangs = langFiles.keys().reduce((plugins, langPath) => {
 export default {
   route: {
     myWork: 'My Work',
+    inbox: 'Inbox',
     dashboard: 'Dashboard',
     projectOverview: 'Project Overview',
     projectList: 'Project List',
@@ -763,7 +764,8 @@ export default {
     SYSTEM: 'System',
     Selected: 'Selected',
     AccountRule: 'Account should be 2-60 characters long and "._-" can be accepted at the middle of string',
-    PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number'
+    PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number',
+    LastLogin: 'Last Login'
   },
   Profile: {
     Basic: 'Basic',
@@ -1257,6 +1259,47 @@ export default {
     TaskListWidth: 'Task list width',
     TimelineLength: 'Before/After',
     DisplayTaskList: 'Display task list'
+  },
+  Inbox: {
+    No: 'No.',
+    Title: 'Title',
+    Type: 'Message Type',
+    Date: 'Date',
+    Sender: 'Sender',
+    Info: 'Info',
+    Warning: 'Warning',
+    Urgent: 'Urgent',
+    NewVersion: 'New Version',
+    SystemAlert: 'System Alert',
+    SystemWarning: 'System Warning',
+    GroupReceiver: {
+      Project: 'Project',
+      User: 'User',
+      Role: 'Role',
+      ProjectOwner: 'Project Owner',
+      All: 'All'
+    },
+    ViewAll: 'View All',
+    TimeRange: 'Time Range',
+    From: 'From',
+    To: 'To',
+    SelectDate: 'Select Date',
+    SelectMessageType: 'Select Message Type',
+    Unread: 'Show  Unread Message Only',
+    IncludeSystemMessage: 'Include System Message',
+    Apply: 'Apply',
+    MessageConsole: 'Message Console',
+    MessageNote: '* The system only keeps 7 days messages. Pelase save the message in local if it\'s important.',
+    CreateMessage: 'Create Message',
+    EditMessage: 'Edit Message',
+    MessageContent: 'Message Content',
+    Public: 'Public',
+    Private: 'Private',
+    GroupReceiverTitle: 'Group Receiver',
+    AlertLevel: 'Alert Level',
+    Send: 'Send',
+    NotifyClosed: 'Message closed successfully',
+    SearchLabel: 'Search Title or Sender'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

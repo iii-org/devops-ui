@@ -208,7 +208,7 @@ export default {
   },
   methods: {
     checkRepeatPwd(rule, value, callback) {
-      if ((value !== this.userForm.password) & (this.userForm.password !== '') && this.userForm.repeatPassword !== '') {
+      if ((value !== this.userForm.password) && (this.userForm.password !== '') && this.userForm.repeatPassword !== '') {
         callback(new Error('password not same'))
       } else {
         callback()
@@ -273,7 +273,7 @@ export default {
               await updateUser(this.userId, data)
               this.$refs[this.formName].resetFields()
               this.dialogLoading = false
-              this.$emit('add-user-visible', false, 'refresh')
+              this.$emit('add-user-visible', false, 'refresh', true)
               this.$message({
                 title: this.$t('general.Success'),
                 message: this.$t('Notify.Updated'),

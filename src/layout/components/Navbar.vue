@@ -8,8 +8,7 @@
 
     <breadcrumb class="breadcrumb-container" />
     <div class="flex right-menu items-center">
-      <AbnormalChecker />
-      <VersionChecker class="ml-2" />
+      <Notification />
       <lang-select class="right-menu-item hover-effect ml-1" />
       <el-dropdown
         class="right-menu-item hover-effect mr-5"
@@ -59,16 +58,14 @@ import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import LangSelect from '@/components/LangSelect'
-import VersionChecker from '@/components/VersionChecker'
-import AbnormalChecker from '@/components/AbnormalChecker'
+import Notification from '@/components/Notification'
 
 export default {
   components: {
     Breadcrumb,
     Hamburger,
     LangSelect,
-    VersionChecker,
-    AbnormalChecker
+    Notification
   },
   computed: {
     ...mapGetters(['sidebar', 'avatar', 'userName'])

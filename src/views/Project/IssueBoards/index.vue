@@ -790,7 +790,6 @@ export default {
       // })
       this.socket.on('update_issue', async (data) => {
         for (const idx in data) {
-          // console.log('update_issue', data[idx])
           data[idx] = _this.socketDataFormat(data[idx])
           const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
           this.$set(this.projectIssueList, findChangeIndex, data[idx])
