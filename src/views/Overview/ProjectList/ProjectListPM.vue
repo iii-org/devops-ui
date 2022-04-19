@@ -351,7 +351,8 @@ export default {
       rowHeight: 74,
       params: params(),
       listData: [],
-      forceDelete: false
+      forceDelete: false,
+      timeoutId: -1
     }
   },
   computed: {
@@ -365,14 +366,16 @@ export default {
   watch: {
     keyword(val) {
       if (val !== null) {
-        if (val.length > 2 || val === '') {
-          this.params.offset = 0
-          this.params.limit = 10
-          this.params.search = this.keyword
-          this.fetchData()
-        }
+        this.params.offset = 0
+        this.params.limit = 10
+        this.params.search = this.keyword
+        clearTimeout(this.timeoutId)
+        this.timeoutId = window.setTimeout(() => this.fetchData(1, 10, val), 1000)
       } else this.keyword = ''
     }
+  },
+  beforeDestroy() {
+    window.clearTimeout(this.timeoutId)
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectList', 'editProject']),
