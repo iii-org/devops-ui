@@ -25,7 +25,8 @@
         :key="element.id"
         :ref="element.id"
         class="board-item item"
-        @drop="dropPanelLabels($event, idx)"
+        @click="setElementId(element.id)"
+        @drop="dropPanelLabels($event, idx, element.id)"
         @dragover="allowDrop($event, idx)"
       >
         <div
@@ -333,10 +334,6 @@ export default {
       type: Function,
       default: () => ({})
     },
-    updateCard: {
-      type: Boolean,
-      default: false
-    },
     elementId: {
       type: Number,
       default: null
@@ -412,9 +409,9 @@ export default {
     }
   },
   watch: {
-    updateCard(value) {
+    list() {
       setTimeout(() => {
-        if (value && this.$refs[this.elementId]) {
+        if (this.$refs[this.elementId]) {
           if (this.$refs[this.elementId].length > 0) {
             const relation = this.$refs[this.elementId][0].getElementsByClassName('el-collapse-item__header')
             if (relation.length > 0) {
@@ -511,13 +508,14 @@ export default {
       }
       return isPriorityUnchanged
     },
-    dropPanelLabels(e, idx) {
+    dropPanelLabels(e, idx, elementId) {
       e.preventDefault()
       if (e.dataTransfer.getData('json')) {
         const data = JSON.parse(e.dataTransfer.getData('json'))
         const element = this.list[idx]
         this.handleDropUpdate(data, element)
       }
+      this.setElementId(elementId)
     },
     handleDropUpdate(data, element) {
       const key = Object.keys(data)[0]
@@ -611,6 +609,9 @@ export default {
     },
     handleContextMenu(row, context, event) {
       this.$emit('contextmenu', { row, context, event })
+    },
+    setElementId(elementId) {
+      this.$emit('elementId', elementId)
     }
   }
 }

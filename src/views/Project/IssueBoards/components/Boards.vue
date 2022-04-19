@@ -15,9 +15,8 @@
         :group="group"
         :dimension="groupBy.dimension"
         :add-issue="saveIssue"
-        :update-card="updateCard"
         :element-id="elementId"
-        @update-card="updateCard = false"
+        @elementId="setUpdateCard"
         @relationIssueId="onRelationIssueDialog($event, classObj.id)"
         @update="updateIssueStatus"
         @update-board="updateIssueBoard"
@@ -114,7 +113,6 @@ export default {
         visible: false,
         id: null
       },
-      updateCard: false,
       elementId: null
     }
   },
@@ -307,7 +305,6 @@ export default {
       })
     },
     setUpdateCard(dataId) {
-      this.updateCard = true
       this.elementId = dataId
     }
   }
