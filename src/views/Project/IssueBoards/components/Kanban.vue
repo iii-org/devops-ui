@@ -413,21 +413,33 @@ export default {
   },
   watch: {
     updateCard(value) {
-      if (value && this.$refs[this.elementId]) {
-        if (this.$refs[this.elementId].length > 0) {
-          this.$refs[this.elementId][0].style.boxShadow = '0px 0px 10px 2px rgba(255,0,0,.2)'
-          this.$refs[this.elementId][0].style.transition = 'box-shadow 0.3s ease-in-out'
-          this.$nextTick(async () => {
-            await setTimeout(() => {
-              if (this.$refs[this.elementId].length > 0) {
-                this.$refs[this.elementId][0].style.boxShadow = ''
-                this.$refs[this.elementId][0].style.transition = 'box-shadow 0.3s ease-in-out'
-              }
-            }, 1500)
-          })
+      setTimeout(() => {
+        if (value && this.$refs[this.elementId]) {
+          if (this.$refs[this.elementId].length > 0) {
+            const relation = this.$refs[this.elementId][0].getElementsByClassName('el-collapse-item__header')
+            if (relation.length > 0) {
+              relation[0].style.background = 'rgba(255,0,0,.2)'
+              relation[0].style.background = 'background 0.3s ease-in-out'
+            }
+            this.$refs[this.elementId][0].style.boxShadow = '0px 0px 10px 2px rgba(255,0,0,.2)'
+            this.$refs[this.elementId][0].style.background = 'rgba(255,0,0,.2)'
+            this.$refs[this.elementId][0].style.transition = 'box-shadow 0.3s ease-in-out'
+            this.$refs[this.elementId][0].style.transition = 'background 0.3s ease-in-out'
+            this.$nextTick(() => {
+              setTimeout(() => {
+                if (this.$refs[this.elementId].length > 0) {
+                  this.$refs[this.elementId][0].style.boxShadow = ''
+                  this.$refs[this.elementId][0].style.background = ''
+                  if (relation.length > 0) {
+                    relation[0].style.background = ''
+                  }
+                }
+              }, 1000)
+            })
+          }
+          this.$emit('update-card')
         }
-        this.$emit('update-card')
-      }
+      }, 100)
     }
   },
   methods: {
