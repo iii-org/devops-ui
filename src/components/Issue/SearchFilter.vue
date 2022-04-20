@@ -118,7 +118,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { cloneDeep } from 'lodash'
-import { fetchHasSon, isProjectHasSon, getProjectRelationData } from '@/utils/parentsChildFilter'
+import { getHasSon, getProjectRelation } from '@/api_v2/projects'
 
 export default {
   name: 'SearchFilter',
@@ -145,10 +145,6 @@ export default {
       type: Object,
       default: () => ({})
     }
-    // projectRelationList: {
-    //   type: Array,
-    //   default: () => []
-    // }
   },
   data() {
     return {
@@ -222,9 +218,10 @@ export default {
     }
   },
   async mounted() {
-    if (await fetchHasSon(this.selectedProjectId)) {
-      this.filterOptionsWithProject = await isProjectHasSon(this.filterOptions)
-      this.projectRelationList = await getProjectRelationData(this.selectedProject)
+    const hasSon = await this.fetchHasSon(this.selectedProjectId)
+    this.filterOptionsWithProject = await this.getFilterOptions(hasSon)
+    if (hasSon) {
+      this.projectRelationList = await this.getProjectRelationData(this.selectedProject)
     }
   },
   methods: {
@@ -296,6 +293,25 @@ export default {
     checkSaveFilterButtonDisplay() {
       const whiteList = ['issue-list']
       return whiteList.includes(this.$route.name)
+    },
+    async fetchHasSon(pId) {
+      const hasSon = await getHasSon(pId)
+      return hasSon.has_child
+    },
+    async getFilterOptions(hasSon) {
+      this.filterOptionsWithProject = hasSon ? [{
+        id: this.filterOptions.length + 1,
+        value: 'project',
+        placeholder: 'Project'
+      }].concat(this.filterOptions) : this.filterOptions
+      return this.filterOptionsWithProject
+    },
+    async getProjectRelationData() {
+      const { id, name } = this.selectedProject
+      const projectRelation = (await getProjectRelation(id)).data
+      const projectRelationList = [{ id, name }]
+      projectRelationList.push(...projectRelation[0].child)
+      return projectRelationList
     }
   }
 }
