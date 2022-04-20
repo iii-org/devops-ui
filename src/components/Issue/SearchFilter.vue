@@ -307,9 +307,9 @@ export default {
       return this.filterOptionsWithProject
     },
     async getProjectRelationData() {
-      const { id, name } = this.selectedProject
+      const { id, display } = this.selectedProject
       const projectRelation = (await getProjectRelation(id)).data
-      const projectRelationList = [{ id, name }]
+      const projectRelationList = [{ id, name: display }]
       projectRelationList.push(...projectRelation[0].child)
       return projectRelationList
     }
