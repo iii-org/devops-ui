@@ -192,6 +192,7 @@
       :project-issue-list="projectIssueList"
       :fixed_version="fixed_version"
       :assigned_to="assigned_to"
+      :element-id="elementId"
       @getRelativeList="getRelativeList"
       @updateIssueList="updateIssueList"
       @updateData="updateData"
@@ -250,6 +251,7 @@ export default {
       relativeIssueList: [],
       searchVisible: false,
       keyword: null,
+      elementId: null,
       socket: io(`/issues/websocket`, { // production socket
         reconnectionAttempts: 5
       })
@@ -796,6 +798,7 @@ export default {
           this.$set(this.projectIssueList, findChangeIndex, data[idx])
           this.updateData()
           this.showUpdateMessage(data[idx])
+          this.elementId = data[idx].id
         }
       })
       this.socket.on('delete_issue', async (data) => {

@@ -16,7 +16,6 @@
         :dimension="groupBy.dimension"
         :add-issue="saveIssue"
         :element-id="elementId"
-        @elementId="setUpdateCard"
         @relationIssueId="onRelationIssueDialog($event, classObj.id)"
         @update="updateIssueStatus"
         @update-board="updateIssueBoard"
@@ -47,7 +46,6 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
-      @update-card="setUpdateCard"
     />
   </section>
 </template>
@@ -103,6 +101,10 @@ export default {
     projectIssueList: {
       type: Array,
       default: () => []
+    },
+    elementId: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -112,8 +114,7 @@ export default {
       relationIssue: {
         visible: false,
         id: null
-      },
-      elementId: null
+      }
     }
   },
   computed: {
@@ -303,9 +304,6 @@ export default {
       this.$nextTick(() => {
         element.scrollIntoView({ behavior: 'smooth' })
       })
-    },
-    setUpdateCard(dataId) {
-      this.elementId = dataId
     }
   }
 }

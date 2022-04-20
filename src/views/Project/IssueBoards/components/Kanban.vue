@@ -25,7 +25,6 @@
         :key="element.id"
         :ref="element.id"
         class="board-item item"
-        @click="setElementId(element.id)"
         @drop="dropPanelLabels($event, idx, element.id)"
         @dragover="allowDrop($event, idx)"
       >
@@ -359,7 +358,9 @@ export default {
     return {
       showDialog: false,
       showAlert: false,
-      errorMsg: []
+      errorMsg: [],
+      timeoutId: -1,
+      timeoutIdx: -1
     }
   },
   computed: {
@@ -409,8 +410,9 @@ export default {
     }
   },
   watch: {
-    list() {
-      setTimeout(() => {
+    async list() {
+      window.clearTimeout(this.timeoutId)
+      this.timeoutId = window.setTimeout(() => {
         if (this.$refs[this.elementId]) {
           if (this.$refs[this.elementId].length > 0) {
             const relation = this.$refs[this.elementId][0].getElementsByClassName('el-collapse-item__header')
@@ -423,7 +425,8 @@ export default {
             this.$refs[this.elementId][0].style.transition = 'box-shadow 0.3s ease-in-out'
             this.$refs[this.elementId][0].style.transition = 'background 0.3s ease-in-out'
             this.$nextTick(() => {
-              setTimeout(() => {
+              window.clearTimeout(this.timeoutIdx)
+              this.timeoutIdx = window.setTimeout(() => {
                 if (this.$refs[this.elementId].length > 0) {
                   this.$refs[this.elementId][0].style.boxShadow = ''
                   this.$refs[this.elementId][0].style.background = ''
@@ -431,13 +434,16 @@ export default {
                     relation[0].style.background = ''
                   }
                 }
-              }, 1000)
+              }, 500)
             })
           }
-          this.$emit('update-card')
         }
       }, 100)
     }
+  },
+  beforeDestroy() {
+    window.clearTimeout(this.timeoutId)
+    window.clearTimeout(this.timeoutIdx)
   },
   methods: {
     /**
@@ -515,7 +521,6 @@ export default {
         const element = this.list[idx]
         this.handleDropUpdate(data, element)
       }
-      this.setElementId(elementId)
     },
     handleDropUpdate(data, element) {
       const key = Object.keys(data)[0]
@@ -551,9 +556,6 @@ export default {
       const updateData = { boardObject, event }
       this.$emit('update', updateData)
       this.$forceUpdate()
-    },
-    updateBoard(sendData) {
-      this.$emit('update-board', sendData)
     },
     handleClick(id) {
       // this.$router.push({ name: 'issue-detail', params: { issueId: id }})
@@ -609,9 +611,6 @@ export default {
     },
     handleContextMenu(row, context, event) {
       this.$emit('contextmenu', { row, context, event })
-    },
-    setElementId(elementId) {
-      this.$emit('elementId', elementId)
     }
   }
 }
