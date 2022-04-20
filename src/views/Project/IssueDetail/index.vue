@@ -266,7 +266,8 @@ import {
   addIssue,
   putIssueRelation,
   deleteIssueRelation,
-  getIssueGitCommitLog
+  getIssueGitCommitLog,
+  getIssueFamily
 } from '@/api/issue'
 import {
   IssueForm,
@@ -284,6 +285,7 @@ import {
   addProjectTags,
   getRootProjectId
 } from '@/api/projects'
+import { getHasSon, getProjectRelation } from '@/api_v2/projects'
 import dayjs from 'dayjs'
 import { Status, Tracker, ExpandSection } from '@/components/Issue'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
@@ -291,7 +293,6 @@ import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import getPageTitle from '@/utils/get-page-title'
 import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
-import { getIssueFamily } from '@/api/issue'
 
 const commitLimit = 10
 
@@ -386,7 +387,8 @@ export default {
       tagsString: '',
       errorMsg: [],
       showAlert: false,
-      isLoadingFamily: false
+      isLoadingFamily: false,
+      projectRelationList: []
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -474,6 +476,7 @@ export default {
   },
   async mounted() {
     await this.fetchIssueLink()
+    await this.getRelationProjectList()
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject']),
@@ -592,7 +595,7 @@ export default {
       if (
         Object.keys(data.project).length > 0 &&
         this.selectedProjectId !== data.project.id &&
-        !this.getRelationProjectList().includes(data.project.id)
+        !this.projectRelationList.includes(data.project.id)
       ) {
         this.onProjectChange(data.project.id)
       }
@@ -600,11 +603,15 @@ export default {
         this.$refs.IssueForm.getClosable()
       }
     },
-    getRelationProjectList() {
-      if (!this.$route.params.projectRelationList) return []
-      return this.$route.params.projectRelationList.map((item) => {
-        return item.id
-      })
+    async getRelationProjectList() {
+      const hasSon = (await getHasSon(this.selectedProjectId)).has_child
+      if (hasSon) {
+        const projectRelation = (await getProjectRelation(this.selectedProjectId)).data
+        this.projectRelationList.push(projectRelation[0].parent.id)
+        projectRelation[0].child.forEach((item) => {
+          this.projectRelationList.push(item.id)
+        })
+      }
     },
     onProjectChange(value) {
       localStorage.setItem('projectId', value)

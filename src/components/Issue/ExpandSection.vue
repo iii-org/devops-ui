@@ -81,10 +81,6 @@ export default {
       type: [String, Number],
       default: 0
     },
-    projectRelationList: {
-      type: Array,
-      default: () => []
-    },
     isButtonDisabled: {
       type: Boolean,
       default: false
@@ -141,10 +137,7 @@ export default {
     },
     handleEdit(issueId) {
       if (!this.popup) {
-        this.$router.push({ name: 'issue-detail', params: {
-          issueId,
-          projectRelationList: this.projectRelationList
-        }})
+        this.$router.push({ name: 'issue-detail', params: { issueId }})
       } else {
         this.$emit('popup-dialog', issueId)
       }

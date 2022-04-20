@@ -14,7 +14,6 @@
       </el-button>
       <SearchFilter
         :filter-options="filterOptions"
-        :project-relation-list="projectRelationList"
         :list-loading="listLoading"
         :selection-options="contextOptions"
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed,fixed_version_closed:fixed_version_closed }"
@@ -127,7 +126,6 @@
             <template slot-scope="{row}">
               <ExpandSection
                 :issue="row"
-                :project-relation-list="projectRelationList"
                 @on-context-menu="onContextMenu"
                 @update-list="loadData"
                 @collapse-expend-row="collapseExpendRow"
@@ -344,7 +342,6 @@ import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api_v2/projects'
 import { getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
 import XLSX from 'xlsx'
-import { getHasSon, getProjectRelation } from '@/api_v2/projects'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -373,7 +370,6 @@ export default {
       selectedIssueList: [],
       allDownloadData: [],
       allDataLoading: false,
-      projectRelationList: [],
       excelColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to'],
       columnsOptions: Object.freeze([
         { display: this.$t('Issue.project'), field: 'project' },
@@ -422,10 +418,6 @@ export default {
   },
   async mounted() {
     this.fetchInitData()
-    const hasSon = await this.fetchHasSon(this.selectedProjectId)
-    if (hasSon) {
-      this.projectRelationList = await this.getProjectRelationData(this.selectedProject)
-    }
   },
   methods: {
     ...mapActions('projects', [
@@ -671,17 +663,6 @@ export default {
     collapseExpendRow(issueId) {
       const row = this.listData.find((item) => item.id === issueId)
       this.refTable.toggleRowExpansion(row, false)
-    },
-    async fetchHasSon(pId) {
-      const hasSon = await getHasSon(pId)
-      return hasSon.has_child
-    },
-    async getProjectRelationData() {
-      const { id, display } = this.selectedProject
-      const projectRelation = (await getProjectRelation(id)).data
-      const projectRelationList = [{ id, name: display }]
-      projectRelationList.push(...projectRelation[0].child)
-      return projectRelationList
     }
   }
 }

@@ -250,10 +250,7 @@ export default {
       if (column.type === 'expand' && this.hasRelationIssue(row)) {
         return this.refTable.toggleRowExpansion(row)
       }
-      this.$router.push({ name: 'issue-detail', params: {
-        issueId: row.id,
-        projectRelationList: this.projectRelationList
-      }})
+      this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
     },
     handleEdit(id) {
       this.$router.push({ name: 'issue-detail', params: { issueId: id }})
