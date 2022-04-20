@@ -20,11 +20,12 @@
           </el-col>
           <el-col :span="24">
             <el-form-item :label="$t('Inbox.MessageContent')" prop="content">
-              <el-input
-                v-model="form.content"
-                type="textarea"
-                :autosize="{ minRows: 6, maxRows: 6}"
-                :placeholder="$t('general.PleaseInput') + $t('Inbox.MessageContent')"
+              <editor
+                ref="mdEditor"
+                initial-edit-type="wysiwyg"
+                :options="editorOptions"
+                height="auto"
+                @change="onMessageChange"
               />
             </el-form-item>
           </el-col>
@@ -95,6 +96,10 @@
 import { mapGetters } from 'vuex'
 import { getAllUser } from '@/api/user'
 import { createMessage, deleteMessage } from '@/api_v2/monitoring'
+import 'codemirror/lib/codemirror.css'
+import '@toast-ui/editor/dist/toastui-editor.css'
+import { Editor } from '@toast-ui/vue-editor'
+import '@toast-ui/editor/dist/i18n/zh-tw'
 
 const formTemplate = () => ({
   title: '',
@@ -108,6 +113,9 @@ const formTemplate = () => ({
 
 export default {
   name: 'CreateMessage',
+  components: {
+    Editor
+  },
   props: {
     alertList: {
       type: Array,
@@ -156,7 +164,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['projectOptions', 'roleList']),
+    ...mapGetters(['projectOptions', 'roleList', 'language']),
     groupReceiver() {
       return [
         { id: 2, label: this.$t('Inbox.GroupReceiver.Project') },
@@ -167,6 +175,12 @@ export default {
     },
     filteredAlert() {
       return this.alertList.slice(0, 3)
+    },
+    editorOptions() {
+      return {
+        minHeight: '200px',
+        language: this.language
+      }
     }
   },
   watch: {
@@ -216,6 +230,7 @@ export default {
           this.form.type_id = ''
         }
         this.form.alert_level = this.messageData.alert_level.id
+        this.$nextTick(() => { this.$refs.mdEditor.invoke('setMarkdown', this.form.content) })
       }
     },
     onDialogClosed() {
@@ -225,6 +240,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.createMessage.resetFields()
         this.form = formTemplate()
+        this.$refs.mdEditor.invoke('reset')
         this.$emit('edit')
       })
     },
@@ -260,10 +276,13 @@ export default {
             this.isLoading = false
           })
           .catch((err) => {
-            console.log(err)
+            console.error(err)
             this.isLoading = false
           })
       })
+    },
+    onMessageChange() {
+      this.form.content = this.$refs.mdEditor.invoke('getMarkdown')
     }
   }
 }
