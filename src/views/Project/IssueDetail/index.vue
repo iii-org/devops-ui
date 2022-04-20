@@ -614,6 +614,7 @@ export default {
       }
     },
     onProjectChange(value) {
+      if (this.isInDialog || this.isFromBoard) return
       localStorage.setItem('projectId', value)
       this.setSelectedProject(this.userProjectList.filter((elm) => elm.id === value)[0])
     },
