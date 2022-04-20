@@ -66,14 +66,22 @@ export default {
     async loadData() {
       this.isLoading = true
       this.listData = listData()
-      const apis = [getHarborStatus, getRancherStatus, getK8sStatus, getRedmineStatus, getSonarqubeStatus, getGitlabStatus]
-      await getHarborStatus().then(async (res) => { if (res.status) apis[0] = getHarborCapacity })
-      apis.forEach(async (api) => await this.fetchData(api))
+      await getHarborStatus().then(async (res) => {
+        if (res.status) {
+          await getHarborCapacity.then((item) => {
+            this.listData[0] = this.handleData(item)
+          })
+        }
+        this.listData[0] = this.handleData(res)
+      })
+      const apis = [getRancherStatus, getK8sStatus, getRedmineStatus, getSonarqubeStatus, getGitlabStatus]
+      apis.forEach(async (api) => { await this.fetchData(api) })
+
       this.isLoading = false
     },
     async fetchData(api) {
       await api().then((res) => {
-        this.listData.splice(0, 1)
+        this.listData.splice(1, 1)
         this.listData.push(this.handleData(res))
       })
     },
