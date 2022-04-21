@@ -9,7 +9,6 @@
       remote
       multiple
       value-key="tags"
-      :loading="isLoading"
       :remote-method="getSearchTags"
       @focus="getSearchTags()"
     >
@@ -45,7 +44,6 @@ export default {
   },
   data() {
     return {
-      isLoading: false,
       tagsList: [],
       tagsString: '',
       cancelToken: null
@@ -70,13 +68,11 @@ export default {
       this.getTagsList(tag_name, tags, query)
     },
     async fetchTagsData(tag_name) {
-      this.isLoading = true
       const pId = this.selectedProjectId
       const cancelToken = this.checkToken()
       const params = { project_id: pId, tag_name }
       const res = tag_name === null ? await getTagsByProject(pId) : await getTagsByName(params, { cancelToken })
       const tags = res.data.tags
-      this.isLoading = false
       this.cancelToken = null
       return tags
     },

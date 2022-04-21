@@ -254,9 +254,6 @@ export default {
     userId() {
       return this.$route.params.userId
     },
-    // userName() {
-    //   return this.$route.params.userName
-    // },
     hasCheckedIssues() {
       return this.checkedIssues.length > 0
     },
