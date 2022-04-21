@@ -37,7 +37,7 @@
               <el-select
                 v-model="filterValue[dimension.value]"
                 :placeholder="$t(`Issue.Select${dimension.placeholder}`)"
-                :disabled="selectedProjectId === -1"
+                :disabled="projectId === -1"
                 filterable
                 clearable
                 value-key="id"
@@ -420,6 +420,8 @@ export default {
         this.socket.emit('leave', { project_id: oldId })
         this.socket.emit('join', { project_id: newId })
         await this.onCleanKeyWord()
+        this.projectId = this.selectedProjectId
+        this.filterValue = {}
         await this.fetchInitData()
       },
       immediate: true
@@ -432,10 +434,16 @@ export default {
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed({ board: value })
       this.loadVersionList(value)
+    },
+    'filterValue.project'(value) {
+      if (value) this.projectId = value
+      else this.projectId = this.selectedProjectId
+      this.loadSelectionList()
     }
   },
   async created() {
     this.connectSocket()
+    this.projectId = this.selectedProjectId
     await this.fetchInitData()
   },
   beforeDestroy() {
@@ -476,9 +484,9 @@ export default {
       await this.loadData()
     },
     async checkProjectHasChildren() {
-      this.hasChildren = (await getHasSon(this.selectedProjectId)).has_child
+      this.hasChildren = (await getHasSon(this.projectId)).has_child
       if (this.hasChildren) {
-        const res = (await getProjectRelation(this.selectedProjectId)).data
+        const res = (await getProjectRelation(this.projectId)).data
         this.project = res[0].child
         this.project.unshift(res[0].parent)
       }
@@ -515,7 +523,7 @@ export default {
     async getRelativeList() {
       const hasClosed = this.groupByValueOnBoard.filter((item) => item.hasOwnProperty('is_closed') && item.is_closed)
       if (hasClosed.length > 0) {
-        const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
+        const projectIssueListRes = await getProjectIssueListByTree(this.projectId)
         this.relativeIssueList = this.createRelativeList(projectIssueListRes.data)
       }
     },
@@ -571,7 +579,7 @@ export default {
         this.$set(this.projectIssueQueue, item.id, CancelToken)
         const dimension = this.groupBy.dimension === 'tags' ? this.groupBy.dimension : `${this.groupBy.dimension}_id`
         const params = { ...this.getParams(), [dimension]: item.id }
-        const getIssueList = getProjectIssueList(this.selectedProjectId, params, config)
+        const getIssueList = getProjectIssueList(this.projectId, params, config)
         issueList.push(getIssueList)
       })
       return issueList
@@ -616,12 +624,12 @@ export default {
       this.$set(this.originFilterValue, 'fixed_version', version[0].id)
     },
     async fetchVersionList(params) {
-      const res = await getProjectVersion(this.selectedProjectId, params)
+      const res = await getProjectVersion(this.projectId, params)
       return res.data.versions
     },
     async loadSelectionList() {
-      if (this.selectedProjectId === -1) return
-      await Promise.all([getProjectUserList(this.selectedProjectId), getTagsByProject(this.selectedProjectId)]).then(
+      if (this.projectId === -1) return
+      await Promise.all([getProjectUserList(this.projectId), getTagsByProject(this.projectId)]).then(
         (res) => {
           const [assigneeList, tagsList] = res.map((item) => item.data)
           this.setAssignedToData(assigneeList)
@@ -858,7 +866,7 @@ export default {
     async connectSocket() {
       this.setSocketListener()
       await this.socket.connect()
-      await this.socket.emit('join', { project_id: this.selectedProjectId })
+      await this.socket.emit('join', { project_id: this.projectId })
     }
   }
 }
