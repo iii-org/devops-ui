@@ -112,6 +112,7 @@ stages:
       - contextmenu
       - parentfilter
       - filter
+      - sortingwbs
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -156,6 +157,7 @@ stages:
       - contextmenu
       - parentfilter
       - filter
+      - sortingwbs
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -215,6 +217,7 @@ stages:
       - contextmenu
       - parentfilter
       - filter
+      - sortingwbs
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -267,6 +270,7 @@ stages:
       - contextmenu
       - parentfilter
       - filter
+      - sortingwbs
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -318,6 +322,7 @@ stages:
       - contextmenu
       - parentfilter
       - filter
+      - sortingwbs
 - name: Test--ZAP
   iiidevops: zap
   steps:
