@@ -341,7 +341,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'selectedProject']),
+    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'selectedProject', 'selectedProjectId']),
     isParentIssueClosed() {
       if (Object.keys(this.parent).length <= 0) return false
       return this.parent.status.name === 'Closed'
@@ -411,10 +411,14 @@ export default {
     'form.assigned_to_id'() {
       if (this.form.assigned_to_id && this.form.status_id === 1) this.form.status_id = 2
       if (!this.form.assigned_to_id) this.form.status_id = 1
+    },
+    selectedProjectId: {
+      handler(val) {
+        this.getHasRelation()
+      }
     }
   },
   mounted() {
-    this.getHasRelation()
     if (this.form.project_id > 0) {
       this.onChangePId()
     }
@@ -591,7 +595,7 @@ export default {
       })
     },
     async getHasRelation() {
-      await getHasRelation(this.form.project || this.selectedProject.id)
+      await getHasRelation(this.selectedProject.id)
         .then((res) => {
           if (res.has_relations) {
             this.getAllRelation()
