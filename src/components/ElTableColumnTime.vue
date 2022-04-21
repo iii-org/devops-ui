@@ -11,6 +11,7 @@
 
 <script>
 import i18n from '@/lang'
+import { UTCtoLocalTime, relativeTime } from '@/filters'
 
 export default {
   name: 'ElTableColumnTime',
@@ -37,23 +38,11 @@ export default {
     }
   },
   methods: {
-    UTCtoLocalTime(dateTime) {
-      const localTime = this.$dayjs(dateTime)
-        .utc()
-        .local()
-        .format('YYYY-MM-DD HH:mm:ss')
-      if (dateTime === 'Invalid date') {
-        return '-'
-      }
-      return localTime
+    UTCtoLocalTime(value) {
+      return UTCtoLocalTime(value)
     },
-    relativeTime(dateTime) {
-      return dateTime
-        ? this.$dayjs(dateTime)
-          .utc()
-          .local()
-          .fromNow()
-        : '-'
+    relativeTime(value) {
+      return relativeTime(value)
     }
   }
 }

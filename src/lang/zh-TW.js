@@ -9,6 +9,7 @@ const asyncLangs = langFiles.keys().reduce((plugins, langPath) => {
 export default {
   route: {
     myWork: '我的工作',
+    inbox: '收件匣',
     dashboard: '儀表板',
     projectOverview: '專案概述',
     projectList: '專案列表',
@@ -146,7 +147,9 @@ export default {
     7006: '當議題有子議題時，參數 {arg} 不能被調整。',
     7007: `參數 $arg 需要以 'ghp_'做開為開頭。`,
     8001: '{service_name} 回報錯誤：{response}',
+    8101: '父議題設定異常，請確認設定之議題非為本議題之子議題或關係議題。',
     9001: '內部錯誤：{type}: {exception}',
+    9002: '出現無效的代碼路徑: {message}',
     9003: '發生未被預期的資料庫錯誤：{message}',
     9999: '發生未知錯誤。',
     20001: 'Token 是無效的。',
@@ -289,7 +292,8 @@ export default {
     pluginRepeatMessage: '紅底為同分支有重複項目設定，請確認其設置為一致(如同為開或關)，以確保 Pipeline 運作正常。',
     ChangeProjectManager: '確認是否要變更專案經理人。',
     ConnectSocket: '看板正在連接 Socket...',
-    UpdateKanban: '{issueName} 已更新'
+    UpdateKanban: '{issueName} 已更新',
+    NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -766,7 +770,8 @@ export default {
     SYSTEM: '系統',
     Selected: '已選',
     AccountRule: '帳號需要2-60個字並只接受._-特殊字元在中間',
-    PasswordRule: '密碼需要8-20個字同時需要至少1個大寫1個小寫和1個數字'
+    PasswordRule: '密碼需要8-20個字同時需要至少1個大寫1個小寫和1個數字',
+    LastLogin: '上次登入'
   },
   Profile: {
     Basic: '基本設定',
@@ -1119,8 +1124,13 @@ export default {
     EnableMessage: '已成功啟用提醒功能',
     DisableMessage: '已成功停用提醒功能',
     SuccessUpdateAlertSettings: '通知設定已更新成功',
+    EnableForceTracker: '強制要求父議題設置已啟用',
+    DisableForceTracker: '強制要求父議題設置已停用',
     TagUpdateMessage: '任務標籤已更新成功',
-    ChangeManager: '變更專案經理'
+    ChangeManager: '變更專案經理',
+    ParentIssueRequired: '議題提醒',
+    ParentIssueRequiredSettings: '議題提醒功能',
+    IssueType: '議題類型'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: '遠端佈署環境',
@@ -1251,6 +1261,47 @@ export default {
     TaskListWidth: '左側寬度',
     TimelineLength: '時間軸長度',
     DisplayTaskList: '顯示議題列表'
+  },
+  Inbox: {
+    No: '項次',
+    Title: '標題',
+    Type: '訊息類型',
+    Date: '日期',
+    Sender: '公告者',
+    Info: '訊息',
+    Warning: '警告',
+    Urgent: '緊急',
+    NewVersion: '有新版本可更新',
+    SystemAlert: '系統警報',
+    SystemWarning: '系統警告',
+    GroupReceiver: {
+      Project: '專案名稱',
+      User: '使用者',
+      Role: '角色',
+      ProjectOwner: '專案經理',
+      All: '全部'
+    },
+    ViewAll: '全部',
+    TimeRange: '訊息區間',
+    From: '自',
+    To: '到',
+    SelectDate: '選擇日期',
+    SelectMessageType: '選擇訊息種類',
+    Unread: '僅顯示未讀訊息',
+    IncludeSystemMessage: '含系統訊息',
+    Apply: '確認',
+    MessageConsole: '推播管理',
+    MessageNote: '* 平台僅保留7天內訊息，如有重要資訊請另行儲存。',
+    CreateMessage: '新增推播',
+    EditMessage: '編輯推播',
+    MessageContent: '訊息內容',
+    Public: '公開',
+    Private: '指定',
+    GroupReceiverTitle: '推播對象',
+    AlertLevel: '訊息類別',
+    Send: '傳送',
+    NotifyClosed: '訊息已關閉',
+    SearchLabel: '搜尋訊息標題或寄送者'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

@@ -9,6 +9,7 @@ const asyncLangs = langFiles.keys().reduce((plugins, langPath) => {
 export default {
   route: {
     myWork: 'My Work',
+    inbox: 'Inbox',
     dashboard: 'Dashboard',
     projectOverview: 'Project Overview',
     projectList: 'Project List',
@@ -146,7 +147,9 @@ export default {
     7006: 'Argument {arg} can not be alerted when children issue exist.',
     7007: `$arg should begin with 'ghp_'.`,
     8001: '{service_name} error: {response}',
+    8101: 'Parent issue setting error! Please confirm that the setting issue is not a sub-issue or related issue of this issue.',
     9001: 'Internal exception: {type}: {exception}',
+    9002: 'An invalid code path happens: {message}',
     9003: 'An unexpected database error has occurred: {message}',
     9999: 'An unknown error has occurred.',
     20001: 'Token is invalid.',
@@ -291,7 +294,8 @@ export default {
       'The red background indicates that there are duplicate project settings in the same branch. Please make sure that the settings are consistent (as on or off) to ensure that the Pipeline operates normally.',
     ChangeProjectManager: 'Confirming if you want to change the project manager?',
     ConnectSocket: 'Kanban is connecting Socket...',
-    UpdateKanban: '{issueName} is updated'
+    UpdateKanban: '{issueName} is updated',
+    NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -771,7 +775,8 @@ export default {
     SYSTEM: 'System',
     Selected: 'Selected',
     AccountRule: 'Account should be 2-60 characters long and "._-" can be accepted at the middle of string',
-    PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number'
+    PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number',
+    LastLogin: 'Last Login'
   },
   Profile: {
     Basic: 'Basic',
@@ -1125,9 +1130,14 @@ export default {
     Unchange: 'The issue has not changed continuously for more than __?__ days',
     EnableMessage: 'The reminder feature has been successfully turned on',
     DisableMessage: 'The reminder feature has been successfully turned off',
+    EnableForceTracker: 'The force tracker feature has been successfully turned on',
+    DisableForceTracker: 'The force tracker feature has been successfully turned off',
     SuccessUpdateAlertSettings: 'The reminder Settings have been updated successfully',
     TagUpdateMessage: 'The task label has been updated successfully',
-    ChangeManager: 'Change Project Manager'
+    ChangeManager: 'Change Project Manager',
+    ParentIssueRequired: 'Parent Issue Required',
+    ParentIssueRequiredSettings: 'Parent Issue Required Settings',
+    IssueType: 'Issue Type'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: 'Remote Env.',
@@ -1260,6 +1270,47 @@ export default {
     TaskListWidth: 'Task list width',
     TimelineLength: 'Before/After',
     DisplayTaskList: 'Display task list'
+  },
+  Inbox: {
+    No: 'No.',
+    Title: 'Title',
+    Type: 'Message Type',
+    Date: 'Date',
+    Sender: 'Sender',
+    Info: 'Info',
+    Warning: 'Warning',
+    Urgent: 'Urgent',
+    NewVersion: 'New Version',
+    SystemAlert: 'System Alert',
+    SystemWarning: 'System Warning',
+    GroupReceiver: {
+      Project: 'Project',
+      User: 'User',
+      Role: 'Role',
+      ProjectOwner: 'Project Owner',
+      All: 'All'
+    },
+    ViewAll: 'View All',
+    TimeRange: 'Time Range',
+    From: 'From',
+    To: 'To',
+    SelectDate: 'Select Date',
+    SelectMessageType: 'Select Message Type',
+    Unread: 'Show  Unread Message Only',
+    IncludeSystemMessage: 'Include System Message',
+    Apply: 'Apply',
+    MessageConsole: 'Message Console',
+    MessageNote: '* The system only keeps 7 days messages. Pelase save the message in local if it\'s important.',
+    CreateMessage: 'Create Message',
+    EditMessage: 'Edit Message',
+    MessageContent: 'Message Content',
+    Public: 'Public',
+    Private: 'Private',
+    GroupReceiverTitle: 'Group Receiver',
+    AlertLevel: 'Alert Level',
+    Send: 'Send',
+    NotifyClosed: 'Message closed successfully',
+    SearchLabel: 'Search Title or Sender'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

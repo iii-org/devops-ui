@@ -53,6 +53,8 @@
         :edit-row-id="editRowId"
         :components="Tracker"
         :options="tracker"
+        :strict-options="strictTracker"
+        :is-parent-exist="isParentExist"
         sortable
         :has-child-edit="true"
         @edit="handleUpdateIssue"
@@ -385,6 +387,7 @@ export default {
       addIssueVisible: false,
       updateLoading: false,
       editRowId: null,
+      isParentExist: false,
       contextMenu: { visible: true, row: {}},
       relationIssue: {
         visible: false,
@@ -397,7 +400,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'priority', 'tracker', 'status', 'userId', 'userRole']),
+    ...mapGetters(['selectedProjectId', 'priority', 'tracker', 'status', 'userId', 'userRole', 'strictTracker']),
     hasInlineCreate() {
       const create = this.listData ? this.listData.filter((item) => item.create) : false
       return create.length > 0
@@ -548,6 +551,7 @@ export default {
       return form
     },
     async appendIssue(row, subLevel, prefill) {
+      if (row) this.$set(this.$data, 'isParentExist', Object.prototype.hasOwnProperty.call(row, 'parent_object'))
       const { row_index, treeDataArray, updateNodeMap } = await this.treeDataArray(row, subLevel)
       const store = this.$refs.WBS.layout.store
       const { treeData, lazyTreeNodeMap } = store.states
@@ -685,6 +689,7 @@ export default {
           columnName = column['property']
         }
         this.$set(this.$data, 'editRowId', row.id)
+        this.$set(this.$data, 'isParentExist', Object.prototype.hasOwnProperty.call(row, 'parent_object'))
         this.$set(row, 'originColumn', cloneDeep(row[columnName]))
         this.$set(row, 'editColumn', columnName)
       }

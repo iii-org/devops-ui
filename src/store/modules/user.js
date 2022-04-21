@@ -74,8 +74,8 @@ const actions = {
     }
     commit('SET_USER_NAME', user.name)
 
-    await dispatch('projects/getSelectionOptions', null, { root: true })
     await dispatch('projects/getMyProjectOptions', null, { root: true })
+    await dispatch('projects/getSelectionOptions', null, { root: true })
 
     dispatch('app/setRoleList', null, { root: true })
     commit('SET_USER_ROLE', user.default_role_name)
@@ -87,6 +87,8 @@ const actions = {
       } else {
         commit('projects/SET_SELECTED_PROJECT', myProjects[0], { root: true })
       }
+      await dispatch('projects/getIssueStrictTracker', null, { root: true })
+      await dispatch('projects/getIssueForceTracker', null, { root: true })
     }
   },
 

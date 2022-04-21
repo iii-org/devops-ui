@@ -14,6 +14,7 @@ function User(user) {
   this.phone = user.phone
   this.title = user.title
   this.update_at = user.update_at
+  this.last_login = user.last_login
   if (user.default_role) {
     this.default_role_id = user.default_role.id
     this.default_role_name = user.default_role.name

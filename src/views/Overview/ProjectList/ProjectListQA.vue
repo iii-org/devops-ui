@@ -355,6 +355,9 @@ export default {
       return this.selectedProjectList.length > 0
     },
     getThisYear() {
+      if (sessionStorage.getItem('startDay') && sessionStorage.getItem('endDay')) {
+        return [sessionStorage.getItem('startDay'), sessionStorage.getItem('endDay')]
+      }
       return [`${thisYear.getFullYear()}-01-01`, `${thisYear.getFullYear() + 1}-12-31`]
     },
     selectedDateNow() {
@@ -519,8 +522,13 @@ export default {
       } else {
         this.params.pj_due_date_start = date[0]
         this.params.pj_due_date_end = date[1]
+        this.setSelectionDate(date[0], date[1])
       }
       this.fetchData()
+    },
+    setSelectionDate(startDay, endDay) {
+      sessionStorage.setItem('startDay', startDay)
+      sessionStorage.setItem('endDay', endDay)
     },
     calculateDays(endDay, startDay) {
       const start = new Date(startDay)
