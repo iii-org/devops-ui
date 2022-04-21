@@ -1242,7 +1242,9 @@ export default {
     childrenStatusErrorTitle: '子議題尚未全關閉：',
     childrenStatusErrorContent: '有未關閉的子議題，請確認所有議題皆已關閉。',
     priorityErrorTitle: '父議題不能改變優先權：',
-    priorityErrorContent: '優先權會依據最後的子議題。'
+    priorityErrorContent: '優先權會依據最後的子議題。',
+    trackerErrorTitle: '議題更動失敗:',
+    trackerErrorContent: '本專案已啟用強制引用父議題此議題異動須含有父議題'
   },
   Status: {
     Finished: '掃描完成',

@@ -1251,7 +1251,9 @@ export default {
     childrenStatusErrorTitle: `The children issues haven't been closed:`,
     childrenStatusErrorContent: 'There are unclosed children issues, please confirm that all issues are closed.',
     priorityErrorTitle: 'The parent issue cannot change priority:',
-    priorityErrorContent: 'Priority will be based on the last children issue.'
+    priorityErrorContent: 'Priority will be based on the last children issue.',
+    trackerErrorTitle: 'Tracker Issue:',
+    trackerErrorContent: 'Tracker type requires parent issue'
   },
   Status: {
     Finished: 'Finished',

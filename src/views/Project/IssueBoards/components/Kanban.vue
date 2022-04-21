@@ -355,6 +355,10 @@ export default {
       title: this.$t('Kanban.priorityErrorTitle'),
       content: this.$t('Kanban.priorityErrorContent')
     }
+    this.trackerError = {
+      title: this.$t('Kanban.trackerErrorTitle'),
+      content: this.$t('Kanban.trackerErrorContent')
+    }
     return {
       showDialog: false,
       showAlert: false,
@@ -364,7 +368,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
+    ...mapGetters(['selectedProjectId', 'forceTracker']),
     getHeaderBarClassName() {
       return function (name) {
         return name.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase())
@@ -475,8 +479,9 @@ export default {
     isStatusNormal(toClassObj, fromClassObj, element) {
       const isAssigned = this.isAssigned(toClassObj, fromClassObj, element)
       const isChildrenIssuesClosed = toClassObj.is_closed === true ? this.isChildrenIssuesClosed(element) : true
+      const isForceTracker = this.isTrackerStrict(element)
       if (this.errorMsg.length > 0) this.showErrorAlert(this.errorMsg)
-      return isAssigned && isChildrenIssuesClosed
+      return isAssigned && isChildrenIssuesClosed && isForceTracker
     },
     isPriorityNormal(element, value) {
       const isPriorityUnchanged = this.isPriorityUnchanged(element, value)
@@ -505,6 +510,18 @@ export default {
         this.handleErrorAlert(error)
       }
       return isChildrenIssuesClosed
+    },
+    isTrackerStrict(element) {
+      const hasForceTacker = this.forceTracker.find(x => x.id === element.tracker.id)
+      if (hasForceTacker) {
+        if (element.has_father) return true
+        else {
+          const error = 'trackerError'
+          this.handleErrorAlert(error)
+          return false
+        }
+      }
+      return true
     },
     isPriorityUnchanged(element) {
       const isPriorityUnchanged = this.checkPriority(element)
