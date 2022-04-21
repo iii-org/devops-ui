@@ -591,7 +591,7 @@ export default {
       })
     },
     async getHasRelation() {
-      await getHasRelation(this.selectedProject.id)
+      await getHasRelation(this.form.project || this.selectedProject.id)
         .then((res) => {
           if (res.has_relations) {
             this.getAllRelation()
