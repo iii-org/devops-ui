@@ -592,7 +592,8 @@ export default {
       if (
         Object.keys(data.project).length > 0 &&
         this.selectedProjectId !== data.project.id &&
-        !this.getRelationProjectList().includes(data.project.id)
+        !this.getRelationProjectList().includes(data.project.id) &&
+        !this.isFromBoard
       ) {
         this.onProjectChange(data.project.id)
       }
