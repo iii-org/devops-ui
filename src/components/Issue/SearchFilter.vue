@@ -215,13 +215,16 @@ export default {
     },
     fixed_version_closed() {
       this.onChangeFixedVersionStatus()
-    }
-  },
-  async mounted() {
-    const hasSon = await this.fetchHasSon(this.selectedProjectId)
-    this.filterOptionsWithProject = await this.getFilterOptions(hasSon)
-    if (hasSon) {
-      this.projectRelationList = await this.getProjectRelationData(this.selectedProject)
+    },
+    selectedProjectId: {
+      async handler(val) {
+        const hasSon = await this.fetchHasSon(this.selectedProjectId)
+        this.filterOptionsWithProject = await this.getFilterOptions(hasSon)
+        if (hasSon) {
+          this.projectRelationList = await this.getProjectRelationData(this.selectedProject)
+        }
+      },
+      immediate: true
     }
   },
   methods: {
