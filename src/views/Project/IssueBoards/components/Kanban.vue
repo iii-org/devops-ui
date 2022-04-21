@@ -333,9 +333,9 @@ export default {
       type: Function,
       default: () => ({})
     },
-    elementId: {
-      type: Number,
-      default: null
+    elementIds: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -414,35 +414,8 @@ export default {
     }
   },
   watch: {
-    async list() {
-      window.clearTimeout(this.timeoutId)
-      this.timeoutId = window.setTimeout(() => {
-        if (this.$refs[this.elementId]) {
-          if (this.$refs[this.elementId].length > 0) {
-            const relation = this.$refs[this.elementId][0].getElementsByClassName('el-collapse-item__header')
-            if (relation.length > 0) {
-              relation[0].style.background = 'rgba(255,0,0,.2)'
-              relation[0].style.background = 'background 0.3s ease-in-out'
-            }
-            this.$refs[this.elementId][0].style.boxShadow = '0px 0px 10px 2px rgba(255,0,0,.2)'
-            this.$refs[this.elementId][0].style.background = 'rgba(255,0,0,.2)'
-            this.$refs[this.elementId][0].style.transition = 'box-shadow 0.3s ease-in-out'
-            this.$refs[this.elementId][0].style.transition = 'background 0.3s ease-in-out'
-            this.$nextTick(() => {
-              window.clearTimeout(this.timeoutIdx)
-              this.timeoutIdx = window.setTimeout(() => {
-                if (this.$refs[this.elementId].length > 0) {
-                  this.$refs[this.elementId][0].style.boxShadow = ''
-                  this.$refs[this.elementId][0].style.background = ''
-                  if (relation.length > 0) {
-                    relation[0].style.background = ''
-                  }
-                }
-              }, 500)
-            })
-          }
-        }
-      }, 100)
+    async elementIds() {
+      this.updateAnimation()
     }
   },
   beforeDestroy() {
@@ -628,6 +601,32 @@ export default {
     },
     handleContextMenu(row, context, event) {
       this.$emit('contextmenu', { row, context, event })
+    },
+    updateAnimation() {
+      for (const elementId of this.elementIds) {
+        setTimeout(() => {
+          if (this.$refs[elementId]) {
+            const relation = this.$refs[elementId][0].getElementsByClassName('el-collapse-item__header')
+            if (relation.length > 0) {
+              relation[0].style.background = 'rgba(255,0,0,.2)'
+              relation[0].style.transition = 'background 0.3s ease-in-out'
+            }
+            this.$refs[elementId][0].style.boxShadow = '0px 0px 10px 2px rgba(255,0,0,.2)'
+            this.$refs[elementId][0].style.background = 'rgba(255,0,0,.2)'
+            this.$refs[elementId][0].style.transition = 'box-shadow 0.3s ease-in-out'
+            this.$refs[elementId][0].style.transition = 'background 0.3s ease-in-out'
+            this.$nextTick(() => {
+              window.setTimeout(() => {
+                if (this.$refs[elementId].length > 0) {
+                  this.$refs[elementId][0].style.boxShadow = ''
+                  this.$refs[elementId][0].style.background = ''
+                  if (relation.length > 0) relation[0].style.background = ''
+                }
+              }, 500)
+            })
+          }
+        }, 100)
+      }
     }
   }
 }
