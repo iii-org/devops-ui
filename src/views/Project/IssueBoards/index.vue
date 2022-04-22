@@ -192,6 +192,7 @@
       :project-issue-list="projectIssueList"
       :fixed_version="fixed_version"
       :assigned_to="assigned_to"
+      :element-ids="elementIds"
       @getRelativeList="getRelativeList"
       @updateIssueList="updateIssueList"
       @updateData="updateData"
@@ -250,6 +251,7 @@ export default {
       relativeIssueList: [],
       searchVisible: false,
       keyword: null,
+      elementIds: [],
       socket: io(`/issues/websocket`, { // production socket
         reconnectionAttempts: 5
       })
@@ -462,6 +464,7 @@ export default {
       await this.getInitStoredData()
       await this.loadSelectionList()
       await this.loadData()
+      await this.syncLoadFilterData()
     },
     async getInitStoredData() {
       const key = 'board'
@@ -796,6 +799,7 @@ export default {
           this.updateData()
           this.showUpdateMessage(data[idx])
         }
+        this.elementIds = data.map(s => s.id)
       })
       this.socket.on('delete_issue', async (data) => {
         const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
