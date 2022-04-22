@@ -24,13 +24,13 @@ server {
 	}
 	# for swagger-ui
 	location ^~ /swagger-ui/ {
-		proxy_pass http://devopsapi-service:10009/swagger-ui/;
+		proxy_pass %%api_url%%swagger-ui/;
 	}
 	location ^~ /flask-apispec/ {
-		proxy_pass http://devopsapi-service:10009/flask-apispec/;
+		proxy_pass %%api_url%%flask-apispec/;
 	}
 	location ^~ /swagger/ {
-		proxy_pass http://devopsapi-service:10009/swagger/;
+		proxy_pass %%api_url%%swagger/;
 	}
 
 	error_page   500 502 503 504  /50x.html;
