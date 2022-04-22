@@ -58,8 +58,8 @@
           <el-col v-if="form.type_id === 3" :span="24">
             <el-form-item :label="$t('Inbox.GroupReceiver.User')" prop="user_ids">
               <el-select v-model="form.user_ids" multiple filterable collapse-tags style="width: 100%">
-                <el-option v-for="item in userList" :key="item.id" :label="item.name" :value="item.id">
-                  {{ item.name }}
+                <el-option v-for="item in userList" :key="item.id" :label="item.name+' ('+item.login+')'" :value="item.id">
+                  {{ item.name }} ({{ item.login }})
                 </el-option>
               </el-select>
             </el-form-item>

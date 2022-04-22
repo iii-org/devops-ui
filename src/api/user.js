@@ -30,7 +30,7 @@ export const getAllUser = async () => {
   const res = await request.get(`/user/list`)
   const userList = []
   for (const user of res.data.user_list) {
-    userList.push({ id: user.id, name: user.name })
+    userList.push({ id: user.id, name: user.name, login: user.login })
   }
   return userList
 }

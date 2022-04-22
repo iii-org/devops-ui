@@ -5,8 +5,8 @@
     width="50%"
   >
     <template slot="title">
-      <h2 style="margin: 0">{{ message.title ? message.title : 'No Title' }}</h2>
-      <div style="color: #45474b; line-height: 5px">{{ UTCtoLocalTime(message.created_at) }}</div>
+      <h2 style="margin-bottom: 12px">{{ message.title ? message.title : 'No Title' }}</h2>
+      <div style="color: #45474b">{{ UTCtoLocalTime(message.created_at) }}</div>
     </template>
     <div class="border">
       <Viewer :initial-value="message.message" />
