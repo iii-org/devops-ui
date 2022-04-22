@@ -246,12 +246,23 @@
         >
           {{ $t('Issue.AddIssue') }}
         </contextmenu-item>
-        <contextmenu-item
+        <contextmenu-submenu
           v-permission="permission"
-          @click="appendIssue(contextMenu.row, true)"
+          :title="$t('Issue.ChildrenIssue')"
         >
-          {{ $t('Issue.AddSubIssue') }}
-        </contextmenu-item>
+          <contextmenu-item
+            v-permission="permission"
+            @click="toggleRelationDialog('Children')"
+          >
+            {{ $t('general.Settings', { name: $t('Issue.ChildrenIssue') }) }}
+          </contextmenu-item>
+          <contextmenu-item
+            v-permission="permission"
+            @click="appendIssue(contextMenu.row, true)"
+          >
+            {{ $t('Issue.AddSubIssue') }}
+          </contextmenu-item>
+        </contextmenu-submenu>
         <contextmenu-item
           v-permission="permission"
           @click="appendIssue(contextMenu.row, false, contextMenu.row)"
@@ -289,6 +300,43 @@
       />
     </el-dialog>
     <el-dialog
+      :visible.sync="relationDialog.visible"
+      :close-on-click-modal="false"
+      width="80%"
+      :show-close="false"
+      append-to-body
+    >
+      <div slot="title">
+        <el-row slot="title" type="flex" align="middle">
+          <el-col :xs="24" :md="16">
+            <el-button
+              type="text"
+              size="medium"
+              icon="el-icon-arrow-left"
+              class="previous text-title linkTextColor"
+              @click="toggleRelationDialog(relationDialog.target)"
+            >
+              {{ $t('general.Back') }}
+            </el-button>
+            <span class="text-title">
+              {{ $t('general.Settings', { name: $t('Issue.' + relationDialog.target + 'Issue') }) }}
+            </span>
+          </el-col>
+          <el-col :xs="24" :md="8" class="text-right">
+            <el-button class="buttonPrimary" @click="onSaveCheckRelationIssue">
+              {{ $t('general.Save') }}
+            </el-button>
+          </el-col>
+        </el-row>
+      </div>
+      <SettingRelationIssue
+        v-if="relationDialog.visible"
+        ref="settingRelationIssue"
+        :row.sync="contextMenu.row"
+        :target.sync="relationDialog.target"
+      />
+    </el-dialog>
+    <el-dialog
       :visible.sync="issueMatrixDialog.visible"
       width="80%"
       top="20px"
@@ -315,6 +363,7 @@ import WBSInputColumn from '@/views/Plan/Milestone/components/WBSInputColumn'
 import WBSSelectColumn from '@/views/Plan/Milestone/components/WBSSelectColumn'
 import WBSDateColumn from '@/views/Plan/Milestone/components/WBSDateColumn'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
+import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
 import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import { addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
@@ -330,6 +379,7 @@ export default {
     ContextmenuItem,
     ContextmenuSubmenu,
     ProjectIssueDetail,
+    SettingRelationIssue,
     IssueMatrix,
     // eslint-disable-next-line vue/no-unused-components
     Tracker, Status
@@ -392,6 +442,10 @@ export default {
       relationIssue: {
         visible: false,
         id: null
+      },
+      relationDialog: {
+        visible: false,
+        target: 'Parent'
       },
       issueMatrixDialog: {
         visible: false,
@@ -953,6 +1007,41 @@ export default {
         done()
       }
     },
+    onSaveCheckRelationIssue() {
+      this.$refs.settingRelationIssue.$refs.issueForm.validate((valid) => {
+        if (valid) {
+          this.onSaveRelationIssue()
+        }
+      })
+    },
+    async onSaveRelationIssue() {
+      try {
+        const getSettingRelationIssue = this.$refs['settingRelationIssue']
+        const updateApi = []
+        if (getSettingRelationIssue.target === 'Parent') {
+          updateApi.push(
+            updateIssue(getSettingRelationIssue.row.id, { parent_id: getSettingRelationIssue.form.parent_id })
+          )
+        } else if (getSettingRelationIssue.target === 'Children') {
+          getSettingRelationIssue.children['append'].forEach((item) => {
+            updateApi.push(updateIssue(item, { parent_id: getSettingRelationIssue.row.id }))
+          })
+          getSettingRelationIssue.children['remove'].forEach((item) => {
+            updateApi.push(updateIssue(item, { parent_id: '' }))
+          })
+        }
+        await Promise.all(updateApi)
+        this.toggleRelationDialog(getSettingRelationIssue.target)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+        this.loadData()
+      } catch (e) {
+        console.error(e)
+      }
+    },
     onRelationIssueDialog(id) {
       this.$set(this.relationIssue, 'visible', true)
       this.$set(this.relationIssue, 'id', id)
@@ -964,6 +1053,10 @@ export default {
     handleRelationUpdate() {
       this.loadData()
       this.$emit('update-issue')
+    },
+    toggleRelationDialog(target) {
+      this.relationDialog.visible = !this.relationDialog.visible
+      this.relationDialog.target = target
     },
     toggleIssueMatrixDialog(row) {
       this.issueMatrixDialog.visible = !this.issueMatrixDialog.visible
