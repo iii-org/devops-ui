@@ -68,11 +68,12 @@ export default {
       this.listData = listData()
       await getHarborStatus().then(async (res) => {
         if (res.status) {
-          await getHarborCapacity.then((item) => {
+          await getHarborCapacity().then((item) => {
             this.listData[0] = this.handleData(item)
           })
+        } else {
+          this.listData[0] = this.handleData(res)
         }
-        this.listData[0] = this.handleData(res)
       })
       const apis = [getRancherStatus, getK8sStatus, getRedmineStatus, getSonarqubeStatus, getGitlabStatus]
       apis.forEach(async (api) => { await this.fetchData(api) })
