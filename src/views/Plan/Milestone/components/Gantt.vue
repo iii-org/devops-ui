@@ -360,10 +360,8 @@ export default {
     getParams() {
       const result = {
         parent_id: 'null',
-        tracker_id: 1
-      }
-      if (this.sort) {
-        result['sort'] = this.sort
+        tracker_id: 1,
+        sort: 'subject:dec'
       }
       if (!this.displayClosed) {
         result['status_id'] = 'open'
