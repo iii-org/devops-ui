@@ -72,7 +72,11 @@
         align="center"
         :label="$t('Inbox.Sender')"
         prop="creator.name"
-      />
+      >
+        <template slot-scope="scope">
+          {{ `${scope.row.creator.name} (${scope.row.creator.login})` }}
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         label="Group Receiver"
@@ -262,9 +266,6 @@ export default {
       }
     }
   },
-  mounted() {
-    this.fetchData()
-  },
   beforeDestroy() {
     window.clearTimeout(this.timeoutId)
   },
@@ -337,7 +338,6 @@ export default {
       }
     },
     async handleClose(row) {
-      console.log(row)
       this.listLoading = true
       await closeMessage(row.id)
         .then(async () => {
