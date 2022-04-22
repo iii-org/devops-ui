@@ -415,7 +415,8 @@ export default {
     selectedProjectId: {
       handler(val) {
         this.getHasRelation()
-      }
+      },
+      immediate: true
     }
   },
   mounted() {
