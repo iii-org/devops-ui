@@ -597,7 +597,7 @@ export default {
         this.selectedProjectId !== data.project.id &&
         !this.projectRelationList.includes(data.project.id)
       ) {
-        this.onProjectChange(data.project.id)
+        // this.onProjectChange(data.project.id)
       }
       if (this.$refs.IssueForm) {
         this.$refs.IssueForm.getClosable()
