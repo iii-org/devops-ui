@@ -116,6 +116,7 @@ stages:
       - parentproject
       - parent02
       - clayfilterdetail
+      - tryonlyfilter
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -168,6 +169,7 @@ stages:
       - parentproject
       - parent02
       - clayfilterdetail
+      - tryonlyfilter
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -231,6 +233,7 @@ stages:
       - parentproject
       - parent02
       - clayfilterdetail
+      - tryonlyfilter
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -287,6 +290,7 @@ stages:
       - parentproject
       - parent02
       - clayfilterdetail
+      - tryonlyfilter
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -342,6 +346,7 @@ stages:
       - parentproject
       - parent02
       - clayfilterdetail
+      - tryonlyfilter
 - name: Test--ZAP
   iiidevops: zap
   steps:
