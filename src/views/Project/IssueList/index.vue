@@ -368,7 +368,6 @@ export default {
       tags: [],
       form: {},
       selectedIssueList: [],
-      allDownloadData: [],
       allDataLoading: false,
       excelColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to'],
       columnsOptions: Object.freeze([
@@ -443,8 +442,8 @@ export default {
         this.mainSelectedProjectId,
         this.getParams(this.totalData)
       )
-      this.allDownloadData = res.data.issue_list
       this.allDataLoading = false
+      return res.data.issue_list
     },
     async getInitStoredData() {
       const key = 'list'
@@ -514,9 +513,12 @@ export default {
     async downloadExcel(selectedIssueList) {
       if (selectedIssueList === 'allDownloadData') {
         this.$notify({ type: 'warning', title: this.$t('Loading').toString() })
-        await this.fetchAllDownloadData()
-      }
-      const selectedColumn = this.handleCsvSelectedColumn(selectedIssueList)
+        const issueList = await this.fetchAllDownloadData()
+        this.handleDownload(issueList)
+      } else this.handleDownload(selectedIssueList)
+    },
+    handleDownload(issueList) {
+      const selectedColumn = this.handleCsvSelectedColumn(issueList)
       const translateTable = this.handleCsvTranslateTable(selectedColumn)
       const worksheet = XLSX.utils.json_to_sheet(translateTable)
       this.$excel(worksheet, 'projectIssues')
@@ -525,7 +527,7 @@ export default {
       const selectedColumn = []
       selectedIssueList.forEach((item) => {
         const targetObject = {}
-        this.excelColumnSelected.map((itemSelected) => {
+        this.excelColumnSelected.forEach((itemSelected) => {
           switch (itemSelected) {
             case 'status':
               this.$set(targetObject, itemSelected, this.getStatusTagType(item.status.name))
@@ -559,7 +561,7 @@ export default {
           key = excelTranslate.projectIssues[key]
           return key
         })
-        Object.values(item).map((val, index) => {
+        Object.values(item).forEach((val, index) => {
           this.$set(chineseExcel, chineseColumnKey[index], val)
         })
         translateTable.push(chineseExcel)
