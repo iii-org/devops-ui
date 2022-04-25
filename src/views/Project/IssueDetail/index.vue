@@ -607,14 +607,14 @@ export default {
         (Object.keys(data.project).length > 0 &&
         this.selectedProjectId !== data.project.id &&
         !this.projectRelationList.includes(data.project.id)) ||
-        !this.isFromBoard)
+        !this.isFromBoard) {
       // Cori keeps both but remove the code from develop
       //        !this.getRelationProjectList().includes(data.project.id) &&
       //        !this.isFromBoard
       //       ( !this.projectRelationList.includes(data.project.id) || (
       //        !this.getRelationProjectList().includes(data.project.id) &&
       //        !this.isFromBoard))
-      ) {
+      // )
         // this.onProjectChange(data.project.id)
       }
       if (this.$refs.IssueForm) {
