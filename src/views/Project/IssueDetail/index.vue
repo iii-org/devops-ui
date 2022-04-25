@@ -426,7 +426,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userProjectList', 'selectedProjectId', 'test_filename', 'userRole', 'forceTracker', 'enableForceTracker']),
+    ...mapGetters([
+      'selectedProject',
+      'userProjectList',
+      'selectedProjectId',
+      'test_filename',
+      'userRole',
+      'forceTracker',
+      'enableForceTracker'
+    ]),
     hasRelationIssue() {
       return Object.keys(this.parent).length > 0 || this.children.length > 0
     },
@@ -454,6 +462,9 @@ export default {
     isButtonDisabled() {
       // return this.userRole === 'QA'
       return this.$route.params.disableButton
+    },
+    formProjectId () {
+      return this.form.project_id ? this.form.project_id : this.selectedProjectId
     }
   },
   watch: {
@@ -595,17 +606,14 @@ export default {
       if (
         (Object.keys(data.project).length > 0 &&
         this.selectedProjectId !== data.project.id &&
-        !this.projectRelationList.includes(data.project.id)) || 
-        (Object.keys(data.project).length > 0 &&
-        this.selectedProjectId !== data.project.id &&
-        !this.getRelationProjectList().includes(data.project.id) &&
+        !this.projectRelationList.includes(data.project.id)) ||
         !this.isFromBoard)
-// Cori keeps both but remove the code from develop
-//        !this.getRelationProjectList().includes(data.project.id) &&
-//        !this.isFromBoard
-//       ( !this.projectRelationList.includes(data.project.id) || (
-//        !this.getRelationProjectList().includes(data.project.id) &&
-//        !this.isFromBoard))
+      // Cori keeps both but remove the code from develop
+      //        !this.getRelationProjectList().includes(data.project.id) &&
+      //        !this.isFromBoard
+      //       ( !this.projectRelationList.includes(data.project.id) || (
+      //        !this.getRelationProjectList().includes(data.project.id) &&
+      //        !this.isFromBoard))
       ) {
         // this.onProjectChange(data.project.id)
       }
@@ -861,7 +869,7 @@ export default {
       formData.delete('name')
       formData.delete('project_id')
       formData.append('name', tag)
-      formData.append('project_id', this.selectedProjectId)
+      formData.append('project_id', this.formProjectId)
       return formData
     },
     submitIssue() {
