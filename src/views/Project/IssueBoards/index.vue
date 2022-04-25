@@ -141,7 +141,7 @@
           <em class="el-icon-arrow-down el-icon--right" />
         </el-button>
       </el-popover>
-      <el-button slot="button" :type="(socket.connected)? 'success': 'danger'" @click="connectSocket()">
+      <el-button slot="button" :disabled="isLoading" :type="(socket.connected)? 'success': 'danger'" @click="onSocketConnect">
         <div class="dot inline-block" :class="(socket.connected)? 'bg-success': 'bg-danger'" />
         {{ (socket.connected) ? $t('general.Connected') : $t('general.Disconnected') }}
       </el-button>
@@ -848,6 +848,11 @@ export default {
           this.showUpdateMessage(data[idx])
         }
       })
+      this.socket.on('disconnect', (reason) => {
+        if (reason !== 'io client disconnect') {
+          this.connectSocket()
+        }
+      })
     },
     socketDataFormat(data) {
       Object.keys(data).forEach(key => {
@@ -871,6 +876,12 @@ export default {
       this.setSocketListener()
       await this.socket.connect()
       await this.socket.emit('join', { project_id: this.projectId })
+    },
+    async onSocketConnect() {
+      this.isLoading = true
+      if (this.socket.connected) await this.socket.disconnect()
+      await this.connectSocket()
+      this.isLoading = false
     }
   }
 }
