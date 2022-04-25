@@ -598,7 +598,9 @@ export default {
 // Cori keeps both but remove the code from develop
 //        !this.getRelationProjectList().includes(data.project.id) &&
 //        !this.isFromBoard
-        !this.projectRelationList.includes(data.project.id)
+       ( !this.projectRelationList.includes(data.project.id) || (
+        !this.getRelationProjectList().includes(data.project.id) &&
+        !this.isFromBoard))
       ) {
         // this.onProjectChange(data.project.id)
       }
