@@ -9,7 +9,7 @@
       <div style="color: #45474b">{{ UTCtoLocalTime(message.created_at) }}</div>
     </template>
     <div class="border">
-      <Viewer :initial-value="message.message" />
+      <Viewer :key="componentKey" :initial-value="message.message" />
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button class="buttonSecondaryReverse" @click="dialogVisible = false">{{ $t('general.Close') }}</el-button>
@@ -33,7 +33,13 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false
+      dialogVisible: false,
+      componentKey: 0
+    }
+  },
+  watch: {
+    message() {
+      this.componentKey += 1
     }
   },
   methods: {
