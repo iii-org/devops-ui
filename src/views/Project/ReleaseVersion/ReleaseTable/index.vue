@@ -110,7 +110,7 @@
         >
           <template slot-scope="scope">
             <div id="release-tag">
-              <div v-if="scope.row.image_tags.length > 1 && !isExpand">
+              <div v-if="scope.row.image_tags && scope.row.image_tags.length > 1 && !isExpand">
                 <div slot="reference">
                   <el-tooltip placement="top">
                     <div slot="content">
