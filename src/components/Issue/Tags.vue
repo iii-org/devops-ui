@@ -87,6 +87,7 @@ export default {
         ? await getTagsByProject(pId)
         : await getTagsByName(params, { cancelToken })
       const tags = res.data.tags
+      this.isLoading = false
       this.cancelToken = null
       return tags
     },
