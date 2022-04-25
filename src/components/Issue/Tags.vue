@@ -55,6 +55,7 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       tagsList: [],
       tagsString: '',
       cancelToken: null
