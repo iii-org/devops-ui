@@ -70,7 +70,7 @@
             <el-menu class="download">
               <el-menu-item
                 :disabled="selectedProjectId === -1"
-                @click="downloadExcel(listData)"
+                @click="downloadExcel(AllData)"
               >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
@@ -346,7 +346,8 @@ export default {
       searchVisible: false,
       csvColumnSelected: ['department', 'display', 'start_date', 'due_date', 'owner_name', 'members'],
       params: params(),
-      listData: []
+      listData: [],
+      AllData: []
     }
   },
   computed: {
@@ -380,6 +381,7 @@ export default {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectList']),
     async fetchData() {
       this.listLoading = true
+      await this.fetchAllData()
       await this.getMyProjectList(this.params)
       this.listLoading = false
       this.listData = this.projectList
@@ -390,6 +392,15 @@ export default {
         this.getCalculateProjectData(filteredArray)
       }
       return this.projectList
+    },
+    async fetchAllData() {
+      await this.getMyProjectList({
+        offset: 0,
+        pj_due_date_start: `${thisYear.getFullYear()}-01-01`,
+        pj_due_date_end: `${thisYear.getFullYear() + 1}-12-31`,
+        pj_members_count: true
+      })
+      this.AllData = this.projectList
     },
     async getCalculateProjectData(project) {
       const ids = project.map(function (el) {
@@ -418,11 +429,11 @@ export default {
       if (this.keyword !== '') {
         this.params.search = this.keyword
       } else delete this.params.search
-      if (this.$refs.filter.isDisabled.length === 1) {
-        this.params.disabled = this.$refs.filter.isDisabled[0]
-      } else {
-        delete this.params.disabled
-      }
+      // if (this.$refs.filter.isDisabled.length === 1) {
+      //   this.params.disabled = this.$refs.filter.isDisabled[0]
+      // } else {
+      //   delete this.params.disabled
+      // }
       await this.fetchData()
       this.initParams()
     },
