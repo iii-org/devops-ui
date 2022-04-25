@@ -75,3 +75,9 @@
     }
   }
 }
+// issue detail and quick add issue parent & child selector
+.el-select-dropdown__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

@@ -13,7 +13,6 @@
           </el-form-item>
         </el-col>
       </el-row>
-
       <el-col
         :md="12"
         :span="24"
@@ -373,6 +372,10 @@ export default {
     trackerList: {
       type: Array,
       default: () => []
+    },
+    pId: {
+      type: Number,
+      default: 0
     }
   },
 
@@ -435,6 +438,9 @@ export default {
       handler() {
         this.setFilterValue()
       }
+    },
+    pId(val) {
+      if (val) this.fetchData(val)
     }
   },
 
@@ -444,12 +450,13 @@ export default {
   },
 
   methods: {
-    async fetchData() {
+    async fetchData(pId) {
+      const projectId = pId || this.projectId
       this.isLoading = true
-      if (this.projectId) {
+      if (projectId) {
         await Promise.all([
-          getProjectAssignable(this.projectId),
-          getProjectVersion(this.projectId, { status: 'open,locked' })
+          getProjectAssignable(projectId),
+          getProjectVersion(projectId, { status: 'open,locked' })
         ]).then((res) => {
           const [assigned_to, fixed_version] = res.map((item) => item.data)
 

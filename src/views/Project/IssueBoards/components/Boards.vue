@@ -118,7 +118,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['tracker', 'status', 'priority']),
+    ...mapGetters(['tracker', 'status', 'priority', 'selectedProject']),
     groupByValueOnBoard() {
       if (this.groupBy.value.length <= 0) {
         return this.getStatusSort.map((item) => item)

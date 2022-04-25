@@ -466,7 +466,7 @@ export default {
       if (!isAssigned) {
         const error = 'unassignedError'
         this.handleErrorAlert(error)
-      } 
+      }
       // else if (isAssigned && toClassObj.name === 'Active') {
       //   if (fromClassObj === null || fromClassObj.name !== 'Active') {
       //     const error = 'assignedError'

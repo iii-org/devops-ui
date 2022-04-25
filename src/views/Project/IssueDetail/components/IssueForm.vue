@@ -8,6 +8,24 @@
     label-position="top"
     :disabled="isButtonDisabled"
   >
+    <el-form-item v-if="hasRelations" :label="$t('Project.Project')">
+      <el-select v-model="form.project_id" style="width: 100%">
+        <el-option
+          v-for="project in allRelation"
+          :key="project.id"
+          :label="project.display"
+          :value="project.id"
+        >
+          <div>{{ project.display }}</div>
+          <div v-if="project.type === 'father'" class="round father">
+            {{ $t('general.Parent') }}
+          </div>
+          <div v-if="project.type === 'son'" class="round son">
+            {{ $t('general.Child') }}
+          </div>
+        </el-option>
+      </el-select>
+    </el-form-item>
     <Tags ref="tags" :form.sync="form" />
     <el-form-item prop="parent_id">
       <template slot="label">
@@ -246,6 +264,7 @@ import Status from '@/components/Issue/Status'
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
 import Tags from '@/components/Issue/Tags'
+import { getAllRelation, getHasRelation } from '@/api_v2/projects'
 
 const relationIssueFilter = { Feature: 'Test Plan', 'Test Plan': 'Feature', 'Fail Management': 'Test Plan' }
 
@@ -323,11 +342,13 @@ export default {
             return time.getTime() < new Date(startDate).getTime()
           }
         }
-      }
+      },
+      allRelation: [],
+      hasRelations: false
     }
   },
   computed: {
-    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'forceTracker', 'enableForceTracker']),
+    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'forceTracker', 'enableForceTracker','selectedProject', 'selectedProjectId']),
     isParentIssueClosed() {
       if (Object.keys(this.parent).length <= 0) return false
       return this.parent.status.name === 'Closed'
@@ -384,12 +405,11 @@ export default {
         this.getSearchIssue()
       }
     },
-    'form.project_id'(value) {
-      this.fetchData()
-      if (value > 0) {
-        this.$refs.tags.getSearchTags()
-        this.getSearchIssue()
-        this.getSearchRelationIssue()
+    'form.project_id': {
+      handler(newPId, oldPId) {
+        if (newPId > 0) {
+          this.onChangePId()
+        }
       }
     },
     'form.tags'() {
@@ -398,26 +418,30 @@ export default {
     'form.assigned_to_id'() {
       if (this.form.assigned_to_id && this.form.status_id === 1) this.form.status_id = 2
       if (!this.form.assigned_to_id) this.form.status_id = 1
+    },
+    selectedProjectId: {
+      handler(val) {
+        this.getHasRelation()
+      },
+      immediate: true
     }
   },
   mounted() {
-    this.fetchData()
     if (this.form.project_id > 0) {
-      this.$refs.tags.getSearchTags()
-      this.getSearchIssue()
-      this.getSearchRelationIssue()
+      this.onChangePId()
     }
   },
   methods: {
-    async fetchData() {
+    async fetchData(pId) {
       this.isLoading = true
-      if (this.form.project_id) {
+      const projectId = pId || this.form.project_id
+      if (projectId) {
         await Promise.all([
-          getProjectAssignable(this.form.project_id)
+          getProjectAssignable(projectId)
         ]).then(res => {
           this.getAssignedTo(res)
         })
-        await this.loadVersionList()
+        await this.loadVersionList(pId)
       }
       if (this.issueId > 0) {
         await this.getClosable()
@@ -437,12 +461,13 @@ export default {
         }, ...assigned_to.user_list
       ]
     },
-    async loadVersionList() {
+    async loadVersionList(pId) {
+      const projectId = pId || this.form.project_id
       const params = { status: 'open,locked' }
       if (this.form.fixed_version_id) {
         params['force_id'] = this.form.fixed_version_id
       }
-      const versionList = await getProjectVersion(this.form.project_id, params)
+      const versionList = await getProjectVersion(projectId, params)
       this.fixed_version = versionList.data.versions
     },
     async getClosable() {
@@ -576,6 +601,34 @@ export default {
       return value.replace(reg, function(str) {
         return '<span class=\'bg-yellow-200 text-danger p-1\'><strong>' + str + '</strong></span>'
       })
+    },
+    async getHasRelation() {
+      await getHasRelation(this.selectedProject.id)
+        .then((res) => {
+          if (res.has_relations) {
+            this.getAllRelation()
+          }
+          this.hasRelations = res.has_relations
+        })
+    },
+    async getAllRelation() {
+      const { display, id, name } = this.selectedProject
+      const selectedProject = {
+        display, id, name
+      }
+      let allRelation = []
+      await getAllRelation(this.selectedProject.id)
+        .then((res) => {
+          allRelation = res.data
+          allRelation.unshift(selectedProject)
+          this.allRelation = allRelation
+        })
+    },
+    onChangePId() {
+      this.fetchData()
+      this.$refs.tags.getSearchTags()
+      this.getSearchIssue()
+      this.getSearchRelationIssue()
     }
   }
 }
@@ -585,5 +638,19 @@ export default {
 /* noinspection CssUnusedSymbol */
 >>> .el-form-item {
   margin-bottom: 10px;
+}
+.round {
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 8px;
+  &.father {
+    background-color: #f56c6c;
+  }
+  &.son {
+    background-color: #409eff;
+  }
 }
 </style>
