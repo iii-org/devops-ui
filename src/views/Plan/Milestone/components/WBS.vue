@@ -356,7 +356,7 @@
 
 <script>
 import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu } from 'v-contextmenu'
-import { getProjectIssueList } from '@/api/projects'
+import { getProjectIssueList } from '@/api_v2/projects'
 import { mapGetters } from 'vuex'
 import { Tracker, Priority, Status } from '@/components/Issue'
 import WBSInputColumn from '@/views/Plan/Milestone/components/WBSInputColumn'
@@ -516,7 +516,7 @@ export default {
     async fetchData() {
       if (!this.selectedProjectId) return
       this.listLoading = true
-      const res = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
+      const res = await getProjectIssueList(this.filterValue.project || this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
       if (res.hasOwnProperty('data')) {
         this.listLoading = false
         return Promise.resolve(res.data.map((item) => this.issueFormatter(item)))

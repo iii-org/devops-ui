@@ -100,7 +100,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { camelCase } from 'lodash'
-import { getProjectIssueList } from '@/api/projects'
+import { getProjectIssueList } from '@/api_v2/projects'
 import { addIssue, getIssueFamily } from '@/api/issue'
 import AddIssue from '@/components/Issue/AddIssue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail'
@@ -417,7 +417,7 @@ export default {
       }
       this.listLoading = true
       try {
-        resProjectIssue = await getProjectIssueList(this.selectedProjectId, this.getParams(), {
+        resProjectIssue = await getProjectIssueList(this.filterValue.project || this.selectedProjectId, this.getParams(), {
           cancelToken: this.cancelToken
         })
       } catch (error) {

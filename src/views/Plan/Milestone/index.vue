@@ -385,7 +385,7 @@ export default {
       this.displayFields = res.data
     },
     async loadAssignedToList() {
-      const res = await getProjectAssignable(this.selectedProjectId)
+      const res = await getProjectAssignable(this.filterValue.project || this.selectedProjectId)
       this.assigned_to = [
         { id: 'null', name: this.$t('Issue.Unassigned') },
         {
@@ -402,11 +402,11 @@ export default {
       if (status) {
         params = { status: 'open,locked,closed' }
       }
-      const versionList = await getProjectVersion(this.selectedProjectId, params)
+      const versionList = await getProjectVersion(this.filterValue.project || this.selectedProjectId, params)
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
     },
     async loadTagsList() {
-      const res = await getTagsByProject(this.selectedProjectId)
+      const res = await getTagsByProject(this.filterValue.project || this.selectedProjectId)
       this.tags = res.data.tags
     },
     handleUpdateLoading(value) {
@@ -416,6 +416,7 @@ export default {
       this.lastUpdated = value
     },
     async onChangeFilterForm(value) {
+      this.loadSelectionList()
       Object.keys(value).forEach((item) => {
         this[item] = value[item]
       })
