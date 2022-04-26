@@ -162,14 +162,13 @@ import {
   getCmasReport
 } from '@/api/cmas'
 import { getCmasPod } from '@/api_v2/cmas'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
+import * as elementTagType from '@/utils/element-tag-type'
 
 export default {
   name: 'Cmas',
   components: {
-    ElTableColumnTag,
     ElTableColumnTime,
     PodLog
   },
