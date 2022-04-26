@@ -3,29 +3,60 @@
     <div class="flex justify-between items-center">
       <div>
         <template v-if="issueId">
-          <el-button
-            size="small"
-            icon="el-icon-upload"
-            :class="isButtonDisabled ? 'buttonInfo' : 'buttonSecondary'"
+          <el-link
+            class="linkTextColor"
+            :underline="false"
             :disabled="isButtonDisabled"
             @click="uploadDialogVisible = true"
-          >{{ $t('Issue.UploadFiles') }}</el-button>
-          <el-button
-            size="small"
-            icon="el-icon-plus"
-            :class="isButtonDisabled ? 'buttonInfo' : 'buttonTertiary'"
-            :disabled="isButtonDisabled"
-            @click="addTopicDialogVisible = true"
-          >{{ $t('Issue.AddSubIssue') }}</el-button>
+          >
+            <em class="el-icon-upload" />
+            {{ $t('Issue.UploadFiles') }}
+          </el-link>
+          <el-popover
+            class="mr-1"
+            placement="bottom"
+            trigger="hover"
+            :open-delay="300"
+            :close-delay="50"
+          >
+            <div class="flex justify-center">
+              <el-button
+                class="mr-2"
+                icon="el-icon-edit"
+                size="mini"
+                @click="toggleRelationDialog()"
+              >
+                {{ $t('general.Settings', { name: $t('Issue.ChildrenIssue') }) }}
+              </el-button>
+              <el-button
+                icon="el-icon-plus"
+                size="mini"
+                @click="addTopicDialogVisible = true"
+              >
+                {{ $t('Issue.AddSubIssue') }}
+              </el-button>
+            </div>
+            <el-link
+              slot="reference"
+              class="linkTextColor ml-3"
+              :underline="false"
+              :disabled="isButtonDisabled"
+            >
+              <em class="el-icon-plus" />
+              {{ $t('Issue.AddSubIssue') }}
+            </el-link>
+          </el-popover>
         </template>
-        <el-button
+        <el-link
           v-if="issueTracker==='Test Plan'"
-          size="small"
-          :class="isButtonDisabled ? 'buttonInfo' : 'buttonPrimary'"
-          icon="el-icon-upload"
+          class="linkTextColor ml-3"
+          :underline="false"
           :disabled="isButtonDisabled"
           @click="handleCollectionDialog"
-        >管理測試檔案</el-button>
+        >
+          <em class="el-icon-upload" />
+          管理測試檔案
+        </el-link>
       </div>
       <div class="text-right">
         <el-link
@@ -104,18 +135,60 @@
         </el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      :visible.sync="relationDialog"
+      :close-on-click-modal="false"
+      width="80%"
+      :show-close="false"
+      append-to-body
+    >
+      <div slot="title">
+        <el-row slot="title" type="flex" align="middle">
+          <el-col :xs="24" :md="16">
+            <el-button
+              type="text"
+              size="medium"
+              icon="el-icon-arrow-left"
+              class="previous text-title linkTextColor"
+              @click="toggleRelationDialog()"
+            >
+              {{ $t('general.Back') }}
+            </el-button>
+            <span class="text-title">
+              {{ $t('general.Settings', { name: $t('Issue.ChildrenIssue') }) }}
+            </span>
+          </el-col>
+          <el-col :xs="24" :md="8" class="text-right">
+            <el-button class="buttonPrimary" @click="onSaveCheckRelationIssue">
+              {{ $t('general.Save') }}
+            </el-button>
+          </el-col>
+        </el-row>
+      </div>
+      <SettingRelationIssue
+        v-if="relationDialog"
+        ref="settingRelationIssue"
+        :row.sync="row"
+        target="Children"
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import IssueFileUploader from './IssueFileUploader'
+import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
 import { addIssue, updateIssue } from '@/api/issue'
 import AddIssue from '@/components/Issue/AddIssue'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'IssueToolbar',
-  components: { AddIssue, IssueFileUploader },
+  components: {
+    AddIssue,
+    IssueFileUploader,
+    SettingRelationIssue
+  },
   props: {
     issueLink: {
       type: String,
@@ -133,6 +206,10 @@ export default {
       type: String,
       default: null
     },
+    row: {
+      type: Object,
+      default: () => ({})
+    },
     isButtonDisabled: {
       type: Boolean,
       default: false
@@ -143,7 +220,8 @@ export default {
       isLoading: false,
       uploadDialogVisible: false,
       addTopicDialogVisible: false,
-      specialSymbols: '\ / : * ? " < > | # { } % ~ &'
+      specialSymbols: '\ / : * ? " < > | # { } % ~ &',
+      relationDialog: false
     }
   },
   computed: {
@@ -220,6 +298,38 @@ export default {
     },
     handleAdvancedSave() {
       this.$refs['AddIssue'].handleSave()
+    },
+    toggleRelationDialog() {
+      this.relationDialog = !this.relationDialog
+    },
+    onSaveCheckRelationIssue() {
+      this.$refs.settingRelationIssue.$refs.issueForm.validate((valid) => {
+        if (valid) {
+          this.onSaveRelationIssue()
+        }
+      })
+    },
+    async onSaveRelationIssue() {
+      try {
+        const getSettingRelationIssue = this.$refs['settingRelationIssue']
+        const updateApi = []
+        getSettingRelationIssue.children['append'].forEach((item) => {
+          updateApi.push(updateIssue(item, { parent_id: getSettingRelationIssue.row.id }))
+        })
+        getSettingRelationIssue.children['remove'].forEach((item) => {
+          updateApi.push(updateIssue(item, { parent_id: '' }))
+        })
+        await Promise.all(updateApi)
+        this.toggleRelationDialog()
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+        this.$emit('update')
+      } catch (e) {
+        console.error(e)
+      }
     },
     loadingUpdate(value, upload) {
       this.isLoading = value
