@@ -308,7 +308,7 @@ import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import getPageTitle from '@/utils/get-page-title'
 import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
-//import { getIssueFamily } from '@/api/issue'
+// import { getIssueFamily } from '@/api/issue'
 import variables from '@/styles/theme/variables.scss'
 
 const commitLimit = 10
@@ -480,8 +480,8 @@ export default {
     },
     isButtonDisabled() {
       return this.$route.params.hasOwnProperty('disableButton')
-      ? this.$route.params.disableButton
-      : false
+        ? this.$route.params.disableButton
+        : false
     },
     formProjectId() {
       return this.form.project_id ? this.form.project_id : this.selectedProjectId

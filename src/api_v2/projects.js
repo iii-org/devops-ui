@@ -149,3 +149,4 @@ export const forceDeleteProject = (project_id) =>
 export const syncProject = (project_id) =>
   request.patch(`/v2/sync_projects/${project_id}`)
 export const getAllRelation = (project_id) => request.get(`/v2/project/${project_id}/all_relation`)
+export const getHasSon = (project_id) => request.get(`/v2/project/${project_id}/has_son`)
