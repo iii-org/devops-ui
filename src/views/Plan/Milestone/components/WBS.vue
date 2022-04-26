@@ -500,6 +500,7 @@ export default {
       if (this.keyword) {
         result['search'] = this.keyword
       }
+      result['only_superproject_issues'] = !!this.filterValue.project
       return result
     },
     async loadData() {
