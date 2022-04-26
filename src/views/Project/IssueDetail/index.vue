@@ -83,8 +83,10 @@
                 :issue-id="issueId"
                 :issue-name="issueName"
                 :issue-tracker="formTrackerName"
+                :row="form"
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
+                @update="getData()"
               />
             </el-col>
           </el-row>
@@ -657,6 +659,7 @@ export default {
     },
     setFormData(data) {
       const {
+        id,
         project,
         parent,
         assigned_to,
@@ -671,12 +674,16 @@ export default {
         due_date,
         description
       } = data
+      this.form.id = id
       this.form.parent_id = parent ? parent.id : ''
+      this.form.project = project
       this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
       this.form.name = name
       this.form.fixed_version_id = fixed_version ? fixed_version.id : ''
+      this.form.tracker = tracker
       this.form.tracker_id = tracker.id
+      this.form.status = status
       this.form.status_id = status.id
       this.form.priority_id = priority.id
       this.form.estimated_hours = estimated_hours
