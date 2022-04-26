@@ -308,7 +308,7 @@ export default {
           target: '.el-dialog',
           text: 'Loading'
         })
-        await deleteHarborRepo({ repository_fullname: this.deleteResourceName })
+        await deleteHarborRepo(this.deleteResourceName)
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Deleted'),
