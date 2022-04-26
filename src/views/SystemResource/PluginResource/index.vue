@@ -55,7 +55,7 @@
 import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getPluginResource } from '@/api/harbor'
-import ResourcePie from './components/ResourcePie'
+import ResourcePie from './components/resourcePie'
 
 const handleLeftQuota = (item) => {
   const quotaValue = item.quota.value === '' ? 0 : Number(item.quota.value)
