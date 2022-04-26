@@ -276,7 +276,10 @@ export default {
         if (valid) {
           this.dialogVisible = false
           const data = this.form
-          await editHarborRepo(data.name, { description: data.description })
+          await editHarborRepo({
+            description: data.description,
+            repository_fullname: data.name
+          })
           this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Updated'),
@@ -305,7 +308,7 @@ export default {
           target: '.el-dialog',
           text: 'Loading'
         })
-        await deleteHarborRepo(this.deleteResourceName)
+        await deleteHarborRepo({ repository_fullname: this.deleteResourceName })
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Deleted'),
