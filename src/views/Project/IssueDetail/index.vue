@@ -650,9 +650,9 @@ export default {
       }
     },
     async getRelationProjectList() {
-      const hasSon = (await getHasSon(this.selectedProjectId)).has_child
+      const hasSon = (await getHasSon(this.formProjectId)).has_child
       if (hasSon) {
-        const projectRelation = (await getProjectRelation(this.selectedProjectId)).data
+        const projectRelation = (await getProjectRelation(this.formProjectId)).data
         this.projectRelationList.push(projectRelation[0].parent.id)
         projectRelation[0].child.forEach((item) => {
           this.projectRelationList.push(item.id)
@@ -673,7 +673,7 @@ export default {
       this.rootProjectId = res.root_project_id
     },
     async getGitCommitLogData() {
-      await this.getRootProject(this.selectedProjectId)
+      await this.getRootProject(this.formProjectId)
       this.setIssueId()
       const params = { limit: commitLimit }
       const res = await getIssueGitCommitLog(this.rootProjectId, this.issueId, params)
