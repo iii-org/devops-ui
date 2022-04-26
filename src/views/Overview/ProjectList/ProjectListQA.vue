@@ -382,6 +382,8 @@ export default {
     async fetchData() {
       this.listLoading = true
       await this.fetchAllData()
+      this.params.pj_due_date_start = this.selectedDateNow[0]
+      this.params.pj_due_date_end = this.selectedDateNow[1]
       await this.getMyProjectList(this.params)
       this.listLoading = false
       this.listData = this.projectList
@@ -396,8 +398,8 @@ export default {
     async fetchAllData() {
       await this.getMyProjectList({
         offset: 0,
-        pj_due_date_start: `${thisYear.getFullYear()}-01-01`,
-        pj_due_date_end: `${thisYear.getFullYear() + 1}-12-31`,
+        pj_due_date_start: this.selectedDateNow[0],
+        pj_due_date_end: this.selectedDateNow[1],
         pj_members_count: true
       })
       this.AllData = this.projectList
@@ -435,10 +437,10 @@ export default {
       //   delete this.params.disabled
       // }
       await this.fetchData()
-      this.initParams()
-    },
-    initParams() {
-      this.params = params()
+    //   this.initParams()
+    // },
+    // initParams() {
+    //   this.params = params()
     },
     cleanFilter() {
       this.keyword = ''
