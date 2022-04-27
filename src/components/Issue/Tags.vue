@@ -94,7 +94,7 @@ export default {
     },
     getTagsList(tag_name, tags, query) {
       const tagsList = []
-      const tag_sorts = tag_name === null ? ['LastResult', 'All'] : ['AddTag']
+      const tag_sorts = tag_name === null ? ['LastResult', 'All'] : ['AddTag', 'Result']
       tag_sorts.forEach(sort => {
         const list = this.getTagsLabel(tags, sort, query)
         if (list.options.length > 0) tagsList.push(list)
@@ -113,7 +113,7 @@ export default {
     getShowTags(tag_sort, tags, addTag) {
       let showTags = null
       const last_three = -3
-      // three type: 'All', 'LastResult', 'AddTag'
+      // four type: 'All', 'LastResult', 'AddTag', 'Result'
       switch (tag_sort) {
         case 'LastResult':
           showTags = tags.slice(last_three)
