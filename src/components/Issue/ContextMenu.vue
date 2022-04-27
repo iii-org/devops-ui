@@ -569,7 +569,7 @@ export default {
       //   type: 'success'
       // })
       this.$emit('backToFirstPage')
-      this.$emit('update')
+      this.$emit('update', Number(data.get('assigned_to_id')))
       this.addTopicDialogVisible = false
       // this.$refs['quickAddIssue'].form.name = ''
       this.LoadingConfirm = false

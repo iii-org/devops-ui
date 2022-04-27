@@ -158,7 +158,7 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
-      @update="fetchData"
+      @update="updateAllIssueTables"
     />
   </div>
 </template>
@@ -377,6 +377,9 @@ export default {
       if (data.hasOwnProperty('relations')) {
         this.$set(row, 'relations', data.relations)
       }
+    },
+    updateAllIssueTables(assignedToId) {
+      this.$emit('update', assignedToId)
     },
     hasRelationIssue(row) {
       return row.family

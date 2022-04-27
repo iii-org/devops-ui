@@ -39,6 +39,7 @@
           :filter-conditions-props="filterConditions"
           :display-closed-props="displayClosedIssue"
           :keyword-props="keyword"
+          @update="updateIssueTables"
           @total="updateTotalCount(tab.id, $event)"
         />
       </el-tab-pane>
@@ -78,7 +79,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['projectOptions'])
+    ...mapGetters(['projectOptions', 'userId'])
   },
   watch: {
     projectId(id) {
@@ -134,7 +135,8 @@ export default {
     updateTotalCount(tabId, $event) {
       this.tabs.find((tab) => tab.id === tabId).count = $event
     },
-    updateIssueTables() {
+    updateIssueTables(assignedToId) {
+      if (assignedToId !== undefined && this.userId !== assignedToId) this.activeTab = 'author_id'
       this.tabs.forEach((tab) => {
         this.$refs[tab.id][0].fetchData()
       })
