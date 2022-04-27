@@ -412,10 +412,11 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'groupBy', 'issueFilter']),
+    ...mapGetters(['userId', 'status', 'priority', 'groupBy', 'issueFilter', 'strictTracker', 'tracker']),
     getTracker() {
       if (this.trackerList.length > 0) return this.trackerList
-      return this.tracker
+      else if (this.parentId) return this.tracker
+      else return this.strictTracker
     }
   },
 

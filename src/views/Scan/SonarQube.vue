@@ -13,6 +13,16 @@
         <em class="ri-external-link-line mr-1" />
         {{ $t('SonarQube.ViewReport') }}
       </el-button>
+      <el-button
+        v-if="hasPod"
+        slot="button"
+        class="buttonPrimary"
+        :disabled="selectedProjectId === -1"
+        @click="handleLogClick"
+      >
+        <em class="ri-computer-line mr-1" />
+        {{ $t('SonarQube.ScanLogs') }}
+      </el-button>
       <el-input
         v-model="keyword"
         :placeholder="$t('Git.Branch')"
@@ -110,24 +120,34 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
+    <PodLog
+      ref="podLogDialog"
+      :pod-name="focusPodName"
+      :container-name="focusContainerName"
+    />
   </div>
 </template>
 
 <script>
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { getSonarQubeData } from '@/api/sonarQube'
+import { getSonarQubePod } from '@/api_v2/sonarQube'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanSonarQube',
-  components: { ElTableColumnTime },
+  components: { ElTableColumnTime, PodLog },
   mixins: [MixinElTableWithAProject],
   data() {
     return {
       searchKeys: ['branch'],
       sqLink: function () {
         return ''
-      }
+      },
+      hasPod: false,
+      focusPodName: '',
+      focusContainerName: ''
     }
   },
   methods: {
@@ -136,6 +156,10 @@ export default {
         return []
       }
       const res = (await getSonarQubeData(this.selectedProject.name)).data
+      const resPod = (await getSonarQubePod(this.selectedProjectId)).data
+      this.hasPod = resPod.has_pod
+      this.focusPodName = resPod.pod_name
+      this.focusContainerName = resPod.container_name
       this.sqLink = res.link
       const data = res.history
       const ret = []
@@ -159,6 +183,10 @@ export default {
     },
     openSonarQube() {
       window.open(this.sqLink)
+    },
+    handleLogClick() {
+      this.$refs.podLogDialog.fetchData(this.focusPodName, this.focusContainerName)
+      this.$refs.podLogDialog.dialogVisible = true
     }
   }
 }

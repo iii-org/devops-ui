@@ -26,3 +26,11 @@ export const getUser = async (page = 1, per_page = 10, search = '') => {
     user_list: userList
   }
 }
+export const getAllUser = async () => {
+  const res = await request.get(`/user/list`)
+  const userList = []
+  for (const user of res.data.user_list) {
+    userList.push({ id: user.id, name: user.name, login: user.login })
+  }
+  return userList
+}

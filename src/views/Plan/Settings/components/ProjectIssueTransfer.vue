@@ -239,6 +239,7 @@ export default {
   mixins: [BasicData, Pagination, ContextMenu, SearchBar],
   data() {
     return {
+      userName: '',
       checkedIssues: [],
       isCheckedAllIssues: false,
       isCheckedAllIssuesByPage: false,
@@ -252,9 +253,6 @@ export default {
     ...mapGetters(['selectedProject']),
     userId() {
       return this.$route.params.userId
-    },
-    userName() {
-      return this.$route.params.userName
     },
     hasCheckedIssues() {
       return this.checkedIssues.length > 0
@@ -293,11 +291,16 @@ export default {
               const { name, login, id } = user
               return { value: id, label: `${name}(${login})` }
             })
-            .filter((assignee) => assignee.value !== this.userId)
+          this.setUserName(this.assigneeList)
+          this.assigneeList = this.assigneeList.filter((assignee) => assignee.value !== Number(this.userId))
         })
         .catch((err) => {
           console.error(err)
         })
+    },
+    setUserName(assigneeList) {
+      const idx = assigneeList.findIndex((assignee) => assignee.value === Number(this.userId))
+      this.userName = assigneeList[idx]['label']
     },
     isCheckedIssue(issueId) {
       return this.checkedIssues.findIndex((item) => item === issueId) > -1
@@ -322,7 +325,7 @@ export default {
       this.handleSinglePageChecked()
     },
     onBackClick() {
-      this.$router.go(-1)
+      this.$router.push({ name: 'Project Settings', params: { projectName: this.selectedProject.name }})
     },
     onTransferClick(issueId) {
       this.$router.push({ name: 'issue-detail', params: { issueId }})

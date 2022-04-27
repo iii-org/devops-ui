@@ -100,7 +100,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { camelCase } from 'lodash'
-import { getProjectIssueList } from '@/api/projects'
+import { getProjectIssueList } from '@/api_v2/projects'
 import { addIssue, getIssueFamily } from '@/api/issue'
 import AddIssue from '@/components/Issue/AddIssue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail'
@@ -360,10 +360,8 @@ export default {
     getParams() {
       const result = {
         parent_id: 'null',
-        tracker_id: 1
-      }
-      if (this.sort) {
-        result['sort'] = this.sort
+        tracker_id: 1,
+        sort: 'subject:dec'
       }
       if (!this.displayClosed) {
         result['status_id'] = 'open'
@@ -419,7 +417,7 @@ export default {
       }
       this.listLoading = true
       try {
-        resProjectIssue = await getProjectIssueList(this.selectedProjectId, this.getParams(), {
+        resProjectIssue = await getProjectIssueList(this.filterValue.project || this.selectedProjectId, this.getParams(), {
           cancelToken: this.cancelToken
         })
       } catch (error) {

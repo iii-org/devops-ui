@@ -23,8 +23,9 @@
       <div
         v-for="(element, idx) in list"
         :key="element.id"
+        :ref="element.id"
         class="board-item item"
-        @drop="dropPanelLabels($event, idx)"
+        @drop="dropPanelLabels($event, idx, element.id)"
         @dragover="allowDrop($event, idx)"
       >
         <div
@@ -331,6 +332,10 @@ export default {
     addIssue: {
       type: Function,
       default: () => ({})
+    },
+    elementIds: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -350,14 +355,20 @@ export default {
       title: this.$t('Kanban.priorityErrorTitle'),
       content: this.$t('Kanban.priorityErrorContent')
     }
+    this.trackerError = {
+      title: this.$t('Kanban.trackerErrorTitle'),
+      content: this.$t('Kanban.trackerErrorContent')
+    }
     return {
       showDialog: false,
       showAlert: false,
-      errorMsg: []
+      errorMsg: [],
+      timeoutId: -1,
+      timeoutIdx: -1
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
+    ...mapGetters(['selectedProjectId', 'forceTracker']),
     getHeaderBarClassName() {
       return function (name) {
         return name.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase())
@@ -402,6 +413,15 @@ export default {
       }
     }
   },
+  watch: {
+    async elementIds() {
+      this.updateAnimation()
+    }
+  },
+  beforeDestroy() {
+    window.clearTimeout(this.timeoutId)
+    window.clearTimeout(this.timeoutIdx)
+  },
   methods: {
     /**
      * issues can be dragged to another status if returning true to property "move", while returning false can't
@@ -432,8 +452,9 @@ export default {
     isStatusNormal(toClassObj, fromClassObj, element) {
       const isAssigned = this.isAssigned(toClassObj, fromClassObj, element)
       const isChildrenIssuesClosed = toClassObj.is_closed === true ? this.isChildrenIssuesClosed(element) : true
+      const isForceTracker = this.isTrackerStrict(element)
       if (this.errorMsg.length > 0) this.showErrorAlert(this.errorMsg)
-      return isAssigned && isChildrenIssuesClosed
+      return isAssigned && isChildrenIssuesClosed && isForceTracker
     },
     isPriorityNormal(element, value) {
       const isPriorityUnchanged = this.isPriorityUnchanged(element, value)
@@ -463,6 +484,18 @@ export default {
       }
       return isChildrenIssuesClosed
     },
+    isTrackerStrict(element) {
+      const hasForceTacker = this.forceTracker.find(x => x.id === element.tracker.id)
+      if (hasForceTacker) {
+        if (element.has_father) return true
+        else {
+          const error = 'trackerError'
+          this.handleErrorAlert(error)
+          return false
+        }
+      }
+      return true
+    },
     isPriorityUnchanged(element) {
       const isPriorityUnchanged = this.checkPriority(element)
       if (!isPriorityUnchanged) {
@@ -471,7 +504,7 @@ export default {
       }
       return isPriorityUnchanged
     },
-    dropPanelLabels(e, idx) {
+    dropPanelLabels(e, idx, elementId) {
       e.preventDefault()
       if (e.dataTransfer.getData('json')) {
         const data = JSON.parse(e.dataTransfer.getData('json'))
@@ -513,9 +546,6 @@ export default {
       const updateData = { boardObject, event }
       this.$emit('update', updateData)
       this.$forceUpdate()
-    },
-    updateBoard(sendData) {
-      this.$emit('update-board', sendData)
     },
     handleClick(id) {
       // this.$router.push({ name: 'issue-detail', params: { issueId: id }})
@@ -571,6 +601,32 @@ export default {
     },
     handleContextMenu(row, context, event) {
       this.$emit('contextmenu', { row, context, event })
+    },
+    updateAnimation() {
+      for (const elementId of this.elementIds) {
+        setTimeout(() => {
+          if (this.$refs[elementId]) {
+            const relation = this.$refs[elementId][0].getElementsByClassName('el-collapse-item__header')
+            if (relation.length > 0) {
+              relation[0].style.background = 'rgba(255,0,0,.2)'
+              relation[0].style.transition = 'background 0.3s ease-in-out'
+            }
+            this.$refs[elementId][0].style.boxShadow = '0px 0px 10px 2px rgba(255,0,0,.2)'
+            this.$refs[elementId][0].style.background = 'rgba(255,0,0,.2)'
+            this.$refs[elementId][0].style.transition = 'box-shadow 0.3s ease-in-out'
+            this.$refs[elementId][0].style.transition = 'background 0.3s ease-in-out'
+            this.$nextTick(() => {
+              window.setTimeout(() => {
+                if (this.$refs[elementId].length > 0) {
+                  this.$refs[elementId][0].style.boxShadow = ''
+                  this.$refs[elementId][0].style.background = ''
+                  if (relation.length > 0) relation[0].style.background = ''
+                }
+              }, 500)
+            })
+          }
+        }, 100)
+      }
     }
   }
 }

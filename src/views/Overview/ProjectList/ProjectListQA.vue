@@ -70,7 +70,7 @@
             <el-menu class="download">
               <el-menu-item
                 :disabled="selectedProjectId === -1"
-                @click="downloadExcel(listData)"
+                @click="downloadExcel(AllData)"
               >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
@@ -346,7 +346,8 @@ export default {
       searchVisible: false,
       csvColumnSelected: ['department', 'display', 'start_date', 'due_date', 'owner_name', 'members'],
       params: params(),
-      listData: []
+      listData: [],
+      AllData: []
     }
   },
   computed: {
@@ -355,6 +356,9 @@ export default {
       return this.selectedProjectList.length > 0
     },
     getThisYear() {
+      if (sessionStorage.getItem('startDay') && sessionStorage.getItem('endDay')) {
+        return [sessionStorage.getItem('startDay'), sessionStorage.getItem('endDay')]
+      }
       return [`${thisYear.getFullYear()}-01-01`, `${thisYear.getFullYear() + 1}-12-31`]
     },
     selectedDateNow() {
@@ -377,6 +381,9 @@ export default {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectList']),
     async fetchData() {
       this.listLoading = true
+      await this.fetchAllData()
+      this.params.pj_due_date_start = this.selectedDateNow[0]
+      this.params.pj_due_date_end = this.selectedDateNow[1]
       await this.getMyProjectList(this.params)
       this.listLoading = false
       this.listData = this.projectList
@@ -387,6 +394,15 @@ export default {
         this.getCalculateProjectData(filteredArray)
       }
       return this.projectList
+    },
+    async fetchAllData() {
+      await this.getMyProjectList({
+        offset: 0,
+        pj_due_date_start: this.selectedDateNow[0],
+        pj_due_date_end: this.selectedDateNow[1],
+        pj_members_count: true
+      })
+      this.AllData = this.projectList
     },
     async getCalculateProjectData(project) {
       const ids = project.map(function (el) {
@@ -406,7 +422,6 @@ export default {
         })
       }
       this.listData = merged
-      console.log(this.listData)
     },
     async onPagination(listQuery) {
       const { limit, page } = listQuery
@@ -416,16 +431,16 @@ export default {
       if (this.keyword !== '') {
         this.params.search = this.keyword
       } else delete this.params.search
-      if (this.$refs.filter.isDisabled.length === 1) {
-        this.params.disabled = this.$refs.filter.isDisabled[0]
-      } else {
-        delete this.params.disabled
-      }
+      // if (this.$refs.filter.isDisabled.length === 1) {
+      //   this.params.disabled = this.$refs.filter.isDisabled[0]
+      // } else {
+      //   delete this.params.disabled
+      // }
       await this.fetchData()
-      this.initParams()
-    },
-    initParams() {
-      this.params = params()
+    //   this.initParams()
+    // },
+    // initParams() {
+    //   this.params = params()
     },
     cleanFilter() {
       this.keyword = ''
@@ -520,8 +535,13 @@ export default {
       } else {
         this.params.pj_due_date_start = date[0]
         this.params.pj_due_date_end = date[1]
+        this.setSelectionDate(date[0], date[1])
       }
       this.fetchData()
+    },
+    setSelectionDate(startDay, endDay) {
+      sessionStorage.setItem('startDay', startDay)
+      sessionStorage.setItem('endDay', endDay)
     },
     calculateDays(endDay, startDay) {
       const start = new Date(startDay)

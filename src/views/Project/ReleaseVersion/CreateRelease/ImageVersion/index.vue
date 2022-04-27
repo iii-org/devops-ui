@@ -197,13 +197,13 @@ export default {
         return
       }
       this.commitForm.branch = this.branchesData.length > 0
-        ? this.branchesData[0].name : this.$t('Loading')
+        ? this.branchesData[0].name : ''
     },
     async getMemberCommitListByBranch() {
       const params = { branch: this.commitForm.branch }
       const res = await getMemberCommitListByBranch(this.selectedRepositoryId, params)
       const commitId = res.data.length !== 0 ? res.data[0].short_id : null
-      const harborCommitId = commitId !== null ? commitId.substring(0, commitId.length - 1) : null
+      const harborCommitId = commitId !== null ? commitId.substring(0, commitId.length - 1) : ''
       this.commitId = harborCommitId
       this.handleSelectedRepoName(this.commitForm.branch)
     },

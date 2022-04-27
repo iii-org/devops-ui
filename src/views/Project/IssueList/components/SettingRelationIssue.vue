@@ -187,8 +187,13 @@ export default {
   },
   data() {
     const validateParentId = (rule, value, callback) => {
+      const foundTracker = this.forceTracker.find((tracker) => tracker.id === this.row.tracker.id)
       if (value === this.row.id) {
         callback(new Error('The parent issue is the same issue.'))
+      } else if (this.enableForceTracker && foundTracker && this.row.has_father) {
+        const tracker_name = this.$t(`Issue.${foundTracker.name}`)
+        const message = this.$t('Notify.NoParentIssueWarning', { tracker_name })
+        callback(new Error(message))
       } else {
         callback()
       }
@@ -219,7 +224,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId'])
+    ...mapGetters(['selectedProjectId', 'forceTracker', 'enableForceTracker'])
   },
   watch: {
     issueFamily: {

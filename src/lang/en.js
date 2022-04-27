@@ -9,6 +9,7 @@ const asyncLangs = langFiles.keys().reduce((plugins, langPath) => {
 export default {
   route: {
     myWork: 'My Work',
+    inbox: 'Inbox',
     dashboard: 'Dashboard',
     projectOverview: 'Project Overview',
     projectList: 'Project List',
@@ -117,6 +118,11 @@ export default {
     1011: 'Project owner role must be PM.',
     1012: 'You cannot change version {fixed_version} that status is {fixed_version_status}.',
     1013: 'Warning! The issue with children issues cannot be deleted, please re-confirm it if you insist and all of children issue will be deleted at the same time.',
+    1014: 'File is not exist. Please ensure you have downloaded it before.',
+    1015: 'Project name {project_name} not found.',
+    1016: 'The project_version name {version_name} already exists, please try another one.',
+    1017: 'Project is disabled.',
+    1018: 'Modify or create issue with tacker_id:{tracker_id} must has father issue.',
     2001: 'User id {user_id} not found.',
     2002: 'User name {name} is not legal. The user name may only contain a-z, A-Z, 0-9, dot, dash, underline, and the heading and trailing character should be alphanumeric and should be 2 to 60 characters long.',
     2003: 'Password is not legal. You can only use a-z, A-Z, 0-9, !@#$%^&*()_+|{}[]``~-=\'";:/?.>,<, and should contain at least an upper case alphabet, a lower case alphabet, and a digit, and is 8 to 20 characters long.',
@@ -124,17 +130,26 @@ export default {
     2005: 'The username or e-mail is already used.',
     2006: 'The user {user_id} is already in project {project_id}.',
     2007: 'This user is project owner in the project.',
+    2008: 'The user {user_id} in a project, cannot change his role.',
+    2011: 'The clusters {server_name} cannot be attached.',
     3001: "The user doesn't have permission for this operation.",
     3002: 'You are not participating in this project.',
     3003: "You are not permitted to access another user's data.",
     3004: 'Only project owner can set it, please contact project owner for assistance.',
     4001: 'Issue not found.',
+    4002: 'Issue in Versions {version_ids} not closed.',
+    4003: 'Issues {issue_id}, {issue_to_id} can not create relations.',
+    5001: 'Template {template_id} not found.',
+    5002: 'Could not get file or folder from template {template_id}, {template_name} project.',
+    7001: 'This error has no detailed information.',
     7002: 'Argument {arg} is incorrect.。',
     7005: 'Maximum number of {object} in a project is {num}.',
     7006: 'Argument {arg} can not be alerted when children issue exist.',
     7007: `$arg should begin with 'ghp_'.`,
     8001: '{service_name} error: {response}',
+    8101: 'Parent issue setting error! Please confirm that the setting issue is not a sub-issue or related issue of this issue.',
     9001: 'Internal exception: {type}: {exception}',
+    9002: 'An invalid code path happens: {message}',
     9003: 'An unexpected database error has occurred: {message}',
     9999: 'An unknown error has occurred.',
     20001: 'Token is invalid.',
@@ -175,6 +190,7 @@ export default {
     StartTime: 'Start Time',
     UpdateTime: 'Update Time',
     PleaseInput: 'Please Input',
+    Input: 'Please Input {item}',
     Close: 'Close',
     Disable: 'Disable',
     Enable: 'Enable',
@@ -239,7 +255,11 @@ export default {
     ForceDelete: 'Force Delete',
     Fix: 'Fix',
     Connected: 'Connected',
-    Disconnected: 'Disconnected'
+    Disconnected: 'Disconnected',
+    Tag: 'Tag',
+    Path: 'Path',
+    Format: 'Format',
+    View: 'View'
   },
   Notify: {
     Updated: 'update successful',
@@ -275,7 +295,8 @@ export default {
       'The red background indicates that there are duplicate project settings in the same branch. Please make sure that the settings are consistent (as on or off) to ensure that the Pipeline operates normally.',
     ChangeProjectManager: 'Confirming if you want to change the project manager?',
     ConnectSocket: 'Kanban is connecting Socket...',
-    UpdateKanban: '{issueName} is updated'
+    UpdateKanban: '{issueName} is updated',
+    NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -755,7 +776,8 @@ export default {
     SYSTEM: 'System',
     Selected: 'Selected',
     AccountRule: 'Account should be 2-60 characters long and "._-" can be accepted at the middle of string',
-    PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number'
+    PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number',
+    LastLogin: 'Last Login'
   },
   Profile: {
     Basic: 'Basic',
@@ -784,6 +806,7 @@ export default {
     Template: 'Template',
     TemplateName: 'Template Name',
     TemplateDescription: 'Template Description',
+    OriginalTemplate: 'Original Template',
     Version: 'Version',
     IssueStatus: 'Issue Status',
     IssueProgress: 'Progress',
@@ -948,7 +971,8 @@ export default {
     sqale_rating: 'Maintainability Rating',
     security_rating: 'Security Rating',
     security_hotspots: 'Security Hotspots',
-    alert_status: 'Quality Gate Status'
+    alert_status: 'Quality Gate Status',
+    ScanLogs: 'Scan Logs'
   },
   Log: {
     duration: 'Duration',
@@ -1017,7 +1041,8 @@ export default {
     Tags: 'Tags',
     CustomPath: 'Custom Path',
     StopReleaseWarning: 'Please check if the image file path matches the format.',
-    StopAddingPathWarning: 'Please check if the input image file is in line with format.'
+    StopAddingPathWarning: 'Please check if the input image file is in line with the following format.',
+    FormatWarning: '(Primary name): (Tag) EX. Branch: Version'
   },
   SystemVersion: {
     Source: 'Source',
@@ -1106,9 +1131,14 @@ export default {
     Unchange: 'The issue has not changed continuously for more than __?__ days',
     EnableMessage: 'The reminder feature has been successfully turned on',
     DisableMessage: 'The reminder feature has been successfully turned off',
+    EnableForceTracker: 'The force tracker feature has been successfully turned on',
+    DisableForceTracker: 'The force tracker feature has been successfully turned off',
     SuccessUpdateAlertSettings: 'The reminder Settings have been updated successfully',
     TagUpdateMessage: 'The task label has been updated successfully',
-    ChangeManager: 'Change Project Manager'
+    ChangeManager: 'Change Project Manager',
+    ParentIssueRequired: 'Parent Issue Required',
+    ParentIssueRequiredSettings: 'Parent Issue Required Settings',
+    IssueType: 'Issue Type'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: 'Remote Env.',
@@ -1222,7 +1252,9 @@ export default {
     childrenStatusErrorTitle: `The children issues haven't been closed:`,
     childrenStatusErrorContent: 'There are unclosed children issues, please confirm that all issues are closed.',
     priorityErrorTitle: 'The parent issue cannot change priority:',
-    priorityErrorContent: 'Priority will be based on the last children issue.'
+    priorityErrorContent: 'Priority will be based on the last children issue.',
+    trackerErrorTitle: 'Tracker Issue:',
+    trackerErrorContent: 'Tracker type requires parent issue'
   },
   Status: {
     Finished: 'Finished',
@@ -1241,6 +1273,47 @@ export default {
     TaskListWidth: 'Task list width',
     TimelineLength: 'Before/After',
     DisplayTaskList: 'Display task list'
+  },
+  Inbox: {
+    No: 'No.',
+    Title: 'Title',
+    Type: 'Message Type',
+    Date: 'Date',
+    Sender: 'Sender',
+    Info: 'Info',
+    Warning: 'Warning',
+    Urgent: 'Urgent',
+    NewVersion: 'New Version',
+    SystemAlert: 'System Alert',
+    SystemWarning: 'System Warning',
+    GroupReceiver: {
+      Project: 'Project',
+      User: 'User',
+      Role: 'Role',
+      ProjectOwner: 'Project Owner',
+      All: 'All'
+    },
+    ViewAll: 'View All',
+    TimeRange: 'Time Range',
+    From: 'From',
+    To: 'To',
+    SelectDate: 'Select Date',
+    SelectMessageType: 'Select Message Type',
+    Unread: 'Show  Unread Message Only',
+    IncludeSystemMessage: 'Include System Message',
+    Apply: 'Apply',
+    MessageConsole: 'Message Console',
+    MessageNote: '* The system only keeps 7 days messages. Pelase save the message in local if it\'s important.',
+    CreateMessage: 'Create Message',
+    EditMessage: 'Edit Message',
+    MessageContent: 'Message Content',
+    Public: 'Public',
+    Private: 'Private',
+    GroupReceiverTitle: 'Group Receiver',
+    AlertLevel: 'Alert Level',
+    Send: 'Send',
+    NotifyClosed: 'Message closed successfully',
+    SearchLabel: 'Search Title or Sender'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

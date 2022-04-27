@@ -37,7 +37,7 @@
               <el-select
                 v-model="filterValue[dimension.value]"
                 :placeholder="$t(`Issue.Select${dimension.placeholder}`)"
-                :disabled="selectedProjectId === -1"
+                :disabled="projectId === -1"
                 filterable
                 clearable
                 value-key="id"
@@ -141,7 +141,7 @@
           <em class="el-icon-arrow-down el-icon--right" />
         </el-button>
       </el-popover>
-      <el-button slot="button" :type="(socket.connected)? 'success': 'danger'" @click="connectSocket()">
+      <el-button slot="button" :disabled="isLoading" :type="(socket.connected)? 'success': 'danger'" @click="onSocketConnect">
         <div class="dot inline-block" :class="(socket.connected)? 'bg-success': 'bg-danger'" />
         {{ (socket.connected) ? $t('general.Connected') : $t('general.Disconnected') }}
       </el-button>
@@ -192,6 +192,7 @@
       :project-issue-list="projectIssueList"
       :fixed_version="fixed_version"
       :assigned_to="assigned_to"
+      :element-ids="elementIds"
       @getRelativeList="getRelativeList"
       @updateIssueList="updateIssueList"
       @updateData="updateData"
@@ -217,6 +218,7 @@ import { Status, Tracker, Priority, CustomFilter } from '@/components/Issue'
 import axios from 'axios'
 import SaveFilterButton from '@/components/Issue/components/SaveFilterButton'
 import { io } from 'socket.io-client'
+import { getHasSon, getProjectRelation } from '@/api_v2/projects'
 
 export default {
   name: 'IssueBoards',
@@ -250,6 +252,9 @@ export default {
       relativeIssueList: [],
       searchVisible: false,
       keyword: null,
+      elementIds: [],
+      hasChildren: false,
+      project: [],
       socket: io(`/issues/websocket`, { // production socket
         reconnectionAttempts: 5
       })
@@ -269,7 +274,7 @@ export default {
       return result
     },
     filterOptions() {
-      return Object.freeze([
+      const filterOption = [
         {
           id: 1,
           label: this.$t('Issue.FilterDimensions.status'),
@@ -309,7 +314,15 @@ export default {
           placeholder: 'Priority',
           tag: true
         }
-      ])
+      ]
+      if (this.hasChildren) {
+        filterOption.unshift({
+          id: 7,
+          value: 'project',
+          placeholder: 'Project'
+        })
+      }
+      return filterOption
     },
     groupByOptions() {
       return this.getStatusSort.map((item, idx) => ({
@@ -409,6 +422,8 @@ export default {
         this.socket.emit('leave', { project_id: oldId })
         this.socket.emit('join', { project_id: newId })
         await this.onCleanKeyWord()
+        this.projectId = this.selectedProjectId
+        this.filterValue = {}
         await this.fetchInitData()
       },
       immediate: true
@@ -421,10 +436,16 @@ export default {
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed({ board: value })
       this.loadVersionList(value)
+    },
+    'filterValue.project'(value) {
+      if (value) this.projectId = value
+      else this.projectId = this.selectedProjectId
+      this.loadSelectionList()
     }
   },
   async created() {
     this.connectSocket()
+    this.projectId = this.selectedProjectId
     await this.fetchInitData()
   },
   beforeDestroy() {
@@ -459,9 +480,19 @@ export default {
     },
     async fetchInitData() {
       this.groupBy = await this.getGroupBy()
+      await this.checkProjectHasChildren()
       await this.getInitStoredData()
       await this.loadSelectionList()
       await this.loadData()
+      await this.syncLoadFilterData()
+    },
+    async checkProjectHasChildren() {
+      this.hasChildren = (await getHasSon(this.projectId)).has_child
+      if (this.hasChildren) {
+        const res = (await getProjectRelation(this.projectId)).data
+        this.project = res[0].child
+        this.project.unshift(res[0].parent)
+      }
     },
     async getInitStoredData() {
       const key = 'board'
@@ -495,7 +526,7 @@ export default {
     async getRelativeList() {
       const hasClosed = this.groupByValueOnBoard.filter((item) => item.hasOwnProperty('is_closed') && item.is_closed)
       if (hasClosed.length > 0) {
-        const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
+        const projectIssueListRes = await getProjectIssueListByTree(this.projectId)
         this.relativeIssueList = this.createRelativeList(projectIssueListRes.data)
       }
     },
@@ -551,7 +582,7 @@ export default {
         this.$set(this.projectIssueQueue, item.id, CancelToken)
         const dimension = this.groupBy.dimension === 'tags' ? this.groupBy.dimension : `${this.groupBy.dimension}_id`
         const params = { ...this.getParams(), [dimension]: item.id }
-        const getIssueList = getProjectIssueList(this.selectedProjectId, params, config)
+        const getIssueList = getProjectIssueList(this.projectId, params, config)
         issueList.push(getIssueList)
       })
       return issueList
@@ -596,12 +627,12 @@ export default {
       this.$set(this.originFilterValue, 'fixed_version', version[0].id)
     },
     async fetchVersionList(params) {
-      const res = await getProjectVersion(this.selectedProjectId, params)
+      const res = await getProjectVersion(this.projectId, params)
       return res.data.versions
     },
     async loadSelectionList() {
-      if (this.selectedProjectId === -1) return
-      await Promise.all([getProjectUserList(this.selectedProjectId), getTagsByProject(this.selectedProjectId)]).then(
+      if (this.projectId === -1) return
+      await Promise.all([getProjectUserList(this.projectId), getTagsByProject(this.projectId)]).then(
         (res) => {
           const [assigneeList, tagsList] = res.map((item) => item.data)
           this.setAssignedToData(assigneeList)
@@ -790,13 +821,13 @@ export default {
       // })
       this.socket.on('update_issue', async (data) => {
         for (const idx in data) {
-          // console.log('update_issue', data[idx])
           data[idx] = _this.socketDataFormat(data[idx])
           const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
           this.$set(this.projectIssueList, findChangeIndex, data[idx])
           this.updateData()
           this.showUpdateMessage(data[idx])
         }
+        this.elementIds = data.map(s => s.id)
       })
       this.socket.on('delete_issue', async (data) => {
         const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
@@ -815,6 +846,11 @@ export default {
           }
           this.updateData()
           this.showUpdateMessage(data[idx])
+        }
+      })
+      this.socket.on('disconnect', (reason) => {
+        if (reason !== 'io client disconnect') {
+          this.connectSocket()
         }
       })
     },
@@ -839,7 +875,13 @@ export default {
     async connectSocket() {
       this.setSocketListener()
       await this.socket.connect()
-      await this.socket.emit('join', { project_id: this.selectedProjectId })
+      await this.socket.emit('join', { project_id: this.projectId })
+    },
+    async onSocketConnect() {
+      this.isLoading = true
+      if (this.socket.connected) await this.socket.disconnect()
+      await this.connectSocket()
+      this.isLoading = false
     }
   }
 }

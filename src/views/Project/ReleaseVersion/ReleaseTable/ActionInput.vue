@@ -21,24 +21,35 @@
         />
       </el-tooltip>
     </div>
-    <el-input
-      v-else
-      v-model="inputValue"
-      :placeholder="$t('general.PleaseInput')"
-    >
-      <em
-        slot="suffix"
-        class="el-icon-circle-plus cursor-pointer button"
-        :style="getStyle('menuActiveText')"
-        @click="inputState === 'IS_EDIT_TAG' ? saveTag() : checkPath()"
-      />
-      <em
-        slot="suffix"
-        class="el-icon-error cursor-pointer button"
-        :style="getStyle('danger')"
-        @click="init"
-      />
-    </el-input>
+    <el-tooltip v-else placement="top">
+      <template v-if="inputState === 'IS_EDIT_ROUTE'" slot="content">
+        <span>{{ $t('general.Format') }}: </span>
+        <span style="color: #f56c6c;" class="font-bold">
+          branch:version
+        </span>
+      </template>
+      <template v-else-if="inputState === 'IS_EDIT_TAG'" slot="content">
+        <span>{{ $t('general.Edit') }}{{ $t('general.Tag') }}</span>
+      </template>
+      <el-input
+        v-model="inputValue"
+        :placeholder="placeholder"
+        style="font-size: 6px;"
+      >
+        <em
+          slot="suffix"
+          class="el-icon-circle-plus cursor-pointer button"
+          :style="getStyle('buttonPrimary')"
+          @click="inputState === 'IS_EDIT_TAG' ? saveTag() : checkPath()"
+        />
+        <em
+          slot="suffix"
+          class="el-icon-error cursor-pointer button"
+          :style="getStyle('danger')"
+          @click="init"
+        />
+      </el-input>
+    </el-tooltip>
   </div>
 </template>
 
@@ -69,6 +80,11 @@ export default {
     },
     releaseId() {
       return this.scope.row.id
+    },
+    placeholder() {
+      return this.inputState === 'IS_EDIT_TAG'
+        ? this.$t('general.Input', { item: this.$t('general.Tag') })
+        : this.$t('general.Input', { item: this.$t('general.Path') })
     }
   },
   watch: {
@@ -105,7 +121,13 @@ export default {
     checkPath() {
       const isPassRules = /:/.test(this.inputValue)
       if (!isPassRules) {
-        this.showErrorMessage(this.$t('Release.StopAddingPathWarning'))
+        const h = this.$createElement
+        this.showErrorMessage(
+          h('p', { style: 'color: #f56c6c; font-size: 14px;' }, [
+            h('div', null, this.$t('Release.StopAddingPathWarning')),
+            h('div', null, this.$t('Release.FormatWarning'))
+          ])
+        )
         return
       }
       this.saveRepo()
@@ -154,6 +176,6 @@ export default {
 <style lang="scss" scoped>
 .button {
   line-height: 40px;
-  font-size: 24px;
+  font-size: 18px;
 }
 </style>

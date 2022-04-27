@@ -2,6 +2,16 @@
   <el-row class="app-container">
     <el-col>
       <ProjectListSelector>
+        <el-button
+          v-if="pod.has_pod"
+          slot="button"
+          class="buttonPrimary"
+          :disabled="selectedProjectId === -1"
+          @click="handleLogClick"
+        >
+          <em class="ri-computer-line mr-1" />
+          {{ $t('SonarQube.ScanLogs') }}
+        </el-button>
         <el-input
           v-model="keyword"
           :placeholder="$t('Postman.SearchBranch')"
@@ -92,6 +102,11 @@
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
+      <PodLog
+        ref="podLogDialog"
+        :pod-name="pod.pod_name"
+        :container-name="pod.container_name"
+      />
     </el-col>
   </el-row>
 </template>
@@ -99,17 +114,20 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getPostmanResult } from '@/api/postman'
+import { getPostmanPod } from '@/api_v2/postman'
 import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
 
 export default {
   name: 'Postman',
-  components: { ElTableColumnTime },
+  components: { ElTableColumnTime, PodLog },
   mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
   data() {
     return {
       dialogVisible: false,
-      searchKeys: ['branch']
+      searchKeys: ['branch'],
+      pod: {}
     }
   },
   computed: {
@@ -117,10 +135,15 @@ export default {
   },
   methods: {
     async fetchData() {
+      this.pod = (await getPostmanPod(this.selectedProjectId)).data
       return (await getPostmanResult(this.selectedProjectId)).data
     },
     handleClick(target, id) {
       this.$router.push({ name: target, params: { id, projectName: this.selectedProject.name }})
+    },
+    handleLogClick() {
+      this.$refs.podLogDialog.fetchData(this.pod.pod_name, this.pod.container_name)
+      this.$refs.podLogDialog.dialogVisible = true
     }
   }
 }

@@ -231,6 +231,21 @@
 }
 
 // AbnormalChecker tooltip
+.normal-tooltip.is-dark {
+  background: #D7A217;
+  width: 150px;
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: 1.5px;
+  > .popper__arrow {
+    border-bottom-color: #D7A217;
+    &:after {
+      border-bottom-color: #D7A217;
+    }
+  }
+}
+
+// AbnormalChecker tooltip
 .abnormal-tooltip.is-dark {
   background: #e85656;
   width: 150px;

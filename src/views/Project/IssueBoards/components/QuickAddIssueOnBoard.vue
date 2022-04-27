@@ -13,7 +13,7 @@
             style="width: 100%"
           >
             <el-option
-              v-for="option in tracker"
+              v-for="option in strictTracker"
               :key="option.id"
               :label="$t('Issue.' + option.name)"
               :value="option.id"
@@ -165,7 +165,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'groupBy', 'issueFilter', 'tracker'])
+    ...mapGetters(['selectedProjectId', 'userId', 'groupBy', 'issueFilter', 'strictTracker'])
   },
   watch: {
     boardObject: {

@@ -8,7 +8,7 @@
       @hide="resetSaveFilterButtons"
     >
       <el-form v-loading="listLoading">
-        <template v-for="dimension in filterOptions">
+        <template v-for="dimension in filterOptionsWithProject">
           <el-form-item :key="dimension.id">
             <div slot="label">
               {{ $t(`Issue.${dimension.value}`) }}
@@ -118,6 +118,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { cloneDeep } from 'lodash'
+import { getHasSon, getProjectRelation } from '@/api_v2/projects'
 
 export default {
   name: 'SearchFilter',
@@ -143,10 +144,6 @@ export default {
     prefill: {
       type: Object,
       default: () => ({})
-    },
-    projectRelationList: {
-      type: Array,
-      default: () => []
     }
   },
   data() {
@@ -157,11 +154,13 @@ export default {
       keyword: null,
       searchVisible: false,
       fixed_version_closed: false,
-      displayClosed: false
+      displayClosed: false,
+      filterOptionsWithProject: [],
+      projectRelationList: []
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'tracker', 'status', 'priority']),
+    ...mapGetters(['selectedProjectId', 'tracker', 'status', 'priority', 'selectedProject']),
     isFilterChanged() {
       return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword
     },
@@ -216,6 +215,16 @@ export default {
     },
     fixed_version_closed() {
       this.onChangeFixedVersionStatus()
+    },
+    selectedProjectId: {
+      async handler(val) {
+        const hasSon = await this.fetchHasSon(this.selectedProjectId)
+        this.filterOptionsWithProject = await this.getFilterOptions(hasSon)
+        if (hasSon) {
+          this.projectRelationList = await this.getProjectRelationData(this.selectedProject)
+        }
+      },
+      immediate: true
     }
   },
   methods: {
@@ -287,6 +296,25 @@ export default {
     checkSaveFilterButtonDisplay() {
       const whiteList = ['issue-list']
       return whiteList.includes(this.$route.name)
+    },
+    async fetchHasSon(pId) {
+      const hasSon = await getHasSon(pId)
+      return hasSon.has_child
+    },
+    async getFilterOptions(hasSon) {
+      this.filterOptionsWithProject = hasSon ? [{
+        id: this.filterOptions.length + 1,
+        value: 'project',
+        placeholder: 'Project'
+      }].concat(this.filterOptions) : this.filterOptions
+      return this.filterOptionsWithProject
+    },
+    async getProjectRelationData() {
+      const { id, display } = this.selectedProject
+      const projectRelation = (await getProjectRelation(id)).data
+      const projectRelationList = [{ id, name: display }]
+      if (projectRelation && projectRelation[0].child) projectRelationList.push(...projectRelation[0].child)
+      return projectRelationList
     }
   }
 }

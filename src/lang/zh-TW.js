@@ -9,6 +9,7 @@ const asyncLangs = langFiles.keys().reduce((plugins, langPath) => {
 export default {
   route: {
     myWork: '我的工作',
+    inbox: '收件匣',
     dashboard: '儀表板',
     projectOverview: '專案概述',
     projectList: '專案列表',
@@ -117,6 +118,11 @@ export default {
     1011: '專案經理角色必須為 PM',
     1012: '指定版本 {fixed_version} 的狀態為 {fixed_version_status}，因此無法變更。',
     1013: '此議題尚有子議題，請再次確認是否真的要"刪除"此議題，同時一併"刪除"子議題。',
+    1014: '檔案不存在，請確認之前是否下載.',
+    1015: '找不到專案名稱為 {project_name} 的專案。',
+    1016: '專案版本 {version_name} 已經存在，請換另一個名字。',
+    1017: '專案被禁用。',
+    1018: '父議題尚未關連，{tracker_id} 的議題修改或新增都須含有父議題。',
     2001: '找不到 ID 為 {user_id} 的使用者。',
     2002: '使用者名稱 {name} 違反命名規則。只能使用大寫字母、小寫字母、數字、減號、底線、句點，且頭尾必須是字母或數字，且必須為 2 到 60 個字元。',
     2003: '密碼需要為 8 到 20 個字元長，且必須包含至少一個大寫字母，一個小寫字母，以及一個數字。',
@@ -124,17 +130,26 @@ export default {
     2005: '此使用者名稱或電子郵件信箱已有人使用。',
     2006: '使用者 {user_id} 已經在專案 {project_id} 內了。',
     2007: '該使用者為本專案之專案經理，不可刪除。',
+    2008: '使用者 {user_id} 有在專案內，無法變更其角色。',
+    2011: '部屬主機 {server_name} 無法被存取。',
     3001: '您的角色沒有權限進行此項操作。',
     3002: '您已非專案成員。',
     3003: '您不被允許存取其他使用者的資料。',
     3004: '僅專案經理才可設置，請洽專案經理協助。',
     4001: '該議題不存在。',
+    4002: '議題在此版本 {version_ids} 尚未結束',
+    4003: '議題 {issue_id}, {issue_to_id} 無法建立關聯。',
+    5001: '找不到範本 {template_id}',
+    5002: '在範本 {template_id}, {template_name} 裡找不到特定檔案或資料夾',
+    7001: '此錯誤不含詳細資訊。',
     7002: '參數 {arg} 輸入錯誤。',
     7005: '{object} 的最大數量為 {num}',
     7006: '當議題有子議題時，參數 {arg} 不能被調整。',
     7007: `參數 $arg 需要以 'ghp_'做開為開頭。`,
     8001: '{service_name} 回報錯誤：{response}',
+    8101: '父議題設定異常，請確認設定之議題非為本議題之子議題或關係議題。',
     9001: '內部錯誤：{type}: {exception}',
+    9002: '出現無效的代碼路徑: {message}',
     9003: '發生未被預期的資料庫錯誤：{message}',
     9999: '發生未知錯誤。',
     20001: 'Token 是無效的。',
@@ -175,6 +190,7 @@ export default {
     StartTime: '開始時間',
     UpdateTime: '更新時間',
     PleaseInput: '請輸入',
+    Input: '請輸入{item}',
     Close: '關閉',
     Disable: '停用',
     Enable: '啟用',
@@ -239,7 +255,11 @@ export default {
     ForceDelete: '刪除',
     Fix: '修復',
     Connected: '連線成功',
-    Disconnected: '連線失敗'
+    Disconnected: '連線失敗',
+    Tag: '標籤',
+    Path: '路徑',
+    Format: '格式',
+    View: '已讀'
   },
   Notify: {
     Updated: '已更新',
@@ -273,7 +293,8 @@ export default {
     pluginRepeatMessage: '紅底為同分支有重複項目設定，請確認其設置為一致(如同為開或關)，以確保 Pipeline 運作正常。',
     ChangeProjectManager: '確認是否要變更專案經理人。',
     ConnectSocket: '看板正在連接 Socket...',
-    UpdateKanban: '{issueName} 已更新'
+    UpdateKanban: '{issueName} 已更新',
+    NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -750,7 +771,8 @@ export default {
     SYSTEM: '系統',
     Selected: '已選',
     AccountRule: '帳號需要2-60個字並只接受._-特殊字元在中間',
-    PasswordRule: '密碼需要8-20個字同時需要至少1個大寫1個小寫和1個數字'
+    PasswordRule: '密碼需要8-20個字同時需要至少1個大寫1個小寫和1個數字',
+    LastLogin: '上次登入'
   },
   Profile: {
     Basic: '基本設定',
@@ -779,6 +801,7 @@ export default {
     Template: '開發範本',
     TemplateName: '開發範本名稱',
     TemplateDescription: '開發範本敘述',
+    OriginalTemplate: '原始範本',
     Version: '版本',
     IssueStatus: '議題狀態',
     IssueProgress: '議題執行進度',
@@ -941,7 +964,8 @@ export default {
     sqale_rating: '可維護性等級',
     security_rating: '安全等級',
     security_hotspots: '安全熱點',
-    alert_status: '品質狀態'
+    alert_status: '品質狀態',
+    ScanLogs: '掃描記錄'
   },
   Log: {
     duration: '消耗時間',
@@ -1010,7 +1034,8 @@ export default {
     Tags: '備註標籤',
     CustomPath: '自定義路徑',
     StopReleaseWarning: '請檢查映像檔路徑是否符合格式。',
-    StopAddingPathWarning: '請檢查輸入的映像檔路徑是否符合格式。'
+    StopAddingPathWarning: '請檢查輸入的映像檔路徑是否符合以下格式。',
+    FormatWarning: '(主要名稱):(標籤) ex. branch:version'
   },
   SystemVersion: {
     Source: '系統模組',
@@ -1100,8 +1125,13 @@ export default {
     EnableMessage: '已成功啟用提醒功能',
     DisableMessage: '已成功停用提醒功能',
     SuccessUpdateAlertSettings: '通知設定已更新成功',
+    EnableForceTracker: '強制要求父議題設置已啟用',
+    DisableForceTracker: '強制要求父議題設置已停用',
     TagUpdateMessage: '任務標籤已更新成功',
-    ChangeManager: '變更專案經理'
+    ChangeManager: '變更專案經理',
+    ParentIssueRequired: '議題提醒',
+    ParentIssueRequiredSettings: '議題提醒功能',
+    IssueType: '議題類型'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: '遠端佈署環境',
@@ -1213,7 +1243,9 @@ export default {
     childrenStatusErrorTitle: '子議題尚未全關閉：',
     childrenStatusErrorContent: '有未關閉的子議題，請確認所有議題皆已關閉。',
     priorityErrorTitle: '父議題不能改變優先權：',
-    priorityErrorContent: '優先權會依據最後的子議題。'
+    priorityErrorContent: '優先權會依據最後的子議題。',
+    trackerErrorTitle: '議題更動失敗:',
+    trackerErrorContent: '本專案已啟用強制引用父議題此議題異動須含有父議題'
   },
   Status: {
     Finished: '掃描完成',
@@ -1232,6 +1264,47 @@ export default {
     TaskListWidth: '左側寬度',
     TimelineLength: '時間軸長度',
     DisplayTaskList: '顯示議題列表'
+  },
+  Inbox: {
+    No: '項次',
+    Title: '標題',
+    Type: '訊息類型',
+    Date: '日期',
+    Sender: '公告者',
+    Info: '訊息',
+    Warning: '警告',
+    Urgent: '緊急',
+    NewVersion: '有新版本可更新',
+    SystemAlert: '系統警報',
+    SystemWarning: '系統警告',
+    GroupReceiver: {
+      Project: '專案名稱',
+      User: '使用者',
+      Role: '角色',
+      ProjectOwner: '專案經理',
+      All: '全部'
+    },
+    ViewAll: '全部',
+    TimeRange: '訊息區間',
+    From: '自',
+    To: '到',
+    SelectDate: '選擇日期',
+    SelectMessageType: '選擇訊息種類',
+    Unread: '僅顯示未讀訊息',
+    IncludeSystemMessage: '含系統訊息',
+    Apply: '確認',
+    MessageConsole: '推播管理',
+    MessageNote: '* 平台僅保留7天內訊息，如有重要資訊請另行儲存。',
+    CreateMessage: '新增推播',
+    EditMessage: '編輯推播',
+    MessageContent: '訊息內容',
+    Public: '公開',
+    Private: '指定',
+    GroupReceiverTitle: '推播對象',
+    AlertLevel: '訊息類別',
+    Send: '傳送',
+    NotifyClosed: '訊息已關閉',
+    SearchLabel: '搜尋訊息標題或寄送者'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

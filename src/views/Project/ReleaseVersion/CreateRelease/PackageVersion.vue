@@ -20,8 +20,13 @@
         <el-row>
           <el-col :span="24">
             <el-form-item :label="$t('Release.CommitAndImage')">
-              <svg-icon icon-class="ion-git-commit-outline" />
-              <span>{{ releaseData.commit }} ({{ releaseData.branch }}) / </span>
+              <template v-if="releaseData.commit || releaseData.branch">
+                <svg-icon icon-class="ion-git-commit-outline" />
+                <span>{{ releaseData.commit }}</span>
+                <span v-if="releaseData.branch">({{ releaseData.branch }})</span>
+              </template>
+              <span v-else>{{ $t('general.Nothing') }}</span>
+              <span> / </span>
               <span
                 v-if="updateData.image !== 'noImage'"
                 class="custom-black"

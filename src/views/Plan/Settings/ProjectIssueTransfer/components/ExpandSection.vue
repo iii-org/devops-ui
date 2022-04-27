@@ -31,7 +31,7 @@
           icon="el-icon-info"
           icon-color="red"
           :title="$t('Issue.RemoveIssueRelation')"
-          @confirm="removeIssueRelation(issue.familyData.parent.id)"
+          @confirm="removeIssueRelation(issue.id)"
         >
           <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
             {{ $t('Issue.Unlink') }}
@@ -115,8 +115,10 @@ export default {
           })
           this.updateListData()
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err)
+        })
+        .finally(() => {
           this.listLoading = false
         })
     },

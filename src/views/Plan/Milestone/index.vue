@@ -2,7 +2,7 @@
   <el-row class="app-container">
     <ProjectListSelector>
       <el-row slot="button">
-        <el-col class="text-right">
+        <el-col>
           <el-button
             icon="el-icon-refresh"
             size="small"
@@ -22,15 +22,16 @@
             <em class="el-icon-check" />
             <strong>{{ $t('Milestone.Success') }}: </strong>{{ lastUpdated.time|relativeTime }}
           </span>
-          <span
+          <div
             v-else-if="lastUpdated && lastUpdated.error"
             class="text-danger"
+            style="max-width: 500px"
           >
             <em class="el-icon-check" />
             <strong>{{ $t('Milestone.Error') }}: </strong>
             {{ $t(`errorMessage.${lastUpdated.error.response.data.error.code}`,
                   lastUpdated.error.response.data.error.details) }}
-          </span>
+          </div>
         </el-col>
       </el-row>
       <SearchFilter
@@ -384,7 +385,7 @@ export default {
       this.displayFields = res.data
     },
     async loadAssignedToList() {
-      const res = await getProjectAssignable(this.selectedProjectId)
+      const res = await getProjectAssignable(this.filterValue.project || this.selectedProjectId)
       this.assigned_to = [
         { id: 'null', name: this.$t('Issue.Unassigned') },
         {
@@ -401,11 +402,11 @@ export default {
       if (status) {
         params = { status: 'open,locked,closed' }
       }
-      const versionList = await getProjectVersion(this.selectedProjectId, params)
+      const versionList = await getProjectVersion(this.filterValue.project || this.selectedProjectId, params)
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
     },
     async loadTagsList() {
-      const res = await getTagsByProject(this.selectedProjectId)
+      const res = await getTagsByProject(this.filterValue.project || this.selectedProjectId)
       this.tags = res.data.tags
     },
     handleUpdateLoading(value) {
@@ -415,6 +416,7 @@ export default {
       this.lastUpdated = value
     },
     async onChangeFilterForm(value) {
+      this.loadSelectionList()
       Object.keys(value).forEach((item) => {
         this[item] = value[item]
       })

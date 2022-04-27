@@ -1,7 +1,7 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <project-list-selector />
+      <ProjectListSelector />
       <el-divider />
       <el-row :gutter="12">
         <el-empty
@@ -34,7 +34,7 @@
               >{{ $t('general.NoData') }}</div>
               <div v-else>
                 <div>
-                  <resource-pie :chart-data="item.data" />
+                  <ResourcePie :chart-data="item.data" />
                 </div>
                 <div
                   :class="hasDetail(item.title) ? 'details-reminder' : 'reminder-space'"
@@ -55,7 +55,7 @@
 import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getPluginResource } from '@/api/harbor'
-import resourcePie from './components/resourcePie'
+import ResourcePie from './components/resourcePie'
 
 const handleLeftQuota = (item) => {
   const quotaValue = item.quota.value === '' ? 0 : Number(item.quota.value)
@@ -110,7 +110,7 @@ export default {
   name: 'PluginResource',
   components: {
     ProjectListSelector,
-    resourcePie
+    ResourcePie
   },
   data() {
     return {

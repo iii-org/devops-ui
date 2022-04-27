@@ -53,6 +53,8 @@
         :edit-row-id="editRowId"
         :components="Tracker"
         :options="tracker"
+        :strict-options="strictTracker"
+        :is-parent-exist="isParentExist"
         sortable
         :has-child-edit="true"
         @edit="handleUpdateIssue"
@@ -244,12 +246,23 @@
         >
           {{ $t('Issue.AddIssue') }}
         </contextmenu-item>
-        <contextmenu-item
+        <contextmenu-submenu
           v-permission="permission"
-          @click="appendIssue(contextMenu.row, true)"
+          :title="$t('Issue.ChildrenIssue')"
         >
-          {{ $t('Issue.AddSubIssue') }}
-        </contextmenu-item>
+          <contextmenu-item
+            v-permission="permission"
+            @click="toggleRelationDialog('Children')"
+          >
+            {{ $t('general.Settings', { name: $t('Issue.ChildrenIssue') }) }}
+          </contextmenu-item>
+          <contextmenu-item
+            v-permission="permission"
+            @click="appendIssue(contextMenu.row, true)"
+          >
+            {{ $t('Issue.AddSubIssue') }}
+          </contextmenu-item>
+        </contextmenu-submenu>
         <contextmenu-item
           v-permission="permission"
           @click="appendIssue(contextMenu.row, false, contextMenu.row)"
@@ -263,7 +276,7 @@
         <contextmenu-item
           v-permission="permission"
           class="menu-remove"
-          @click="handleRemoveIssue(contextMenu.row)"
+          @click="handleRemoveIssue(contextMenu.row, 'Delete', false)"
         >
           <em class="el-icon-delete">{{ $t('general.Delete') }}</em>
         </contextmenu-item>
@@ -287,6 +300,43 @@
       />
     </el-dialog>
     <el-dialog
+      :visible.sync="relationDialog.visible"
+      :close-on-click-modal="false"
+      width="80%"
+      :show-close="false"
+      append-to-body
+    >
+      <div slot="title">
+        <el-row slot="title" type="flex" align="middle">
+          <el-col :xs="24" :md="16">
+            <el-button
+              type="text"
+              size="medium"
+              icon="el-icon-arrow-left"
+              class="previous text-title linkTextColor"
+              @click="toggleRelationDialog(relationDialog.target)"
+            >
+              {{ $t('general.Back') }}
+            </el-button>
+            <span class="text-title">
+              {{ $t('general.Settings', { name: $t('Issue.' + relationDialog.target + 'Issue') }) }}
+            </span>
+          </el-col>
+          <el-col :xs="24" :md="8" class="text-right">
+            <el-button class="buttonPrimary" @click="onSaveCheckRelationIssue">
+              {{ $t('general.Save') }}
+            </el-button>
+          </el-col>
+        </el-row>
+      </div>
+      <SettingRelationIssue
+        v-if="relationDialog.visible"
+        ref="settingRelationIssue"
+        :row.sync="contextMenu.row"
+        :target.sync="relationDialog.target"
+      />
+    </el-dialog>
+    <el-dialog
       :visible.sync="issueMatrixDialog.visible"
       width="80%"
       top="20px"
@@ -306,13 +356,14 @@
 
 <script>
 import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu } from 'v-contextmenu'
-import { getProjectIssueList } from '@/api/projects'
+import { getProjectIssueList } from '@/api_v2/projects'
 import { mapGetters } from 'vuex'
 import { Tracker, Priority, Status } from '@/components/Issue'
 import WBSInputColumn from '@/views/Plan/Milestone/components/WBSInputColumn'
 import WBSSelectColumn from '@/views/Plan/Milestone/components/WBSSelectColumn'
 import WBSDateColumn from '@/views/Plan/Milestone/components/WBSDateColumn'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
+import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
 import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import { addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
@@ -328,7 +379,10 @@ export default {
     ContextmenuItem,
     ContextmenuSubmenu,
     ProjectIssueDetail,
-    IssueMatrix
+    SettingRelationIssue,
+    IssueMatrix,
+    // eslint-disable-next-line vue/no-unused-components
+    Tracker, Status
   },
   directives: {
     contextmenu: directive
@@ -383,10 +437,15 @@ export default {
       addIssueVisible: false,
       updateLoading: false,
       editRowId: null,
+      isParentExist: false,
       contextMenu: { visible: true, row: {}},
       relationIssue: {
         visible: false,
         id: null
+      },
+      relationDialog: {
+        visible: false,
+        target: 'Parent'
       },
       issueMatrixDialog: {
         visible: false,
@@ -395,7 +454,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'priority', 'tracker', 'status', 'userId', 'userRole']),
+    ...mapGetters(['selectedProjectId', 'priority', 'tracker', 'status', 'userId', 'userRole', 'strictTracker']),
     hasInlineCreate() {
       const create = this.listData ? this.listData.filter((item) => item.create) : false
       return create.length > 0
@@ -415,11 +474,9 @@ export default {
       // const tracker = this.tracker.find((item) => item.name === 'Epic')
       const result = {
         parent_id: 'null',
-        with_point: true
+        with_point: true,
+        sort: 'subject:dec'
         // tracker_id: tracker ? tracker.id : 1
-      }
-      if (this.sort) {
-        result['sort'] = this.sort
       }
       if (!this.displayClosed) {
         result['status_id'] = 'open'
@@ -443,6 +500,7 @@ export default {
       if (this.keyword) {
         result['search'] = this.keyword
       }
+      result['only_superproject_issues'] = !!this.filterValue.project
       return result
     },
     async loadData() {
@@ -459,7 +517,7 @@ export default {
     async fetchData() {
       if (!this.selectedProjectId) return
       this.listLoading = true
-      const res = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
+      const res = await getProjectIssueList(this.filterValue.project || this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
       if (res.hasOwnProperty('data')) {
         this.listLoading = false
         return Promise.resolve(res.data.map((item) => this.issueFormatter(item)))
@@ -546,6 +604,7 @@ export default {
       return form
     },
     async appendIssue(row, subLevel, prefill) {
+      if (row) this.$set(this.$data, 'isParentExist', Object.prototype.hasOwnProperty.call(row, 'parent_object'))
       const { row_index, treeDataArray, updateNodeMap } = await this.treeDataArray(row, subLevel)
       const store = this.$refs.WBS.layout.store
       const { treeData, lazyTreeNodeMap } = store.states
@@ -602,51 +661,77 @@ export default {
         this.listData.splice(row_index, 1)
       }
     },
-    async handleRemoveIssue(row) {
-      await this.$msgbox({
-        title: this.$t('general.Delete'),
-        type: 'warning',
-        message: this.$t('Issue.DeleteIssue', { issueName: `#${row.id} - ${row.name}` }),
-        showCancelButton: true,
-        confirmButtonClass: 'el-button--danger',
+    async handleRemoveIssue(row, msg, force, detail) {
+      const h = this.$createElement
+      const issueName = { issueName: row.name }
+      const messageList = [h('span', null, this.$t(`Issue.${msg}Issue`, issueName))]
+      if (detail) {
+        messageList.push(h('ul', null,
+          detail.map(issue => {
+            let tags = ''
+            if (issue.tags && issue.tags.length > 0) {
+              tags = issue.tags.map(tag => h('el-tag', { class: { 'mx-1': true }, props: { type: 'mini' }}, tag.name))
+            }
+            return h('li', null, [
+              h('Status', { class: { 'mx-1': true }, props: { name: this.$t(`Issue.${issue.status.name}`), size: 'mini' }}, ''),
+              h('Tracker', { props: { name: this.$t(`Issue.${issue.tracker.name}`), size: 'mini' }}, ''),
+              h('span', null, [
+                h('span', null, `#${issue.id} - `),
+                ...tags,
+                h('span', null, `${issue.name} ${(Object.keys(issue.assigned_to).length > 0 ? `(${this.$t(`Issue.assigned_to`)}: ${issue.assigned_to.name}
+             -  ${issue.assigned_to.login})` : '')}`)
+              ])
+            ])
+          })
+        ))
+      }
+      const message = h('p', null, messageList)
+      const deleteRequest = await this.$confirm(message, this.$t('general.Delete'), {
         confirmButtonText: this.$t('general.Delete'),
         cancelButtonText: this.$t('general.Cancel'),
-        beforeClose: async (action, instance, done) => {
-          if (action === 'confirm') {
-            this.updateLoading = true
-            this.$emit('update-loading', true)
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = this.$t('Updating')
-            try {
-              const res = await deleteIssue(row.id)
-              this.$emit('update-status', {
-                time: res.datetime
-              })
-              this.$notify({
-                title: this.$t('general.Success').toString(),
-                type: 'success',
-                message: this.$t('Notify.Deleted').toString()
-              })
-            } catch (e) {
-              this.$emit('update-status', {
-                error: e
-              })
-              this.$notify({
-                title: this.$t('general.Error').toString(),
-                type: 'error',
-                message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString()
-              })
-            }
-            this.updateLoading = false
-            this.$emit('update-loading', false)
-            instance.confirmButtonLoading = false
-            done()
-            await this.removeIssue(row)
+        type: 'error',
+        confirmButtonClass: 'el-button--danger'
+      }).catch(err => console.error(err))
+      if (deleteRequest === 'confirm') {
+        this.updateLoading = true
+        this.$emit('update-loading', true)
+        try {
+          await this.deleteIssueAPI(force, row)
+        } catch (err) {
+          const errorRes = err.response.data
+          if (errorRes && errorRes.error.code === 1013) {
+            await this.handleRemoveIssue(row, 'ConfirmDelete', true, errorRes.error.details)
           } else {
-            done()
+            this.$emit('update-status', {
+              error: err
+            })
+            this.$message({
+              title: this.$t('general.Error').toString(),
+              type: 'error',
+              message: this.$t(`errorMessage.${err.response.data.error.code}`, err.response.data.error.details).toString()
+            })
           }
         }
+        this.updateLoading = false
+      }
+    },
+    async deleteIssueAPI(force, row) {
+      let params = {}
+      if (force) {
+        params = { force: force }
+      }
+      const res = await deleteIssue(row.id, params)
+      this.$emit('update-status', {
+        time: res.datetime
       })
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Deleted'),
+        type: 'success'
+      })
+      this.updateLoading = false
+      this.$emit('update-loading', false)
+      await this.removeIssue(row)
     },
     handleCellClick(row, column) {
       if (!this.isButtonDisabled) {
@@ -657,6 +742,7 @@ export default {
           columnName = column['property']
         }
         this.$set(this.$data, 'editRowId', row.id)
+        this.$set(this.$data, 'isParentExist', Object.prototype.hasOwnProperty.call(row, 'parent_object'))
         this.$set(row, 'originColumn', cloneDeep(row[columnName]))
         this.$set(row, 'editColumn', columnName)
       }
@@ -922,6 +1008,41 @@ export default {
         done()
       }
     },
+    onSaveCheckRelationIssue() {
+      this.$refs.settingRelationIssue.$refs.issueForm.validate((valid) => {
+        if (valid) {
+          this.onSaveRelationIssue()
+        }
+      })
+    },
+    async onSaveRelationIssue() {
+      try {
+        const getSettingRelationIssue = this.$refs['settingRelationIssue']
+        const updateApi = []
+        if (getSettingRelationIssue.target === 'Parent') {
+          updateApi.push(
+            updateIssue(getSettingRelationIssue.row.id, { parent_id: getSettingRelationIssue.form.parent_id })
+          )
+        } else if (getSettingRelationIssue.target === 'Children') {
+          getSettingRelationIssue.children['append'].forEach((item) => {
+            updateApi.push(updateIssue(item, { parent_id: getSettingRelationIssue.row.id }))
+          })
+          getSettingRelationIssue.children['remove'].forEach((item) => {
+            updateApi.push(updateIssue(item, { parent_id: '' }))
+          })
+        }
+        await Promise.all(updateApi)
+        this.toggleRelationDialog(getSettingRelationIssue.target)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+        this.loadData()
+      } catch (e) {
+        console.error(e)
+      }
+    },
     onRelationIssueDialog(id) {
       this.$set(this.relationIssue, 'visible', true)
       this.$set(this.relationIssue, 'id', id)
@@ -933,6 +1054,10 @@ export default {
     handleRelationUpdate() {
       this.loadData()
       this.$emit('update-issue')
+    },
+    toggleRelationDialog(target) {
+      this.relationDialog.visible = !this.relationDialog.visible
+      this.relationDialog.target = target
     },
     toggleIssueMatrixDialog(row) {
       this.issueMatrixDialog.visible = !this.issueMatrixDialog.visible
