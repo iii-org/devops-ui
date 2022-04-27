@@ -258,7 +258,8 @@ export default {
     Disconnected: 'Disconnected',
     Tag: 'Tag',
     Path: 'Path',
-    Format: 'Format'
+    Format: 'Format',
+    View: 'View'
   },
   Notify: {
     Updated: 'update successful',

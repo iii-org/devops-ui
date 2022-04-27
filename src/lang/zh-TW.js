@@ -258,7 +258,8 @@ export default {
     Disconnected: '連線失敗',
     Tag: '標籤',
     Path: '路徑',
-    Format: '格式'
+    Format: '格式',
+    View: '已讀'
   },
   Notify: {
     Updated: '已更新',

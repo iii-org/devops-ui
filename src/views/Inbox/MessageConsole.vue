@@ -43,7 +43,7 @@
       <el-table-column
         header-align="center"
         :label="$t('Inbox.Title')"
-        width="500px"
+        width="450px"
       >
         <template slot-scope="scope">
           {{ scope.row.title ? scope.row.title : 'No Title' }}
@@ -79,7 +79,7 @@
       </el-table-column>
       <el-table-column
         align="center"
-        label="Group Receiver"
+        :label="$t('Inbox.GroupReceiverTitle')"
         prop="creator.name"
       >
         <template slot-scope="scope">
@@ -88,8 +88,16 @@
       </el-table-column>
       <el-table-column
         align="center"
-        label="Status"
-        prop="creator.name"
+        :label="$t('general.View')"
+        prop="already_receive_number"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.already_receive_number }} / {{ scope.row.total_receive_number }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        :label="$t('general.Status')"
       >
         <template slot-scope="scope">
           <el-tag
@@ -101,7 +109,7 @@
       </el-table-column>
       <el-table-column
         header-align="center"
-        label="Action"
+        :label="$t('general.Actions')"
         width="300px"
       >
         <template slot-scope="scope">
