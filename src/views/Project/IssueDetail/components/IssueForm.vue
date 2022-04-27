@@ -609,16 +609,17 @@ export default {
       await getHasRelation(this.form.project_id || this.selectedProjectId)
         .then((res) => {
           if (res.has_relations) {
-            this.getAllRelation()
+            const selectedProject = this.allRelation.find((project) => project.id === this.form.project_id)
+            if (selectedProject) delete selectedProject.type
+            this.allRelation = []
+            this.getAllRelation(selectedProject)
           }
           this.hasRelations = res.has_relations
         })
     },
-    async getAllRelation() {
-      const { display, id, name } = this.selectedProject
-      const selectedProject = this.issueProject.id && this.issueProject.display
-        ? this.issueProject
-        : { display, id, name }
+    async getAllRelation(project) {
+      const { display, id, name } = this.getIssueDetailSelectedProject(project)
+      const selectedProject = { display, id, name }
       let allRelation = []
       await getAllRelation(this.form.project_id || this.selectedProjectId)
         .then((res) => {
@@ -626,6 +627,15 @@ export default {
           allRelation.unshift(selectedProject)
           this.allRelation = allRelation
         })
+    },
+    getIssueDetailSelectedProject(project) {
+      if (project && this.hasSelectedProject(project)) return project
+      return this.hasSelectedProject(this.issueProject)
+        ? this.issueProject
+        : this.selectedProject
+    },
+    hasSelectedProject(project) {
+      return !(!project.id || !project.display || !project.name)
     },
     onChangePId() {
       this.fetchData()
