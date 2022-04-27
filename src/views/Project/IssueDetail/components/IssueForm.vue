@@ -11,8 +11,8 @@
     <el-form-item v-if="hasRelations" :label="$t('Project.Project')">
       <el-select v-model="form.project_id" style="width: 100%">
         <el-option
-          v-for="project in allRelation"
-          :key="project.id"
+          v-for="(project, index) in allRelation"
+          :key="index"
           :label="project.display"
           :value="project.id"
         >
@@ -295,6 +295,14 @@ export default {
     isButtonDisabled: {
       type: Boolean,
       default: false
+    },
+    issueProject: {
+      type: Object,
+      default: () => ({
+        display: '',
+        id: '',
+        name: ''
+      })
     }
   },
   data() {
@@ -420,12 +428,6 @@ export default {
       if (this.form.assigned_to_id && this.form.status_id === 1) this.form.status_id = 2
       if (!this.form.assigned_to_id) this.form.status_id = 1
     }
-    // selectedProjectId: {
-    //   handler(val) {
-    //     this.getHasRelation()
-    //   },
-    //   immediate: true
-    // }
   },
   mounted() {
     if (this.form.project_id > 0) {
@@ -614,11 +616,11 @@ export default {
     },
     async getAllRelation() {
       const { display, id, name } = this.selectedProject
-      const selectedProject = {
-        display, id, name
-      }
+      const selectedProject = this.issueProject.id && this.issueProject.display
+        ? this.issueProject
+        : { display, id, name }
       let allRelation = []
-      await getAllRelation(this.selectedProject.id)
+      await getAllRelation(this.form.project_id || this.selectedProjectId)
         .then((res) => {
           allRelation = res.data
           allRelation.unshift(selectedProject)

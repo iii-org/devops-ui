@@ -193,6 +193,7 @@
             ref="IssueForm"
             :is-button-disabled="isButtonDisabled"
             :issue-id="issueId"
+            :issue-project="issueProject"
             :form.sync="form"
             :parent="parent"
             :relations="relations"
@@ -407,7 +408,8 @@ export default {
       isLoadingFamily: false,
       projectRelationList: [],
       isShowDialog: false,
-      storagePId: ''
+      storagePId: '',
+      issueProject: {}
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -531,6 +533,7 @@ export default {
         await this.fetchIssue()
       } else if (this.$route.params.issueId) {
         this.issueId = parseInt(this.$route.params.issueId)
+        this.issueProject = this.$route.params.project
         await this.fetchIssue()
       } else {
         this.form.project_id = this.selectedProjectId
