@@ -8,7 +8,7 @@ RUN git rev-parse HEAD > git_commit && echo "1.17.0-dev" > git_tag && git log -1
 RUN echo -e "\nVUE_APP_COMMIT='$(cat git_commit)'\nVUE_APP_TAG='$(cat git_tag)'\nVUE_APP_DATE='$(cat git_date)'" >> .env.production
 RUN yarn run build:prod
 
-FROM dockerhub/library/nginx:1.21
+FROM dockerhub/library/nginx:1.20
 #RUN apt update -y; apt upgrade -y
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 COPY --from=build-stage /app/default.conf /etc/nginx/conf.d/default.conf
