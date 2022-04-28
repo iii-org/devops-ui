@@ -9,7 +9,7 @@ RUN echo -e "\nVUE_APP_COMMIT='$(cat git_commit)'\nVUE_APP_TAG='$(cat git_tag)'\
 RUN yarn run build:prod
 
 FROM dockerhub/bitnami/nginx:1.21
-RUN apt update -y; apt upgrade -y
+#RUN apt update -y; apt upgrade -y
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 COPY --from=build-stage /app/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=build-stage /app/default.conf.tmpl /etc/nginx/conf.d/default.conf.tmpl
