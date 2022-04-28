@@ -9,6 +9,8 @@ RUN echo -e "\nVUE_APP_COMMIT='$(cat git_commit)'\nVUE_APP_TAG='$(cat git_tag)'\
 RUN yarn run build:prod
 
 FROM dockerhub/bitnami/nginx:1.21
+### Revert to the root user
+USER root
 #RUN apt update -y; apt upgrade -y
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 COPY --from=build-stage /app/default.conf /etc/nginx/conf.d/default.conf
@@ -18,3 +20,5 @@ RUN chmod -R 775 /usr/share/nginx/html; chmod 775 /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 CMD ["/run_ui.pl"]
+## Set the container to be run as a non-root user by default
+USER 1001
