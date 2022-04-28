@@ -21,11 +21,12 @@ stages:
         git.commitID: ${CICD_GIT_COMMIT}
         git.repoName: ${CICD_GIT_REPO_NAME}
         git.url: ${CICD_GIT_URL}
+        harbor.host: harbor-dev3.iiidevops.org
         pipeline.sequence: ${CICD_EXECUTION_SEQUENCE}
       catalogTemplate: cattle-global-data:iii-dev-charts3-scan-sonarqube
       name: ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-sq
       targetNamespace: ${CICD_GIT_REPO_NAME}
-      version: 0.2.1
+      version: 0.2.4
   when:
     branch:
       include:
@@ -252,11 +253,12 @@ stages:
         git.repoName: ${CICD_GIT_REPO_NAME}
         git.url: ${CICD_GIT_URL}
         harbor.host: harbor-dev3.iiidevops.org
-        kube.ingress.base_domain: ingress-dev3.iiidevops.org
-        kube.ingress.proxy_body_size: 20m
+        imagePullSecrets[0].name: harbor-local
         pipeline.sequence: ${CICD_EXECUTION_SEQUENCE}
         web.imageTag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_BRANCH}:${CICD_GIT_COMMIT}
         web.port: 80
+        kube.ingress.base_domain: ingress-dev3.iiidevops.org
+        kube.ingress.proxy_body_size: 20m
       catalogTemplate: cattle-global-data:iii-dev-charts3-web
       name: ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-serv
       targetNamespace: ${CICD_GIT_REPO_NAME}
