@@ -38,6 +38,7 @@ stages:
       - packrelease
       - sonarqubelogs
       - tracker
+      - mywork
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -59,6 +60,7 @@ stages:
       - master
       - develop
       - packrelease
+      - mywork
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
   steps:
@@ -118,6 +120,7 @@ stages:
       - clayfilterdetail
       - tryonlyfilter
       - new
+      - mywork
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -172,6 +175,7 @@ stages:
       - clayfilterdetail
       - tryonlyfilter
       - new
+      - mywork
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -237,6 +241,7 @@ stages:
       - clayfilterdetail
       - tryonlyfilter
       - new
+      - mywork
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -295,6 +300,7 @@ stages:
       - clayfilterdetail
       - tryonlyfilter
       - new
+      - mywork
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -352,6 +358,7 @@ stages:
       - clayfilterdetail
       - tryonlyfilter
       - new
+      - mywork
 - name: Test--ZAP
   iiidevops: zap
   steps:
