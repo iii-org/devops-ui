@@ -124,6 +124,7 @@ stages:
       - new
       - mywork
       - testsocket
+      - mergeissueandfile
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -176,6 +177,7 @@ stages:
       - new
       - mywork
       - testsocket
+      - mergeissueandfile
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -243,6 +245,7 @@ stages:
       - new
       - mywork
       - testsocket
+      - mergeissueandfile
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -303,6 +306,7 @@ stages:
       - new
       - mywork
       - testsocket
+      - mergeissueandfile
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -362,6 +366,7 @@ stages:
       - new
       - mywork
       - testsocket
+      - mergeissueandfile
 - name: Test--ZAP
   iiidevops: zap
   steps:
