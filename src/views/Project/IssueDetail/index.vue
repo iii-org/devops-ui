@@ -86,7 +86,7 @@
                 :row="form"
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
-                @update="getData()"
+                @updateFamilyData="getIssueFamilyData(issue)"
               />
             </el-col>
           </el-row>
@@ -101,18 +101,18 @@
               :span="24"
               class="mb-3"
             >
-              <issue-description
+              <IssueDescription
                 v-model="form.description"
                 :old-value="originForm.description"
                 :issue-id="issueId"
                 :is-button-disabled="isButtonDisabled"
               />
-              <issue-files
+              <IssueFiles
                 v-if="files.length > 0"
                 :is-button-disabled="isButtonDisabled"
                 :issue-file.sync="files"
               />
-              <issue-collection
+              <IssueCollection
                 v-if="test_files.length > 0"
                 :is-button-disabled="isButtonDisabled"
                 :issue-test.sync="test_files"
@@ -142,7 +142,7 @@
                     :popup="true"
                     :is-button-disabled="isButtonDisabled"
                     :reload="relationVisible"
-                    @update-list="fetchIssueLink"
+                    @update-list="getIssueFamilyData(issue)"
                     @on-context-menu="onContextMenu"
                     @popup-dialog="onRelationIssueDialog"
                   />

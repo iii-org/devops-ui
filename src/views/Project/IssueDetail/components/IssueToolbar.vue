@@ -113,7 +113,7 @@
         :project-id="selectedProjectId"
         :parent-id="issueId"
         :parent-name="issueName"
-        @loading="loadingUpdate($event, false)"
+        @loading="loadingUpdate($event, true)"
         @add-topic-visible="emitAddTopicDialogVisible"
       />
       <span
@@ -237,10 +237,8 @@ export default {
       this.uploadDialogVisible = false
     },
     async uploadFiles(sendForm, fileList) {
-      this.loadingUpdate(true, false)
       // use one by one edit issue to upload file
       const { issueId } = this
-      // use one by one edit issue to upload file
       try {
         const uploadApi = fileList.map(function (item) {
           const sendForm = new FormData()
@@ -281,7 +279,7 @@ export default {
           return error
         })
         .finally(() => {
-          this.loadingUpdate(false, false)
+          this.$emit('updateFamilyData')
         })
     },
     handleCollectionDialog() {
@@ -326,7 +324,7 @@ export default {
           message: this.$t('Notify.Updated'),
           type: 'success'
         })
-        this.$emit('update')
+        this.$emit('updateFamilyData')
       } catch (e) {
         console.error(e)
       }
