@@ -141,17 +141,10 @@
           <em class="el-icon-arrow-down el-icon--right" />
         </el-button>
       </el-popover>
-      <el-button slot="button" :disabled="isLoading" :type="(socket.connected)? 'success': 'danger'" @click="onSocketConnect">
+      <!-- <el-button slot="button" :disabled="isLoading" :type="(socket.connected)? 'success': 'danger'" @click="onSocketConnect">
         <div class="dot inline-block" :class="(socket.connected)? 'bg-success': 'bg-danger'" />
         {{ (socket.connected) ? $t('general.Connected') : $t('general.Disconnected') }}
-      </el-button>
-      <el-button
-        slot="button"
-        icon="el-icon-refresh"
-        size="small"
-        class="buttonSecondaryReverse"
-        @click="reload"
-      />
+      </el-button> -->
       <el-divider direction="vertical" />
       <el-input
         v-if="searchVisible"
@@ -884,9 +877,6 @@ export default {
       if (this.socket.connected) await this.socket.disconnect()
       await this.connectSocket()
       this.isLoading = false
-    },
-    reload() {
-      window.location.reload()
     }
   }
 }
