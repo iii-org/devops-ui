@@ -126,6 +126,7 @@ stages:
       - testsocket
       - mergeissueandfile
       - attachment
+      - rmbubbles
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -180,6 +181,7 @@ stages:
       - testsocket
       - mergeissueandfile
       - attachment
+      - rmbubbles
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -249,6 +251,7 @@ stages:
       - testsocket
       - mergeissueandfile
       - attachment
+      - rmbubbles
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -311,6 +314,7 @@ stages:
       - testsocket
       - mergeissueandfile
       - attachment
+      - rmbubbles
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -372,6 +376,7 @@ stages:
       - testsocket
       - mergeissueandfile
       - attachment
+      - rmbubbles
 - name: Test--ZAP
   iiidevops: zap
   steps:
