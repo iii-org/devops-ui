@@ -392,6 +392,7 @@ export default {
         await this.isChildrenIssueClosed(index)
         await this.listData[index].close()
       }
+      this.$emit('onUpdate')
       this.multipleSelection = []
       this.listLoading = false
     },
