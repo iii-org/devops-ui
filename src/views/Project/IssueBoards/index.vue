@@ -19,7 +19,7 @@
         @hide="resetSaveFilterButtons"
       >
         <el-form v-loading="isLoading">
-          <template v-for="dimension in filterOptions">
+          <template v-for="dimension in filterOptionsWithProject">
             <el-form-item
               v-if="groupBy.dimension !== dimension.value"
               :key="dimension.id"
@@ -141,10 +141,10 @@
           <em class="el-icon-arrow-down el-icon--right" />
         </el-button>
       </el-popover>
-      <el-button slot="button" :disabled="isLoading" :type="(socket.connected)? 'success': 'danger'" @click="onSocketConnect">
+      <!-- <el-button slot="button" :disabled="isLoading" :type="(socket.connected)? 'success': 'danger'" @click="onSocketConnect">
         <div class="dot inline-block" :class="(socket.connected)? 'bg-success': 'bg-danger'" />
         {{ (socket.connected) ? $t('general.Connected') : $t('general.Disconnected') }}
-      </el-button>
+      </el-button> -->
       <el-divider direction="vertical" />
       <el-input
         v-if="searchVisible"
@@ -255,6 +255,45 @@ export default {
       elementIds: [],
       hasChildren: false,
       project: [],
+      filterOptions: [{
+        id: 1,
+        label: this.$t('Issue.FilterDimensions.status'),
+        value: 'status',
+        placeholder: 'Status',
+        tag: true
+      },
+      {
+        id: 2,
+        label: this.$t('Issue.FilterDimensions.tags'),
+        value: 'tags',
+        placeholder: 'Tag'
+      },
+      {
+        id: 3,
+        label: this.$t('Issue.FilterDimensions.tracker'),
+        value: 'tracker',
+        placeholder: 'Type',
+        tag: true
+      },
+      {
+        id: 4,
+        label: this.$t('Issue.FilterDimensions.assigned_to'),
+        value: 'assigned_to',
+        placeholder: 'Member'
+      },
+      {
+        id: 5,
+        label: this.$t('Issue.FilterDimensions.fixed_version'),
+        value: 'fixed_version',
+        placeholder: 'Version'
+      },
+      {
+        id: 6,
+        label: this.$t('Issue.FilterDimensions.priority'),
+        value: 'priority',
+        placeholder: 'Priority',
+        tag: true
+      }],
       socket: io(`/issues/websocket`, { // production socket
         reconnectionAttempts: 5
       })
@@ -273,56 +312,12 @@ export default {
       })
       return result
     },
-    filterOptions() {
-      const filterOption = [
-        {
-          id: 1,
-          label: this.$t('Issue.FilterDimensions.status'),
-          value: 'status',
-          placeholder: 'Status',
-          tag: true
-        },
-        {
-          id: 2,
-          label: this.$t('Issue.FilterDimensions.tags'),
-          value: 'tags',
-          placeholder: 'Tag'
-        },
-        {
-          id: 3,
-          label: this.$t('Issue.FilterDimensions.tracker'),
-          value: 'tracker',
-          placeholder: 'Type',
-          tag: true
-        },
-        {
-          id: 4,
-          label: this.$t('Issue.FilterDimensions.assigned_to'),
-          value: 'assigned_to',
-          placeholder: 'Member'
-        },
-        {
-          id: 5,
-          label: this.$t('Issue.FilterDimensions.fixed_version'),
-          value: 'fixed_version',
-          placeholder: 'Version'
-        },
-        {
-          id: 6,
-          label: this.$t('Issue.FilterDimensions.priority'),
-          value: 'priority',
-          placeholder: 'Priority',
-          tag: true
-        }
-      ]
-      if (this.hasChildren) {
-        filterOption.unshift({
-          id: 7,
-          value: 'project',
-          placeholder: 'Project'
-        })
-      }
-      return filterOption
+    filterOptionsWithProject() {
+      return this.hasChildren ? [{
+        id: this.filterOptions.length + 1,
+        value: 'project',
+        placeholder: 'Project'
+      }].concat(this.filterOptions) : this.filterOptions
     },
     groupByOptions() {
       return this.getStatusSort.map((item, idx) => ({
@@ -825,7 +820,7 @@ export default {
           const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
           this.$set(this.projectIssueList, findChangeIndex, data[idx])
           this.updateData()
-          this.showUpdateMessage(data[idx])
+          // this.showUpdateMessage(data[idx])
         }
         this.elementIds = data.map(s => s.id)
       })
