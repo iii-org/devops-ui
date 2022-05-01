@@ -141,10 +141,20 @@
           <em class="el-icon-arrow-down el-icon--right" />
         </el-button>
       </el-popover>
-      <!-- <el-button slot="button" :disabled="isLoading" :type="(socket.connected)? 'success': 'danger'" @click="onSocketConnect">
+      <el-tooltip
+            placement="bottom"
+            :open-delay="200"
+            :content="socket.connected ?
+              $t('general.SocketConnected') :
+              $t('general.ReconnectByReload')"
+          >
+      <div style="float:left;">
+      <el-button slot="button" :disabled="isLoading" :type="(socket.connected)? 'success': 'danger'" @click="onSocketConnect">
         <div class="dot inline-block" :class="(socket.connected)? 'bg-success': 'bg-danger'" />
         {{ (socket.connected) ? $t('general.Connected') : $t('general.Disconnected') }}
-      </el-button> -->
+      </el-button> 
+      </div>
+      </el-tooltip>
       <el-divider direction="vertical" />
       <el-input
         v-if="searchVisible"
@@ -441,7 +451,7 @@ export default {
   async created() {
     this.connectSocket()
     this.projectId = this.selectedProjectId
-    await this.fetchInitData()
+    //await this.fetchInitData()
   },
   beforeDestroy() {
     this.socket.disconnect()
@@ -874,7 +884,7 @@ export default {
     },
     async onSocketConnect() {
       this.isLoading = true
-      if (this.socket.connected) await this.socket.disconnect()
+      //if (this.socket.connected) await this.socket.disconnect()
       await this.connectSocket()
       this.isLoading = false
     }
