@@ -142,18 +142,18 @@
         </el-button>
       </el-popover>
       <el-tooltip
-            placement="bottom"
-            :open-delay="200"
-            :content="socket.connected ?
-              $t('general.SocketConnected') :
-              $t('general.ReconnectByReload')"
-          >
-      <div style="float:left;">
-      <el-button slot="button" :disabled="isLoading" :type="(socket.connected)? 'success': 'danger'" @click="onSocketConnect">
-        <div class="dot inline-block" :class="(socket.connected)? 'bg-success': 'bg-danger'" />
-        {{ (socket.connected) ? $t('general.Connected') : $t('general.Disconnected') }}
-      </el-button> 
-      </div>
+        placement="bottom"
+        :open-delay="200"
+        :content="socket.connected ?
+          $t('general.SocketConnected') :
+          $t('general.ReconnectByReload')"
+      >
+        <div style="float:left;">
+          <el-button slot="button" :disabled="isLoading" :type="(socket.connected)? 'success': 'danger'" @click="onSocketConnect">
+            <div class="dot inline-block" :class="(socket.connected)? 'bg-success': 'bg-danger'" />
+            {{ (socket.connected) ? $t('general.Connected') : $t('general.Disconnected') }}
+          </el-button> 
+        </div>
       </el-tooltip>
       <el-divider direction="vertical" />
       <el-input
@@ -450,11 +450,13 @@ export default {
   },
   async created() {
     this.connectSocket()
+    setInterval(() => this.connectSocket(), 30000)
     this.projectId = this.selectedProjectId
-    //await this.fetchInitData()
+    // await this.fetchInitData()
   },
   beforeDestroy() {
     this.socket.disconnect()
+    clearInterval()
   },
   methods: {
     ...mapActions('projects', [
@@ -858,6 +860,9 @@ export default {
           this.connectSocket()
         }
       })
+      this.socket.on('connect_error', () => {
+        window.location.reload()
+      })
     },
     socketDataFormat(data) {
       Object.keys(data).forEach(key => {
@@ -884,7 +889,7 @@ export default {
     },
     async onSocketConnect() {
       this.isLoading = true
-      //if (this.socket.connected) await this.socket.disconnect()
+      // if (this.socket.connected) await this.socket.disconnect()
       await this.connectSocket()
       this.isLoading = false
     }
