@@ -203,6 +203,7 @@
       :fixed_version="fixed_version"
       :assigned_to="assigned_to"
       :element-ids="elementIds"
+      :project-id="projectId"
       @getRelativeList="getRelativeList"
       @updateIssueList="updateIssueList"
       @updateData="updateData"
@@ -451,7 +452,7 @@ export default {
   async created() {
     this.connectSocket()
     this.projectId = this.selectedProjectId
-    //await this.fetchInitData()
+    // await this.fetchInitData()
   },
   beforeDestroy() {
     this.socket.disconnect()
@@ -842,16 +843,19 @@ export default {
       })
       this.socket.on('add_issue', async data => {
         for (const idx in data) {
-          data[idx] = _this.socketDataFormat(data[idx])
-          const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-          if (findChangeIndex !== -1) {
-            this.$set(this.projectIssueList, findChangeIndex, data[idx])
-          } else {
-            this.$set(this.projectIssueList, this.projectIssueList.length, data[idx])
+          if ((this.filterValue.project) && (this.filterValue.project === data[idx].project.id) || !this.filterValue.project) {
+            data[idx] = _this.socketDataFormat(data[idx])
+            const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+            if (findChangeIndex !== -1) {
+              this.$set(this.projectIssueList, findChangeIndex, data[idx])
+            } else {
+              this.$set(this.projectIssueList, this.projectIssueList.length, data[idx])
+            }
+            this.updateData()
+            this.showUpdateMessage(data[idx])
           }
-          this.updateData()
-          this.showUpdateMessage(data[idx])
         }
+        this.elementIds = data.map(s => s.id)
       })
       this.socket.on('disconnect', (reason) => {
         if (reason !== 'io client disconnect') {
@@ -884,7 +888,7 @@ export default {
     },
     async onSocketConnect() {
       this.isLoading = true
-      //if (this.socket.connected) await this.socket.disconnect()
+      // if (this.socket.connected) await this.socket.disconnect()
       await this.connectSocket()
       this.isLoading = false
     }

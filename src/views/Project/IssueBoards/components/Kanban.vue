@@ -267,7 +267,7 @@
           <QuickAddIssueOnBoard
             v-if="showDialog"
             class="board-item quick-add"
-            :project-id="selectedProjectId"
+            :project-id="projectId"
             :save-data="addIssue"
             :board-object="boardObject"
             @after-add="showDialog = !showDialog"
@@ -336,6 +336,10 @@ export default {
     elementIds: {
       type: Array,
       default: () => []
+    },
+    projectId: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -415,7 +419,9 @@ export default {
   },
   watch: {
     async elementIds() {
-      this.updateAnimation()
+      this.$nextTick(() => {
+        this.updateAnimation()
+      })
     }
   },
   beforeDestroy() {
@@ -606,24 +612,26 @@ export default {
       for (const elementId of this.elementIds) {
         setTimeout(() => {
           if (this.$refs[elementId]) {
-            const relation = this.$refs[elementId][0].getElementsByClassName('el-collapse-item__header')
-            if (relation.length > 0) {
-              relation[0].style.background = 'rgba(255,0,0,.2)'
-              relation[0].style.transition = 'background 0.3s ease-in-out'
+            if (this.$refs[elementId].length > 0) {
+              const relation = this.$refs[elementId][0].getElementsByClassName('el-collapse-item__header')
+              if (relation.length > 0) {
+                relation[0].style.background = 'rgba(255,0,0,.2)'
+                relation[0].style.transition = 'background 0.3s ease-in-out'
+              }
+              this.$refs[elementId][0].style.boxShadow = '0px 0px 10px 2px rgba(255,0,0,.2)'
+              this.$refs[elementId][0].style.background = 'rgba(255,0,0,.2)'
+              this.$refs[elementId][0].style.transition = 'box-shadow 0.3s ease-in-out'
+              this.$refs[elementId][0].style.transition = 'background 0.3s ease-in-out'
+              this.$nextTick(() => {
+                window.setTimeout(() => {
+                  if (this.$refs[elementId].length > 0) {
+                    this.$refs[elementId][0].style.boxShadow = ''
+                    this.$refs[elementId][0].style.background = ''
+                    if (relation.length > 0) relation[0].style.background = ''
+                  }
+                }, 500)
+              })
             }
-            this.$refs[elementId][0].style.boxShadow = '0px 0px 10px 2px rgba(255,0,0,.2)'
-            this.$refs[elementId][0].style.background = 'rgba(255,0,0,.2)'
-            this.$refs[elementId][0].style.transition = 'box-shadow 0.3s ease-in-out'
-            this.$refs[elementId][0].style.transition = 'background 0.3s ease-in-out'
-            this.$nextTick(() => {
-              window.setTimeout(() => {
-                if (this.$refs[elementId].length > 0) {
-                  this.$refs[elementId][0].style.boxShadow = ''
-                  this.$refs[elementId][0].style.background = ''
-                  if (relation.length > 0) relation[0].style.background = ''
-                }
-              }, 500)
-            })
           }
         }, 100)
       }

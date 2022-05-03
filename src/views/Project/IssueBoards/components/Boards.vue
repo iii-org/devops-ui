@@ -16,6 +16,7 @@
         :dimension="groupBy.dimension"
         :add-issue="saveIssue"
         :element-ids="elementIds"
+        :project-id="projectId"
         @relationIssueId="onRelationIssueDialog($event, classObj.id)"
         @update="updateIssueStatus"
         @update-board="updateIssueBoard"
@@ -105,6 +106,10 @@ export default {
     elementIds: {
       type: Array,
       default: () => []
+    },
+    projectId: {
+      type: Number,
+      default: null
     }
   },
   data() {
