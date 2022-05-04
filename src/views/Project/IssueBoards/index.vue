@@ -861,7 +861,7 @@ export default {
         }
       })
       this.socket.on('connect_error', () => {
-        window.location.reload()
+        this.connectSocket()
       })
     },
     socketDataFormat(data) {
