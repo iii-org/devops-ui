@@ -6,6 +6,7 @@
   >
     <ProjectListSelector>
       <CustomFilter
+        v-if="socket.connected"
         ref="customFilter"
         type="issue_board"
         :group-by="groupBy"
@@ -13,6 +14,7 @@
         @apply-filter="applyCustomFilter"
       />
       <el-popover
+        v-if="socket.connected"
         popper-class="popper"
         placement="bottom"
         trigger="click"
@@ -72,7 +74,6 @@
             />
           </el-form-item>
         </el-form>
-
         <SaveFilterButton
           ref="saveFilterButton"
           type="issue_board"
@@ -91,8 +92,9 @@
           <em class="el-icon-arrow-down el-icon--right" />
         </el-button>
       </el-popover>
-      <el-divider direction="vertical" />
+      <el-divider v-if="socket.connected" direction="vertical" />
       <el-popover
+        v-if="socket.connected"
         placement="bottom"
         trigger="click"
       >
@@ -143,7 +145,7 @@
       </el-popover>
       <el-tooltip
         placement="bottom"
-        :open-delay="200"
+        :open-delay="100"
         :content="socket.connected ?
           $t('general.SocketConnected') :
           $t('general.ReconnectByReload')"
@@ -155,9 +157,23 @@
           </el-button> 
         </div>
       </el-tooltip>
-      <el-divider direction="vertical" />
+      <el-tooltip
+        v-if="socket.disconnected"
+        placement="bottom"
+        :open-delay="100"
+        :content="$t('general.Reload')"
+      >
+        <el-button
+          class="ml-2 buttonPrimaryReverse"
+          icon="el-icon-refresh"
+          style="float:left;"
+          circle
+          @click="reloadPage"
+        />
+      </el-tooltip>
+      <el-divider v-if="socket.connected" direction="vertical" />
       <el-input
-        v-if="searchVisible"
+        v-if="searchVisible && socket.connected"
         id="input-search"
         v-model="keyword"
         prefix-icon="el-icon-search"
@@ -169,7 +185,7 @@
         @change="onChangeFilter"
       />
       <el-button
-        v-else
+        v-if="!searchVisible && socket.connected"
         type="text"
         :loading="isLoading"
         class="headerTextColor"
@@ -178,7 +194,7 @@
       >
         {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
       </el-button>
-      <template v-if="isFilterChanged">
+      <template v-if="isFilterChanged && socket.connected">
         <el-divider direction="vertical" />
         <el-button
           size="small"
@@ -892,6 +908,9 @@ export default {
       // if (this.socket.connected) await this.socket.disconnect()
       await this.connectSocket()
       this.isLoading = false
+    },
+    reloadPage() {
+      window.location.reload()
     }
   }
 }

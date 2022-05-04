@@ -261,7 +261,8 @@ export default {
     Format: 'Format',
     View: 'View',
     SocketConnected: 'Socket is connected',
-    ReconnectByReload: 'Please reload the page to ensure the socket reconnected properly'
+    ReconnectByReload: 'Please reload the page to ensure the socket reconnected properly',
+    Reload: 'Reload the page'
   },
   Notify: {
     Updated: 'update successful',
