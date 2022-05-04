@@ -259,7 +259,10 @@ export default {
     Tag: '標籤',
     Path: '路徑',
     Format: '格式',
-    View: '已讀'
+    View: '已讀',
+    SocketConnected: 'Socket 已連線成功',
+    ReconnectByReload: '請重整頁面(F5)，以確保連線正常',
+    Reload: '頁面重整'
   },
   Notify: {
     Updated: '已更新',

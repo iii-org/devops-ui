@@ -368,7 +368,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'forceTracker']),
+    ...mapGetters(['selectedProjectId', 'forceTracker', 'enableForceTracker']),
     getHeaderBarClassName() {
       return function (name) {
         return name.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase())
@@ -485,13 +485,15 @@ export default {
       return isChildrenIssuesClosed
     },
     isTrackerStrict(element) {
-      const hasForceTacker = this.forceTracker.find(x => x.id === element.tracker.id)
-      if (hasForceTacker) {
-        if (element.has_father) return true
-        else {
-          const error = 'trackerError'
-          this.handleErrorAlert(error)
-          return false
+      if (this.enableForceTracker) {
+        const hasForceTacker = this.forceTracker.find(x => x.id === element.tracker.id)
+        if (hasForceTacker) {
+          if (element.has_father) return true
+          else {
+            const error = 'trackerError'
+            this.handleErrorAlert(error)
+            return false
+          }
         }
       }
       return true
