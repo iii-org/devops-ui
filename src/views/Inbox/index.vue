@@ -159,9 +159,6 @@ export default {
       }
     }
   },
-  mounted() {
-    this.fetchData()
-  },
   beforeDestroy() {
     window.clearTimeout(this.timeoutId)
   },

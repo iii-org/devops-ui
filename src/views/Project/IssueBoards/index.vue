@@ -321,7 +321,8 @@ export default {
         tag: true
       }],
       socket: io(`/issues/websocket`, { // production socket
-        reconnectionAttempts: 5
+        reconnectionAttempts: 5,
+        forceNew: true
       })
       // socket: io(`${process.env.VUE_APP_BASE_API}/issues/websocket`, { // development socket
       //   reconnectionAttempts: 5
@@ -389,6 +390,10 @@ export default {
       const selectedLabels = []
       Object.keys(this.filterValue).forEach((item) => {
         if (!this.filterValue[item]) return
+        if (this.filterValue[item].length <= 0) {
+          this.$delete(this.filterValue, item)
+          return
+        }
         const isArray = Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0
         isArray ? selectedLabels.push(this.handleArrayLabels(item)) : selectedLabels.push(this.handleLabels(item))
       })
@@ -444,7 +449,6 @@ export default {
         this.socket.emit('join', { project_id: newId })
         await this.onCleanKeyWord()
         this.projectId = this.selectedProjectId
-        this.filterValue = {}
         await this.fetchInitData()
       },
       immediate: true
@@ -465,14 +469,14 @@ export default {
     }
   },
   async created() {
-    this.connectSocket()
-    setInterval(() => this.connectSocket(), 30000)
     this.projectId = this.selectedProjectId
+    this.connectSocket()
+    this.intervalTimer = window.setInterval(() => this.connectSocket(), 30000)
     // await this.fetchInitData()
   },
   beforeDestroy() {
     this.socket.disconnect()
-    clearInterval()
+    window.clearInterval(this.intervalTimer)
   },
   methods: {
     ...mapActions('projects', [
@@ -836,12 +840,9 @@ export default {
     },
     setSocketListener() {
       const _this = this
-      // this.socket.on('connect', () => {
-      //   this.$message({
-      //     message: this.$t('Notify.ConnectSocket'),
-      //     type: 'success'
-      //   })
-      // })
+      this.socket.on('connect', () => {
+        console.log('connect')
+      })
       this.socket.on('update_issue', async (data) => {
         for (const idx in data) {
           data[idx] = _this.socketDataFormat(data[idx])
@@ -877,7 +878,7 @@ export default {
         }
       })
       this.socket.on('connect_error', () => {
-        this.connectSocket()
+        console.log('connection error')
       })
     },
     socketDataFormat(data) {
