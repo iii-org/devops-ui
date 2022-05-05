@@ -1006,7 +1006,11 @@ export default {
         if (this.originForm[key] === null) {
           this.originForm[key] = 0
         }
-        if (this.originForm[key] !== this.form[key]) {
+        if (
+          key === 'relation_ids'
+            ? this.originForm[key].length !== this.form[key].length
+            : this.originForm[key] !== this.form[key]
+        ) {
           return true
         }
       }
@@ -1087,6 +1091,7 @@ export default {
         this.$set(row, 'parent', data.parent)
         this.$set(this, 'parent', data.parent)
       } else {
+        this.originForm.parent_id = ''
         this.form.parent_id = ''
         this.$set(row, 'parent', {})
         this.$set(this, 'parent', {})
@@ -1099,10 +1104,12 @@ export default {
         this.$set(this, 'children', [])
       }
       if (data.hasOwnProperty('relations')) {
+        this.originForm.relation_ids = data.relations.map((item) => item.id)
         this.form.relation_ids = data.relations.map((item) => item.id)
         this.$set(row, 'relations', data.relations)
         this.$set(this, 'relations', data.relations)
       } else {
+        this.originForm.relation_ids = []
         this.form.relation_ids = []
         this.$set(row, 'relations', [])
         this.$set(this, 'relations', [])
