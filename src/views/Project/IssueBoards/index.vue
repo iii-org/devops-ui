@@ -443,10 +443,14 @@ export default {
       this.setFixedVersionShowClosed({ board: value })
       this.loadVersionList(value)
     },
-    'filterValue.project'(value) {
+    async 'filterValue.project'(value) {
       if (value) this.projectId = value
       else this.projectId = this.selectedProjectId
-      this.loadSelectionList()
+      await this.onCleanKeyWord()
+      if (value) this.filterValue.project = value
+      await this.loadSelectionList()
+      await this.getInitStoredData()
+      await this.loadVersionList()
     }
   },
   async created() {
@@ -505,6 +509,11 @@ export default {
       const storedData = await this.fetchStoredData()
       const { storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed } = storedData
       this.filterValue = storedFilterValue[key] ? storedFilterValue[key] : {}
+      if (this.filterValue.hasOwnProperty('assigned_to')) {
+        const findChangeIndex = this.assigned_to.findIndex(issue => parseInt(this.filterValue.assigned_to) === parseInt(issue.id))
+        if (findChangeIndex < 0) this.$delete(this.filterValue, 'assigned_to')
+      }
+      this.$delete(this.filterValue, 'tags')
       this.keyword = storedKeyword[key] ? storedKeyword[key] : null
       this.displayClosed = storedDisplayClosed[key] ? storedDisplayClosed[key] : false
       this.fixed_version_closed = storedVersionClosed[key] ? storedVersionClosed[key] : false
@@ -622,15 +631,22 @@ export default {
       const versionList = await this.fetchVersionList(params)
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
       const version = this.getFilteredVersion
-      version.length > 0 ? this.setFilterValue(version) : this.$delete(this.originFilterValue, 'fixed_version')
+      if (version.length > 0) {
+        this.setFilterValue(version)
+      } else {
+        this.$delete(this.originFilterValue, 'fixed_version')
+        this.$delete(this.filterValue, 'fixed_version')
+      } 
       this.onChangeFilter()
     },
     setFilterValue(version) {
-      const sessionValue = sessionStorage.getItem('issueFilter')
-      if (!sessionValue || !JSON.parse(sessionValue)['board']) {
-        this.$set(this.filterValue, 'fixed_version', version[0].id)
-      }
+      // const sessionValue = sessionStorage.getItem('issueFilter')
+      // if (!sessionValue || !JSON.parse(sessionValue)['board']) {
+      //   this.$set(this.filterValue, 'fixed_version', version[0].id)
+      // }
+      this.$set(this.filterValue, 'fixed_version', version[0].id)
       this.$set(this.originFilterValue, 'fixed_version', version[0].id)
+
     },
     async fetchVersionList(params) {
       const res = await getProjectVersion(this.projectId, params)

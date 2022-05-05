@@ -22,8 +22,8 @@
     >
       <div
         v-for="(element, idx) in list"
+        :id="element.id"
         :key="element.id"
-        :ref="element.id"
         class="board-item item"
         @drop="dropPanelLabels($event, idx, element.id)"
         @dragover="allowDrop($event, idx)"
@@ -611,30 +611,33 @@ export default {
     updateAnimation() {
       for (const elementId of this.elementIds) {
         setTimeout(() => {
-          if (this.$refs[elementId]) {
-            if (this.$refs[elementId].length > 0) {
-              const relation = this.$refs[elementId][0].getElementsByClassName('el-collapse-item__header')
-              if (relation.length > 0) {
-                relation[0].style.background = 'rgba(255,0,0,.2)'
-                relation[0].style.transition = 'background 0.3s ease-in-out'
-              }
-              this.$refs[elementId][0].style.boxShadow = '0px 0px 10px 2px rgba(255,0,0,.2)'
-              this.$refs[elementId][0].style.background = 'rgba(255,0,0,.2)'
-              this.$refs[elementId][0].style.transition = 'box-shadow 0.3s ease-in-out'
-              this.$refs[elementId][0].style.transition = 'background 0.3s ease-in-out'
-              this.$nextTick(() => {
-                window.setTimeout(() => {
-                  if (this.$refs[elementId].length > 0) {
-                    this.$refs[elementId][0].style.boxShadow = ''
-                    this.$refs[elementId][0].style.background = ''
-                    if (relation.length > 0) relation[0].style.background = ''
-                  }
-                }, 500)
-              })
+          var element = document.getElementById(elementId)
+          if (element) {
+            this.scrollTo(element)
+            const relation = element.getElementsByClassName('el-collapse-item__header')
+            if (relation.length > 0) {
+              relation[0].style.background = 'rgba(255,0,0,.2)'
+              relation[0].style.transition = 'background 0.3s ease-in-out'
             }
+            element.style.boxShadow = '0px 0px 10px 2px rgba(255,0,0,.2)'
+            element.style.background = 'rgba(255,0,0,.2)'
+            element.style.transition = 'box-shadow 0.3s ease-in-out'
+            element.style.transition = 'background 0.3s ease-in-out'
+            this.$nextTick(() => {
+              window.setTimeout(() => {
+                element.style.boxShadow = ''
+                element.style.background = ''
+                if (relation.length > 0) relation[0].style.background = ''
+              }, 500)
+            })
           }
         }, 100)
       }
+    },
+    scrollTo(element) {
+      this.$nextTick(() => {
+        element.scrollIntoView({ behavior: 'smooth' })
+      })
     }
   }
 }
