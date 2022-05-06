@@ -636,7 +636,7 @@ export default {
     },
     scrollTo(element) {
       this.$nextTick(() => {
-        element.scrollIntoView({ behavior: 'smooth' })
+        element.parentNode.scrollTo({ top: 0, behavior: 'smooth' })
       })
     }
   }
