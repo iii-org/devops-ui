@@ -364,7 +364,6 @@ import WBSSelectColumn from '@/views/Plan/Milestone/components/WBSSelectColumn'
 import WBSDateColumn from '@/views/Plan/Milestone/components/WBSDateColumn'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
-import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import { addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
 import { CancelRequest } from '@/newMixins'
@@ -380,7 +379,7 @@ export default {
     ContextmenuSubmenu,
     ProjectIssueDetail,
     SettingRelationIssue,
-    IssueMatrix,
+    IssueMatrix: () => import('@/views/Project/IssueDetail/components/IssueMatrix'),
     // eslint-disable-next-line vue/no-unused-components
     Tracker, Status
   },

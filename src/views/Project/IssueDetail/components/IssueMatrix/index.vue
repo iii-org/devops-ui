@@ -28,6 +28,54 @@
         />
       </el-form-item>
       <el-form-item class="float-right">
+        <el-popover
+          placement="bottom"
+          trigger="click"
+        >
+          <el-form
+            :model="form"
+            label-width="120px"
+            label-position="left"
+          >
+            <el-form-item label="尋找全部關係">
+              <el-switch v-model="form.allRelation" />
+            </el-form-item>
+            <el-form-item label="僅往下找">
+              <el-switch v-model="form.onlyChildren" />
+              <div v-if="form.onlyChildren">
+                <el-input v-model.number="form.level" placeholder="請填入數字" />
+                <div style="color: red; font-size: 12px;">請填入數字，預設留空為全部</div>
+              </div>
+            </el-form-item>
+            <el-form-item label="不顯示關聯議題">
+              <el-switch v-model="form.noRelation" />
+            </el-form-item>
+            <el-form-item label="顯示項目">
+              <el-select
+                v-model="form.showItem"
+                placeholder="請選擇顯示項目"
+                multiple
+              >
+                <el-option
+                  v-for="item in showItemList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+            <!-- <el-button class="mt-3" type="primary" @click="onSubmit">
+              儲存設定
+            </el-button> -->
+          </el-form>
+          <el-button
+            slot="reference"
+            type="text"
+            icon="el-icon-s-tools"
+          >
+            設定條件
+          </el-button>
+        </el-popover>
         <el-button
           icon="el-icon-download"
           class="buttonPrimaryReverse"
@@ -43,7 +91,7 @@
       class="mermaid-wrapper"
       :style="{height:`${tableHeight}px`}"
     >
-      <vue-mermaid
+      <VueMermaid
         ref="mermaid"
         :nodes="data"
         type="flowchart LR"
@@ -91,12 +139,22 @@ import { mapGetters } from 'vuex'
 import { camelCase } from 'lodash'
 import { dragscroll } from 'vue-dragscroll'
 import { getTestFileByTestPlan } from '@/api/qa'
-
 import theme from '@/theme.js'
+
+const form = {
+  allRelation: false,
+  onlyChildren: false,
+  level: '',
+  noRelation: false,
+  showItem: []
+}
 
 export default {
   name: 'IssueMatrix',
-  components: { VueMermaid, ProjectIssueDetail: () => import('@/views/Project/IssueDetail') },
+  components: {
+    VueMermaid,
+    ProjectIssueDetail: () => import('@/views/Project/IssueDetail')
+  },
   directives: {
     dragscroll
   },
@@ -107,6 +165,14 @@ export default {
     }
   },
   data() {
+    this.showItemList = [
+      { value: 'id', label: '議題編號' },
+      { value: 'name', label: '議題名稱' },
+      { value: 'status', label: '議題狀態' },
+      { value: 'category', label: '議題類別' },
+      { value: 'assignee', label: '受分配者' },
+      { value: 'version', label: '版號' }
+    ]
     return {
       tableHeight: 0,
       zoom: 100,
@@ -125,7 +191,9 @@ export default {
         visible: false,
         id: null
       },
-      trackerColor: Object.freeze(theme.backgroundColor)
+      trackerColor: Object.freeze(theme.backgroundColor),
+      family: {},
+      form: form
     }
   },
   computed: {
@@ -146,6 +214,14 @@ export default {
   watch: {
     selectedProjectId() {
       this.initChart()
+    },
+    async chartProgress(val) {
+      if (val > 0) await this.getChartIssueList()
+    },
+    'form.allRelation': {
+      handler(allRelation) {
+        this.initChart()
+      }
     }
   },
   mounted() {
@@ -240,6 +316,7 @@ export default {
       if (issue.id === this.row.id) {
         point['edgeType'] = 'stadium'
       }
+      console.log(point)
       return point
     },
     formatTestFile(test_file, group) {
@@ -322,70 +399,135 @@ export default {
       this.accessedIssueId = []
       this.chartIssueList = []
       this.chartProgress.total = 1
-      const network = new this.PaintNetwork(this)
-      const family = await getIssueFamily(this.row.id)
-      this.chartProgress.now = 1
+      this.family = (await getIssueFamily(this.row.id)).data
       this.accessedIssueId.push(this.row.id)
-      await network.getPaintFamily(this.row, family.data)
-      await network.end()
+      this.chartProgress.now = 1
+      await this.getPaintFamily(this.row, this.family)
+      await this.end()
       this.chartLoading = false
     },
-    PaintNetwork(vueInstance) {
-      this.getIssueFamilyData = async function (chartIssueList) {
-        const getIssueFamilyAPI = chartIssueList.map((issue) => {
-          vueInstance.accessedIssueId.push(issue.id)
-          return getIssueFamily(issue.id)
-        })
-        const response = await Promise.all(getIssueFamilyAPI)
-        return Promise.resolve(response.map((res) => res.data))
+    async getPaintFamily(issue, issueFamily) {
+      if (this.chartProgress.now === 1) {
+        await this.getChartIssueList(issue, issueFamily)
       }
-
-      this.getPaintFamily = async function (issue, issueFamily) {
-        vueInstance.chartProgress.total += 1
-        if (issue.tracker.name === 'Test Plan') {
-          const test_files = await getTestFileByTestPlan(vueInstance.selectedProjectId, issue.id)
-          vueInstance.chartIssueList.push({ ...issue, ...issueFamily, test_files: test_files.data })
-        } else {
-          vueInstance.chartIssueList.push({ ...issue, ...issueFamily })
-        }
+      if (form.allRelation) {
+        this.chartProgress.total += 1
         const getFamilyList = await this.combineFamilyList(issue, issueFamily)
         const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
         for (const [index, subIssue] of getFamilyList.entries()) {
           await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
-          vueInstance.chartProgress.now += 1
+          this.chartProgress.now += 1
         }
-        return Promise.resolve(issue)
-      }
-
-      this.combineFamilyList = function (issue, family) {
-        const bug = vueInstance.tracker.find((item) => item.name === 'Bug').id
-        const close = vueInstance.status.find((item) => item.name === 'Closed').id
-        let getFamilyList = []
-        Object.keys(family).forEach((relationType) => {
-          if (!Array.isArray(family[relationType])) {
-            family[relationType] = [family[relationType]]
-          }
-          family[relationType] = family[relationType].filter(
-            (item) => !(item.status_id === close && item.tracker_id === bug)
-          )
-          family[relationType] = this.formatFamilyList(issue, family[relationType], relationType)
-          if (family.hasOwnProperty(relationType)) {
-            getFamilyList = getFamilyList.concat(family[relationType])
-          }
-        })
-        getFamilyList = getFamilyList.filter((item) => !vueInstance.accessedIssueId.includes(item.id))
-        return Promise.resolve(getFamilyList)
-      }
-
-      this.formatFamilyList = function (issue, family, relationTarget) {
-        return family.map((item) => ({ ...item, relation_type: relationTarget, relation_id: issue.id }))
-      }
-
-      this.end = function () {
-        vueInstance.chartProgress.now = vueInstance.chartProgress.total
-        return Promise.resolve()
       }
     },
+    async getChartIssueList(row, family) {
+      const issue = row || this.row
+      const issueFamily = family || this.family
+      if (issue.tracker.name === 'Test Plan') {
+        const test_files = await this.getTestPlan(issue.id)
+        this.chartIssueList.push({ ...issue, ...issueFamily, test_files })
+      } else {
+        this.chartIssueList.push({ ...issue, ...issueFamily })
+      }
+    },
+    async getTestPlan(issueId) {
+      const testFiles = await getTestFileByTestPlan(this.selectedProjectId, issueId)
+      return testFiles.data
+    },
+    async getIssueFamilyData(chartIssueList) {
+      const getIssueFamilyAPI = chartIssueList.map((issue) => {
+        this.accessedIssueId.push(issue.id)
+        return getIssueFamily(issue.id)
+      })
+      const response = await Promise.all(getIssueFamilyAPI)
+      return Promise.resolve(response.map((res) => res.data))
+    },
+    combineFamilyList(issue, family) {
+      console.log(issue)
+      console.log(family)
+      const bug = this.tracker.find((item) => item.name === 'Bug').id
+      const close = this.status.find((item) => item.name === 'Closed').id
+      let getFamilyList = []
+      Object.keys(family).forEach((relationType) => {
+        if (!Array.isArray(family[relationType])) {
+          family[relationType] = [family[relationType]]
+        }
+        family[relationType] = family[relationType].filter(
+          (item) => !(item.status_id === close && item.tracker_id === bug)
+        )
+        family[relationType] = this.formatFamilyList(issue, family[relationType], relationType)
+        if (family.hasOwnProperty(relationType)) {
+          getFamilyList = getFamilyList.concat(family[relationType])
+        }
+      })
+      getFamilyList = getFamilyList.filter((item) => !this.accessedIssueId.includes(item.id))
+      return Promise.resolve(getFamilyList)
+    },
+    formatFamilyList(issue, family, relationTarget) {
+      return family.map((item) => ({ ...item, relation_type: relationTarget, relation_id: issue.id }))
+    },
+    end() {
+      this.chartProgress.now = this.chartProgress.total
+      return Promise.resolve()
+    },
+    // PaintNetwork(vueInstance) {
+    //   this.getIssueFamilyData = async function (chartIssueList) {
+    //     const getIssueFamilyAPI = chartIssueList.map((issue) => {
+    //       vueInstance.accessedIssueId.push(issue.id)
+    //       return getIssueFamily(issue.id)
+    //     })
+    //     const response = await Promise.all(getIssueFamilyAPI)
+    //     return Promise.resolve(response.map((res) => res.data))
+    //   }
+
+    //   this.getPaintFamily = async function (issue, issueFamily) {
+    //     if (issue.tracker.name === 'Test Plan') {
+    //       const test_files = await getTestFileByTestPlan(vueInstance.selectedProjectId, issue.id)
+    //       vueInstance.chartIssueList.push({ ...issue, ...issueFamily, test_files: test_files.data })
+    //     } else {
+    //       vueInstance.chartIssueList.push({ ...issue, ...issueFamily })
+    //     }
+    //     if (form.allRelation) {
+    //       vueInstance.chartProgress.total += 1
+    //       const getFamilyList = await this.combineFamilyList(issue, issueFamily)
+    //       const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
+    //       for (const [index, subIssue] of getFamilyList.entries()) {
+    //         await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
+    //         vueInstance.chartProgress.now += 1
+    //       }
+    //     }
+    //     return Promise.resolve(issue)
+    //   }
+
+    //   this.combineFamilyList = function (issue, family) {
+    //     const bug = vueInstance.tracker.find((item) => item.name === 'Bug').id
+    //     const close = vueInstance.status.find((item) => item.name === 'Closed').id
+    //     let getFamilyList = []
+    //     Object.keys(family).forEach((relationType) => {
+    //       if (!Array.isArray(family[relationType])) {
+    //         family[relationType] = [family[relationType]]
+    //       }
+    //       family[relationType] = family[relationType].filter(
+    //         (item) => !(item.status_id === close && item.tracker_id === bug)
+    //       )
+    //       family[relationType] = this.formatFamilyList(issue, family[relationType], relationType)
+    //       if (family.hasOwnProperty(relationType)) {
+    //         getFamilyList = getFamilyList.concat(family[relationType])
+    //       }
+    //     })
+    //     getFamilyList = getFamilyList.filter((item) => !vueInstance.accessedIssueId.includes(item.id))
+    //     return Promise.resolve(getFamilyList)
+    //   }
+
+    //   this.formatFamilyList = function (issue, family, relationTarget) {
+    //     return family.map((item) => ({ ...item, relation_type: relationTarget, relation_id: issue.id }))
+    //   }
+
+    //   this.end = function () {
+    //     vueInstance.chartProgress.now = vueInstance.chartProgress.total
+    //     return Promise.resolve()
+    //   }
+    // },
     editNode(nodeId) {
       this.onRelationIssueDialog(nodeId)
     },
