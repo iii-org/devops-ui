@@ -34,19 +34,29 @@
         >
           <el-form
             :model="form"
+            :disabled="chartLoading"
             label-width="120px"
             label-position="left"
           >
             <el-form-item label="尋找全部關係">
-              <el-switch v-model="form.allRelation" />
+              <el-switch
+                v-model="form.allRelation"
+              />
+              <div v-if="!form.allRelation">
+                <el-input v-model.number="form.level" style="width: 200px;">
+                  <div slot="prepend">僅往下找</div>
+                  <div slot="append">層</div>
+                </el-input>
+                <div style="color: red; font-size: 12px;">請填入數字，預設為 1 層</div>
+              </div>
             </el-form-item>
-            <el-form-item label="僅往下找">
+            <!-- <el-form-item label="僅往下找">
               <el-switch v-model="form.onlyChildren" />
               <div v-if="form.onlyChildren">
                 <el-input v-model.number="form.level" placeholder="請填入數字" />
                 <div style="color: red; font-size: 12px;">請填入數字，預設留空為全部</div>
               </div>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="不顯示關聯議題">
               <el-switch v-model="form.noRelation" />
             </el-form-item>
@@ -64,9 +74,9 @@
                 />
               </el-select>
             </el-form-item>
-            <!-- <el-button class="mt-3" type="primary" @click="onSubmit">
+            <el-button class="mt-3" type="primary" @click="initChart">
               儲存設定
-            </el-button> -->
+            </el-button>
           </el-form>
           <el-button
             slot="reference"
@@ -143,8 +153,8 @@ import theme from '@/theme.js'
 
 const form = {
   allRelation: false,
-  onlyChildren: false,
-  level: '',
+  // onlyChildren: false,
+  level: 1,
   noRelation: false,
   showItem: []
 }
@@ -218,20 +228,26 @@ export default {
     async chartProgress(val) {
       if (val > 0) await this.getChartIssueList()
     },
-    'form.allRelation': {
-      handler(allRelation) {
-        this.initChart()
-      }
+    form: {
+      handler(form) {
+        if (form.allRelation) {
+          form.onlyChildren = false
+          form.level = 1
+        }
+        if (form.onlyChildren) form.allRelation = false
+      },
+      deep: true
     }
   },
   mounted() {
+    this.levelCounter = Number(this.form.level)
     this.initChart()
     this.$nextTick(() => {
-      this.tableHeight = this.$refs['wrapper'].clientHeight - 60
+      this.tableHeight = this.$refs['wrapper'].clientHeight - 30
     })
     window.onresize = () => {
       this.$nextTick(() => {
-        this.tableHeight = this.$refs['wrapper'].clientHeight - 60
+        this.tableHeight = this.$refs['wrapper'].clientHeight - 30
       })
     }
   },
@@ -411,13 +427,18 @@ export default {
         await this.getChartIssueList(issue, issueFamily)
       }
       if (form.allRelation) {
-        this.chartProgress.total += 1
-        const getFamilyList = await this.combineFamilyList(issue, issueFamily)
-        const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
-        for (const [index, subIssue] of getFamilyList.entries()) {
-          await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
-          this.chartProgress.now += 1
-        }
+        await this.paintAllFamily(issue, issueFamily)
+      } else if (!form.allRelation && this.form.level > this.chartProgress.total) {
+        await this.paintAllFamily(issue, issueFamily)
+      }
+    },
+    async paintAllFamily(issue, issueFamily) {
+      this.chartProgress.total += 1
+      const getFamilyList = await this.combineFamilyList(issue, issueFamily)
+      const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
+      for (const [index, subIssue] of getFamilyList.entries()) {
+        await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
+        this.chartProgress.now += 1
       }
     },
     async getChartIssueList(row, family) {
@@ -443,12 +464,11 @@ export default {
       return Promise.resolve(response.map((res) => res.data))
     },
     combineFamilyList(issue, family) {
-      console.log(issue)
-      console.log(family)
       const bug = this.tracker.find((item) => item.name === 'Bug').id
       const close = this.status.find((item) => item.name === 'Closed').id
-      let getFamilyList = []
+      let familyList = []
       Object.keys(family).forEach((relationType) => {
+        if (this.form.noRelation && relationType === 'relations') return
         if (!Array.isArray(family[relationType])) {
           family[relationType] = [family[relationType]]
         }
@@ -457,11 +477,11 @@ export default {
         )
         family[relationType] = this.formatFamilyList(issue, family[relationType], relationType)
         if (family.hasOwnProperty(relationType)) {
-          getFamilyList = getFamilyList.concat(family[relationType])
+          familyList = familyList.concat(family[relationType])
         }
       })
-      getFamilyList = getFamilyList.filter((item) => !this.accessedIssueId.includes(item.id))
-      return Promise.resolve(getFamilyList)
+      familyList = familyList.filter((item) => !this.accessedIssueId.includes(item.id))
+      return Promise.resolve(familyList)
     },
     formatFamilyList(issue, family, relationTarget) {
       return family.map((item) => ({ ...item, relation_type: relationTarget, relation_id: issue.id }))
