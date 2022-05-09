@@ -207,6 +207,7 @@ export default {
     },
     // check if image path includes ':'
     checkImagePath(releaseData) {
+      if (releaseData.extra_image_path === '') return true
       return /:/.test(releaseData.extra_image_path)
     },
     stopRelease() {
