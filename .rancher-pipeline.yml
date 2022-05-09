@@ -41,6 +41,7 @@ stages:
       - tracker
       - mywork
       - testsocket
+      - issuerelationchart
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -128,6 +129,7 @@ stages:
       - mergeissueandfile
       - attachment
       - rmbubbles
+      - issuerelationchart
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -187,6 +189,7 @@ stages:
       - mergeissueandfile
       - attachment
       - rmbubbles
+      - issuerelationchart
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -257,6 +260,7 @@ stages:
       - mergeissueandfile
       - attachment
       - rmbubbles
+      - issuerelationchart
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -321,6 +325,7 @@ stages:
       - mergeissueandfile
       - attachment
       - rmbubbles
+      - issuerelationchart
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -383,6 +388,7 @@ stages:
       - mergeissueandfile
       - attachment
       - rmbubbles
+      - issuerelationchart
 - name: Test--ZAP
   iiidevops: zap
   steps:
