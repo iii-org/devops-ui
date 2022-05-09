@@ -75,7 +75,7 @@
               </el-select>
             </el-form-item>
             <el-button class="mt-3" type="primary" @click="initChart">
-              儲存設定
+              更新關聯圖
             </el-button>
           </el-form>
           <el-button
