@@ -142,7 +142,7 @@ export default {
     return {
       isLoading: false,
       mainVersion: '',
-      imagePath: '{{branch}}:{{version}}',
+      imagePath: '',
       note: '',
       releaseVersionOptions: []
     }
@@ -163,7 +163,7 @@ export default {
   watch: {
     mainVersion: {
       handler(val) {
-        if (!val) return '{{branch}}:{{version}}'
+        if (!val || !this.releaseData.branch) return ''
         const version = this.releaseVersionOptions.find(option => option.value === val)
         this.imagePath = `${this.releaseData.branch}:${version.label}`
       },
