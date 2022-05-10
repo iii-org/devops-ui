@@ -1318,5 +1318,21 @@ export default {
     NotifyClosed: 'Message closed successfully',
     SearchLabel: 'Search Title or Sender'
   },
+  IssueMatrix: {
+    SearchAllRelations: 'Show All',
+    SearchFor: 'Search For',
+    Layer: 'Layer',
+    LayerWarning: 'Please fill in the number, the default is 1 layer.',
+    NoRelatedIssues: `No Related Issuses`,
+    DisplayItem: 'Display Items',
+    SelectDisplayItem: 'Please select a display item',
+    ConditionSettings: 'Condition Settings',
+    Id: 'Id',
+    Name: '@:Issue.name',
+    Status: '@:Issue.FilterDimensions.status',
+    Tracker: '@:Issue.FilterDimensions.tracker',
+    Assignee: '@:Issue.Assignee',
+    Version: 'Version'
+  },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }
