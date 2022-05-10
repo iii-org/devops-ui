@@ -41,6 +41,7 @@ stages:
       - mywork
       - testsocket
       - issuerelationchart
+      - wbsboard
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -129,6 +130,7 @@ stages:
       - attachment
       - rmbubbles
       - issuerelationchart
+      - wbsboard
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -189,6 +191,7 @@ stages:
       - attachment
       - rmbubbles
       - issuerelationchart
+      - wbsboard
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -260,6 +263,7 @@ stages:
       - attachment
       - rmbubbles
       - issuerelationchart
+      - wbsboard
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -324,6 +328,7 @@ stages:
       - attachment
       - rmbubbles
       - issuerelationchart
+      - wbsboard
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -387,6 +392,7 @@ stages:
       - attachment
       - rmbubbles
       - issuerelationchart
+      - wbsboard
 - name: Test--ZAP
   iiidevops: zap
   steps:
