@@ -3,9 +3,9 @@
     class="board-column"
     :class="getHeaderBarClassName(boardObject.name)"
   >
-    <div class="board-column-header">
+    <div class="board-column-header" :style="!fromWbs ? '': 'height: 25px'">
       <div class="header-bar" />
-      <el-row class="flex">
+      <el-row v-if="!fromWbs" class="flex">
         <el-col class="text-center">
           {{ getTranslateHeader(boardObject.name) }} <strong>({{ list.length }})</strong>
         </el-col>
@@ -252,7 +252,7 @@
           class="no-info"
         />
       </div>
-      <div slot="header">
+      <div v-if="!fromWbs" slot="header">
         <div
           :class="selectedProjectId === -1 ? 'board-item-ban' : 'board-item'"
           class="title board-item select-none"
@@ -336,6 +336,10 @@ export default {
     elementIds: {
       type: Array,
       default: () => []
+    },
+    fromWbs: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -546,7 +550,7 @@ export default {
     },
     end(boardObject, event) {
       const updateData = { boardObject, event }
-      this.$emit('update', updateData)
+      this.fromWbs ? this.$emit('update', updateData, this.boardObject.parent_id) : this.$emit('update', updateData)
       this.$forceUpdate()
     },
     handleClick(id) {
@@ -602,7 +606,7 @@ export default {
       })
     },
     handleContextMenu(row, context, event) {
-      this.$emit('contextmenu', { row, context, event })
+      this.fromWbs ? this.$emit('contextmenu', row, context, event) : this.$emit('contextmenu', { row, context, event })
     },
     updateAnimation() {
       for (const elementId of this.elementIds) {
@@ -637,7 +641,7 @@ export default {
 <style lang="scss" scoped>
 .board-column {
   width: 280px;
-  margin: 0 5px 20px 5px;
+  margin: 10px 5px 10px 5px;
   flex: 0 0 280px;
   padding-bottom: 20px;
   @apply overflow-hidden bg-white rounded-md border-solid border border-gray-300;
@@ -656,6 +660,7 @@ export default {
   .board-column-content {
     border: 10px solid transparent;
     height: 95%;
+    min-height: 250px;
     @apply overflow-x-hidden overflow-y-auto space-y-4;
 
     .quick-add {

@@ -2,7 +2,6 @@
   <section>
     <div
       class="board"
-      :class="{'is-panel':false}"
     >
       <div class="header">
         <div
@@ -25,10 +24,11 @@
           </div>
         </div>
       </div>
-      <el-row>
+      <div class="header" style="width: 1450px">
         <el-table
           ref="issueList"
           v-loading="listLoading"
+          :element-loading-text="$t('Loading')"
           :data="listData"
           :show-header="false"
           highlight-current-row
@@ -39,18 +39,32 @@
         >
           <el-table-column type="expand">
             <template slot-scope="{row}">
-              <!-- <ExpandSection
-                :issue="row"
-                @update-list="fetchData"
-                @on-context-menu="onContextMenu"
-                @collapse-expend-row="collapseExpendRow"
-              /> -->
-              {{ row }}
+              <el-row 
+                v-loading="row.hasOwnProperty('isLoadingFamily') && row.isLoadingFamily"
+                style="background: #e8e8e8"
+              >
+                <div class="header">
+                  <Kanban
+                    v-for="classObj in boardHeaderName"
+                    :id="'card_' + row.id + '_' + classObj.id"
+                    :key="classObj.id"
+                    :board-object="{parent_id: row.id, ...classObj}"
+                    :list="boardData[row.id] ? boardData[row.id].children[classObj.id] : []"
+                    :status="status"
+                    :group="group"
+                    :dimension="'status'"
+                    :from-wbs="true"
+                    @relationIssueId="onRelationIssueDialog($event, row.id, classObj.id)"
+                    @update="updateIssueStatus"
+                    @update-drag="quickUpdateIssue"
+                    @contextmenu="handleContextMenu"
+                  />
+                </div>
+              </el-row>
             </template>
           </el-table-column>
           <el-table-column
             :label="$t('Issue.Id')"
-            min-width="280"
             show-overflow-tooltip
             prop="id"
             sortable="custom"
@@ -80,109 +94,62 @@
             />
           </template>
         </el-table>
-      </el-row>
-      <contextmenu ref="contextmenu">
-        <template v-if="Object.keys(contextMenu.row).length > 2">
-          <contextmenu-item class="menu-title">{{ contextMenu.row.name }}</contextmenu-item>
-          <contextmenu-submenu
-            v-permission="permission"
-            :title="$t('Issue.tags')"
+      </div>
+      <transition name="slide-fade">
+        <div v-if="relationIssue.visible" class="rightPanel">
+          <div
+            class="handle-button"
+            :style="{'background-color':'#85c1e9'}"
+            @click="handleRightPanelVisible"
           >
-            <contextmenu-item
-              v-for="item in tags"
-              :key="item.id"
-              :class="{current:getContextMenuCurrentValue('tags', item), [item.class]:item.class}"
-              @click="handleUpdateIssue({value:{'tags':item.id}, row:contextMenu.row})"
-            >
-              <em
-                v-if="getContextMenuCurrentValue('tags', item)"
-                class="el-icon-check"
-              />
-              <em
-                v-if="item.id==='null'"
-                class="el-icon-circle-close"
-              />
-              {{ item.name }} {{ item.message }}
-            </contextmenu-item>
-          </contextmenu-submenu>
-          <contextmenu-item
-            v-permission="permission"
-            divider
+            <em class="el-icon-d-arrow-right" />
+          </div>
+          <ProjectIssueDetail
+            :props-issue-id="relationIssue.id"
+            :is-in-dialog="true"
+            :is-from-board="true"
+            @delete="handleRelationDelete"
           />
-          <contextmenu-item @click="onRelationIssueDialog(contextMenu.row.id)">
-            {{ $t('route.Issue Detail') }}
-          </contextmenu-item>
-          <contextmenu-item @click="toggleIssueMatrixDialog(contextMenu.row)">
-            {{ $t('Issue.TraceabilityMatrix') }}
-          </contextmenu-item>
-          <contextmenu-item
-            v-permission="permission"
-            divider
-          />
-          <contextmenu-item
-            v-permission="permission"
-            @click="appendIssue(contextMenu.row)"
-          >
-            {{ $t('Issue.AddIssue') }}
-          </contextmenu-item>
-          <contextmenu-submenu
-            v-permission="permission"
-            :title="$t('Issue.ChildrenIssue')"
-          >
-            <contextmenu-item
-              v-permission="permission"
-              @click="toggleRelationDialog('Children')"
-            >
-              {{ $t('general.Settings', { name: $t('Issue.ChildrenIssue') }) }}
-            </contextmenu-item>
-            <contextmenu-item
-              v-permission="permission"
-              @click="appendIssue(contextMenu.row, true)"
-            >
-              {{ $t('Issue.AddSubIssue') }}
-            </contextmenu-item>
-          </contextmenu-submenu>
-          <contextmenu-item
-            v-permission="permission"
-            @click="appendIssue(contextMenu.row, false, contextMenu.row)"
-          >
-            {{ $t('Issue.CopyIssue') }}
-          </contextmenu-item>
-          <contextmenu-item
-            v-permission="permission"
-            divider
-          />
-          <contextmenu-item
-            v-permission="permission"
-            class="menu-remove"
-            @click="handleRemoveIssue(contextMenu.row, 'Delete', false)"
-          >
-            <em class="el-icon-delete">{{ $t('general.Delete') }}</em>
-          </contextmenu-item>
-        </template>
-      </contextmenu>
+        </div>
+      </transition>
+      <ContextMenu
+        ref="contextmenu"
+        :visible="contextMenu.visible"
+        :row="contextMenu.row"
+        :filter-column-options="filterOptions"
+        :selection-options="contextOptions"
+      />
     </div>
   </section>
 </template>
 
 <script>
-import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu } from 'v-contextmenu'
 import { mapGetters } from 'vuex'
 import { CancelRequest } from '@/newMixins'
 import { getProjectIssueList } from '@/api_v2/projects'
-import { Tracker, Priority, Status } from '@/components/Issue'
+import { Tracker, Priority, Status, ContextMenu } from '@/components/Issue'
+import { updateIssue, getIssueFamily } from '@/api/issue'
+import { Kanban } from '@/views/Project/IssueBoards/components'
+import ProjectIssueDetail from '@/views/Project/IssueDetail/'
+
+const contextMenu = {
+  row: {
+    fixed_version: { id: 'null' },
+    assigned_to: { id: 'null' }
+  },
+  visible: false,
+  left: 0,
+  top: 0
+}
 
 export default {
   name: 'Board',
   components: {
-    Contextmenu,
-    ContextmenuItem,
-    ContextmenuSubmenu,
+    ContextMenu,
+    Kanban,
+    ProjectIssueDetail,
     // eslint-disable-next-line vue/no-unused-components
     Tracker, Priority, Status
-  },
-  directives: {
-    contextmenu: directive
   },
   mixins: [CancelRequest],
   props: {
@@ -225,11 +192,64 @@ export default {
       listData: [],
       updateLoading: false,
       editRowId: null,
-      contextMenu: { visible: true, row: {}}
+      contextMenu: contextMenu,
+      isLoadingFamily: false,
+      group: 'mission',
+      boardData: {},
+      originalChildren: {},
+      relationIssue: {
+        visible: false,
+        id: null
+      },
+      filterOptions: [{
+        id: 1,
+        label: this.$t('Issue.FilterDimensions.status'),
+        value: 'status',
+        placeholder: 'Status',
+        tag: true
+      },
+      {
+        id: 2,
+        label: this.$t('Issue.FilterDimensions.tags'),
+        value: 'tags',
+        placeholder: 'Tag'
+      },
+      {
+        id: 3,
+        label: this.$t('Issue.FilterDimensions.tracker'),
+        value: 'tracker',
+        placeholder: 'Type',
+        tag: true
+      },
+      {
+        id: 4,
+        label: this.$t('Issue.FilterDimensions.assigned_to'),
+        value: 'assigned_to',
+        placeholder: 'Member'
+      },
+      {
+        id: 5,
+        label: this.$t('Issue.FilterDimensions.fixed_version'),
+        value: 'fixed_version',
+        placeholder: 'Version'
+      },
+      {
+        id: 6,
+        label: this.$t('Issue.FilterDimensions.priority'),
+        value: 'priority',
+        placeholder: 'Priority',
+        tag: true
+      }]
     }
   },
   computed: {
     ...mapGetters(['selectedProjectId', 'priority', 'tracker', 'status', 'userId', 'userRole', 'strictTracker']),
+    assigned_to() {
+      return this.assignedTo
+    },
+    fixed_version() {
+      return this.fixedVersion
+    },
     boardHeaderName() { 
       return [{
         id: 1,
@@ -248,9 +268,16 @@ export default {
         name: 'Verified'
       }]
     },
+    contextOptions() {
+      const result = {}
+      const getOptions = ['assigned_to', 'fixed_version', 'tags']
+      getOptions.forEach((item) => {
+        result[item] = this[item]
+      })
+      return result
+    },
     getHeaderBarClassName() {
       return function (name) {
-        console.log(name)
         return name.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase())
       }
     },
@@ -307,8 +334,6 @@ export default {
       if (!this.selectedProjectId) return
       this.listLoading = true
       const res = await getProjectIssueList(this.filterValue.project || this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
-      console.log(this.getParams())
-      console.log(res)
       if (res.hasOwnProperty('data')) {
         this.listLoading = false
         const result = res.data.filter(row => row.has_children === true)
@@ -337,16 +362,17 @@ export default {
         event.preventDefault()
         const eventX = event.pageX
         const eventY = event.pageY
-        this.$refs.contextmenu.show()
+        this.$refs.contextmenu.$refs.contextmenu.show()
+        const contextmenu = this.$refs.contextmenu.$refs.contextmenu
         this.$nextTick(() => {
           const contextmenuPosition = {
             top: eventY,
             left: eventX
           }
-          const contextmenuWidth = this.$refs.contextmenu.$el.clientWidth
-          const contextmenuHeight = this.$refs.contextmenu.$el.clientHeight
+          const contextmenuWidth = contextmenu.$el.clientWidth
+          const contextmenuHeight = contextmenu.$el.clientHeight
           if (contextmenuWidth <= 50) {
-            this.handleContextMenu(row, column, event)
+            this.handleContextMenu({ row, column, event })
           }
           if (contextmenuHeight + eventY >= window.innerHeight) {
             contextmenuPosition.top -= contextmenuHeight
@@ -358,16 +384,156 @@ export default {
           this.contextMenu.left = contextmenuPosition.left
           this.contextMenu.row = row
           this.contextMenu.visible = true
-          this.$refs.contextmenu.style = {
-            top: this.contextMenu.top + 'px',
-            left: this.contextMenu.left + 'px'
+          contextmenu.style = {
+            top: `${this.contextMenu.top}px`,
+            left: `${this.contextMenu.left}px`
           }
           document.addEventListener('click', this.hideContextMenu)
         })
       }
     },
-    getBoardData(data) {
-      console.log(data)
+    hideContextMenu() {
+      this.contextMenu.visible = false
+      document.removeEventListener('click', this.hideContextMenu)
+    },
+    async getBoardData(row, expandedRows) {
+      this.expandedRow = expandedRows
+      if (expandedRows.find((item) => item.id === row.id)) {
+        try {
+          await this.$set(row, 'isLoadingFamily', true)
+          const res = await getIssueFamily(row.id)
+          this.originalChildren[row.id] = res.data.children
+          this.$set(row, 'children', this.classifyIssue(res.data.children))
+          this.$set(row, 'isLoadingFamily', false)
+          this.boardData[row.id] = row
+        } catch (e) {
+          //   null
+          return Promise.resolve()
+        }
+      }
+      return Promise.resolve()
+    },
+    classifyIssue(children) {
+      const data = this.checkGroupByValueOnBoard()
+      children.forEach((issue) => {
+        if (issue) {
+          const dimensionName = issue.status.id ? issue.status.id : 'null'
+          data[dimensionName].push(issue)
+        }
+      })
+      return this.sortIssue(data)
+    },
+    checkGroupByValueOnBoard() {
+      const data = {}
+      this.boardHeaderName.forEach((dimension) => {
+        data[dimension.id] = []
+      })
+      return data
+    },
+    sortIssue(data) {
+      const sortUpdateOn = (a, b) => new Date(b.updated_on) - new Date(a.updated_on)
+      Object.keys(data).forEach((item) => {
+        this.$set(data, item, data[item].sort(sortUpdateOn))
+      })
+      return data
+    },
+    async updateIssueStatus(evt, parentId) {
+      if (evt.event.hasOwnProperty('added')) {
+        try {
+          const updatedData = { [`status_id`]: evt.boardObject.id, [`parent_id`]: evt.boardObject.parent_id }
+          const issueId = evt.event.added.element.id
+          const newData = await this.updatedIssue(issueId, updatedData)
+          const oldParentId = evt.event.remove.element.id
+          this.setProjectIssueList(newData, parentId, oldParentId)
+        } catch (e) {
+          // error
+        } finally {
+          // this.setProjectIssueList(newData, parentId)
+          // this.$emit('getRelativeList')
+        }
+      }
+    },
+    async updatedIssue(id, updatedData) {
+      const res = await updateIssue(id, updatedData)
+      return res.data
+      // await this.updateRelationIssue(this.originalChildren[parentId], res.data)
+    },
+    setProjectIssueList(newData, parentId, oldParentId) {
+      if (parentId !== oldParentId) {
+        const idx = this.originalChildren[oldParentId].findIndex((item) => item.id === newData.id)
+        const issue = this.originalChildren[parentId].find((item) => item.id === newData.id)
+        this.$delete(this.originalChildren[oldParentId], idx)
+        this.originalChildren[parentId].push(issue)
+      } else {
+        const idx = this.originalChildren[oldParentId].findIndex((item) => item.id === newData.id)
+        const issue = this.originalChildren[parentId].find((item) => item.id === newData.id)
+        this.$set(this.originalChildren[parentId], idx, issue)
+      }
+      this.$set(this.boardData[parentId], 'children', this.classifyIssue(this.originalChildren[parentId]))
+      // this.$emit('updateIssueList', idx, issue)
+    },
+    updateRelationIssue(list, updatedIssue) {
+      list.forEach((issue) => {
+        if (issue.hasOwnProperty('parent') && issue.parent.id === updatedIssue.id) {
+          this.$set(issue, 'parent', updatedIssue)
+        }
+        this.handleUpdatedIssue('children', updatedIssue)
+        this.handleUpdatedIssue('relations', updatedIssue)
+      })
+    },
+    handleUpdatedIssue(key, updatedIssue) {
+      if (updatedIssue.hasOwnProperty(key)) this.setUpdatedIssue(key, updatedIssue)
+    },
+    setUpdatedIssue(key, updatedIssue) {
+      const idx = updatedIssue[key].findIndex((item) => item.id === issue.id)
+      const issue = updatedIssue[key].find((item) => item.id === issue.id)
+      this.$set(issue[key], idx, issue)
+    },
+    async quickUpdateIssue(event) {
+      const { id, params } = event
+      this.$parent.isLoading = true
+      const filterDimension = Object.keys(params)[0]
+      const data = this.handleFilterArrayData(params)
+      try {
+        await this.updatedIssue(id, data)
+      } catch (e) {
+        // error
+      } finally {
+        const idx = this.projectIssueList.findIndex((item) => item.id === id)
+        const issue = this.projectIssueList.find((item) => item.id === id)
+        issue[filterDimension] = params[filterDimension]
+        this.$emit('updateIssueList', idx, issue)
+      }
+      this.$parent.isLoading = false
+    },
+    handleFilterArrayData(value) {
+      const filterDimension = Object.keys(value)[0]
+      let data = { [`${filterDimension}_id`]: value[filterDimension].id }
+      if (Array.isArray(value[filterDimension])) {
+        data = { [filterDimension]: value[filterDimension].map((item) => item.id).join(',') }
+      }
+      return data
+    },
+    onRelationIssueDialog(id, rowId, element) {
+      this.$set(this.relationIssue, 'visible', true)
+      this.$set(this.relationIssue, 'id', id)
+      this.$emit('relation-issue', true)
+      this.scrollTo(rowId, element)
+    },
+    handleRelationDelete() {
+      this.$set(this.relationIssue, 'visible', false)
+      this.$set(this.relationIssue, 'id', null)
+      this.$emit('relation-issue', false)
+    },
+    handleRightPanelVisible() {
+      this.$set(this.relationIssue, 'visible', false)
+      this.$emit('relation-issue', false)
+    },
+    scrollTo(rowId, target) {
+      var element = document.getElementById('card_' + rowId + '_' + target)
+      this.$nextTick(() => {
+        element.scrollIntoView({ behavior: 'smooth' })
+      })
     }
   }
 }
@@ -376,7 +542,7 @@ export default {
 <style lang="scss" scoped>
 .board-column {
   width: 280px;
-  margin: 0 5px 20px 5px;
+  margin: 10px 5px 10px 5px;
   flex: 0 0 280px;
   // padding-bottom: 20px;
   @apply overflow-hidden bg-white rounded-md border-solid border border-gray-300;
@@ -617,10 +783,57 @@ export default {
     justify-content: flex-start;
     flex-wrap: nowrap;
   }
+}
+.current {
+  @apply text-success font-bold;
+}
 
-  &.is-panel {
-    width: calc(100% - 750px);
-    transition: width 1s;
+.menu-remove {
+  @apply text-danger font-bold;
+}
+
+>>> .cursor-context-menu {
+  cursor: context-menu;
+}
+
+.rightPanel {
+  width: 100%;
+  max-width: 750px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: #fff;
+}
+
+.slide-fade-enter-active {
+  transition: all .5s ease-in-out;
+
+}
+.slide-fade-leave-active {
+  transition: all .5s ease-in-out;
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(800px);
+}
+
+.handle-button {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  left: -50px;
+  text-align: center;
+  font-size: 24px;
+  border-radius: 6px 0 0 6px !important;
+  z-index: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  color: #fff;
+  line-height: 50px;
+  i {
+    font-size: 24px;
+    line-height: 50px;
   }
 }
 </style>

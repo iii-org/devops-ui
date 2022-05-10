@@ -125,6 +125,7 @@
     <div
       ref="wrapper"
       class="wrapper"
+      :class="{'is-panel':relationIssue}"
     >
       <el-tabs
         v-model="activeTab"
@@ -170,12 +171,14 @@
           lazy
         >
           <Board 
+            ref="Board"
             :filter-value="filterValue"
             :keyword="keyword"
             :display-closed="displayClosed"
             :assigned-to="assigned_to"
             :fixed-version="fixed_version"
             :tags="tags"
+            @relation-issue="onRelationIssue"
           />
         </el-tab-pane>
       </el-tabs>
@@ -224,6 +227,7 @@ export default {
       searchVisible: false,
       displayClosed: false,
       tableHeight: 0,
+      relationIssue: false,
       filterOptions: Object.freeze([
         {
           id: 1,
@@ -386,6 +390,9 @@ export default {
       'setKeyword',
       'setDisplayClosed'
     ]),
+    onRelationIssue(value) {
+      this.relationIssue = value
+    },
     loadSelectionList() {
       this.loadVersionList(this.fixedVersionShowClosed)
       this.loadAssignedToList()
@@ -542,333 +549,16 @@ export default {
 <style lang="scss" scoped>
 .wrapper {
   height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
+
+  &.is-panel {
+    width: calc(100% - 750px);
+    transition: width 1s;
+  }
 }
 
 .display-column {
   .el-form-item {
     margin: 0;
-  }
-}
-
-.board-column {
-  width: 280px;
-  margin: 0 5px 20px 5px;
-  flex: 0 0 280px;
-  padding-bottom: 20px;
-  @apply overflow-hidden bg-white rounded-md border-solid border border-gray-300;
-
-  .board-column-header {
-    height: 50px;
-    line-height: 50px;
-    @apply overflow-hidden;
-
-    .header-bar {
-      height: 3px;
-      @apply bg-red-500;
-    }
-  }
-
-  .board-column-content {
-    border: 10px solid transparent;
-    height: 95%;
-    @apply overflow-x-hidden overflow-y-auto space-y-4;
-
-    .quick-add {
-      padding: 10px 10px 0 10px;
-    }
-
-    .board-item {
-      cursor: pointer;
-      width: 95%;
-      height: auto;
-      text-align: left;
-      line-height: 20px;
-      box-sizing: border-box;
-      border: 1px solid #e9e9e9;
-      @apply shadow-md bg-white rounded-md border-solid border border-gray-300 mx-auto;
-      font-size: 16px;
-
-      &-ban {
-        pointer-events: none;
-        opacity: 0.4;
-      }
-
-      .tags {
-        @apply mr-1;
-      }
-
-      .add-button {
-        transition: transform 0.6s;
-        @apply m-3;
-        &.rotate {
-          transform: rotate(225deg);
-        }
-      }
-
-      &.item {
-        cursor: move;
-      }
-
-      .progress-bar {
-        @apply bg-active rounded-full;
-        height: 5px;
-
-        &.success {
-          @apply bg-success;
-        }
-
-        &.danger {
-          @apply bg-danger;
-        }
-
-        &.warning {
-          @apply bg-warning;
-        }
-      }
-
-      .title {
-        @apply m-3 flex justify-between content-start;
-
-        .text {
-          @apply cursor-pointer text-left text-primary font-bold break-all;
-        }
-
-        .action {
-          @apply flex cursor-pointer w-5 h-5;
-          .icon {
-            @apply bg-gray-200 text-black rounded-md text-center align-middle px-1;
-          }
-        }
-      }
-
-      .relation {
-        .parent {
-          @apply m-3;
-          font-size: 0.75em;
-
-          .el-tag {
-            font-size: 0.5em;
-          }
-
-          .Active {
-            @apply bg-active;
-          }
-
-          .Assigned {
-            @apply bg-assigned;
-          }
-
-          .Solved {
-            @apply bg-solved;
-          }
-
-          .InProgress {
-            @apply bg-inProgress;
-          }
-
-          .Verified {
-            @apply bg-finished;
-          }
-
-          .Closed {
-            @apply bg-closed;
-          }
-        }
-
-        .children_list {
-          margin: 0;
-        }
-
-        >>> .el-collapse-item {
-          &__header {
-            height: 2.5em;
-          }
-
-          &__content {
-            padding-bottom: 0;
-          }
-        }
-      }
-
-      .issue-status-tags {
-        font-size: 1em;
-        @apply mx-3 mb-1;
-
-        .tracker {
-          font-size: 0.8em;
-        }
-      }
-
-      .info {
-        @apply flex border-0 border-t border-solid border-gray-200 divide-x divide-solid divide-gray-200 rounded-b-md;
-        .detail {
-          min-width: 0;
-          font-size: 1em;
-          line-height: 1em;
-          padding: 0 3px;
-          @apply ml-1 flex flex-1 py-2 border-0;
-          .text {
-            @apply truncate;
-          }
-
-          em {
-            @apply mr-0.5 text-gray-400;
-          }
-        }
-
-        .due_date {
-          .danger {
-            font-weight: 900;
-            color: #f56c6c;
-          }
-
-          .warning {
-            font-weight: 500;
-            color: #d27e00;
-          }
-        }
-      }
-
-      .no-info {
-        @apply mb-3;
-      }
-    }
-  }
-
-  &.active {
-    .board-column-header {
-      .header-bar {
-        @apply bg-active;
-      }
-    }
-  }
-
-  &.assigned {
-    .board-column-header {
-      .header-bar {
-        @apply bg-assigned;
-      }
-    }
-  }
-
-  &.solved {
-    .board-column-header {
-      .header-bar {
-        @apply bg-solved;
-      }
-    }
-  }
-
-  &.inprogress {
-    .board-column-header {
-      .header-bar {
-        @apply bg-inProgress;
-      }
-    }
-  }
-
-  &.verified {
-    .board-column-header {
-      .header-bar {
-        @apply bg-finished;
-      }
-    }
-  }
-
-  &.closed {
-    .board-column-header {
-      .header-bar {
-        @apply bg-closed;
-      }
-    }
-  }
-
-  &.document {
-    .board-column-header {
-      .header-bar {
-        @apply bg-document;
-      }
-    }
-  }
-
-  &.research {
-    .board-column-header {
-      .header-bar {
-        @apply bg-research;
-      }
-    }
-  }
-
-  &.epic {
-    .board-column-header {
-      .header-bar {
-        @apply bg-epic;
-      }
-    }
-  }
-
-  &.audit {
-    .board-column-header {
-      .header-bar {
-        @apply bg-audit;
-      }
-    }
-  }
-
-  &.feature {
-    .board-column-header {
-      .header-bar {
-        @apply bg-feature;
-      }
-    }
-  }
-
-  &.bug {
-    .board-column-header {
-      .header-bar {
-        @apply bg-bug;
-      }
-    }
-  }
-
-  &.issue {
-    .board-column-header {
-      .header-bar {
-        @apply bg-issue;
-      }
-    }
-  }
-
-  &.changeRequest {
-    .board-column-header {
-      .header-bar {
-        @apply bg-changeRequest;
-      }
-    }
-  }
-
-  &.risk {
-    .board-column-header {
-      .header-bar {
-        @apply bg-risk;
-      }
-    }
-  }
-
-  &.testPlan {
-    .board-column-header {
-      .header-bar {
-        @apply bg-testPlan;
-      }
-    }
-  }
-
-  &.failManagement {
-    .board-column-header {
-      .header-bar {
-        @apply bg-failManagement;
-      }
-    }
   }
 }
 </style>
