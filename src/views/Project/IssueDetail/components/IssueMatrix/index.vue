@@ -145,7 +145,7 @@ const Form = () => ({
   group: false,
   isStatus: true, // status or tracker
   allRelation: true,
-  level: 1,
+  level: '',
   noRelation: false,
   showItem: ['id', 'name', 'status', 'tracker', 'version']
 })
@@ -179,8 +179,6 @@ export default {
       tableHeight: 0,
       zoom: 100,
       chartIssueList: [],
-      issueLoading: false,
-      chartLoading: false,
       chartProgress: {
         now: 0,
         total: 0
@@ -209,6 +207,9 @@ export default {
       testFileList = [].concat.apply([], testFileList).map((test_file) => this.formatTestFile(test_file))
       testFileList = [].concat.apply([], testFileList)
       return chartData.concat(testFileList)
+    },
+    chartLoading() {
+      return this.accessedIssueId.length !== this.chartIssueList.length
     }
   },
   watch: {
@@ -219,14 +220,14 @@ export default {
       if (val > 0) await this.getChartIssueList()
     },
     'form.allRelation'(val) {
-      if (val) this.form.level = 1
+      if (val) this.form.level = ''
       this.initChart()
     },
     'form.noRelation'(val) {
       this.initChart()
     },
     'form.level'(val) {
-      if (val) this.initChart()
+      if (val || val === '') this.initChart()
     }
   },
   mounted() {
@@ -412,32 +413,31 @@ export default {
       return result
     },
     async onPaintChart() {
-      this.chartLoading = true
       this.accessedIssueId = []
       this.chartIssueList = []
       this.chartProgress.total = 1
       this.family = (await getIssueFamily(this.row.id)).data
       this.accessedIssueId.push(this.row.id)
       this.chartProgress.now = 1
-      await this.getPaintFamily(this.row, this.family)
+      await this.handlePaintFamily(this.row, this.family)
       await this.end()
-      this.chartLoading = false
     },
-    async getPaintFamily(issue, issueFamily) {
-      if (this.chartProgress.now === 1) {
-        await this.getChartIssueList(issue, issueFamily)
+    async handlePaintFamily(issue, issueFamily) {
+      await this.getChartIssueList(issue, issueFamily)
+      if (this.form.level === '') {
+        await this.paintAllFamily(issue, issueFamily)
+      } else if (this.form.level && this.form.level >= this.chartProgress.total) {
+        await this.paintAllFamily(issue, issueFamily)
       }
-      if (!this.form.allRelation && this.chartProgress.total >= this.form.level) return
-      await this.paintAllFamily(issue, issueFamily)
     },
     async paintAllFamily(issue, issueFamily) {
       this.chartProgress.total += 1
       const getFamilyList = await this.combineFamilyList(issue, issueFamily)
       const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
-      for (const [index, subIssue] of getFamilyList.entries()) {
-        await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
+      getFamilyList.forEach(async (subIssue, index) => {
+        await this.handlePaintFamily(subIssue, getIssuesFamilyList[index])
         this.chartProgress.now += 1
-      }
+      })
     },
     async getChartIssueList(row, family) {
       const issue = row || this.row
@@ -467,6 +467,7 @@ export default {
       let familyList = []
       Object.keys(family).forEach((relationType) => {
         if (this.form.noRelation && relationType === 'relations') return
+        if (!this.form.allRelation && relationType === 'parent') return
         if (!Array.isArray(family[relationType])) {
           family[relationType] = [family[relationType]]
         }

@@ -1322,7 +1322,7 @@ export default {
     SearchAllRelations: 'Show All',
     SearchFor: 'Search For',
     Layer: 'Layer',
-    LayerWarning: 'Please fill in the number, the default is 1 layer.',
+    LayerWarning: 'Please fill in the number, and leave the blank as all.',
     NoRelatedIssues: `No Related Issuses`,
     DisplayItem: 'Display Items',
     SelectDisplayItem: 'Please select a display item',

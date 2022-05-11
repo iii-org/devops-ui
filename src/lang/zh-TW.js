@@ -1313,7 +1313,7 @@ export default {
     SearchAllRelations: '尋找全部關係',
     SearchFor: '僅往下找',
     Layer: '層',
-    LayerWarning: '請填入數字，預設為 1 層。',
+    LayerWarning: '請填入數字，預設留空為全部。',
     NoRelatedIssues: '不顯示關聯議題',
     DisplayItem: '顯示項目',
     SelectDisplayItem: '請選擇顯示項目',
