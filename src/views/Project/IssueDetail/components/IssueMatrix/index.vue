@@ -41,14 +41,27 @@
             <el-switch
               v-model="form.allRelation"
             />
-            <div v-if="!form.allRelation">
+          </el-form-item>
+          <!-- <el-form-item v-if="!form.allRelation" :label="$t('IssueMatrix.SearchFor')">
+            <div>
               <el-input v-model.number="form.level" style="width: 200px;">
                 <div slot="prepend">{{ $t('IssueMatrix.SearchFor') }}</div>
                 <div slot="append">{{ $t('IssueMatrix.Layer') }}</div>
               </el-input>
+              <el-select
+                v-model="form.level"
+                clearable
+              >
+                <el-option
+                  v-for="(level, index) of 5"
+                  :key="index"
+                  :label="level"
+                  :value="level"
+                />
+              </el-select>
               <div style="color: red; font-size: 12px;">{{ $t('IssueMatrix.LayerWarning') }}</div>
             </div>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item :label="$t('IssueMatrix.NoRelatedIssues')">
             <el-switch v-model="form.noRelation" />
           </el-form-item>
@@ -144,9 +157,9 @@ import theme from '@/theme.js'
 const Form = () => ({
   group: false,
   isStatus: true, // status or tracker
-  allRelation: true,
-  level: '',
-  noRelation: false,
+  allRelation: false,
+  // level: '',
+  noRelation: true,
   showItem: ['id', 'name', 'status', 'tracker', 'version']
 })
 
@@ -175,14 +188,14 @@ export default {
       { value: 'version', label: this.$t('IssueMatrix.Version') }
     ]
     return {
-      chartData: [],
       tableHeight: 0,
       zoom: 100,
       chartIssueList: [],
-      chartProgress: {
-        now: 0,
-        total: 0
-      },
+      // chartProgress: {
+      //   level: 0,
+      //   now: 0,
+      //   total: 0
+      // },
       accessedIssueId: [],
       relationLine: {},
       relationIssue: {
@@ -197,7 +210,10 @@ export default {
   computed: {
     ...mapGetters(['selectedProjectId', 'tracker', 'status']),
     getPercentProgress() {
-      return Math.round((this.chartProgress.now / this.chartProgress.total) * 100)
+      return Math.round((this.chartIssueList.length / this.accessedIssueId.length) * 100)
+    },
+    chartLoading() {
+      return this.accessedIssueId.length !== this.chartIssueList.length
     },
     data() {
       const chartData = this.chartIssueList.map((issue) => this.formatChartData(issue))
@@ -207,17 +223,11 @@ export default {
       testFileList = [].concat.apply([], testFileList).map((test_file) => this.formatTestFile(test_file))
       testFileList = [].concat.apply([], testFileList)
       return chartData.concat(testFileList)
-    },
-    chartLoading() {
-      return this.accessedIssueId.length !== this.chartIssueList.length
     }
   },
   watch: {
     selectedProjectId() {
       this.initChart()
-    },
-    async chartProgress(val) {
-      if (val > 0) await this.getChartIssueList()
     },
     'form.allRelation'(val) {
       if (val) this.form.level = ''
@@ -225,10 +235,14 @@ export default {
     },
     'form.noRelation'(val) {
       this.initChart()
-    },
-    'form.level'(val) {
-      if (val || val === '') this.initChart()
     }
+    // 'form.level'(val) {
+    //   if (val) {
+    //     this.chartProgress.now = 0
+    //     this.chartProgress.total = 0
+    //   }
+    //   this.initChart()
+    // }
   },
   mounted() {
     this.initChart()
@@ -415,33 +429,24 @@ export default {
     async onPaintChart() {
       this.accessedIssueId = []
       this.chartIssueList = []
-      this.chartProgress.total = 1
-      this.family = (await getIssueFamily(this.row.id)).data
+      const family = (await getIssueFamily(this.row.id)).data
       this.accessedIssueId.push(this.row.id)
-      this.chartProgress.now = 1
-      await this.handlePaintFamily(this.row, this.family)
-      await this.end()
+      await this.handlePaintFamily(this.row, family)
     },
     async handlePaintFamily(issue, issueFamily) {
       await this.getChartIssueList(issue, issueFamily)
-      if (this.form.level === '') {
-        await this.paintAllFamily(issue, issueFamily)
-      } else if (this.form.level && this.form.level >= this.chartProgress.total) {
-        await this.paintAllFamily(issue, issueFamily)
-      }
+      await this.paintAllFamily(issue, issueFamily)
     },
     async paintAllFamily(issue, issueFamily) {
-      this.chartProgress.total += 1
       const getFamilyList = await this.combineFamilyList(issue, issueFamily)
       const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
       getFamilyList.forEach(async (subIssue, index) => {
         await this.handlePaintFamily(subIssue, getIssuesFamilyList[index])
-        this.chartProgress.now += 1
       })
     },
     async getChartIssueList(row, family) {
-      const issue = row || this.row
-      const issueFamily = family || this.family
+      const issue = row
+      const issueFamily = family
       if (issue.tracker.name === 'Test Plan') {
         const test_files = await this.getTestPlan(issue.id)
         this.chartIssueList.push({ ...issue, ...issueFamily, test_files })
@@ -455,8 +460,10 @@ export default {
     },
     async getIssueFamilyData(chartIssueList) {
       const getIssueFamilyAPI = chartIssueList.map((issue) => {
-        this.accessedIssueId.push(issue.id)
-        return getIssueFamily(issue.id)
+        if (!this.accessedIssueId.includes(issue.id)) {
+          this.accessedIssueId.push(issue.id)
+          return getIssueFamily(issue.id)
+        }
       })
       const response = await Promise.all(getIssueFamilyAPI)
       return Promise.resolve(response.map((res) => res.data))
@@ -480,14 +487,11 @@ export default {
         }
       })
       familyList = familyList.filter((item) => !this.accessedIssueId.includes(item.id))
+      this.family = familyList
       return Promise.resolve(familyList)
     },
     formatFamilyList(issue, family, relationTarget) {
       return family.map((item) => ({ ...item, relation_type: relationTarget, relation_id: issue.id }))
-    },
-    end() {
-      this.chartProgress.now = this.chartProgress.total
-      return Promise.resolve()
     },
     editNode(nodeId) {
       this.onRelationIssueDialog(nodeId)
