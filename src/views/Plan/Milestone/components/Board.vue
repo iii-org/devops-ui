@@ -1,5 +1,31 @@
 <template>
   <section>
+    <el-tooltip
+      placement="top"
+      :open-delay="100"
+      :content="socket.connected ?
+        $t('general.SocketConnected') :
+        $t('general.ReconnectByReload')"
+    >
+      <transition name="el-fade-in">
+        <div
+          :style="{
+            'right': '50px',
+            'bottom': '50px'
+          }"
+          class="el-backtop"
+        >
+          <el-button 
+            slot="button" 
+            icon="el-icon-connection" 
+            circle 
+            class="socket-button"
+            :type="(socket.connected)? 'success': 'danger'" 
+            @click="onSocketConnect" 
+          />
+        </div>
+      </transition>
+    </el-tooltip>
     <div
       class="board"
     >
@@ -54,9 +80,9 @@
                     :group="group"
                     :dimension="'status'"
                     :from-wbs="true"
+                    :element-ids="elementIds"
                     @relationIssueId="onRelationIssueDialog($event, row.id, classObj.id)"
                     @update="updateIssueStatus"
-                    @update-drag="quickUpdateIssue"
                     @contextmenu="handleContextMenu"
                   />
                 </div>
@@ -131,6 +157,7 @@ import { Tracker, Priority, Status, ContextMenu } from '@/components/Issue'
 import { updateIssue, getIssueFamily } from '@/api/issue'
 import { Kanban } from '@/views/Project/IssueBoards/components'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
+import { io } from 'socket.io-client'
 
 const contextMenu = {
   row: {
@@ -197,6 +224,11 @@ export default {
       group: 'mission',
       boardData: {},
       originalChildren: {},
+      newParentId: null,
+      oldParentId: null,
+      issueId: null,
+      updatedData: {},
+      elementIds: [],
       relationIssue: {
         visible: false,
         id: null
@@ -239,7 +271,11 @@ export default {
         value: 'priority',
         placeholder: 'Priority',
         tag: true
-      }]
+      }],
+      socket: io(`/issues/websocket`, { // production socket
+        reconnectionAttempts: 5,
+        forceNew: true
+      })
     }
   },
   computed: {
@@ -287,15 +323,19 @@ export default {
   },
   mounted() {
     this.loadData()
+    this.connectSocket()
+    this.intervalTimer = window.setInterval(() => this.connectSocket(), 30000)
+  },
+  beforeDestroy() {
+    this.socket.disconnect()
+    window.clearInterval(this.intervalTimer)
   },
   methods: {
     getParams() {
-      // const tracker = this.tracker.find((item) => item.name === 'Epic')
       const result = {
         parent_id: 'null',
         with_point: true,
         sort: 'subject:dec'
-        // tracker_id: tracker ? tracker.id : 1
       }
       if (!this.displayClosed) {
         result['status_id'] = 'open'
@@ -402,6 +442,7 @@ export default {
         try {
           await this.$set(row, 'isLoadingFamily', true)
           const res = await getIssueFamily(row.id)
+          res.data.children.map((item) => { item.family = true })
           this.originalChildren[row.id] = res.data.children
           this.$set(row, 'children', this.classifyIssue(res.data.children))
           this.$set(row, 'isLoadingFamily', false)
@@ -437,82 +478,33 @@ export default {
       })
       return data
     },
-    async updateIssueStatus(evt, parentId) {
+    async updateIssueStatus(evt) {
       if (evt.event.hasOwnProperty('added')) {
+        this.newParentId = evt.boardObject.parent_id
+        this.issueId = evt.event.added.element.id
+        this.updatedData = { [`status_id`]: evt.boardObject.id }
+      }
+      if (evt.event.hasOwnProperty('removed')) this.oldParentId = evt.boardObject.parent_id
+
+      if (this.newParentId !== null && this.oldParentId !== null) {
         try {
-          const updatedData = { [`status_id`]: evt.boardObject.id, [`parent_id`]: evt.boardObject.parent_id }
-          const issueId = evt.event.added.element.id
-          const newData = await this.updatedIssue(issueId, updatedData)
-          const oldParentId = evt.event.remove.element.id
-          this.setProjectIssueList(newData, parentId, oldParentId)
+          if (this.newParentId !== this.oldParentId) {
+            this.updatedData.parent_id = this.newParentId
+          }
+          await this.updatedIssue(this.issueId, this.updatedData)
         } catch (e) {
-          // error
+          console.error(e)
         } finally {
-          // this.setProjectIssueList(newData, parentId)
-          // this.$emit('getRelativeList')
+          this.newParentId = null
+          this.oldParentId = null
+          this.updatedData = {}
+          this.issueId = null
         }
       }
     },
     async updatedIssue(id, updatedData) {
       const res = await updateIssue(id, updatedData)
       return res.data
-      // await this.updateRelationIssue(this.originalChildren[parentId], res.data)
-    },
-    setProjectIssueList(newData, parentId, oldParentId) {
-      if (parentId !== oldParentId) {
-        const idx = this.originalChildren[oldParentId].findIndex((item) => item.id === newData.id)
-        const issue = this.originalChildren[parentId].find((item) => item.id === newData.id)
-        this.$delete(this.originalChildren[oldParentId], idx)
-        this.originalChildren[parentId].push(issue)
-      } else {
-        const idx = this.originalChildren[oldParentId].findIndex((item) => item.id === newData.id)
-        const issue = this.originalChildren[parentId].find((item) => item.id === newData.id)
-        this.$set(this.originalChildren[parentId], idx, issue)
-      }
-      this.$set(this.boardData[parentId], 'children', this.classifyIssue(this.originalChildren[parentId]))
-      // this.$emit('updateIssueList', idx, issue)
-    },
-    updateRelationIssue(list, updatedIssue) {
-      list.forEach((issue) => {
-        if (issue.hasOwnProperty('parent') && issue.parent.id === updatedIssue.id) {
-          this.$set(issue, 'parent', updatedIssue)
-        }
-        this.handleUpdatedIssue('children', updatedIssue)
-        this.handleUpdatedIssue('relations', updatedIssue)
-      })
-    },
-    handleUpdatedIssue(key, updatedIssue) {
-      if (updatedIssue.hasOwnProperty(key)) this.setUpdatedIssue(key, updatedIssue)
-    },
-    setUpdatedIssue(key, updatedIssue) {
-      const idx = updatedIssue[key].findIndex((item) => item.id === issue.id)
-      const issue = updatedIssue[key].find((item) => item.id === issue.id)
-      this.$set(issue[key], idx, issue)
-    },
-    async quickUpdateIssue(event) {
-      const { id, params } = event
-      this.$parent.isLoading = true
-      const filterDimension = Object.keys(params)[0]
-      const data = this.handleFilterArrayData(params)
-      try {
-        await this.updatedIssue(id, data)
-      } catch (e) {
-        // error
-      } finally {
-        const idx = this.projectIssueList.findIndex((item) => item.id === id)
-        const issue = this.projectIssueList.find((item) => item.id === id)
-        issue[filterDimension] = params[filterDimension]
-        this.$emit('updateIssueList', idx, issue)
-      }
-      this.$parent.isLoading = false
-    },
-    handleFilterArrayData(value) {
-      const filterDimension = Object.keys(value)[0]
-      let data = { [`${filterDimension}_id`]: value[filterDimension].id }
-      if (Array.isArray(value[filterDimension])) {
-        data = { [filterDimension]: value[filterDimension].map((item) => item.id).join(',') }
-      }
-      return data
     },
     onRelationIssueDialog(id, rowId, element) {
       this.$set(this.relationIssue, 'visible', true)
@@ -534,6 +526,108 @@ export default {
       this.$nextTick(() => {
         element.scrollIntoView({ behavior: 'smooth' })
       })
+    },
+    setSocketListener() {
+      const _this = this
+      this.socket.on('connect', () => {
+        console.info('Connect')
+      })
+      this.socket.on('update_issue', async (data) => {
+        console.log(data)
+        const elementId = []
+        for (const idx in data) {
+          const findParentId = this.listData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+          if (findParentId >= 0) continue
+          data[idx] = _this.socketDataFormat(data[idx])
+          console.log(data[idx])
+          if (data[idx].hasOwnProperty('origin_parent_id')) {
+            const findChangeIndex = this.originalChildren[data.old_parent_id].findIndex(issue => parseInt(data.origin_parent_id) === parseInt(issue.id))
+            this.$delete(this.originalChildren[data.origin_parent_id], findChangeIndex)
+            if (data[idx].hasOwnProperty('parent')) {
+              this.originalChildren[data[idx].parent.id].push(data[idx])
+            }
+          } else {
+            const findChangeIndex = this.originalChildren[data[idx].parent.id].findIndex(issue => parseInt(data[idx].parent.id) === parseInt(issue.id))
+            this.$set(this.originalChildren[data[idx].parent.id], findChangeIndex, data[idx])
+          }
+          this.$set(this.boardData[data[idx].parent.id], 'children', this.classifyIssue(this.originalChildren[data[idx].parent.id]))
+          elementId.push(data[idx].id)
+        }
+        this.elementIds = elementId
+      })
+      this.socket.on('delete_issue', async (data) => {
+        const findParentIndex = this.listData.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+        if (findParentIndex >= 0) {
+          this.$delete(this.listData, findParentIndex)
+          this.$delete(this.boardData, data.id)
+        } else {
+          const findChangeIndex = this.originalChildren[data.parent.id].findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+          this.$delete(this.originalChildren[data.parent.id], findChangeIndex)
+          this.$set(this.boardData[data.parent.id], 'children', this.classifyIssue(this.originalChildren[data.parent.id]))
+        }
+        this.showUpdateMessage(data)
+      })
+      this.socket.on('add_issue', async data => {
+        for (const idx in data) {
+          if (!data[idx].hasOwnProperty('parent')) continue
+          const findParentIndex = this.listData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+          if (findParentIndex >= 0) continue
+
+          data[idx] = _this.socketDataFormat(data[idx])
+          if (this.originalChildren[data[idx].parent.id]) {
+            const findChangeIndex = this.originalChildren[data[idx].parent.id].findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+            if (findChangeIndex !== -1) {
+              this.$set(this.originalChildren[data[idx].parent.id], findChangeIndex, data[idx])
+            } else {
+              this.originalChildren[data[idx].parent.id].push(data[idx])
+            }
+          } else {
+            this.listData.push(data[idx].parent)
+            this.originalChildren[data[idx].parent.id] = data[idx]
+          }
+          this.$set(this.boardData[data[idx].parent.id], 'children', this.classifyIssue(this.originalChildren[data[idx].parent.id]))
+          this.showUpdateMessage(data[idx])
+        }
+      })
+      this.socket.on('disconnect', (reason) => {
+        if (reason !== 'io client disconnect') {
+          this.connectSocket()
+        }
+      })
+      this.socket.on('connect_error', () => {
+        console.error('Connection Error')
+      })
+    },
+    socketDataFormat(data) {
+      Object.keys(data).forEach(key => {
+        const splitKey = key.split('_id')
+        if (splitKey.length > 1) {
+          const findObject = this[splitKey[0]].find(item => item.id === parseInt(data[key]) && item.login !== '-Me-')
+          if (findObject) {
+            data[splitKey[0]] = findObject
+          }
+        }
+      })
+      return data
+    },
+    showUpdateMessage(data) {
+      this.$message({
+        message: this.$t('Notify.UpdateKanban', { issueName: data.name }),
+        type: 'success'
+      })
+    },
+    async connectSocket() {
+      this.setSocketListener()
+      await this.socket.connect()
+      await this.socket.emit('join', { project_id: this.projectId })
+    },
+    async onSocketConnect() {
+      if (this.socket.disconnect) {
+        await this.connectSocket()
+      }
+    },
+    reloadPage() {
+      window.location.reload()
     }
   }
 }
@@ -835,5 +929,14 @@ export default {
     font-size: 24px;
     line-height: 50px;
   }
+}
+
+.socket-button {
+  height: 55px;
+  width: 55px;
+  padding-top: 12px;
+  padding-right: 20px;
+  padding-bottom: 12px;
+  padding-left: 20px;
 }
 </style>

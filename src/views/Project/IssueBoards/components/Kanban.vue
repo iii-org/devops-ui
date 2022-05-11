@@ -550,7 +550,7 @@ export default {
     },
     end(boardObject, event) {
       const updateData = { boardObject, event }
-      this.fromWbs ? this.$emit('update', updateData, this.boardObject.parent_id) : this.$emit('update', updateData)
+      this.$emit('update', updateData)
       this.$forceUpdate()
     },
     handleClick(id) {
