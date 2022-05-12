@@ -203,7 +203,6 @@ export default {
         id: null
       },
       trackerColor: Object.freeze(theme.backgroundColor),
-      family: {},
       form: new Form()
     }
   },
@@ -444,9 +443,7 @@ export default {
         await this.handlePaintFamily(subIssue, getIssuesFamilyList[index])
       })
     },
-    async getChartIssueList(row, family) {
-      const issue = row
-      const issueFamily = family
+    async getChartIssueList(issue, issueFamily) {
       if (issue.tracker.name === 'Test Plan') {
         const test_files = await this.getTestPlan(issue.id)
         this.chartIssueList.push({ ...issue, ...issueFamily, test_files })
@@ -460,10 +457,8 @@ export default {
     },
     async getIssueFamilyData(chartIssueList) {
       const getIssueFamilyAPI = chartIssueList.map((issue) => {
-        if (!this.accessedIssueId.includes(issue.id)) {
-          this.accessedIssueId.push(issue.id)
-          return getIssueFamily(issue.id)
-        }
+        this.accessedIssueId.push(issue.id)
+        return getIssueFamily(issue.id)
       })
       const response = await Promise.all(getIssueFamilyAPI)
       return Promise.resolve(response.map((res) => res.data))
@@ -487,7 +482,6 @@ export default {
         }
       })
       familyList = familyList.filter((item) => !this.accessedIssueId.includes(item.id))
-      this.family = familyList
       return Promise.resolve(familyList)
     },
     formatFamilyList(issue, family, relationTarget) {
