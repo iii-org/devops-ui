@@ -1319,11 +1319,13 @@ export default {
     SearchLabel: 'Search Title or Sender'
   },
   IssueMatrix: {
+    Relations: 'Relationship',
     SearchAllRelations: 'Show All',
     SearchFor: 'Search For',
+    OnlyDown: 'Only Down',
     Layer: 'Layer',
+    RelatedIssue: '@:Issue.RelatedIssue',
     LayerWarning: 'Please fill in the number, and leave the blank as all.',
-    NoRelatedIssues: `No Related Issuses`,
     DisplayItem: 'Display Items',
     SelectDisplayItem: 'Please select a display item',
     ConditionSettings: 'Condition Settings',

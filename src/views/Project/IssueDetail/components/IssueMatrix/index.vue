@@ -33,13 +33,15 @@
           <el-form-item>
             <el-switch
               v-model="form.isStatus"
-              :active-text="$t('Issue.status')"
-              :inactive-text="$t('Issue.tracker')"
+              :active-text="$t('Issue.tracker')"
+              :inactive-text="$t('Issue.status')"
             />
           </el-form-item>
-          <el-form-item :label="$t('IssueMatrix.SearchAllRelations')">
+          <el-form-item :label="$t('IssueMatrix.Relations')">
             <el-switch
               v-model="form.allRelation"
+              :active-text="$t('general.All')"
+              :inactive-text="$t('IssueMatrix.OnlyDown')"
             />
           </el-form-item>
           <!-- <el-form-item v-if="!form.allRelation" :label="$t('IssueMatrix.SearchFor')">
@@ -62,8 +64,12 @@
               <div style="color: red; font-size: 12px;">{{ $t('IssueMatrix.LayerWarning') }}</div>
             </div>
           </el-form-item> -->
-          <el-form-item :label="$t('IssueMatrix.NoRelatedIssues')">
-            <el-switch v-model="form.noRelation" />
+          <el-form-item :label="$t('IssueMatrix.RelatedIssue')">
+            <el-switch
+              v-model="form.hasRelation"
+              :active-text="$t('general.on')"
+              :inactive-text="$t('general.off')"
+            />
           </el-form-item>
           <el-form-item :label="$t('IssueMatrix.DisplayItem')">
             <el-select
@@ -156,10 +162,10 @@ import theme from '@/theme.js'
 
 const Form = () => ({
   group: false,
-  isStatus: true, // status or tracker
+  isStatus: false, // status or tracker
   allRelation: false,
   // level: '',
-  noRelation: true,
+  hasRelation: false,
   showItem: ['id', 'name', 'status', 'tracker', 'version']
 })
 
@@ -232,7 +238,7 @@ export default {
       if (val) this.form.level = ''
       this.initChart()
     },
-    'form.noRelation'(val) {
+    'form.hasRelation'(val) {
       this.initChart()
     }
     // 'form.level'(val) {
@@ -468,7 +474,7 @@ export default {
       const close = this.status.find((item) => item.name === 'Closed').id
       let familyList = []
       Object.keys(family).forEach((relationType) => {
-        if (this.form.noRelation && relationType === 'relations') return
+        if (!this.form.hasRelation && relationType === 'relations') return
         if (!this.form.allRelation && relationType === 'parent') return
         if (!Array.isArray(family[relationType])) {
           family[relationType] = [family[relationType]]
