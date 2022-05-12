@@ -78,7 +78,7 @@
     >
       <AddIssue
         ref="AddIssue"
-        :project-id="selectedProjectId"
+        :project-id="projectId"
         :parent-id="parentId"
         :prefill="form"
         :save-data="saveData"
@@ -125,7 +125,7 @@ export default {
     },
     projectId: {
       type: Number,
-      default: 0
+      default: null
     },
     saveData: {
       type: Function,
@@ -193,7 +193,7 @@ export default {
   },
   methods: {
     async fetchSelection() {
-      await Promise.all([getProjectAssignable(this.selectedProjectId)]).then((res) => {
+      await Promise.all([getProjectAssignable(this.projectId)]).then((res) => {
         const [assigned_to] = res.map((item) => item.data)
         this.assigned_to = [
           {
