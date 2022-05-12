@@ -533,21 +533,25 @@ export default {
         console.info('Connect')
       })
       this.socket.on('update_issue', async (data) => {
-        console.log(data)
         const elementId = []
         for (const idx in data) {
           const findParentId = this.listData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
           if (findParentId >= 0) continue
           data[idx] = _this.socketDataFormat(data[idx])
-          console.log(data[idx])
           if (data[idx].hasOwnProperty('origin_parent_id')) {
-            const findChangeIndex = this.originalChildren[data.old_parent_id].findIndex(issue => parseInt(data.origin_parent_id) === parseInt(issue.id))
-            this.$delete(this.originalChildren[data.origin_parent_id], findChangeIndex)
+            const findChangeIndex = this.originalChildren[data[idx].origin_parent_id].findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+            this.$delete(this.originalChildren[data[idx].origin_parent_id], findChangeIndex)
+            this.$set(this.boardData[data[idx].origin_parent_id], 'children', this.classifyIssue(this.originalChildren[data[idx].origin_parent_id]))
             if (data[idx].hasOwnProperty('parent')) {
-              this.originalChildren[data[idx].parent.id].push(data[idx])
+              const findIdx = this.originalChildren[data[idx].parent.id].findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+              if (findIdx >= 0) {
+                this.$set(this.originalChildren[data[idx].parent.id], findIdx, data[idx])
+              } else {
+                this.originalChildren[data[idx].parent.id].push(data[idx])
+              }
             }
           } else {
-            const findChangeIndex = this.originalChildren[data[idx].parent.id].findIndex(issue => parseInt(data[idx].parent.id) === parseInt(issue.id))
+            const findChangeIndex = this.originalChildren[data[idx].parent.id].findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
             this.$set(this.originalChildren[data[idx].parent.id], findChangeIndex, data[idx])
           }
           this.$set(this.boardData[data[idx].parent.id], 'children', this.classifyIssue(this.originalChildren[data[idx].parent.id]))
@@ -568,26 +572,28 @@ export default {
         this.showUpdateMessage(data)
       })
       this.socket.on('add_issue', async data => {
+        const elementId = []
         for (const idx in data) {
-          if (!data[idx].hasOwnProperty('parent')) continue
           const findParentIndex = this.listData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
           if (findParentIndex >= 0) continue
 
           data[idx] = _this.socketDataFormat(data[idx])
-          if (this.originalChildren[data[idx].parent.id]) {
-            const findChangeIndex = this.originalChildren[data[idx].parent.id].findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-            if (findChangeIndex !== -1) {
-              this.$set(this.originalChildren[data[idx].parent.id], findChangeIndex, data[idx])
-            } else {
-              this.originalChildren[data[idx].parent.id].push(data[idx])
-            }
-          } else {
-            this.listData.push(data[idx].parent)
-            this.originalChildren[data[idx].parent.id] = data[idx]
-          }
+          if (data[idx].hasOwnProperty('parent')) {
+            if (this.originalChildren[data[idx].parent.id]) {
+              const findChangeIndex = this.originalChildren[data[idx].parent.id].findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+              if (findChangeIndex !== -1) {
+                this.$set(this.originalChildren[data[idx].parent.id], findChangeIndex, data[idx])
+              } else {
+                this.originalChildren[data[idx].parent.id].push(data[idx])
+              }
+              elementId.push(data[idx].id)
+            } else continue
+          } else continue
+
           this.$set(this.boardData[data[idx].parent.id], 'children', this.classifyIssue(this.originalChildren[data[idx].parent.id]))
           this.showUpdateMessage(data[idx])
         }
+        this.elementIds = elementId
       })
       this.socket.on('disconnect', (reason) => {
         if (reason !== 'io client disconnect') {
@@ -600,11 +606,13 @@ export default {
     },
     socketDataFormat(data) {
       Object.keys(data).forEach(key => {
-        const splitKey = key.split('_id')
-        if (splitKey.length > 1) {
-          const findObject = this[splitKey[0]].find(item => item.id === parseInt(data[key]) && item.login !== '-Me-')
-          if (findObject) {
-            data[splitKey[0]] = findObject
+        if (key !== 'origin_parent_id') {
+          const splitKey = key.split('_id')
+          if (splitKey.length > 1 && splitKey !== 'origin_parent') {
+            const findObject = this[splitKey[0]].find(item => item.id === parseInt(data[key]) && item.login !== '-Me-')
+            if (findObject) {
+              data[splitKey[0]] = findObject
+            }
           }
         }
       })
@@ -619,7 +627,7 @@ export default {
     async connectSocket() {
       this.setSocketListener()
       await this.socket.connect()
-      await this.socket.emit('join', { project_id: this.projectId })
+      await this.socket.emit('join', { project_id: this.selectedProjectId })
     },
     async onSocketConnect() {
       if (this.socket.disconnect) {
