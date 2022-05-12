@@ -132,6 +132,7 @@ stages:
       - rmbubbles
       - issuerelationchart
       - wbsboard
+      - selftemplate
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -193,6 +194,7 @@ stages:
       - rmbubbles
       - issuerelationchart
       - wbsboard
+      - selftemplate
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -265,6 +267,7 @@ stages:
       - rmbubbles
       - issuerelationchart
       - wbsboard
+      - selftemplate
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -331,6 +334,7 @@ stages:
       - rmbubbles
       - issuerelationchart
       - wbsboard
+      - selftemplate
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -395,6 +399,7 @@ stages:
       - rmbubbles
       - issuerelationchart
       - wbsboard
+      - selftemplate
 - name: Test--ZAP
   iiidevops: zap
   steps:
