@@ -68,8 +68,9 @@ export default {
     'Service Monitoring': '服務監控',
     Harbor: 'Harbor 資源',
 
-    Activities: '操作記錄',
+    Activities: '服務操作',
     'Project Activities': '操作紀錄',
+    'Template Manage': '範本管理',
 
     Settings: '設定管理',
     'Participate Project': '參與專案',
@@ -906,7 +907,17 @@ export default {
     ActionType: '動作',
     ActionParts: '內容',
     ActAt: '發生時間',
-    SearchPlaceholder: '搜尋 使用者、動作或內容'
+    SearchPlaceholder: '搜尋 使用者、動作或內容',
+    AddTemplate: '新增範本',
+    TemplateName: '範本名稱',
+    OriginalProject: '原始專案',
+    QuoteTimes: '引用次數',
+    OriginalProjectUpdatedTime: '原專案更新時間',
+    SyncTime: '同步時間',
+    CreateTemplate: '新增自製範本',
+    EditTemplate: '修改自製範本',
+    LocalProject: '本地專案',
+    TemplateDescription: '範本簡述'
   },
   Maintenance: {
     AddSecret: '新增 Secret',

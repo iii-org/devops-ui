@@ -70,6 +70,7 @@ export default {
 
     Activities: 'Activities',
     'Project Activities': 'Project Activities',
+    'Template Manage': 'Template Manage',
 
     Settings: 'Settings',
     'Participate Project': 'Participate In The Project',
@@ -912,7 +913,17 @@ export default {
     ActionType: 'Action Type',
     ActionParts: 'Action Parts',
     ActAt: 'Act At',
-    SearchPlaceholder: 'Search User, Action Type or Action Parts'
+    SearchPlaceholder: 'Search User, Action Type or Action Parts',
+    AddTemplate: 'Add Template',
+    TemplateName: 'Template Name',
+    OriginalProject: 'Original Project',
+    QuoteTimes: 'Quote Times',
+    OriginalProjectUpdatedTime: 'Original Project Updated Time',
+    SyncTime: 'Sync Time',
+    CreateTemplate: 'Create Template',
+    EditTemplate: 'Edit Template',
+    LocalProject: 'Local Project',
+    TemplateDescription: 'Template Description'
   },
   Maintenance: {
     AddSecret: 'Add Secret',
