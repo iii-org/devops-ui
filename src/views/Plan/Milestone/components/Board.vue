@@ -54,11 +54,10 @@
         <el-table
           ref="issueList"
           v-loading="listLoading"
+          row-key="id"
           :element-loading-text="$t('Loading')"
           :data="listData"
           :show-header="false"
-          highlight-current-row
-          row-key="id"
           :tree-props="{ children: 'child' }"
           @row-contextmenu="handleContextMenu"
           @expand-change="getBoardData"
@@ -211,12 +210,18 @@ export default {
     displayClosed: {
       type: Boolean,
       default: false
+    },
+    groupBy: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
     return {
       listLoading: false,
+      originalListData: [],
       listData: [],
+      rowList: [],
       updateLoading: false,
       editRowId: null,
       contextMenu: contextMenu,
@@ -321,6 +326,31 @@ export default {
       return ['Administrator', 'Project Manager', 'Engineer']
     }
   },
+  watch: {
+    'groupBy.value'() {
+      this.rowList = []
+      if (this.groupBy.value.length > 0) {
+        if (this.groupBy.dimension === 'status') {
+          for (const idx in this.groupBy.value) {
+            const rowData = this.originalListData.filter(row => row.status.id === this.groupBy.value[idx].id)
+            this.rowList = [...this.rowList, ...rowData]
+          }
+        }
+        this.listData = this.rowList
+        this.$emit('row-list', this.rowList)
+      }
+    },
+    'groupBy.list'() {
+      const rowId = this.groupBy.list.map(a => a.id)
+      if (rowId.length > 0) {
+        this.listData = this.originalListData.filter(row => rowId.includes(row.id))
+      } else if (rowId.length === 0 && this.groupBy.value.length === 0) {
+        this.listData = this.originalListData
+      } else {
+        this.listData = this.rowList
+      }
+    }
+  },
   mounted() {
     this.loadData()
     this.connectSocket()
@@ -377,7 +407,8 @@ export default {
       if (res.hasOwnProperty('data')) {
         this.listLoading = false
         const result = res.data.filter(row => row.has_children === true)
-        return Promise.resolve(result.map((item) => this.issueFormatter(item)))
+        this.originalListData = result.map((item) => this.issueFormatter(item))
+        return Promise.resolve(this.originalListData)
       }
     },
     issueFormatter(issue) {
@@ -877,7 +908,7 @@ export default {
 }
 
 .board {
-  height: calc(100vh - 70px - 40px - 40px - 25px - 10px);
+  height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
   overflow-x: auto;
   transition: width 1s;
   .header {

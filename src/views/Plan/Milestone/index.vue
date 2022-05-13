@@ -43,7 +43,7 @@
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
       >
-        <el-popover>
+        <el-popover v-if="activeTab === 'WBS'">
           <el-form>
             <el-form-item label="展開層數">
               <el-select v-model="downloadForm.levels">
@@ -81,6 +81,7 @@
             </template>
           </el-form>
           <el-button
+            v-if="activeTab === 'WBS'"
             slot="reference"
             icon="el-icon-download"
             class="buttonPrimaryReverse"
@@ -89,8 +90,73 @@
             {{ $t('File.Download') }}
           </el-button>
         </el-popover>
-        <el-divider direction="vertical" />
+        <el-divider v-if="activeTab === 'Board'" direction="vertical" />
         <el-popover
+          v-if="activeTab === 'Board'"
+          placement="bottom"
+          trigger="click"
+        >
+          <el-form v-loading="listLoading">
+            <el-form-item :label="$t('Issue.FilterDimensions.label')">
+              <el-select
+                v-model="groupBy.dimension"
+                class="mr-4"
+                filterable
+                @change="onChangeGroupByDimension($event)"
+              >
+                <template v-for="item in groupByOptions">
+                  <el-option
+                    :key="item.id"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </template>
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('Issue.Display')">
+              <el-select-all
+                ref="groupByValue"
+                :value="groupBy.value"
+                filterable
+                multiple
+                collapse-tags
+                :loading="listLoading"
+                :options="groupByValueList"
+                value-key="id"
+                @change="onChangeGroupByValue($event)"
+              />
+            </el-form-item>
+            <el-form-item :label="$t('Issue.Issue')">
+              <el-select-all
+                ref="groupByRow"
+                :value="groupBy.list"
+                filterable
+                multiple
+                collapse-tags
+                :loading="listLoading"
+                :options="groupByRow"
+                value-key="id"
+                @change="onChangeGroupByRow($event)"
+              />
+            </el-form-item>
+          </el-form>
+          <el-button
+            v-if="activeTab === 'Board'"
+            slot="reference"
+            :loading="listLoading"
+            class="headerTextColor"
+            type="text"
+          >
+            <i18n path="Issue.GroupBy">
+              <strong slot="filter">{{ showSelectedGroupByName }}</strong>
+            </i18n>
+            ({{ showSelectedGroupByLength }})
+            <em class="el-icon-arrow-down el-icon--right" />
+          </el-button>
+        </el-popover>
+        <el-divider v-if="activeTab === 'WBS'" direction="vertical" />
+        <el-popover
+          v-if="activeTab === 'WBS'"
           placement="bottom"
           trigger="click"
         >
@@ -109,6 +175,7 @@
             </el-form-item>
           </el-form>
           <el-button
+            v-if="activeTab === 'WBS'"
             slot="reference"
             icon="el-icon-s-operation"
             type="text"
@@ -178,6 +245,8 @@
             :assigned-to="assigned_to"
             :fixed-version="fixed_version"
             :tags="tags"
+            :group-by="groupBy"
+            @row-list="setGroupByRow"
             @relation-issue="onRelationIssue"
           />
         </el-tab-pane>
@@ -204,6 +273,7 @@ import {
 } from '@/api/projects'
 import { getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
 import XLSX from 'xlsx'
+import ElSelectAll from '@/components/ElSelectAll'
 
 export default {
   name: 'ProjectMilestone',
@@ -212,7 +282,8 @@ export default {
     WBS,
     Board,
     Gantt,
-    ProjectListSelector
+    ProjectListSelector,
+    ElSelectAll
   },
   data() {
     return {
@@ -228,6 +299,11 @@ export default {
       displayClosed: false,
       tableHeight: 0,
       relationIssue: false,
+      groupBy: {
+        dimension: 'status',
+        value: [],
+        list: []
+      },
       filterOptions: Object.freeze([
         {
           id: 1,
@@ -305,6 +381,7 @@ export default {
       keyword: null,
       listData: [],
       activeTab: 'WBS',
+      groupByRow: [],
       addTopicDialog: {
         visible: false,
         parentId: 0,
@@ -324,7 +401,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'selectedProjectId', 'tracker', 'fixedVersionShowClosed']),
+    ...mapGetters(['userId', 'selectedProjectId', 'status', 'tracker', 'fixedVersionShowClosed']),
     contextOptions() {
       const result = {}
       const getOptions = ['assigned_to', 'fixed_version', 'tags']
@@ -341,6 +418,40 @@ export default {
     },
     deploy_column() {
       return this.columnsOptions.filter((item) => this.columns.includes(item.field))
+    },
+    groupByOptions() {
+      return [{
+        id: 1,
+        label: this.$t('Issue.FilterDimensions.status'),
+        value: 'status',
+        placeholder: 'Status'
+      }]
+    },
+    groupByValueList() {
+      return this.getStatusSort.map((item, idx) => ({
+        id: idx,
+        label: this.getTranslateHeader(item.name),
+        value: item
+      }))
+    },
+    getStatusSort() {
+      const dimension = this.groupBy.dimension
+      return dimension === 'status' ? this.filterClosedStatus(this[dimension]) : this[dimension]
+    },
+    filterClosedStatus(statusList) {
+      return function (statusList) {
+        if (this.displayClosed) return statusList
+        return statusList.filter((item) => item.is_closed === false)
+      }
+    },
+    showSelectedGroupByName() {
+      return this.groupByOptions.find((item) => item.value === this.groupBy.dimension).label
+    },
+    showSelectedGroupByLength() {
+      if (this.groupByValueList.length === this.groupBy.value.length || this.groupBy.value.length === 0) {
+        return this.$t('general.All')
+      }
+      return this.groupBy.value.length
     }
   },
   watch: {
@@ -541,6 +652,29 @@ export default {
         console.error(e)
         return Promise.reject(e)
       }
+    },
+    onChangeGroupByDimension(value) {
+      this.$set(this.groupBy, 'dimension', value)
+      this.$set(this.groupBy, 'value', [])
+      this.$refs['groupByValue'].selected = []
+    },
+    onChangeGroupByValue(value) {
+      this.$set(this.groupBy, 'value', value)
+      this.$set(this.groupBy, 'list', [])
+      this.$refs['groupByRow'].selected = []
+    },
+    onChangeGroupByRow(value) {
+      this.$set(this.groupBy, 'list', value)
+    },
+    setGroupByRow(value) {
+      this.groupByRow = value.map((item) => ({
+        id: item.id,
+        label: item.name,
+        value: item
+      }))
+    },
+    getTranslateHeader(value) {
+      return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value
     }
   }
 }
