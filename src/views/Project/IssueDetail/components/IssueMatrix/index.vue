@@ -225,8 +225,7 @@ export default {
       let testFileList = this.chartIssueList
         .map((issue) => (issue.test_files ? issue.test_files : null))
         .filter((issue) => issue)
-      testFileList = [].concat.apply([], testFileList).map((test_file) => this.formatTestFile(test_file))
-      testFileList = [].concat.apply([], testFileList)
+      testFileList = testFileList.flat().map((test_file) => this.formatTestFile(test_file)).flat()
       return chartData.concat(testFileList)
     }
   },
