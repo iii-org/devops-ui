@@ -357,9 +357,9 @@ export const asyncRoutes = [
         path: '',
         component: () => import('@/views/Inbox'),
         name: 'inbox',
-        meta: { 
+        meta: {
           title: 'inbox'
-          // roles: ['Administrator', 'Project Manager'] 
+          // roles: ['Administrator', 'Project Manager']
         }
       },
       {
@@ -550,23 +550,6 @@ export const asyncRoutes = [
               title: 'Issue Detail',
               roles: ['Administrator', 'Project Manager', 'Engineer'],
               rolePage: false
-            }
-          }
-        ]
-      },
-      {
-        path: 'deploy',
-        redirect: { name: 'deploy' },
-        component: parentBlank,
-        meta: { title: 'deploy', roles: ['Administrator', 'Project Manager', 'Engineer'] },
-        children: [
-          {
-            path: '',
-            name: 'deploy',
-            component: () => import('@/views/Project/Deploy'),
-            meta: {
-              title: 'deploy',
-              roles: ['Administrator', 'Project Manager', 'Engineer']
             }
           }
         ]
@@ -959,18 +942,32 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/project-activities/:projectName?',
+    path: '/activities/:projectName?',
     component: Layout,
-    redirect: { name: 'ProjectActivities' },
+    name: 'Activities',
+    redirect: { name: 'Activities' },
     meta: {
+      title: 'Activities',
       icon: 'el-icon-s-order',
       roles: ['Administrator', 'Project Manager']
     },
     children: [
       {
-        path: '',
+        path: 'deploy',
+        name: 'deploy',
+        component: () => import('@/views/Project/Deploy'),
+        meta: { title: 'deploy', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+      },
+      {
+        path: 'template-manage',
+        name: 'Template Manage',
+        component: () => import('@/views/Activities/TemplateManage'),
+        meta: { title: 'Template Manage', roles: ['Administrator', 'Project Manager'] }
+      },
+      {
+        path: 'project-activities',
+        name: 'Project Activities',
         component: () => import('@/views/Activities/ProjectActivities'),
-        name: 'ProjectActivities',
         meta: { title: 'Project Activities', roles: ['Administrator', 'Project Manager'] }
       }
     ]
