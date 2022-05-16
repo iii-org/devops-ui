@@ -298,7 +298,7 @@ export default {
       }
       children = children.concat(relations)
       if (issue['test_files']) {
-        const test_files = issue['test_files'].map((item) => item.file_name)
+        const test_files = issue['test_files'].map((item) => `file_${item.id}`)
         for (let index = 0; index < test_files.length; index++) {
           link.push('-->')
         }
@@ -358,9 +358,10 @@ export default {
     formatTestFile(test_file) {
       const result = []
       const file = {
-        id: test_file.file_name,
+        id: `file_${test_file.id}`,
+        name: test_file.file_name,
         link: ['-->'],
-        next: [`${test_file.software_name}.${test_file.file_name}_result`],
+        next: [`file_result_${test_file.id}`],
         editable: false
       }
       if (this.form.group) {
@@ -415,7 +416,8 @@ export default {
           test_file.the_last_test_result.commit_id
       }
       const file_result = {
-        id: `${test_file.software_name}.${test_file.file_name}_result`,
+        id: `file_result_${test_file.id}`,
+        name: `${test_file.software_name}.${test_file.file_name}_result`,
         link: ['-->'],
         text: `"${last_result}"`,
         editable: true
