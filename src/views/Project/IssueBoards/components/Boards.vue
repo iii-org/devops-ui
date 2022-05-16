@@ -33,7 +33,6 @@
           <em class="el-icon-d-arrow-right" />
         </div>
         <ProjectIssueDetail
-          :issue-detail-project="issueDetailProject"
           :props-issue-id="relationIssue.id"
           :is-in-dialog="true"
           :is-from-board="true"
@@ -115,8 +114,7 @@ export default {
       relationIssue: {
         visible: false,
         id: null
-      },
-      issueDetailProject: {}
+      }
     }
   },
   computed: {
@@ -290,7 +288,6 @@ export default {
       document.removeEventListener('click', this.hideContextMenu)
     },
     onRelationIssueDialog(row, element) {
-      this.issueDetailProject = row.project
       this.$set(this.relationIssue, 'visible', true)
       this.$set(this.relationIssue, 'id', row.id)
       this.scrollTo(element)

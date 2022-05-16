@@ -295,7 +295,6 @@
         ref="children"
         :props-issue-id="relationIssue.id"
         :is-in-dialog="true"
-        :issue-detail-project="issueDetailProject"
         @update="handleRelationUpdate"
         @delete="handleRelationDelete"
       />
@@ -451,8 +450,7 @@ export default {
       issueMatrixDialog: {
         visible: false,
         row: { id: null, name: null }
-      },
-      issueDetailProject: {}
+      }
     }
   },
   computed: {
@@ -1045,7 +1043,6 @@ export default {
       }
     },
     onRelationIssueDialog(row) {
-      this.issueDetailProject = row.project
       this.$set(this.relationIssue, 'visible', true)
       this.$set(this.relationIssue, 'id', row.id)
     },
