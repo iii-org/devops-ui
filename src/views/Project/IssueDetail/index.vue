@@ -346,6 +346,10 @@ export default {
     isFromBoard: {
       type: Boolean,
       default: false
+    },
+    issueDetailProject: {
+      type: Object,
+      default: () => {}
     }
   },
   data() {
@@ -530,6 +534,7 @@ export default {
       this.isLoading = true
       if (this.propsIssueId) {
         this.issueId = parseInt(this.propsIssueId)
+        this.issueProject = this.issueDetailProject
         await this.fetchIssue()
       } else if (this.$route.params.issueId) {
         this.issueId = parseInt(this.$route.params.issueId)
