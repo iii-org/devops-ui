@@ -1,9 +1,10 @@
 <template>
   <div
     class="board-column"
+    :style="fromWbs ? 'background: transparent' : ''"
     :class="getHeaderBarClassName(boardObject.name)"
   >
-    <div class="board-column-header" :style="!fromWbs ? '': 'height: 25px'">
+    <div class="board-column-header" :style="!fromWbs ? '': 'height: 10px'">
       <div class="header-bar" />
       <el-row v-if="!fromWbs" class="flex">
         <el-col class="text-center">
@@ -15,6 +16,7 @@
       :list="list"
       v-bind="$attrs"
       class="board-column-content"
+      :style="fromWbs ? 'border: 1px solid transparent' : ''"
       :class="boardObject.name"
       :move="canIssueMoved"
       :draggable="'.item'"
@@ -35,12 +37,25 @@
           :style="{width: `${element.done_ratio}%`}"
         />
         <div @contextmenu="handleContextMenu(element, '', $event)">
-          <div class="title">
+          <div class="title" :class="fromWbs ? 'cardTitle' : ''">
             <span
               class="text linkTextColor"
+              :class="fromWbs ? 'msg-text' : ''"
               @click="handleClick(element.id)"
             >
-              {{ element.name }}
+              <el-tooltip
+                v-if="fromWbs"
+                placement="bottom-start"
+                :open-delay="100"
+                :content="element.name"
+              >
+                <span>
+                  {{ element.name }}
+                </span>
+              </el-tooltip>
+              <span v-else>
+                {{ element.name }}
+              </span>
               <el-tag
                 v-for="item in element.tags"
                 :key="item.id"
@@ -86,7 +101,7 @@
                 class="tracker"
               />
             </span>
-            <span v-if="element.done_ratio > 0">
+            <span v-if="element.done_ratio > 0 && !fromWbs">
               <el-tag
                 :type="getStatus(element)"
                 size="mini"
@@ -95,6 +110,19 @@
                 {{ element.done_ratio }}%
               </el-tag>
             </span>
+            <el-tooltip
+              v-if="Object.keys(element.assigned_to).length > 0"
+              :content="element.assigned_to.login"
+              placement="right-start"
+              :disabled="!element.assigned_to.login"
+            >
+              <span v-if="fromWbs" style="float:right;">
+                <span class="detail user">
+                  <em class="el-icon-user-solid" />
+                  <span class="text">{{ element.assigned_to.name }}</span>
+                </span>
+              </span>
+            </el-tooltip>
           </div>
         </div>
         <div
@@ -209,7 +237,7 @@
           </el-collapse>
         </div>
         <div
-          v-if="element.due_date || Object.keys(element.assigned_to).length > 0"
+          v-if="element.due_date || Object.keys(element.assigned_to).length > 0 && !fromWbs"
           class="info"
         >
           <div
@@ -660,7 +688,7 @@ export default {
   .board-column-content {
     border: 10px solid transparent;
     height: 95%;
-    min-height: 250px;
+    min-height: 130px;
     @apply overflow-x-hidden overflow-y-auto space-y-4;
 
     .quick-add {
@@ -960,5 +988,16 @@ export default {
       }
     }
   }
+}
+.cardTitle {
+  margin-top: 3px; 
+  margin-bottom: 3px;
+}
+.msg-text {
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+  overflow: hidden; 
+  width: 220px;
+  font-weight: bold;
 }
 </style>

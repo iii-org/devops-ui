@@ -1,7 +1,7 @@
 <template>
   <section>
     <el-tooltip
-      placement="top"
+      placement="top-end"
       :open-delay="100"
       :content="socket.connected ?
         $t('general.SocketConnected') :
@@ -10,8 +10,8 @@
       <transition name="el-fade-in">
         <div
           :style="{
-            'right': '50px',
-            'bottom': '50px'
+            'right': '30px',
+            'bottom': '30px'
           }"
           class="el-backtop"
         >
@@ -26,10 +26,8 @@
         </div>
       </transition>
     </el-tooltip>
-    <div
-      class="board"
-    >
-      <div class="header">
+    <div class="board">
+      <div class="header fix-header">
         <div
           v-for="headerName in boardHeaderName"
           :id="'card' + headerName.id"
@@ -38,6 +36,7 @@
           <div
             class="board-column"
             :class="getHeaderBarClassName(headerName.name)"
+            style="margin-top: 0"
           >
             <div class="board-column-header">
               <div class="header-bar" />
@@ -50,7 +49,7 @@
           </div>
         </div>
       </div>
-      <div class="header" style="width: 1450px">
+      <div class="header" style="width: 1450px;">
         <el-table
           ref="issueList"
           v-loading="listLoading"
@@ -109,7 +108,20 @@
                 v-if="scope.row.status.name"
                 :name="$t(`Issue.${scope.row.status.name}`)"
                 :type="scope.row.status.name"
+                :size="'mini'"
               />
+            </template>
+          </el-table-column>
+          <el-table-column width="50px">
+            <template slot-scope="{row}">
+              <div class="action">
+                <div
+                  class="icon"
+                  @click.stop="handleContextMenu(row, '', $event, true)"
+                >
+                  <em class="el-icon-more" />
+                </div>
+              </div>
             </template>
           </el-table-column>
           <template slot="empty">
@@ -428,11 +440,14 @@ export default {
     getTranslateHeader(value) {
       return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value
     },
-    handleContextMenu(row, column, event) {
+    handleContextMenu(row, column, event, forceLeft) {
       if (parseInt(row.id)) {
         event.preventDefault()
-        const eventX = event.pageX
+        let eventX = event.pageX
         const eventY = event.pageY
+        if (forceLeft) {
+          eventX = eventX - 155
+        }
         this.$refs.contextmenu.$refs.contextmenu.show()
         const contextmenu = this.$refs.contextmenu.$refs.contextmenu
         this.$nextTick(() => {
@@ -934,6 +949,7 @@ export default {
   max-width: 750px;
   height: 100vh;
   position: fixed;
+  z-index: 1;
   top: 0;
   right: 0;
   background: #fff;
@@ -977,5 +993,26 @@ export default {
   padding-right: 20px;
   padding-bottom: 12px;
   padding-left: 20px;
+}
+
+>>> .el-table .el-table__cell {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.action {
+  @apply flex cursor-pointer;
+  width: 15px;
+  height: 25px;
+
+  .icon {
+    @apply bg-gray-200 text-black rounded-md text-center align-middle px-1;
+  }
+}
+.fix-header {
+  top: 0px;
+  z-index: 1;
+  position: sticky;
+  position: -webkit-sticky;
 }
 </style>
