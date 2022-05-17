@@ -263,7 +263,8 @@ export default {
     View: '已讀',
     SocketConnected: 'Socket 已連線成功',
     ReconnectByReload: '請重整頁面(F5)，以確保連線正常',
-    Reload: '頁面重整'
+    Reload: '頁面重整',
+    NoTestResult: '尚無測試結果'
   },
   Notify: {
     Updated: '已更新',
@@ -1336,7 +1337,8 @@ export default {
     Status: '@:Issue.FilterDimensions.status',
     Tracker: '@:Issue.FilterDimensions.tracker',
     Assignee: '@:Issue.Assignee',
-    Version: '版號'
+    Version: '版號',
+    DisplayItemWarning: '顯示項目不得為空'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

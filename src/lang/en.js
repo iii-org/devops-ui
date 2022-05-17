@@ -263,7 +263,8 @@ export default {
     View: 'View',
     SocketConnected: 'Socket is connected',
     ReconnectByReload: 'Please reload the page to ensure the socket reconnected properly',
-    Reload: 'Reload the page'
+    Reload: 'Reload the page',
+    NoTestResult: 'No Test Result'
   },
   Notify: {
     Updated: 'update successful',
@@ -1345,7 +1346,8 @@ export default {
     Status: '@:Issue.FilterDimensions.status',
     Tracker: '@:Issue.FilterDimensions.tracker',
     Assignee: '@:Issue.Assignee',
-    Version: 'Version'
+    Version: 'Version',
+    DisplayItemWarning: `Display items shouldn't be empty`
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

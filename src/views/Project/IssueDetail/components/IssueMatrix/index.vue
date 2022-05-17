@@ -18,6 +18,7 @@
         trigger="click"
       >
         <el-form
+          ref="form"
           :model="form"
           :disabled="chartLoading"
           label-width="150px"
@@ -71,12 +72,15 @@
               :inactive-text="$t('general.off')"
             />
           </el-form-item>
-          <el-form-item :label="$t('IssueMatrix.DisplayItem')">
+          <el-form-item
+            :label="$t('IssueMatrix.DisplayItem')"
+            prop="displayConditions"
+            required
+          >
             <el-select
-              v-model="form.showItem"
+              v-model="form.displayConditions"
               :placeholder="$t('IssueMatrix.SelectDisplayItem')"
               multiple
-              clearable
               collapse-tags
             >
               <el-option
@@ -111,6 +115,7 @@
       :style="{ height:`${tableHeight}px` }"
     >
       <VueMermaid
+        v-if="data.length > 0"
         ref="mermaid"
         :nodes="data"
         type="flowchart LR"
@@ -142,6 +147,7 @@
       <ProjectIssueDetail
         v-if="relationIssue.visible"
         ref="children"
+        :is-open-matrix="true"
         :props-issue-id="relationIssue.id"
         :is-in-dialog="true"
         @update="handleRelationUpdate"
@@ -152,7 +158,6 @@
 </template>
 
 <script>
-import VueMermaid from './components/vue-mermaid'
 import { getIssueFamily } from '@/api/issue'
 import { mapGetters } from 'vuex'
 import { camelCase } from 'lodash'
@@ -166,13 +171,13 @@ const Form = () => ({
   allRelation: false,
   // level: '',
   hasRelation: false,
-  showItem: ['id', 'name', 'status', 'tracker', 'version']
+  displayConditions: ['id', 'name', 'status', 'tracker', 'version']
 })
 
 export default {
   name: 'IssueMatrix',
   components: {
-    VueMermaid,
+    VueMermaid: () => import('./components/vue-mermaid'),
     ProjectIssueDetail: () => import('@/views/Project/IssueDetail')
   },
   directives: {
@@ -225,8 +230,7 @@ export default {
       let testFileList = this.chartIssueList
         .map((issue) => (issue.test_files ? issue.test_files : null))
         .filter((issue) => issue)
-      testFileList = [].concat.apply([], testFileList).map((test_file) => this.formatTestFile(test_file))
-      testFileList = [].concat.apply([], testFileList)
+      testFileList = testFileList.flat().map((test_file) => this.formatTestFile(test_file)).flat()
       return chartData.concat(testFileList)
     }
   },
@@ -240,6 +244,14 @@ export default {
     },
     'form.hasRelation'(val) {
       this.initChart()
+    },
+    'form.displayConditions'(val) {
+      this.$refs.form.validate((valid) => {
+        if (val.length === 0 || !valid) {
+          this.showWarning(this.$t('IssueMatrix.DisplayItemWarning'))
+          this.form.displayConditions.push('name')
+        }
+      })
     }
     // 'form.level'(val) {
     //   if (val) {
@@ -299,7 +311,7 @@ export default {
       }
       children = children.concat(relations)
       if (issue['test_files']) {
-        const test_files = issue['test_files'].map((item) => item.file_name)
+        const test_files = issue['test_files'].map((item) => `file_${item.id}`)
         for (let index = 0; index < test_files.length; index++) {
           link.push('-->')
         }
@@ -354,14 +366,15 @@ export default {
       return point
     },
     isConditionSelected(item) {
-      return this.form.showItem.includes(item)
+      return this.form.displayConditions.includes(item)
     },
     formatTestFile(test_file) {
       const result = []
       const file = {
-        id: test_file.file_name,
+        id: `file_${test_file.id}`,
+        name: test_file.file_name,
         link: ['-->'],
-        next: [`${test_file.software_name}.${test_file.file_name}_result`],
+        next: [`file_result_${test_file.id}`],
         editable: false
       }
       if (this.form.group) {
@@ -374,49 +387,24 @@ export default {
       result.push(file)
       let last_result = null
       // const commit_icon = '<svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' aria-hidden=\'true\' role=\'img\' class=\'iconify iconify--ion\' width=\'32\' height=\'32\' preserveAspectRatio=\'xMidYMid meet\' viewBox=\'0 0 512 512\'><circle cx=\'256\' cy=\'256\' r=\'96\' fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\'></circle><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M160 256H48\'></path><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M464 256H352\'></path></svg>'
-      const commit_icon = 'Commit: '
-      let status_light = ''
-      const color = { pass: 'rgba(103,194,80,100)', failure: 'rgba(245,108,108,100)' }
       if (test_file.software_name === 'Postman') {
-        const success = test_file.the_last_test_result.success
-        const failure = test_file.the_last_test_result.failure
-        const total = success + failure
-        let count_result
-        if (success === total) {
-          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['pass']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = `${status_light} <span style=\'color: ${color['pass']}; font-weight:600;\'>Pass</span>`
-        } else {
-          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = `${status_light} <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
-        }
-        last_result =
-          count_result +
-          '<br/>' +
-          test_file.the_last_test_result.branch +
-          '<br/> ' +
-          commit_icon +
-          test_file.the_last_test_result.commit_id
+        const success = test_file.the_last_test_result && test_file.the_last_test_result.success
+          ? test_file.the_last_test_result.success : '-'
+        const failure = test_file.the_last_test_result && test_file.the_last_test_result.failure
+          ? test_file.the_last_test_result.failure : '-'
+        const total = test_file.the_last_test_result && test_file.the_last_test_result.success && test_file.the_last_test_result.failure
+          ? success + failure : '-'
+        last_result = this.getTestLayout(success, total, test_file)
       } else if (test_file.software_name === 'SideeX') {
-        const success = test_file.the_last_test_result.result.casesPassed
-        const total = test_file.the_last_test_result.result.casesTotal
-        let count_result
-        if (success === total) {
-          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['pass']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = `${status_light} <span style=\'color: ${color['pass']}; font-weight:600;\'>Pass</span>`
-        } else {
-          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = `${status_light} <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
-        }
-        last_result =
-          count_result +
-          '<br/>' +
-          test_file.the_last_test_result.branch +
-          '<br/> ' +
-          commit_icon +
-          test_file.the_last_test_result.commit_id
+        const success = test_file.the_last_test_result && test_file.the_last_test_result.result
+          ? test_file.the_last_test_result.result.casesPassed : '-'
+        const total = test_file.the_last_test_result && test_file.the_last_test_result.result
+          ? test_file.the_last_test_result.result.casesTotal : '-'
+        last_result = this.getTestLayout(success, total, test_file)
       }
       const file_result = {
-        id: `${test_file.software_name}.${test_file.file_name}_result`,
+        id: `file_result_${test_file.id}`,
+        name: `${test_file.software_name}.${test_file.file_name}_result`,
         link: ['-->'],
         text: `"${last_result}"`,
         editable: true
@@ -430,6 +418,32 @@ export default {
       }
       result.push(file_result)
       return result
+    },
+    getTestLayout(success, total, test_file) {
+      const color = { pass: 'rgba(103,194,80,100)', failure: 'rgba(245,108,108,100)' }
+      const commit_icon = 'Commit: '
+      let status_light = ''
+      let count_result = ''
+      let last_result = null
+      if (success === total && success !== '-' && total !== '-') {
+        status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['pass']}; display:inline-block; border-radius: 99999px; \'></div>`
+        count_result = `${status_light} <span style=\'color: ${color['pass']}; font-weight:600;\'>Pass</span>`
+      } else {
+        status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
+        count_result = `${status_light} <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
+      }
+      if (!test_file.the_last_test_result.result) {
+        last_result = `${count_result}<br/>${this.$t('general.NoTestResult')}`
+      } else {
+        last_result =
+          count_result +
+          '<br/>' +
+          test_file.the_last_test_result.branch +
+          '<br/> ' +
+          commit_icon +
+          test_file.the_last_test_result.commit_id
+      }
+      return last_result
     },
     async onPaintChart() {
       this.accessedIssueId = []
@@ -544,6 +558,13 @@ export default {
       } catch (e) {
         // nothing to do.
       }
+    },
+    showWarning(message) {
+      this.$message({
+        title: this.$t('general.Warning'),
+        type: 'warning',
+        message
+      })
     }
   }
 }
