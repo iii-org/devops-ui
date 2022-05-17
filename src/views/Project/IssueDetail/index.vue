@@ -214,6 +214,7 @@
         <ProjectIssueDetail
           v-if="relationIssue.visible"
           ref="children"
+          :is-open-matrix="isOpenMatrix"
           :props-issue-id="relationIssue.id"
           :is-in-dialog="true"
           @update="showLoading"
