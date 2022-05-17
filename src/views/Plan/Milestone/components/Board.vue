@@ -1,7 +1,7 @@
 <template>
   <section>
     <el-tooltip
-      placement="top-end"
+      placement="left"
       :open-delay="100"
       :content="socket.connected ?
         $t('general.SocketConnected') :
@@ -22,6 +22,30 @@
             class="socket-button"
             :type="(socket.connected)? 'success': 'danger'" 
             @click="onSocketConnect" 
+          />
+        </div>
+      </transition>
+    </el-tooltip>
+    <el-tooltip
+      v-if="socket.disconnected"
+      placement="left"
+      :open-delay="100"
+      :content="$t('general.Reload')"
+    >
+      <transition name="el-fade-in">
+        <div
+          :style="{
+            'right': '30px',
+            'bottom': '90px'
+          }"
+          class="el-backtop"
+        >
+          <el-button 
+            slot="button" 
+            icon="el-icon-refresh" 
+            class="buttonPrimaryReverse"
+            circle
+            @click="reloadPage"
           />
         </div>
       </transition>
@@ -65,7 +89,7 @@
             <template slot-scope="{row}">
               <el-row 
                 v-loading="row.hasOwnProperty('isLoadingFamily') && row.isLoadingFamily"
-                style="background: #e8e8e8"
+                style="background: #f5f5f5"
               >
                 <div class="header">
                   <Kanban
@@ -340,27 +364,14 @@ export default {
   },
   watch: {
     'groupBy.value'() {
-      this.rowList = []
-      if (this.groupBy.value.length > 0) {
-        if (this.groupBy.dimension === 'status') {
-          for (const idx in this.groupBy.value) {
-            const rowData = this.originalListData.filter(row => row.status.id === this.groupBy.value[idx].id)
-            this.rowList = [...this.rowList, ...rowData]
-          }
-        }
-        this.listData = this.rowList
-        this.$emit('row-list', this.rowList)
-      }
+      this.groupByValue()
     },
     'groupBy.list'() {
-      const rowId = this.groupBy.list.map(a => a.id)
-      if (rowId.length > 0) {
-        this.listData = this.originalListData.filter(row => rowId.includes(row.id))
-      } else if (rowId.length === 0 && this.groupBy.value.length === 0) {
-        this.listData = this.originalListData
-      } else {
-        this.listData = this.rowList
-      }
+      this.groupByList()
+    },
+    originalListData() {
+      this.groupByValue()
+      this.groupByList()
     }
   },
   mounted() {
@@ -418,8 +429,9 @@ export default {
       const res = await getProjectIssueList(this.filterValue.project || this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
       if (res.hasOwnProperty('data')) {
         this.listLoading = false
-        const result = res.data.filter(row => row.has_children === true)
-        this.originalListData = result.map((item) => this.issueFormatter(item))
+        // const result = res.data.filter(row => row.has_children === true)
+        // this.originalListData = result.map((item) => this.issueFormatter(item))
+        this.originalListData = res.data.map((item) => this.issueFormatter(item))
         return Promise.resolve(this.originalListData)
       }
     },
@@ -488,13 +500,17 @@ export default {
         try {
           await this.$set(row, 'isLoadingFamily', true)
           const res = await getIssueFamily(row.id)
-          res.data.children.map((item) => { item.family = true })
-          this.originalChildren[row.id] = res.data.children
+          if (res.data.children) {
+            res.data.children.map((item) => { item.family = true })
+            this.originalChildren[row.id] = res.data.children
+          } else {
+            this.originalChildren[row.id] = []
+          }
           this.$set(row, 'children', this.classifyIssue(res.data.children))
           this.$set(row, 'isLoadingFamily', false)
           this.boardData[row.id] = row
         } catch (e) {
-          //   null
+          console.error(e)
           return Promise.resolve()
         }
       }
@@ -502,12 +518,14 @@ export default {
     },
     classifyIssue(children) {
       const data = this.checkGroupByValueOnBoard()
-      children.forEach((issue) => {
-        if (issue) {
-          const dimensionName = issue.status.id ? issue.status.id : 'null'
-          data[dimensionName].push(issue)
-        }
-      })
+      if (children) {
+        children.forEach((issue) => {
+          if (issue) {
+            const dimensionName = issue.status.id ? issue.status.id : 'null'
+            data[dimensionName].push(issue)
+          }
+        })
+      }
       return this.sortIssue(data)
     },
     checkGroupByValueOnBoard() {
@@ -581,8 +599,16 @@ export default {
       this.socket.on('update_issue', async (data) => {
         const elementId = []
         for (const idx in data) {
-          const findParentId = this.listData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-          if (findParentId >= 0) continue
+          const findOriParentId = this.originalListData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+          if (findOriParentId >= 0) {
+            this.$set(this.originalListData, findOriParentId, data[idx])
+            const findParentId = this.listData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+            if (findParentId >= 0) {
+              this.$set(this.listData, findParentId, data[idx])
+            }
+            continue
+          }
+          
           data[idx] = _this.socketDataFormat(data[idx])
           if (data[idx].hasOwnProperty('origin_parent_id')) {
             const findChangeIndex = this.originalChildren[data[idx].origin_parent_id].findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
@@ -606,26 +632,41 @@ export default {
         this.elementIds = elementId
       })
       this.socket.on('delete_issue', async (data) => {
-        const findParentIndex = this.listData.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
-        if (findParentIndex >= 0) {
-          this.$delete(this.listData, findParentIndex)
-          this.$delete(this.boardData, data.id)
+        const findOriParentId = this.originalListData.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+        if (findOriParentId >= 0) { // if issue on the parent list
+          this.$delete(this.originalListData, findOriParentId)
+          const findParentIndex = this.listData.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+          if (findParentIndex >= 0) {
+            this.$delete(this.listData, findParentIndex)
+            this.$delete(this.boardData, data.id)
+          }
         } else {
-          const findChangeIndex = this.originalChildren[data.parent.id].findIndex(issue => parseInt(data.id) === parseInt(issue.id))
-          this.$delete(this.originalChildren[data.parent.id], findChangeIndex)
-          this.$set(this.boardData[data.parent.id], 'children', this.classifyIssue(this.originalChildren[data.parent.id]))
+          Object.keys(this.originalChildren).forEach((key) => {
+            this.originalChildren[key].forEach((child, idx) => {
+              if (parseInt(child.id) === parseInt(data.id)) {
+                this.originalChildren[key].splice(idx, 1)
+                this.$set(this.boardData[key], 'children', this.classifyIssue(this.originalChildren[key]))
+              }
+            })
+          })
         }
-        this.showUpdateMessage(data)
       })
       this.socket.on('add_issue', async data => {
         const elementId = []
         for (const idx in data) {
-          const findParentIndex = this.listData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-          if (findParentIndex >= 0) continue
+          const findOriParentId = this.originalListData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+          if (findOriParentId >= 0) {
+            this.$set(this.originalListData, findOriParentId, data[idx])
+            const findParentIndex = this.listData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+            if (findParentIndex >= 0) {
+              this.$set(this.listData, findParentIndex, data[idx])
+            }
+            continue
+          }
 
           data[idx] = _this.socketDataFormat(data[idx])
-          if (data[idx].hasOwnProperty('parent')) {
-            if (this.originalChildren[data[idx].parent.id]) {
+          if (data[idx].hasOwnProperty('parent')) { // if issue has parent
+            if (this.originalChildren[data[idx].parent.id]) { // if issue's parent already on the list
               const findChangeIndex = this.originalChildren[data[idx].parent.id].findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
               if (findChangeIndex !== -1) {
                 this.$set(this.originalChildren[data[idx].parent.id], findChangeIndex, data[idx])
@@ -634,10 +675,13 @@ export default {
               }
               elementId.push(data[idx].id)
             } else continue
-          } else continue
+          } else {
+            this.originalListData.push(data[idx])
+            continue
+          }
 
           this.$set(this.boardData[data[idx].parent.id], 'children', this.classifyIssue(this.originalChildren[data[idx].parent.id]))
-          this.showUpdateMessage(data[idx])
+          // this.showUpdateMessage(data[idx])
         }
         this.elementIds = elementId
       })
@@ -682,6 +726,29 @@ export default {
     },
     reloadPage() {
       window.location.reload()
+    },
+    groupByValue() {
+      this.rowList = []
+      if (this.groupBy.value.length > 0) {
+        if (this.groupBy.dimension === 'status') {
+          for (const idx in this.groupBy.value) {
+            const rowData = this.originalListData.filter(row => row.status.id === this.groupBy.value[idx].id)
+            this.rowList = [...this.rowList, ...rowData]
+          }
+        }
+        this.listData = this.rowList
+        this.$emit('row-list', this.rowList)
+      }
+    },
+    groupByList() {
+      const rowId = this.groupBy.list.map(a => a.id)
+      if (rowId.length > 0) {
+        this.listData = this.originalListData.filter(row => rowId.includes(row.id))
+      } else if (rowId.length === 0 && this.groupBy.value.length === 0) {
+        this.listData = this.originalListData
+      } else {
+        this.listData = this.rowList
+      }
     }
   }
 }

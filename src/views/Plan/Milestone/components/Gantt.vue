@@ -360,7 +360,7 @@ export default {
     getParams() {
       const result = {
         parent_id: 'null',
-        tracker_id: 1,
+        with_point: true,
         sort: 'subject:dec'
       }
       if (!this.displayClosed) {

@@ -1306,7 +1306,7 @@ export default {
     IncludeSystemMessage: 'Include System Message',
     Apply: 'Apply',
     MessageConsole: 'Message Console',
-    MessageNote: '* The system only keeps 7 days messages. Pelase save the message in local if it\'s important.',
+    MessageNote: '* The system only keeps 7 days messages. Please save the message in local if it\'s important.',
     CreateMessage: 'Create Message',
     EditMessage: 'Edit Message',
     MessageContent: 'Message Content',

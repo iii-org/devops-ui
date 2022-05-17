@@ -590,7 +590,10 @@ export default {
       this.displayFields = res.data
     },
     onChangeFilter() {
-      this.$refs[this.activeTab].loadData()
+      if (this.$refs['WBS']) this.$refs['WBS'].loadData()
+      if (this.$refs['Gantt']) this.$refs['Gantt'].loadData()
+      if (this.$refs['Board']) this.$refs['Board'].loadData()
+      // this.$refs[this.activeTab].loadData()
     },
     prepareExcel(result) {
       const worksheet = XLSX.utils.json_to_sheet(result)
