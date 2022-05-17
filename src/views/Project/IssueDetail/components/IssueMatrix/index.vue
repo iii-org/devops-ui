@@ -18,6 +18,7 @@
         trigger="click"
       >
         <el-form
+          ref="form"
           :model="form"
           :disabled="chartLoading"
           label-width="150px"
@@ -71,12 +72,15 @@
               :inactive-text="$t('general.off')"
             />
           </el-form-item>
-          <el-form-item :label="$t('IssueMatrix.DisplayItem')">
+          <el-form-item
+            :label="$t('IssueMatrix.DisplayItem')"
+            prop="displayConditions"
+            required
+          >
             <el-select
-              v-model="form.showItem"
+              v-model="form.displayConditions"
               :placeholder="$t('IssueMatrix.SelectDisplayItem')"
               multiple
-              clearable
               collapse-tags
             >
               <el-option
@@ -166,7 +170,7 @@ const Form = () => ({
   allRelation: false,
   // level: '',
   hasRelation: false,
-  showItem: ['id', 'name', 'status', 'tracker', 'version']
+  displayConditions: ['id', 'name', 'status', 'tracker', 'version']
 })
 
 export default {
@@ -239,6 +243,14 @@ export default {
     },
     'form.hasRelation'(val) {
       this.initChart()
+    },
+    'form.displayConditions'(val) {
+      this.$refs.form.validate((valid) => {
+        if (val.length === 0 || !valid) {
+          this.showWarning(this.$t('IssueMatrix.DisplayItemWarning'))
+          this.form.displayConditions.push('name')
+        }
+      })
     }
     // 'form.level'(val) {
     //   if (val) {
@@ -353,7 +365,7 @@ export default {
       return point
     },
     isConditionSelected(item) {
-      return this.form.showItem.includes(item)
+      return this.form.displayConditions.includes(item)
     },
     formatTestFile(test_file) {
       const result = []
@@ -545,6 +557,13 @@ export default {
       } catch (e) {
         // nothing to do.
       }
+    },
+    showWarning(message) {
+      this.$message({
+        title: this.$t('general.Warning'),
+        type: 'warning',
+        message
+      })
     }
   }
 }

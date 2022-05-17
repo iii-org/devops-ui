@@ -1335,7 +1335,8 @@ export default {
     Status: '@:Issue.FilterDimensions.status',
     Tracker: '@:Issue.FilterDimensions.tracker',
     Assignee: '@:Issue.Assignee',
-    Version: 'Version'
+    Version: 'Version',
+    DisplayItemWarning: `Display items shouldn't be empty`
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

@@ -1326,7 +1326,8 @@ export default {
     Status: '@:Issue.FilterDimensions.status',
     Tracker: '@:Issue.FilterDimensions.tracker',
     Assignee: '@:Issue.Assignee',
-    Version: '版號'
+    Version: '版號',
+    DisplayItemWarning: '顯示項目不得為空'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }
