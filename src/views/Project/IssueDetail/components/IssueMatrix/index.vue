@@ -115,6 +115,7 @@
       :style="{ height:`${tableHeight}px` }"
     >
       <VueMermaid
+        v-if="data.length > 0"
         ref="mermaid"
         :nodes="data"
         type="flowchart LR"
@@ -146,6 +147,7 @@
       <ProjectIssueDetail
         v-if="relationIssue.visible"
         ref="children"
+        :is-open-matrix="true"
         :props-issue-id="relationIssue.id"
         :is-in-dialog="true"
         @update="handleRelationUpdate"
@@ -156,7 +158,6 @@
 </template>
 
 <script>
-import VueMermaid from './components/vue-mermaid'
 import { getIssueFamily } from '@/api/issue'
 import { mapGetters } from 'vuex'
 import { camelCase } from 'lodash'
@@ -176,7 +177,7 @@ const Form = () => ({
 export default {
   name: 'IssueMatrix',
   components: {
-    VueMermaid,
+    VueMermaid: () => import('./components/vue-mermaid'),
     ProjectIssueDetail: () => import('@/views/Project/IssueDetail')
   },
   directives: {

@@ -129,8 +129,9 @@
                     {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
                     <el-button
                       size="mini"
-                      class="buttonPrimary"
+                      :class="isOpenMatrix ? 'buttonInfo' : 'buttonPrimary'"
                       icon="el-icon-data-line"
+                      :disabled="isOpenMatrix"
                       @click.native.stop="toggleIssueMatrixDialog"
                     >
                       {{ $t('Issue.TraceabilityMatrix') }}
@@ -328,6 +329,10 @@ export default {
       default: false
     },
     isFromBoard: {
+      type: Boolean,
+      default: false
+    },
+    isOpenMatrix: {
       type: Boolean,
       default: false
     }
