@@ -9,29 +9,14 @@
             class="buttonSecondaryReverse"
             @click="onChangeFilter"
           />
-          <span
-            v-if="updateLoading"
-            class="headerTextColor"
+          <el-button
+            size="small"
+            class="buttonSecondary"
+            icon="el-icon-plus"
+            @click="handleShowAddDialog"
           >
-            <em class="el-icon-loading" /> {{ $t('Milestone.Saving') }}......
-          </span>
-          <span
-            v-else-if="lastUpdated && lastUpdated.time"
-            class="text-success"
-          >
-            <em class="el-icon-check" />
-            <strong>{{ $t('Milestone.Success') }}: </strong>{{ lastUpdated.time|relativeTime }}
-          </span>
-          <div
-            v-else-if="lastUpdated && lastUpdated.error"
-            class="text-danger"
-            style="max-width: 500px"
-          >
-            <em class="el-icon-check" />
-            <strong>{{ $t('Milestone.Error') }}: </strong>
-            {{ $t(`errorMessage.${lastUpdated.error.response.data.error.code}`,
-                  lastUpdated.error.response.data.error.details) }}
-          </div>
+            {{ $t('Issue.AddIssue') }}
+          </el-button>
         </el-col>
       </el-row>
       <SearchFilter
@@ -85,6 +70,7 @@
             slot="reference"
             icon="el-icon-download"
             class="buttonPrimaryReverse"
+            size="small"
             :disabled="selectedProjectId === -1"
           >
             {{ $t('File.Download') }}
@@ -252,6 +238,43 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+    <el-dialog
+      :title="$t('Issue.AddIssue')"
+      :visible.sync="showAddIssue"
+      width="50%"
+      top="50px"
+      :close-on-click-modal="false"
+      destroy-on-close
+      append-to-body
+      @close="handleCloseAddDialog"
+    >
+      <AddIssue
+        ref="AddIssue"
+        :project-id="projectId"
+        :prefill="form"
+        :save-data="saveIssue"
+        @add-topic-visible="handleCloseAddDialog"
+      />
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          id="dialog-btn-cancel"
+          class="buttonSecondaryReverse"
+          :disabled="loadingSave"
+          @click="handleAdvancedClose"
+        >{{ $t('general.Cancel') }}</el-button>
+        <el-button
+          id="dialog-btn-confirm"
+          :loading="loadingSave"
+          class="buttonPrimary"
+          @click="handleAdvancedSave"
+        >
+          {{ $t('general.Confirm') }}
+        </el-button>
+      </span>
+    </el-dialog>
   </el-row>
 </template>
 
@@ -271,9 +294,10 @@ import {
   patchIssueListDownload,
   postIssueListDownload
 } from '@/api/projects'
-import { getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
+import { addIssue, getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
 import XLSX from 'xlsx'
 import ElSelectAll from '@/components/ElSelectAll'
+import AddIssue from '@/components/Issue/AddIssue'
 
 export default {
   name: 'ProjectMilestone',
@@ -283,7 +307,8 @@ export default {
     Board,
     Gantt,
     ProjectListSelector,
-    ElSelectAll
+    ElSelectAll,
+    AddIssue
   },
   data() {
     return {
@@ -299,6 +324,9 @@ export default {
       displayClosed: false,
       tableHeight: 0,
       relationIssue: false,
+      showAddIssue: false,
+      loadingSave: false,
+      form: {},
       groupBy: {
         dimension: 'status',
         value: [],
@@ -438,7 +466,7 @@ export default {
       const dimension = this.groupBy.dimension
       return dimension === 'status' ? this.filterClosedStatus(this[dimension]) : this[dimension]
     },
-    filterClosedStatus(statusList) {
+    filterClosedStatus() {
       return function (statusList) {
         if (this.displayClosed) return statusList
         return statusList.filter((item) => item.is_closed === false)
@@ -452,6 +480,9 @@ export default {
         return this.$t('general.All')
       }
       return this.groupBy.value.length
+    },
+    projectId() {
+      return this.filterValue.project || this.selectedProjectId
     }
   },
   watch: {
@@ -678,6 +709,67 @@ export default {
     },
     getTranslateHeader(value) {
       return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value
+    },
+    handleCloseAddDialog() {
+      this.showAddIssue = false
+    },
+    handleShowAddDialog() {
+      this.form = {
+        tracker_id: null,
+        name: null,
+        assigned_to_id: null,
+        status_id: 1,
+        priority_id: 3
+      }
+      const dimensions = ['fixed_version', 'tracker', 'status', 'assigned_to', 'version', 'priority']
+      dimensions.forEach((item) => {
+        if (
+          this.filterValue &&
+          this.filterValue[item] !== 'null' &&
+          !!this.filterValue[item] &&
+          this.filterValue[item] !== ''
+        ) {
+          this.$set(this.form, item + '_id', this.filterValue[item])
+        }
+      })
+      if (this.filterValue.hasOwnProperty('due_date_start')) {
+        if (this.filterValue.due_date_start !== null) {
+          this.$set(this.form, 'start_date', this.filterValue.due_date_start)
+        }
+      }
+      if (this.filterValue.hasOwnProperty('due_date_end')) {
+        if (this.filterValue.due_date_end !== null) {
+          this.$set(this.form, 'due_date', this.filterValue.due_date_end)
+        }
+      }
+      if (this.filterValue.hasOwnProperty('tags')) {
+        if (this.filterValue.tags && this.filterValue.tags.length > 0) {
+          this.$set(this.form, 'tags', this.filterValue.tags)
+        }
+      }
+      console.log(this.form)
+      this.showAddIssue = true
+    },
+    handleAdvancedClose() {
+      this.$refs['AddIssue'].handleClose()
+    },
+    handleAdvancedSave() {
+      this.$refs['AddIssue'].handleSave()
+    },
+    async saveIssue(data) {
+      this.loadingSave = true
+      await addIssue(data)
+        .then((res) => {
+          this.onChangeFilter()
+          return res
+        })
+        .catch((error) => {
+          return error
+        })
+        .finally(() => {
+          this.showAddIssue = false
+          this.loadingSave = false
+        })
     }
   }
 }

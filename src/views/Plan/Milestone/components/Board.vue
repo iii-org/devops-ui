@@ -73,17 +73,21 @@
           </div>
         </div>
       </div>
-      <div class="header" style="width: 1450px;">
+      <div 
+        class="header" 
+        :style="displayClosed ? 'width: 1740px' : 'width: 1450px'"
+      >
         <el-table
           ref="issueList"
           v-loading="listLoading"
           row-key="id"
           :element-loading-text="$t('Loading')"
           :data="listData"
-          :show-header="false"
           :tree-props="{ children: 'child' }"
+          :row-class-name="setClassName"
           @row-contextmenu="handleContextMenu"
           @expand-change="getBoardData"
+          @row-click="handleRowClick"
         >
           <el-table-column type="expand">
             <template slot-scope="{row}">
@@ -112,13 +116,24 @@
             </template>
           </el-table-column>
           <el-table-column
-            :label="$t('Issue.Id')"
+            :label="$t('Issue.name')"
             show-overflow-tooltip
             prop="id"
-            sortable="custom"
           >
             <template slot-scope="scope">
               <span class="text-success mr-2">#{{ scope.row.id }}</span>
+              <el-link
+                class="linkTextColor"
+                @click.stop="onRelationIssueDialog(scope.row.id)"
+              >
+                {{ scope.row.name }}
+              </el-link>
+              <Status
+                v-if="scope.row.status.name"
+                :name="$t(`Issue.${scope.row.status.name}`)"
+                :type="scope.row.status.name"
+                :size="'mini'"
+              />
               <el-tag
                 v-for="item in scope.row.tags"
                 :key="item.id"
@@ -127,13 +142,22 @@
               >
                 [{{ item.name }}]
               </el-tag>
-              {{ scope.row.name }}
-              <Status
-                v-if="scope.row.status.name"
-                :name="$t(`Issue.${scope.row.status.name}`)"
-                :type="scope.row.status.name"
-                :size="'mini'"
-              />
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="assigned_to.name"
+            :label="$t('Issue.assigned_to')"
+            width="200px"
+            align="center"
+          />
+          <el-table-column
+            width="120px"
+            prop="due_date"
+            :label="$t('Issue.EndDate')"
+            align="center"
+          >
+            <template slot-scope="scope">
+              {{ (scope.row.due_date) ? $dayjs(scope.row.due_date).format('YYYY-MM-DD'): '-' }}
             </template>
           </el-table-column>
           <el-table-column width="50px">
@@ -274,6 +298,25 @@ export default {
         visible: false,
         id: null
       },
+      boardHeader: [{
+        id: 1,
+        name: 'Active'
+      }, {
+        id: 2,
+        name: 'Assigned'
+      }, {
+        id: 3,
+        name: 'InProgress'
+      }, {
+        id: 4,
+        name: 'Solved'
+      }, {
+        id: 5,
+        name: 'Verified'
+      }, {
+        id: 6,
+        name: 'Closed'
+      }],
       filterOptions: [{
         id: 1,
         label: this.$t('Issue.FilterDimensions.status'),
@@ -327,23 +370,8 @@ export default {
     fixed_version() {
       return this.fixedVersion
     },
-    boardHeaderName() { 
-      return [{
-        id: 1,
-        name: 'Active'
-      }, {
-        id: 2,
-        name: 'Assigned'
-      }, {
-        id: 3,
-        name: 'InProgress'
-      }, {
-        id: 4,
-        name: 'Solved'
-      }, {
-        id: 5,
-        name: 'Verified'
-      }]
+    boardHeaderName() {
+      return this.displayClosed ? this.boardHeader : this.boardHeader.filter(row => row.id !== 6)
     },
     contextOptions() {
       const result = {}
@@ -355,7 +383,7 @@ export default {
     },
     getHeaderBarClassName() {
       return function (name) {
-        return name.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase())
+        return name.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (_, chr) => chr.toUpperCase())
       }
     },
     permission() {
@@ -426,7 +454,11 @@ export default {
     async fetchData() {
       if (!this.selectedProjectId) return
       this.listLoading = true
-      const res = await getProjectIssueList(this.filterValue.project || this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
+      const res = await getProjectIssueList(
+        this.filterValue.project || this.selectedProjectId, 
+        this.getParams(), 
+        { cancelToken: this.cancelToken }
+      )
       if (res.hasOwnProperty('data')) {
         this.listLoading = false
         // const result = res.data.filter(row => row.has_children === true)
@@ -548,7 +580,9 @@ export default {
         this.issueId = evt.event.added.element.id
         this.updatedData = { [`status_id`]: evt.boardObject.id }
       }
-      if (evt.event.hasOwnProperty('removed')) this.oldParentId = evt.boardObject.parent_id
+      if (evt.event.hasOwnProperty('removed')) {
+        this.oldParentId = evt.boardObject.parent_id
+      }
 
       if (this.newParentId !== null && this.oldParentId !== null) {
         try {
@@ -574,7 +608,7 @@ export default {
       this.$set(this.relationIssue, 'visible', true)
       this.$set(this.relationIssue, 'id', id)
       this.$emit('relation-issue', true)
-      this.scrollTo(rowId, element)
+      if (rowId) this.scrollTo(rowId, element)
     },
     handleRelationDelete() {
       this.$set(this.relationIssue, 'visible', false)
@@ -599,10 +633,12 @@ export default {
       this.socket.on('update_issue', async (data) => {
         const elementId = []
         for (const idx in data) {
-          const findOriParentId = this.originalListData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+          const findOriParentId = this.originalListData
+            .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
           if (findOriParentId >= 0) {
             this.$set(this.originalListData, findOriParentId, data[idx])
-            const findParentId = this.listData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+            const findParentId = this.listData
+              .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
             if (findParentId >= 0) {
               this.$set(this.listData, findParentId, data[idx])
             }
@@ -611,11 +647,17 @@ export default {
           
           data[idx] = _this.socketDataFormat(data[idx])
           if (data[idx].hasOwnProperty('origin_parent_id')) {
-            const findChangeIndex = this.originalChildren[data[idx].origin_parent_id].findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+            const findChangeIndex = this.originalChildren[data[idx].origin_parent_id]
+              .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
             this.$delete(this.originalChildren[data[idx].origin_parent_id], findChangeIndex)
-            this.$set(this.boardData[data[idx].origin_parent_id], 'children', this.classifyIssue(this.originalChildren[data[idx].origin_parent_id]))
+            this.$set(
+              this.boardData[data[idx].origin_parent_id], 
+              'children', 
+              this.classifyIssue(this.originalChildren[data[idx].origin_parent_id])
+            )
             if (data[idx].hasOwnProperty('parent')) {
-              const findIdx = this.originalChildren[data[idx].parent.id].findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+              const findIdx = this.originalChildren[data[idx].parent.id] 
+                .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
               if (findIdx >= 0) {
                 this.$set(this.originalChildren[data[idx].parent.id], findIdx, data[idx])
               } else {
@@ -623,19 +665,26 @@ export default {
               }
             }
           } else {
-            const findChangeIndex = this.originalChildren[data[idx].parent.id].findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+            const findChangeIndex = this.originalChildren[data[idx].parent.id]
+              .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
             this.$set(this.originalChildren[data[idx].parent.id], findChangeIndex, data[idx])
           }
-          this.$set(this.boardData[data[idx].parent.id], 'children', this.classifyIssue(this.originalChildren[data[idx].parent.id]))
+          this.$set(
+            this.boardData[data[idx].parent.id], 
+            'children', 
+            this.classifyIssue(this.originalChildren[data[idx].parent.id])
+          )
           elementId.push(data[idx].id)
         }
         this.elementIds = elementId
       })
       this.socket.on('delete_issue', async (data) => {
-        const findOriParentId = this.originalListData.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+        const findOriParentId = this.originalListData
+          .findIndex(issue => parseInt(data.id) === parseInt(issue.id))
         if (findOriParentId >= 0) { // if issue on the parent list
           this.$delete(this.originalListData, findOriParentId)
-          const findParentIndex = this.listData.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+          const findParentIndex = this.listData
+            .findIndex(issue => parseInt(data.id) === parseInt(issue.id))
           if (findParentIndex >= 0) {
             this.$delete(this.listData, findParentIndex)
             this.$delete(this.boardData, data.id)
@@ -645,7 +694,11 @@ export default {
             this.originalChildren[key].forEach((child, idx) => {
               if (parseInt(child.id) === parseInt(data.id)) {
                 this.originalChildren[key].splice(idx, 1)
-                this.$set(this.boardData[key], 'children', this.classifyIssue(this.originalChildren[key]))
+                this.$set(
+                  this.boardData[key], 
+                  'children', 
+                  this.classifyIssue(this.originalChildren[key])
+                )
               }
             })
           })
@@ -654,10 +707,12 @@ export default {
       this.socket.on('add_issue', async data => {
         const elementId = []
         for (const idx in data) {
-          const findOriParentId = this.originalListData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+          const findOriParentId = this.originalListData
+            .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
           if (findOriParentId >= 0) {
             this.$set(this.originalListData, findOriParentId, data[idx])
-            const findParentIndex = this.listData.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+            const findParentIndex = this.listData
+              .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
             if (findParentIndex >= 0) {
               this.$set(this.listData, findParentIndex, data[idx])
             }
@@ -666,8 +721,9 @@ export default {
 
           data[idx] = _this.socketDataFormat(data[idx])
           if (data[idx].hasOwnProperty('parent')) { // if issue has parent
-            if (this.originalChildren[data[idx].parent.id]) { // if issue's parent already on the list
-              const findChangeIndex = this.originalChildren[data[idx].parent.id].findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+            if (this.originalChildren[data[idx].parent.id]) { // if issue's parent already on the expanded list
+              const findChangeIndex = this.originalChildren[data[idx].parent.id]
+                .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
               if (findChangeIndex !== -1) {
                 this.$set(this.originalChildren[data[idx].parent.id], findChangeIndex, data[idx])
               } else {
@@ -675,12 +731,16 @@ export default {
               }
               elementId.push(data[idx].id)
             } else continue
-          } else {
+          } else { // add issue to parent list
             this.originalListData.push(data[idx])
             continue
           }
 
-          this.$set(this.boardData[data[idx].parent.id], 'children', this.classifyIssue(this.originalChildren[data[idx].parent.id]))
+          this.$set(
+            this.boardData[data[idx].parent.id], 
+            'children', 
+            this.classifyIssue(this.originalChildren[data[idx].parent.id])
+          )
           // this.showUpdateMessage(data[idx])
         }
         this.elementIds = elementId
@@ -699,7 +759,8 @@ export default {
         if (key !== 'origin_parent_id') {
           const splitKey = key.split('_id')
           if (splitKey.length > 1 && splitKey !== 'origin_parent') {
-            const findObject = this[splitKey[0]].find(item => item.id === parseInt(data[key]) && item.login !== '-Me-')
+            const findObject = this[splitKey[0]]
+              .find(item => item.id === parseInt(data[key]) && item.login !== '-Me-')
             if (findObject) {
               data[splitKey[0]] = findObject
             }
@@ -732,7 +793,8 @@ export default {
       if (this.groupBy.value.length > 0) {
         if (this.groupBy.dimension === 'status') {
           for (const idx in this.groupBy.value) {
-            const rowData = this.originalListData.filter(row => row.status.id === this.groupBy.value[idx].id)
+            const rowData = this.originalListData
+              .filter(row => row.status.id === this.groupBy.value[idx].id)
             this.rowList = [...this.rowList, ...rowData]
           }
         }
@@ -749,6 +811,12 @@ export default {
       } else {
         this.listData = this.rowList
       }
+    },
+    async handleRowClick(row) {
+      this.$refs.issueList.toggleRowExpansion(row)
+    },
+    setClassName({ row }) {
+      return row.has_children ? '' : 'expand'
     }
   }
 }
@@ -1081,5 +1149,9 @@ export default {
   z-index: 1;
   position: sticky;
   position: -webkit-sticky;
+}
+
+>>> .expand .el-table__expand-column .cell  {
+    display: none;
 }
 </style>
