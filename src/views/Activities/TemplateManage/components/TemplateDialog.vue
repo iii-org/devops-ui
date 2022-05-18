@@ -21,6 +21,7 @@
         <el-select
           v-model="form.project"
           :placeholder="$t('Project.SelectProject')"
+          :disabled="title === $t('Activities.EditTemplate')"
           filterable
           @change="changeProject()"
         >
@@ -55,15 +56,26 @@
     <span slot="footer" class="dialog-footer">
       <el-button
         class="buttonSecondaryReverse"
+        :loading="isLoading"
         @click="onDialogClosed"
       >
         {{ $t('general.Close') }}
       </el-button>
       <el-button
+        v-if="title === $t('Activities.CreateTemplate')"
         type="primary"
+        :loading="isLoading"
         @click="handleCreate"
       >
         {{ $t('general.Add') }}
+      </el-button>
+      <el-button
+        v-else
+        type="primary"
+        :loading="isLoading"
+        @click="handleUpdate"
+      >
+        {{ $t('SystemVersion.UpdateNow') }}
       </el-button>
     </span>
   </el-dialog>
@@ -72,7 +84,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getTemplateParams } from '@/api/template'
-import { createTemplateFromProject } from '@/api_v2/template'
+import { createTemplateFromProject, updateTemplateFromProject } from '@/api_v2/template'
 import { VueEditor } from 'vue2-editor'
 
 const formTemplate = () => ({
@@ -98,11 +110,19 @@ export default {
     return {
       isLoading: false,
       form: formTemplate(),
+      row: {},
       rules: {
+        project: [
+          {
+            required: true,
+            message: this.$t('RuleMsg.PleaseSelect') + this.$t('Project.Project'),
+            trigger: 'blur'
+          }
+        ],
         name: [
           {
             required: true,
-            message: this.$t('general.PleaseInput') + this.$t('Activities.TemplateName'),
+            message: this.$t('RuleMsg.PleaseInput') + this.$t('Activities.TemplateName'),
             trigger: 'blur'
           }
         ]
@@ -113,6 +133,14 @@ export default {
   },
   computed: {
     ...mapGetters(['projectOptions', 'selectedProjectId'])
+  },
+  watch: {
+    row(value) {
+      if (value) {
+        this.form.project = value.from_project_id
+        this.changeProject()
+      }
+    }
   },
   mounted() {
     this.getCategoryProjectList()
@@ -137,6 +165,7 @@ export default {
       ]
     },
     async changeProject() {
+      if (!this.form.project) return
       this.isLoading = true
       const repositoryId = this.allProjects.filter((item) => {
         return item.id === this.form.project
@@ -150,29 +179,52 @@ export default {
       this.$refs['form'].validate(async(valid) => {
         if (valid) {
           this.isLoading = true
-          if (this.title === this.$t('Activities.CreateTemplate')) {
-            try {
-              const sendData = new FormData()
-              sendData.append('name', this.form.name)
-              sendData.append('description', this.form.description)
-              await createTemplateFromProject(this.form.project, sendData)
-              this.$message({
-                title: this.$t('general.Success'),
-                message: this.$t('Notify.Added'),
-                type: 'success'
-              })
-            } catch (error) {
-              console.error(error)
-            } finally {
-              this.isLoading = false
-              this.onDialogClosed()
-              this.$emit('update')
-            }
+          try {
+            const sendData = new FormData()
+            sendData.append('name', this.form.name)
+            sendData.append('description', this.form.description)
+            await createTemplateFromProject(this.form.project, sendData)
+            this.$message({
+              title: this.$t('general.Success'),
+              message: this.$t('Notify.Added'),
+              type: 'success'
+            })
+          } catch (error) {
+            console.error(error)
+          } finally {
+            this.isLoading = false
+            this.onDialogClosed()
+            this.$emit('update')
+          }
+        }
+      })
+    },
+    handleUpdate() {
+      this.$refs['form'].validate(async(valid) => {
+        if (valid) {
+          this.isLoading = true
+          try {
+            const sendData = new FormData()
+            sendData.append('name', this.form.name)
+            sendData.append('description', this.form.description)
+            await updateTemplateFromProject(this.row.id, sendData)
+            this.$message({
+              title: this.$t('general.Success'),
+              message: this.$t('Notify.Updated'),
+              type: 'success'
+            })
+          } catch (error) {
+            console.error(error)
+          } finally {
+            this.isLoading = false
+            this.onDialogClosed()
+            this.$emit('update')
           }
         }
       })
     },
     onDialogClosed() {
+      this.row = {}
       this.$refs['form'].resetFields()
       this.$emit('update:dialogVisible', false)
     }

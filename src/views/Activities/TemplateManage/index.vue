@@ -41,7 +41,7 @@
               class="text-center"
             >
               <span class="text-title">
-                {{ scope.row.from_project_repo_url }}
+                {{ scope.row.template_repository_url }}
               </span>
             </p>
             <div class="flex justify-center">
@@ -53,7 +53,7 @@
                 @click="copyUrl(`copy-${scope.$index}`)"
               />
               <a
-                :href="scope.row.from_project_repo_url"
+                :href="scope.row.template_repository_url"
                 target="_blank"
               >
                 <el-button
@@ -84,10 +84,12 @@
         align="center"
         :label="$t('Activities.QuoteTimes')"
         prop="times_cited"
+        width="100"
       />
       <el-table-column-time
         :label="$t('Activities.OriginalProjectUpdatedTime')"
         prop="the_last_update_time"
+        width="140"
       />
       <el-table-column-time
         :label="$t('Activities.SyncTime')"
@@ -97,6 +99,7 @@
         align="center"
         :label="$t('general.Creator')"
         prop="creator_name"
+        width="150"
       />
       <el-table-column
         align="center"
@@ -143,6 +146,7 @@
       @pagination="onPagination"
     />
     <TemplateDialog
+      ref="templateDialog"
       :dialog-visible.sync="dialogVisible"
       :title="title"
       @update="loadData"
@@ -188,6 +192,7 @@ export default {
     handleEdit(row) {
       this.dialogVisible = true
       this.title = this.$t('Activities.EditTemplate')
+      this.$refs.templateDialog.row = row
     },
     async handleDelete(row) {
       try {
