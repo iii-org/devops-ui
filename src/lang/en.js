@@ -30,6 +30,7 @@ export default {
     ProjectRoadmap: 'Project Roadmap',
     AdvanceBranchSettings: 'Advance Branch Settings',
     ProjectSettings: 'Project Settings',
+    ProjectSetting: 'Project Setting',
     IssueTransfer: 'Issue Transfer',
 
     DevProgress: 'Develop Progress',
@@ -38,6 +39,7 @@ export default {
     Pipelines: 'Pipelines',
     DevEnvironment: 'Deployed Environments',
     KubernetesResources: 'Kubernetes Resources',
+    ReleaseVersions: 'Release Version',
     ReleaseVersion: 'Release Version',
 
     AutoTesting: 'Auto Testing',
@@ -54,7 +56,7 @@ export default {
 
     SystemResource: 'System Resource',
     DeploymentList: 'Deployment List',
-    PodsList: 'Pods List',
+    PodsLists: 'Pods List',
     ServiceList: 'Service List',
     SecretList: 'Secret List',
     ConfigMapsList: 'ConfigMaps List',
@@ -62,7 +64,7 @@ export default {
     PluginResource: 'Plugin Resource',
     ServiceMonitoring: 'Service Monitoring',
     Harbor: 'Harbor',
-    ProjectActivities: 'Project Activities',
+    ProjectActivity: 'Project Activities',
     ParticipateProject: 'Participate In The Project',
 
     IssueDetail: 'Issue Detail',

@@ -13,7 +13,10 @@ const pmRoute = [
   {
     path: '/myWork/:projectName?',
     component: 'layout',
+    name: 'MyWork',
+    redirect: { name: 'MyWork' },
     meta: {
+      icon: 'el-icon-s-home',
       roles: ['Project Manager']
     },
     children: [
@@ -22,8 +25,7 @@ const pmRoute = [
         name: 'MyWork',
         component: 'views/MyWork',
         meta: {
-          title: 'myWork',
-          icon: 'el-icon-s-home',
+          title: 'MyWork',
           roles: ['Project Manager']
         }
       }
@@ -208,20 +210,9 @@ const pmRoute = [
       },
       {
         path: 'deploy',
-        redirect: { name: 'Deploy' },
-        component: 'layout/components/parentBlank',
-        meta: { title: 'deploy', roles: ['Project Manager'] },
-        children: [
-          {
-            path: '',
-            name: 'Deploy',
-            component: 'views/Project/Deploy',
-            meta: {
-              title: 'deploy',
-              roles: ['Project Manager']
-            }
-          }
-        ]
+        name: 'Deploy',
+        component: 'views/Project/Deploy',
+        meta: { title: 'Deploy', roles: ['Project Manager'] }
       }
     ]
   },
@@ -369,7 +360,7 @@ const pmRoute = [
   // 測試管理
   {
     path: '/test/:projectName?/',
-    name: 'Test',
+    // name: 'Test',
     component: 'layout',
     redirect: { name: 'TestPlan' },
     meta: {

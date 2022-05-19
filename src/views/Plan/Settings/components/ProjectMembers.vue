@@ -237,7 +237,7 @@ export default {
       })
     },
     handleParticipateDialog(user_id) {
-      this.$router.push({ name: 'ParticipateProject', params: { user_id }})
+      this.$router.push({ name: 'ParticipateProject', params: { userId: user_id }})
     }
   }
 }

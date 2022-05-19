@@ -30,6 +30,7 @@ export default {
     ProjectRoadmap: '版本歷程',
     AdvanceBranchSettings: '進階分支設定',
     ProjectSettings: '專案設定',
+    ProjectSetting: '專案設定',
     IssueTransfer: '議題轉移',
 
     DevProgress: '開發進度',
@@ -38,6 +39,7 @@ export default {
     Pipelines: 'Pipelines',
     DevEnvironment: '實證環境',
     KubernetesResources: 'Kubernetes 資源',
+    ReleaseVersions: '釋出版本',
     ReleaseVersion: '釋出版本',
 
     AutoTesting: '測試紀錄',
@@ -54,7 +56,7 @@ export default {
 
     SystemResource: '系統資源',
     DeploymentList: 'Deployment 列表',
-    PodsList: 'Pods 列表',
+    PodsLists: 'Pods 列表',
     ServiceList: 'Service 列表',
     SecretList: 'Secret 列表',
     ConfigMapsList: 'ConfigMaps 列表',
@@ -62,7 +64,7 @@ export default {
     PluginResource: 'Plugin 資源',
     ServiceMonitoring: '服務監控',
     Harbor: 'Harbor 資源',
-    ProjectActivities: '操作紀錄',
+    ProjectActivity: '操作紀錄',
     ParticipateProject: '參與專案',
 
     IssueDetail: '議題內容',

@@ -116,7 +116,7 @@ export default {
     fetchData() {
       this.isLoading = true
       this.runAt = this.UTCtoLocalTime(this.$route.params.run_at)
-      getWebInspectReport(this.$route.params.scan_id).then(res => {
+      getWebInspectReport(this.$route.params.scanId).then(res => {
         this.xmlData = res
         this.$nextTick(() => this.parseXml())
       })
