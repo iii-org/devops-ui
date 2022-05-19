@@ -115,7 +115,6 @@
     </el-dialog>
     <el-dialog
       v-if="row.project"
-      :title="$t('Issue.AddIssue')"
       :visible.sync="addTopicDialogVisible"
       width="50%"
       top="5px"
@@ -123,6 +122,16 @@
       destroy-on-close
       append-to-body
     >
+      <template slot="title">
+        {{ $t('Issue.AddIssue') }}
+        <el-button
+          v-if="parentId!==0"
+          class="buttonPrimary float-right mr-5"
+          @click="handleAdvancedImport"
+        >
+          {{ $t('Issue.ImportParentIssueData') }}
+        </el-button>
+      </template>
       <AddIssue
         v-if="addTopicDialogVisible"
         ref="AddIssue"
@@ -504,6 +513,10 @@ export default {
       this.$emit('update')
       this.$emit('update-card', this.row.id)
     },
+    handleAdvancedImport() {
+      this.setFormData(this.row, true)
+      this.$refs['AddIssue'].handleImport()
+    },
     handleAdvancedClose() {
       this.$refs['AddIssue'].handleClose()
     },
@@ -533,7 +546,7 @@ export default {
       this.form.parent_id = parent ? parent.id : ''
       this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
-      this.form.name = copy ? name + '(' + this.$t('Issue.Copy') + ')' : name
+      this.form.name = (copy && this.parentId === 0) ? name + '(' + this.$t('Issue.Copy') + ')' : name
       this.form.fixed_version_id = fixed_version ? fixed_version.id : ''
       this.form.tracker_id = tracker.id
       this.form.status_id = status.id

@@ -604,7 +604,8 @@ export default {
     CustomFilter: '自定義條件',
     CustomFilterName: '自定義條件名稱',
     InputFilterName: '請輸入篩選條件名稱',
-    RemoveCustomFilter: '確認要移除自定義條件嗎?'
+    RemoveCustomFilter: '確認要移除自定義條件嗎?',
+    ImportParentIssueData: '匯入父議題標題與敍述'
   },
   Milestone: {
     Saving: '儲存中',
