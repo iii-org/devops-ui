@@ -632,7 +632,7 @@ export default {
       TestSoftware: 'Test Software',
       TestName: 'Test Name',
       PostmanUpload: 'Postman Filename Rule: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex Filename Rule: {file_name}.sideex.json'
+      SideeXUpload: 'Sideex Filename Rule: {file_name}.json'
     }
   },
   Wiki: {
