@@ -68,7 +68,7 @@
               slot="reference"
               :underline="false"
               :disabled="scope.row.disabled || scope.row.is_lock"
-              style="font-size: 22px"
+              style="font-size: 16px"
             >
               {{ scope.row.from_project_name }}
             </el-link>
@@ -89,7 +89,7 @@
       <el-table-column-time
         :label="$t('Activities.OriginalProjectUpdatedTime')"
         prop="the_last_update_time"
-        width="140"
+        width="150"
       />
       <el-table-column-time
         :label="$t('Activities.SyncTime')"
