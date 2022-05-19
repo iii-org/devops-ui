@@ -99,7 +99,7 @@
                 </template>
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('Issue.Display')">
+            <el-form-item>
               <el-select-all
                 ref="groupByValue"
                 :value="groupBy.value"
@@ -111,8 +111,18 @@
                 value-key="id"
                 @change="onChangeGroupByValue($event)"
               />
+              <div slot="label">
+                {{ $t(`Issue.${groupBy.dimension}`) }}
+                <el-tag
+                  v-if="groupBy.dimension === 'fixed_version'"
+                  type="info"
+                  class="flex-1"
+                >
+                  <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
+                </el-tag>
+              </div>
             </el-form-item>
-            <el-form-item :label="$t('Issue.Issue')">
+            <el-form-item v-if="groupBy === 'status'" :label="$t('Issue.Issue')">
               <el-select-all
                 ref="groupByRow"
                 :value="groupBy.list"
@@ -326,6 +336,7 @@ export default {
       relationIssue: false,
       showAddIssue: false,
       loadingSave: false,
+      fixed_version_closed: false,
       form: {},
       groupBy: {
         dimension: 'status',
@@ -450,21 +461,39 @@ export default {
     groupByOptions() {
       return [{
         id: 1,
-        label: this.$t('Issue.FilterDimensions.status'),
+        label: this.$t('Issue.Issue'),
         value: 'status',
         placeholder: 'Status'
+      }, {
+        id: 2,
+        label: this.$t('Issue.assigned_to'),
+        value: 'assigned_to',
+        placeholder: 'Assignee'
+      }, {
+        id: 3,
+        label: this.$t('Issue.fixed_version'),
+        value: 'fixed_version',
+        placeholder: 'Version'
       }]
     },
     groupByValueList() {
       return this.getStatusSort.map((item, idx) => ({
         id: idx,
-        label: this.getTranslateHeader(item.name),
+        label: this.getTranslateHeader(item),
         value: item
       }))
     },
     getStatusSort() {
       const dimension = this.groupBy.dimension
-      return dimension === 'status' ? this.filterClosedStatus(this[dimension]) : this[dimension]
+      let sort = []
+      if (dimension === 'status') {
+        sort = this.filterClosedStatus(this[dimension])
+      } else if (dimension === 'assigned_to') {
+        sort = this[dimension].filter((item) => item.login !== '-Me-')
+      } else {
+        sort = this[dimension]
+      }
+      return sort
     },
     filterClosedStatus() {
       return function (statusList) {
@@ -491,7 +520,7 @@ export default {
       this.loadSelectionList()
       this.$refs['searchFilter'].cleanFilter()
     },
-    fixedVersionShowClosed(value) {
+    fixed_version_closed(value) {
       this.loadVersionList(value)
     }
   },
@@ -581,6 +610,7 @@ export default {
       this.lastUpdated = value
     },
     async onChangeFilterForm(value) {
+      this.fixed_version_closed = false
       this.loadSelectionList()
       Object.keys(value).forEach((item) => {
         this[item] = value[item]
@@ -695,7 +725,7 @@ export default {
     onChangeGroupByValue(value) {
       this.$set(this.groupBy, 'value', value)
       this.$set(this.groupBy, 'list', [])
-      this.$refs['groupByRow'].selected = []
+      if (this.$refs['groupByRow']) this.$refs['groupByRow'].selected = []
     },
     onChangeGroupByRow(value) {
       this.$set(this.groupBy, 'list', value)
@@ -708,7 +738,13 @@ export default {
       }))
     },
     getTranslateHeader(value) {
-      return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value
+      let label = this.$te('Issue.' + value.name) ? this.$t('Issue.' + value.name) : value.name
+      if (this.groupBy.dimension === 'fixed_version') {
+        if (value.status === 'closed') {
+          label = label + ' (' + this.$t('Version.closed') + ')'
+        }
+      }
+      return label
     },
     handleCloseAddDialog() {
       this.showAddIssue = false
@@ -747,7 +783,6 @@ export default {
           this.$set(this.form, 'tags', this.filterValue.tags)
         }
       }
-      console.log(this.form)
       this.showAddIssue = true
     },
     handleAdvancedClose() {

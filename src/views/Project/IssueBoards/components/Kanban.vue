@@ -99,6 +99,11 @@
                 :name="$t(`Issue.${element.tracker.name}`)"
                 :type="element.tracker.name"
                 class="tracker"
+                :style="
+                  fromWbs ? 
+                    'max-width: 80px; display: inline-block;' 
+                    : ''
+                "
               />
             </span>
             <span v-if="element.done_ratio > 0 && !fromWbs">
@@ -119,7 +124,16 @@
               <span v-if="fromWbs" style="float:right;">
                 <span class="detail user">
                   <em class="el-icon-user-solid" />
-                  <span class="text">{{ element.assigned_to.name }}</span>
+                  <span 
+                    class="text" 
+                    style="
+                      font-size: 14px;
+                      max-width: 70px; 
+                      display: inline-block;
+                    "
+                  >
+                    {{ element.assigned_to.name }}
+                  </span>
                 </span>
               </span>
             </el-tooltip>
@@ -368,6 +382,10 @@ export default {
     fromWbs: {
       type: Boolean,
       default: false
+    },
+    fixedVersion: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -470,23 +488,51 @@ export default {
       const toClassObj = this.status.find((item) => item.name === toName)
       const fromClassObj = this.status.find((item) => item.name === fromName)
       const element = evt.draggedContext.element
-      const canIssueMoved = this.isIssueNormal(toClassObj, fromClassObj, element)
+      const canIssueMoved = this.isIssueNormal(toClassObj, fromClassObj, element, evt)
       return canIssueMoved
     },
-    isIssueNormal(toClassObj, fromClassObj, element) {
+    isIssueNormal(toClassObj, fromClassObj, element, evt) {
       switch (this.dimension) {
         case 'status':
-          return this.isStatusNormal(toClassObj, fromClassObj, element)
+          return this.isStatusNormal(toClassObj, fromClassObj, element, evt)
         case 'priority':
           return this.isPriorityNormal(element)
       }
     },
-    isStatusNormal(toClassObj, fromClassObj, element) {
+    isStatusNormal(toClassObj, fromClassObj, element, evt) {
       const isAssigned = this.isAssigned(toClassObj, fromClassObj, element)
       const isChildrenIssuesClosed = toClassObj.is_closed === true ? this.isChildrenIssuesClosed(element) : true
       const isForceTracker = this.isTrackerStrict(element)
+      const isVersionClosed = this.isClosedVersion(toClassObj, element, evt)
       if (this.errorMsg.length > 0) this.showErrorAlert(this.errorMsg)
-      return isAssigned && isChildrenIssuesClosed && isForceTracker
+      return isAssigned && isChildrenIssuesClosed && isForceTracker && isVersionClosed
+    },
+    isClosedVersion(toClassObj, element, evt) {
+      const version_id = element.fixed_version.id
+      const version = this.fixedVersion.find(issue => parseInt(version_id) === parseInt(issue.id))
+      if (version) {
+        if (version.status === 'closed') {
+          // const error = 'unassignedError'
+          // this.handleErrorAlert(error)
+          return false
+        }
+      }
+      if (this.boardObject.hasOwnProperty('fixed_version_id')) {
+        const version_board_id = evt.to.id.substring(
+          evt.to.id.indexOf('_') + 1, 
+          evt.to.id.lastIndexOf('_')
+        )
+        const version_board = this.fixedVersion.find(issue => parseInt(version_board_id) === parseInt(issue.id))
+        if (version_board) {
+          if (version_board.status === 'closed') {
+            // const error = 'unassignedError'
+            // this.handleErrorAlert(error)
+            return false
+          } 
+          return true
+        }
+      }
+      return true
     },
     isPriorityNormal(element, value) {
       const isPriorityUnchanged = this.isPriorityUnchanged(element, value)

@@ -78,6 +78,7 @@
         :style="displayClosed ? 'width: 1740px' : 'width: 1450px'"
       >
         <el-table
+          v-if="groupBy.dimension === 'status'"
           ref="issueList"
           v-loading="listLoading"
           row-key="id"
@@ -92,10 +93,11 @@
           <el-table-column type="expand">
             <template slot-scope="{row}">
               <el-row 
-                v-loading="row.hasOwnProperty('isLoadingFamily') && row.isLoadingFamily"
+                v-loading="row.hasOwnProperty('isLoadingFamily') 
+                  && row.isLoadingFamily"
                 style="background: #f5f5f5"
               >
-                <div class="header">
+                <div class="header resizeHeight">
                   <Kanban
                     v-for="classObj in boardHeaderName"
                     :id="'card_' + row.id + '_' + classObj.id"
@@ -157,7 +159,11 @@
             align="center"
           >
             <template slot-scope="scope">
-              {{ (scope.row.due_date) ? $dayjs(scope.row.due_date).format('YYYY-MM-DD'): '-' }}
+              {{ 
+                (scope.row.due_date) ? 
+                  $dayjs(scope.row.due_date).format('YYYY-MM-DD') : 
+                  '-' 
+              }}
             </template>
           </el-table-column>
           <el-table-column width="50px">
@@ -178,6 +184,63 @@
               :image-size="100"
             />
           </template>
+        </el-table>
+        <el-table 
+          v-else
+          ref="assigneeList"
+          v-loading="listLoading"
+          row-key="id"
+          :element-loading-text="$t('Loading')"
+          :data="assigneeVersionData"
+          :tree-props="{ children: 'child' }"
+          @expand-change="getAssigneeData"
+          @row-click="handleRowClick"
+        >
+          <el-table-column type="expand">
+            <template slot-scope="{row}">
+              <el-row 
+                v-loading="row.hasOwnProperty('isLoadingFamily') 
+                  && row.isLoadingFamily"
+                style="background: #f5f5f5"
+              >
+                <div class="header resizeHeight">
+                  <Kanban
+                    v-for="classObj in boardHeaderName"
+                    :id="'card_' + row.id + '_' + classObj.id"
+                    :key="classObj.id"
+                    :board-object="{[groupBy.dimension + '_id']: row.id, ...classObj}"
+                    :list="boardAssigneeVersionData[row.id] ? 
+                      boardAssigneeVersionData[row.id].children[classObj.id] : 
+                      []
+                    "
+                    :status="status"
+                    :group="group"
+                    :dimension="'status'"
+                    :from-wbs="true"
+                    :element-ids="elementIds"
+                    :fixed-version="fixedVersion"
+                    @relationIssueId="onRelationIssueDialog($event, row.id, classObj.id)"
+                    @update="updateIssueStatus"
+                    @contextmenu="handleContextMenu"
+                  />
+                </div>
+              </el-row>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            :label="groupBy.dimension === 'assigned_to' ? 
+              $t('Issue.assigned_to') : $t('Issue.fixed_version')"
+          >
+            <template slot-scope="{row}">
+              {{ groupBy.dimension === 'fixed_version' 
+                ? ( row.status === 'closed' 
+                  ? row.name + ' (' + $t('Version.closed') + ')' 
+                  : row.name) 
+                : row.name 
+              }}
+            </template>
+          </el-table-column>
         </el-table>
       </div>
       <transition name="slide-fade">
@@ -282,12 +345,14 @@ export default {
       originalListData: [],
       listData: [],
       rowList: [],
+      assigneeVersionData: [],
       updateLoading: false,
       editRowId: null,
       contextMenu: contextMenu,
       isLoadingFamily: false,
       group: 'mission',
       boardData: {},
+      boardAssigneeVersionData: {},
       originalChildren: {},
       newParentId: null,
       oldParentId: null,
@@ -363,7 +428,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'priority', 'tracker', 'status', 'userId', 'userRole', 'strictTracker']),
+    ...mapGetters([
+      'selectedProjectId', 
+      'priority', 
+      'tracker', 
+      'status', 
+      'userId', 
+      'userRole', 
+      'strictTracker'
+    ]),
     assigned_to() {
       return this.assignedTo
     },
@@ -371,7 +444,8 @@ export default {
       return this.fixedVersion
     },
     boardHeaderName() {
-      return this.displayClosed ? this.boardHeader : this.boardHeader.filter(row => row.id !== 6)
+      return this.displayClosed ? this.boardHeader 
+        : this.boardHeader.filter(row => row.id !== 6)
     },
     contextOptions() {
       const result = {}
@@ -391,6 +465,9 @@ export default {
     }
   },
   watch: {
+    // 'groupBy.dimension'() {
+    //   this.groupByDimension()
+    // },
     'groupBy.value'() {
       this.groupByValue()
     },
@@ -400,6 +477,9 @@ export default {
     originalListData() {
       this.groupByValue()
       this.groupByList()
+    },
+    fixed_version() {
+      this.groupByValue()
     }
   },
   mounted() {
@@ -461,8 +541,6 @@ export default {
       )
       if (res.hasOwnProperty('data')) {
         this.listLoading = false
-        // const result = res.data.filter(row => row.has_children === true)
-        // this.originalListData = result.map((item) => this.issueFormatter(item))
         this.originalListData = res.data.map((item) => this.issueFormatter(item))
         return Promise.resolve(this.originalListData)
       }
@@ -548,12 +626,38 @@ export default {
       }
       return Promise.resolve()
     },
+    async getAssigneeData(row, expandedRows) {
+      if (expandedRows.find((item) => item.id === row.id)) {
+        try {
+          await this.$set(row, 'isLoadingFamily', true)
+          const params = {
+            with_point: true,
+            sort: 'subject:dec',
+            [this.groupBy.dimension + '_id']: row.id
+          }
+          const res = await getProjectIssueList(
+            this.filterValue.project || this.selectedProjectId, 
+            params, 
+            { cancelToken: this.cancelToken }
+          )
+          this.originalChildren[row.id] = res.data
+          this.$set(row, 'children', this.classifyIssue(res.data))
+          this.$set(row, 'isLoadingFamily', false)
+          this.boardAssigneeVersionData[row.id] = row
+        } catch (e) {
+          console.error(e)
+          return Promise.resolve()
+        }
+      }
+      return Promise.resolve()
+    },
     classifyIssue(children) {
       const data = this.checkGroupByValueOnBoard()
       if (children) {
         children.forEach((issue) => {
           if (issue) {
             const dimensionName = issue.status.id ? issue.status.id : 'null'
+            if (!data[dimensionName]) return
             data[dimensionName].push(issue)
           }
         })
@@ -576,18 +680,30 @@ export default {
     },
     async updateIssueStatus(evt) {
       if (evt.event.hasOwnProperty('added')) {
-        this.newParentId = evt.boardObject.parent_id
+        if (this.groupBy.dimension === 'status') {
+          this.newParentId = evt.boardObject.parent_id
+        } else {
+          this.newParentId = evt.boardObject[this.groupBy.dimension + '_id']
+        }
         this.issueId = evt.event.added.element.id
         this.updatedData = { [`status_id`]: evt.boardObject.id }
       }
       if (evt.event.hasOwnProperty('removed')) {
-        this.oldParentId = evt.boardObject.parent_id
+        if (this.groupBy.dimension === 'status') {
+          this.oldParentId = evt.boardObject.parent_id
+        } else {
+          this.oldParentId = evt.boardObject[this.groupBy.dimension + '_id']
+        }
       }
 
       if (this.newParentId !== null && this.oldParentId !== null) {
         try {
           if (this.newParentId !== this.oldParentId) {
-            this.updatedData.parent_id = this.newParentId
+            if (this.groupBy.dimension === 'status') {
+              this.updatedData.parent_id = this.newParentId
+            } else {
+              this.updatedData[this.groupBy.dimension + '_id'] = this.newParentId
+            }
           }
           await this.updatedIssue(this.issueId, this.updatedData)
         } catch (e) {
@@ -632,55 +748,90 @@ export default {
       })
       this.socket.on('update_issue', async (data) => {
         const elementId = []
-        for (const idx in data) {
-          const findOriParentId = this.originalListData
-            .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-          if (findOriParentId >= 0) {
-            this.$set(this.originalListData, findOriParentId, data[idx])
-            const findParentId = this.listData
+        if (this.groupBy.dimension === 'status') {
+          for (const idx in data) {
+            const findOriParentId = this.originalListData
               .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-            if (findParentId >= 0) {
-              this.$set(this.listData, findParentId, data[idx])
-            }
-            continue
-          }
-          
-          data[idx] = _this.socketDataFormat(data[idx])
-          if (data[idx].hasOwnProperty('origin_parent_id')) {
-            const findChangeIndex = this.originalChildren[data[idx].origin_parent_id]
-              .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-            this.$delete(this.originalChildren[data[idx].origin_parent_id], findChangeIndex)
-            this.$set(
-              this.boardData[data[idx].origin_parent_id], 
-              'children', 
-              this.classifyIssue(this.originalChildren[data[idx].origin_parent_id])
-            )
-            if (data[idx].hasOwnProperty('parent')) {
-              const findIdx = this.originalChildren[data[idx].parent.id] 
+            if (findOriParentId >= 0) {
+              this.$set(this.originalListData, findOriParentId, data[idx])
+              const findParentId = this.listData
                 .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-              if (findIdx >= 0) {
-                this.$set(this.originalChildren[data[idx].parent.id], findIdx, data[idx])
-              } else {
-                this.originalChildren[data[idx].parent.id].push(data[idx])
+              if (findParentId >= 0) {
+                this.$set(this.listData, findParentId, data[idx])
               }
+              continue
             }
-          } else {
-            const findChangeIndex = this.originalChildren[data[idx].parent.id]
-              .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-            this.$set(this.originalChildren[data[idx].parent.id], findChangeIndex, data[idx])
+            
+            data[idx] = _this.socketDataFormat(data[idx])
+            if (data[idx].hasOwnProperty('origin_parent_id')) {
+              const findChangeIndex = this.originalChildren[data[idx].origin_parent_id]
+                .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+              this.$delete(this.originalChildren[data[idx].origin_parent_id], findChangeIndex)
+              this.$set(
+                this.boardData[data[idx].origin_parent_id], 
+                'children', 
+                this.classifyIssue(this.originalChildren[data[idx].origin_parent_id])
+              )
+              if (data[idx].hasOwnProperty('parent')) {
+                const findIdx = this.originalChildren[data[idx].parent.id] 
+                  .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+                if (findIdx >= 0) {
+                  this.$set(this.originalChildren[data[idx].parent.id], findIdx, data[idx])
+                } else {
+                  this.originalChildren[data[idx].parent.id].push(data[idx])
+                }
+              }
+            } else {
+              const findChangeIndex = this.originalChildren[data[idx].parent.id]
+                .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+              this.$set(this.originalChildren[data[idx].parent.id], findChangeIndex, data[idx])
+            }
+            this.$set(
+              this.boardData[data[idx].parent.id], 
+              'children', 
+              this.classifyIssue(this.originalChildren[data[idx].parent.id])
+            )
+            elementId.push(data[idx].id)
           }
-          this.$set(
-            this.boardData[data[idx].parent.id], 
-            'children', 
-            this.classifyIssue(this.originalChildren[data[idx].parent.id])
-          )
-          elementId.push(data[idx].id)
+        } else {
+          const dimension = 'origin_' + this.groupBy.dimension + '_id'
+          for (const idx in data) {
+            data[idx] = _this.socketDataFormat(data[idx])
+            if (data[idx].hasOwnProperty(dimension)) {
+              const findChangeIndex = this.originalChildren[data[idx][dimension]]
+                .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+              this.$delete(this.originalChildren[data[idx][dimension]], findChangeIndex)
+              this.$set(
+                this.boardAssigneeVersionData[data[idx][dimension]], 
+                'children', 
+                this.classifyIssue(this.originalChildren[data[idx][dimension]])
+              )
+            }
+            
+            const findChangeIndex = this.originalChildren[data[idx][this.groupBy.dimension].id]
+              .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+            if (findChangeIndex >= 0) {
+              this.$set(this.originalChildren[data[idx][this.groupBy.dimension].id], findChangeIndex, data[idx])
+            } else {
+              this.originalChildren[data[idx][this.groupBy.dimension].id].push(data[idx])
+            }
+
+            this.$set(
+              this.boardAssigneeVersionData[data[idx][this.groupBy.dimension].id], 
+              'children', 
+              this.classifyIssue(this.originalChildren[data[idx][this.groupBy.dimension].id])
+            )
+            elementId.push(data[idx].id)
+          }
         }
         this.elementIds = elementId
       })
       this.socket.on('delete_issue', async (data) => {
-        const findOriParentId = this.originalListData
-          .findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+        let findOriParentId = -1
+        if (this.groupBy.dimension === 'status') {
+          findOriParentId = this.originalListData
+            .findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+        }
         if (findOriParentId >= 0) { // if issue on the parent list
           this.$delete(this.originalListData, findOriParentId)
           const findParentIndex = this.listData
@@ -707,40 +858,61 @@ export default {
       this.socket.on('add_issue', async data => {
         const elementId = []
         for (const idx in data) {
-          const findOriParentId = this.originalListData
-            .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-          if (findOriParentId >= 0) {
-            this.$set(this.originalListData, findOriParentId, data[idx])
-            const findParentIndex = this.listData
+          let findOriParentId = -1
+          if (this.groupBy.dimension === 'status') {
+            findOriParentId = this.originalListData
               .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-            if (findParentIndex >= 0) {
-              this.$set(this.listData, findParentIndex, data[idx])
+            if (findOriParentId >= 0) {
+              this.$set(this.originalListData, findOriParentId, data[idx])
+              const findParentIndex = this.listData
+                .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+              if (findParentIndex >= 0) {
+                this.$set(this.listData, findParentIndex, data[idx])
+              }
+              continue
             }
-            continue
-          }
+            data[idx] = _this.socketDataFormat(data[idx])
+            if (data[idx].hasOwnProperty('parent')) { // if issue has parent
+              if (this.originalChildren[data[idx].parent.id]) { // if issue's parent already on the expanded list
+                const findChangeIndex = this.originalChildren[data[idx].parent.id]
+                  .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+                if (findChangeIndex !== -1) {
+                  this.$set(this.originalChildren[data[idx].parent.id], findChangeIndex, data[idx])
+                } else {
+                  this.originalChildren[data[idx].parent.id].push(data[idx])
+                }
+                elementId.push(data[idx].id)
+              } else continue
+            } else { // add issue to parent list
+              this.originalListData.push(data[idx])
+              continue
+            }
 
-          data[idx] = _this.socketDataFormat(data[idx])
-          if (data[idx].hasOwnProperty('parent')) { // if issue has parent
-            if (this.originalChildren[data[idx].parent.id]) { // if issue's parent already on the expanded list
-              const findChangeIndex = this.originalChildren[data[idx].parent.id]
+            this.$set(
+              this.boardData[data[idx].parent.id], 
+              'children', 
+              this.classifyIssue(this.originalChildren[data[idx].parent.id])
+            )
+          } else {
+            data[idx] = _this.socketDataFormat(data[idx])
+            if (this.originalChildren[data[idx][this.groupBy.dimension].id]) { // if issue's parent already on the expanded list
+              const findChangeIndex = this.originalChildren[data[idx][this.groupBy.dimension].id]
                 .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
               if (findChangeIndex !== -1) {
-                this.$set(this.originalChildren[data[idx].parent.id], findChangeIndex, data[idx])
+                this.$set(this.originalChildren[data[idx][this.groupBy.dimension].id], 
+                  findChangeIndex, data[idx])
               } else {
-                this.originalChildren[data[idx].parent.id].push(data[idx])
+                this.originalChildren[data[idx][this.groupBy.dimension].id].push(data[idx])
               }
               elementId.push(data[idx].id)
             } else continue
-          } else { // add issue to parent list
-            this.originalListData.push(data[idx])
-            continue
-          }
 
-          this.$set(
-            this.boardData[data[idx].parent.id], 
-            'children', 
-            this.classifyIssue(this.originalChildren[data[idx].parent.id])
-          )
+            this.$set(
+              this.boardAssigneeVersionData[data[idx][this.groupBy.dimension].id], 
+              'children', 
+              this.classifyIssue(this.originalChildren[data[idx][this.groupBy.dimension].id])
+            )
+          }
           // this.showUpdateMessage(data[idx])
         }
         this.elementIds = elementId
@@ -756,7 +928,7 @@ export default {
     },
     socketDataFormat(data) {
       Object.keys(data).forEach(key => {
-        if (key !== 'origin_parent_id') {
+        if (!key.includes('origin')) {
           const splitKey = key.split('_id')
           if (splitKey.length > 1 && splitKey !== 'origin_parent') {
             const findObject = this[splitKey[0]]
@@ -789,17 +961,36 @@ export default {
       window.location.reload()
     },
     groupByValue() {
-      this.rowList = []
-      if (this.groupBy.value.length > 0) {
-        if (this.groupBy.dimension === 'status') {
+      if (this.groupBy.dimension === 'status') {
+        this.rowList = []
+        if (this.groupBy.value.length > 0) {
           for (const idx in this.groupBy.value) {
             const rowData = this.originalListData
               .filter(row => row.status.id === this.groupBy.value[idx].id)
             this.rowList = [...this.rowList, ...rowData]
           }
+        } else {
+          this.rowList = this.originalListData
         }
         this.listData = this.rowList
         this.$emit('row-list', this.rowList)
+      } else {
+        let list = []
+        if (this.groupBy.value.length > 0) {
+          for (const idx in this.groupBy.value) {
+            const rowData = this[this.groupBy.dimension]
+              .filter(row => row.id === this.groupBy.value[idx].id)
+            rowData[0].isLoadingFamily = false
+            list = [...list, ...rowData]
+          }
+        } else {
+          list = this[this.groupBy.dimension]
+        }
+        if (this.groupBy.dimension === 'assigned_to') {
+          list = this[this.groupBy.dimension].filter((item) => item.login !== '-Me-')
+        }
+        this.originalChildren = {}
+        this.assigneeVersionData = list
       }
     },
     groupByList() {
@@ -813,7 +1004,8 @@ export default {
       }
     },
     async handleRowClick(row) {
-      this.$refs.issueList.toggleRowExpansion(row)
+      if (this.groupBy.dimension === 'status') this.$refs.issueList.toggleRowExpansion(row)
+      else this.$refs.assigneeList.toggleRowExpansion(row)
     },
     setClassName({ row }) {
       return row.has_children ? '' : 'expand'
@@ -838,173 +1030,6 @@ export default {
     .header-bar {
       height: 3px;
       @apply bg-red-500;
-    }
-  }
-
-  .board-column-content {
-    border: 10px solid transparent;
-    height: 95%;
-    @apply overflow-x-hidden overflow-y-auto space-y-4;
-
-    .quick-add {
-      padding: 10px 10px 0 10px;
-    }
-
-    .board-item {
-      cursor: pointer;
-      width: 95%;
-      height: auto;
-      text-align: left;
-      line-height: 20px;
-      box-sizing: border-box;
-      border: 1px solid #e9e9e9;
-      @apply shadow-md bg-white rounded-md border-solid border border-gray-300 mx-auto;
-      font-size: 16px;
-
-      &-ban {
-        pointer-events: none;
-        opacity: 0.4;
-      }
-
-      .tags {
-        @apply mr-1;
-      }
-
-      .add-button {
-        transition: transform 0.6s;
-        @apply m-3;
-        &.rotate {
-          transform: rotate(225deg);
-        }
-      }
-
-      &.item {
-        cursor: move;
-      }
-
-      .progress-bar {
-        @apply bg-active rounded-full;
-        height: 5px;
-
-        &.success {
-          @apply bg-success;
-        }
-
-        &.danger {
-          @apply bg-danger;
-        }
-
-        &.warning {
-          @apply bg-warning;
-        }
-      }
-
-      .title {
-        @apply m-3 flex justify-between content-start;
-
-        .text {
-          @apply cursor-pointer text-left text-primary font-bold break-all;
-        }
-
-        .action {
-          @apply flex cursor-pointer w-5 h-5;
-          .icon {
-            @apply bg-gray-200 text-black rounded-md text-center align-middle px-1;
-          }
-        }
-      }
-
-      .relation {
-        .parent {
-          @apply m-3;
-          font-size: 0.75em;
-
-          .el-tag {
-            font-size: 0.5em;
-          }
-
-          .Active {
-            @apply bg-active;
-          }
-
-          .Assigned {
-            @apply bg-assigned;
-          }
-
-          .Solved {
-            @apply bg-solved;
-          }
-
-          .InProgress {
-            @apply bg-inProgress;
-          }
-
-          .Verified {
-            @apply bg-finished;
-          }
-
-          .Closed {
-            @apply bg-closed;
-          }
-        }
-
-        .children_list {
-          margin: 0;
-        }
-
-        >>> .el-collapse-item {
-          &__header {
-            height: 2.5em;
-          }
-
-          &__content {
-            padding-bottom: 0;
-          }
-        }
-      }
-
-      .issue-status-tags {
-        font-size: 1em;
-        @apply mx-3 mb-1;
-
-        .tracker {
-          font-size: 0.8em;
-        }
-      }
-
-      .info {
-        @apply flex border-0 border-t border-solid border-gray-200 divide-x divide-solid divide-gray-200 rounded-b-md;
-        .detail {
-          min-width: 0;
-          font-size: 1em;
-          line-height: 1em;
-          padding: 0 3px;
-          @apply ml-1 flex flex-1 py-2 border-0;
-          .text {
-            @apply truncate;
-          }
-
-          em {
-            @apply mr-0.5 text-gray-400;
-          }
-        }
-
-        .due_date {
-          .danger {
-            font-weight: 900;
-            color: #f56c6c;
-          }
-
-          .warning {
-            font-weight: 500;
-            color: #d27e00;
-          }
-        }
-      }
-
-      .no-info {
-        @apply mb-3;
-      }
     }
   }
 
@@ -1066,6 +1091,14 @@ export default {
     justify-content: flex-start;
     flex-wrap: nowrap;
   }
+  .resizeHeight {
+    max-height: 420px; 
+    resize: vertical; 
+    overflow: auto;
+  }
+  .resizeHeight[style*="height"] {
+    max-height: unset; 
+} 
 }
 .current {
   @apply text-success font-bold;
