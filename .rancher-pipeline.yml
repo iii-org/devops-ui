@@ -134,6 +134,7 @@ stages:
       - wbsboard
       - selftemplate
       - echart
+      - sideexjson
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -193,6 +194,7 @@ stages:
       - wbsboard
       - selftemplate
       - echart
+      - sideexjson
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -267,6 +269,7 @@ stages:
       - wbsboard
       - selftemplate
       - echart
+      - sideexjson
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -335,6 +338,7 @@ stages:
       - wbsboard
       - selftemplate
       - echart
+      - sideexjson
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -401,6 +405,7 @@ stages:
       - wbsboard
       - selftemplate
       - echart
+      - sideexjson
 - name: Test--ZAP
   iiidevops: zap
   steps:
