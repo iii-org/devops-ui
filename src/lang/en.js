@@ -264,9 +264,7 @@ export default {
     SocketConnected: 'Socket is connected',
     ReconnectByReload: 'Please reload the page to ensure the socket reconnected properly',
     Reload: 'Reload the page',
-    NoTestResult: 'No Test Result',
-    Parent: 'P',
-    Child: 'C'
+    NoTestResult: 'No Test Result'
   },
   Notify: {
     Updated: 'update successful',
@@ -303,8 +301,7 @@ export default {
     ChangeProjectManager: 'Confirming if you want to change the project manager?',
     ConnectSocket: 'Kanban is connecting Socket...',
     UpdateKanban: '{issueName} is updated',
-    NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.',
-    ChangeProject: `Switching a project will empty the version, label, and distributor's information, confirm the transfer?`
+    NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',

@@ -81,10 +81,6 @@ export default {
       type: [String, Number],
       default: 0
     },
-    projectRelationList: {
-      type: Array,
-      default: () => []
-    },
     isButtonDisabled: {
       type: Boolean,
       default: false

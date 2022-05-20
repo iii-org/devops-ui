@@ -123,7 +123,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['tracker', 'status', 'priority', 'selectedProject']),
+    ...mapGetters(['tracker', 'status', 'priority']),
     groupByValueOnBoard() {
       if (this.groupBy.value.length <= 0) {
         return this.getStatusSort.map((item) => item)
@@ -292,9 +292,9 @@ export default {
       this.contextMenu.visible = false
       document.removeEventListener('click', this.hideContextMenu)
     },
-    onRelationIssueDialog(row, element) {
+    onRelationIssueDialog(id, element) {
       this.$set(this.relationIssue, 'visible', true)
-      this.$set(this.relationIssue, 'id', row.id)
+      this.$set(this.relationIssue, 'id', id)
       this.scrollTo(element)
     },
     handleRelationDelete() {

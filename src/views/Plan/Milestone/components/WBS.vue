@@ -230,7 +230,7 @@
           v-permission="permission"
           divider
         />
-        <contextmenu-item @click="onRelationIssueDialog(contextMenu.row)">
+        <contextmenu-item @click="onRelationIssueDialog(contextMenu.row.id)">
           {{ $t('route.Issue Detail') }}
         </contextmenu-item>
         <contextmenu-item @click="toggleIssueMatrixDialog(contextMenu.row)">
@@ -1042,9 +1042,9 @@ export default {
         console.error(e)
       }
     },
-    onRelationIssueDialog(row) {
+    onRelationIssueDialog(id) {
       this.$set(this.relationIssue, 'visible', true)
-      this.$set(this.relationIssue, 'id', row.id)
+      this.$set(this.relationIssue, 'id', id)
     },
     onCloseRelationIssueDialog() {
       this.$set(this.relationIssue, 'visible', false)

@@ -264,9 +264,7 @@ export default {
     SocketConnected: 'Socket 已連線成功',
     ReconnectByReload: '請重整頁面(F5)，以確保連線正常',
     Reload: '頁面重整',
-    NoTestResult: '尚無測試結果',
-    Parent: '父',
-    Child: '子'
+    NoTestResult: '尚無測試結果'
   },
   Notify: {
     Updated: '已更新',
@@ -301,8 +299,7 @@ export default {
     ChangeProjectManager: '確認是否要變更專案經理人。',
     ConnectSocket: '看板正在連接 Socket...',
     UpdateKanban: '{issueName} 已更新',
-    NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。',
-    ChangeProject: '切換專案將清空版本、標籤及受分配者的資訊，確認移轉嗎？'
+    NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。'
   },
   RuleMsg: {
     PleaseInput: '請輸入',

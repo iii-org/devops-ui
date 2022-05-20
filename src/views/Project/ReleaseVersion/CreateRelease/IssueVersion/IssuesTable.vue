@@ -391,7 +391,6 @@ export default {
       for (const index of indexes) {
         await this.isChildrenIssueClosed(index)
         await this.listData[index].close()
-        this.$emit('onUpdate')
       }
       this.$emit('onUpdate')
       this.multipleSelection = []

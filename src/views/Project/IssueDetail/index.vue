@@ -196,7 +196,6 @@
             ref="IssueForm"
             :is-button-disabled="isButtonDisabled"
             :issue-id="issueId"
-            :issue-project="issueProject"
             :form.sync="form"
             :parent="parent"
             :relations="relations"
@@ -251,21 +250,6 @@
         @update-issue="handleUpdated"
       />
     </el-dialog>
-    <el-dialog
-      :visible.sync="isShowDialog"
-      append-to-body
-      destroy-on-close
-      width="30%"
-    >
-      <span>
-        <em class="el-icon-warning" :style="getStyle('danger')" />
-        {{ $t('Notify.ChangeProject') }}
-      </span>
-      <span slot="footer">
-        <el-button @click="onCancel">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" @click="onConfirm">{{ $t('general.Confirm') }}</el-button>
-      </span>
-    </el-dialog>
     <ContextMenu
       ref="contextmenu"
       :visible="contextMenu.visible"
@@ -313,8 +297,6 @@ import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import getPageTitle from '@/utils/get-page-title'
 import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
-// import { getIssueFamily } from '@/api/issue'
-import variables from '@/styles/theme/variables.scss'
 
 const commitLimit = 10
 
@@ -414,10 +396,7 @@ export default {
       errorMsg: [],
       showAlert: false,
       isLoadingFamily: false,
-      projectRelationList: [],
-      isShowDialog: false,
-      storagePId: '',
-      issueProject: {}
+      projectRelationList: []
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -489,11 +468,10 @@ export default {
       return getTrackerName.name
     },
     isButtonDisabled() {
-      return this.$route.params.hasOwnProperty('disableButton')
-        ? this.$route.params.disableButton
-        : false
+      // return this.userRole === 'QA'
+      return this.$route.params.disableButton
     },
-    formProjectId() {
+    formProjectId () {
       return this.form.project_id ? this.form.project_id : this.selectedProjectId
     }
   },
@@ -508,24 +486,11 @@ export default {
     propsIssueId(val) {
       this.fetchIssueLink()
       this.$nextTick(() => this.$refs.IssueForm.$refs.form.clearValidate())
-    },
-    async relationVisible(val) {
-      if (val === 1) {
-        await this.getIssueFamilyData(this.issue)
-      }
-    },
-    'form.project_id': {
-      handler(newPId, oldPId) {
-        if (this.storagePId && newPId !== this.storagePId) {
-          this.isShowDialog = true
-        }
-      }
     }
   },
   async mounted() {
     await this.fetchIssueLink()
     await this.getRelationProjectList()
-    this.storagePId = this.form.project_id
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject']),
@@ -541,7 +506,6 @@ export default {
         await this.fetchIssue()
       } else if (this.$route.params.issueId) {
         this.issueId = parseInt(this.$route.params.issueId)
-        this.issueProject = this.$route.params.project
         await this.fetchIssue()
       } else {
         this.form.project_id = this.selectedProjectId
@@ -659,12 +623,11 @@ export default {
       if (this.$refs.IssueForm) {
         this.$refs.IssueForm.getClosable()
       }
-      this.issueProject = data.project
     },
     async getRelationProjectList() {
-      const hasSon = (await getHasSon(this.formProjectId)).has_child
+      const hasSon = (await getHasSon(this.selectedProjectId)).has_child
       if (hasSon) {
-        const projectRelation = (await getProjectRelation(this.formProjectId)).data
+        const projectRelation = (await getProjectRelation(this.selectedProjectId)).data
         this.projectRelationList.push(projectRelation[0].parent.id)
         projectRelation[0].child.forEach((item) => {
           this.projectRelationList.push(item.id)
@@ -685,7 +648,7 @@ export default {
       this.rootProjectId = res.root_project_id
     },
     async getGitCommitLogData() {
-      await this.getRootProject(this.formProjectId)
+      await this.getRootProject(this.selectedProjectId)
       this.setIssueId()
       const params = { limit: commitLimit }
       const res = await getIssueGitCommitLog(this.rootProjectId, this.issueId, params)
@@ -1175,29 +1138,6 @@ export default {
     },
     UTCtoLocalTime(value) {
       return UTCtoLocalTime(value)
-    },
-    onResetPId(pId) {
-      this.form.project_id = pId
-    },
-    onCancel() {
-      this.form.project_id = this.storagePId
-      this.isShowDialog = false
-    },
-    onConfirm() {
-      this.storagePId = this.form.project_id
-      this.resetForm()
-      this.isShowDialog = false
-    },
-    resetForm() {
-      this.form.tags = []
-      this.form.assigned_to_id = ''
-      this.form.fixed_version_id = ''
-    },
-    getStyle(colorCode) {
-      const color = variables[`${colorCode}`]
-      return {
-        color
-      }
     }
   }
 }

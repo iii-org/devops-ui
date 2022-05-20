@@ -14,14 +14,27 @@
       @focus="getSearchTags()"
     >
       <template v-if="tagsList && tagsList.length > 0">
-        <el-option-group v-for="group in tagsList" :key="group.name" :label="group.name">
+        <el-option-group
+          v-for="group in tagsList"
+          :key="group.name"
+          :label="group.name"
+        >
           <template v-for="item in group.options">
-            <el-option :key="item.id" :value="item.id" :label="item.name" />
+            <el-option
+              :key="item.id"
+              :value="item.id"
+              :label="item.name"
+            />
           </template>
         </el-option-group>
       </template>
       <template v-else>
-        <el-option v-for="item in []" :key="item.value" :label="item.label" :value="item.value" />
+        <el-option
+          v-for="item in []"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
       </template>
     </el-select>
   </el-form-item>
