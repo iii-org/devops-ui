@@ -122,7 +122,7 @@
                 </el-tag>
               </div>
             </el-form-item>
-            <el-form-item v-if="groupBy === 'status'" :label="$t('Issue.Issue')">
+            <el-form-item v-if="groupBy.dimension === 'status'" :label="$t('Issue.Issue')">
               <el-select-all
                 ref="groupByRow"
                 :value="groupBy.list"

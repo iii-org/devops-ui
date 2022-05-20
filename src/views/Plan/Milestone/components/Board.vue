@@ -465,9 +465,9 @@ export default {
     }
   },
   watch: {
-    // 'groupBy.dimension'() {
-    //   this.groupByDimension()
-    // },
+    'groupBy.dimension'() {
+      this.originalChildren = {}
+    },
     'groupBy.value'() {
       this.groupByValue()
     },
@@ -808,10 +808,10 @@ export default {
               )
             }
             
-            const findChangeIndex = this.originalChildren[data[idx][this.groupBy.dimension].id]
+            const findIndex = this.originalChildren[data[idx][this.groupBy.dimension].id]
               .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-            if (findChangeIndex >= 0) {
-              this.$set(this.originalChildren[data[idx][this.groupBy.dimension].id], findChangeIndex, data[idx])
+            if (findIndex >= 0) {
+              this.$set(this.originalChildren[data[idx][this.groupBy.dimension].id], findIndex, data[idx])
             } else {
               this.originalChildren[data[idx][this.groupBy.dimension].id].push(data[idx])
             }
@@ -987,9 +987,8 @@ export default {
           list = this[this.groupBy.dimension]
         }
         if (this.groupBy.dimension === 'assigned_to') {
-          list = this[this.groupBy.dimension].filter((item) => item.login !== '-Me-')
+          list = list.filter((item) => item.login !== '-Me-')
         }
-        this.originalChildren = {}
         this.assigneeVersionData = list
       }
     },
