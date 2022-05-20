@@ -70,7 +70,7 @@
               :disabled="scope.row.disabled || scope.row.is_lock"
               style="font-size: 16px"
             >
-              {{ scope.row.from_project_name }}
+              {{ scope.row.template_repository_name }}
             </el-link>
           </el-popover>
         </template>
@@ -78,7 +78,7 @@
       <el-table-column
         align="center"
         :label="$t('Activities.OriginalProject')"
-        prop="template_repository_name"
+        prop="from_project_name"
       />
       <el-table-column
         align="center"
