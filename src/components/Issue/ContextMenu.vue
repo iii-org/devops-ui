@@ -543,7 +543,7 @@ export default {
         description
       } = data
       this.form = {}
-      this.form.parent_id = parent ? parent.id : ''
+      // this.form.parent_id = parent ? parent.id : ''
       this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
       this.form.name = (copy && this.parentId === 0) ? name + '(' + this.$t('Issue.Copy') + ')' : name
@@ -560,9 +560,9 @@ export default {
     },
     advancedAddIssue(copy) {
       if (copy) {
-        this.setFormData(this.row, copy)
         this.parentId = 0
         this.parentName = null
+        this.setFormData(this.row, copy)
       } else {
         this.form = Object.assign({}, rowFormData())
         this.parentId = this.row.id
