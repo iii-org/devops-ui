@@ -67,7 +67,6 @@
       </el-form>
     </el-col>
     <el-dialog
-      :title="$t('Issue.AddIssue')"
       :visible.sync="addTopicDialogVisible"
       width="50%"
       top="5px"
@@ -76,12 +75,42 @@
       append-to-body
       @close="handleClose"
     >
+      <template slot="title">
+        <div class="flex items-center">
+          <div>{{ $t('Issue.AddIssue') }}</div>
+          <div
+            v-if="hasRelations"
+            style="margin-left: 10px;"
+          >
+            <el-select v-model="pId">
+              <template slot="prefix">
+                <div>{{ $t('Project.Project') }}</div>
+              </template>
+              <el-option
+                v-for="project in allRelation"
+                :key="project.id"
+                :label="project.name"
+                :value="project.id"
+              >
+                <div>{{ project.name }}</div>
+                <div v-if="project.type === 'father'" class="round father">
+                  {{ $t('general.Parent') }}
+                </div>
+                <div v-if="project.type === 'son'" class="round son">
+                  {{ $t('general.Child') }}
+                </div>
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+      </template>
       <AddIssue
         ref="AddIssue"
         :project-id="projectId"
         :parent-id="parentId"
         :prefill="form"
         :save-data="saveData"
+        :p-id="pId"
         import-from="board"
         @loading="loadingUpdate"
         @add-topic-visible="handleCloseDialog"
@@ -113,6 +142,7 @@ import Tracker from '@/components/Issue/Tracker'
 import { getProjectAssignable } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import AddIssue from '@/components/Issue/AddIssue'
+import { getAllRelation, getHasRelation } from '@/api_v2/projects'
 
 export default {
   name: 'QuickAddIssueOnBoard',
@@ -161,11 +191,14 @@ export default {
         name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
         tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
         assigned_to_id: [{ validator: validateAssignedTo, trigger: 'blur' }]
-      }
+      },
+      allRelation: [],
+      hasRelations: false,
+      pId: ''
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'groupBy', 'issueFilter', 'strictTracker'])
+    ...mapGetters(['selectedProject', 'selectedProjectId', 'userId', 'groupBy', 'issueFilter', 'strictTracker', 'tracker'])
   },
   watch: {
     boardObject: {
@@ -188,6 +221,7 @@ export default {
     }
   },
   mounted() {
+    this.getHasRelation(this.selectedProject)
     this.setFilterValue()
     this.fetchSelection()
   },
@@ -283,6 +317,29 @@ export default {
     loadingUpdate(value) {
       this.LoadingConfirm = value
       if (value) this.$emit('after-add')
+    },
+    async getHasRelation() {
+      await getHasRelation(this.selectedProject.id)
+        .then((res) => {
+          if (res.has_relations) {
+            this.getAllRelation()
+          }
+          this.hasRelations = res.has_relations
+        })
+    },
+    async getAllRelation() {
+      const { display, id, name } = this.selectedProject
+      const selectedProject = {
+        display, id, name
+      }
+      let allRelation = []
+      await getAllRelation(this.selectedProject.id)
+        .then((res) => {
+          allRelation = res.data
+          allRelation.unshift(selectedProject)
+          this.allRelation = allRelation
+          this.pId = id
+        })
     }
   }
 }
@@ -300,5 +357,19 @@ export default {
   box-sizing: border-box;
   border: 1px solid #e9e9e9;
   box-shadow: 1px 3px 3px 0 rgba(0, 0, 0, 0.2);
+}
+.round {
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 8px;
+  &.father {
+    background-color: #f56c6c;
+  }
+  &.son {
+    background-color: #409eff;
+  }
 }
 </style>

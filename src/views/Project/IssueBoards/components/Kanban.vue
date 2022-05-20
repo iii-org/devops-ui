@@ -38,7 +38,7 @@
           <div class="title">
             <span
               class="text linkTextColor"
-              @click="handleClick(element.id)"
+              @click="handleClick(element)"
             >
               {{ element.name }}
               <el-tag
@@ -472,7 +472,7 @@ export default {
       if (!isAssigned) {
         const error = 'unassignedError'
         this.handleErrorAlert(error)
-      } 
+      }
       // else if (isAssigned && toClassObj.name === 'Active') {
       //   if (fromClassObj === null || fromClassObj.name !== 'Active') {
       //     const error = 'assignedError'
@@ -555,9 +555,9 @@ export default {
       this.$emit('update', updateData)
       this.$forceUpdate()
     },
-    handleClick(id) {
+    handleClick(row) {
       // this.$router.push({ name: 'issue-detail', params: { issueId: id }})
-      this.$emit('relationIssueId', id)
+      this.$emit('relationIssueId', row)
     },
     showErrorAlert(errorMsg) {
       const h = this.$createElement

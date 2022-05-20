@@ -342,6 +342,7 @@ import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api_v2/projects'
 import { getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
 import XLSX from 'xlsx'
+import { getHasRelation, getProjectRelation } from '@/api_v2/projects'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -665,6 +666,26 @@ export default {
     collapseExpendRow(issueId) {
       const row = this.listData.find((item) => item.id === issueId)
       this.refTable.toggleRowExpansion(row, false)
+    },
+    async isProjectHasSon() {
+      const hasSon = await getHasRelation(this.selectedProjectId)
+      if (hasSon.has_child) {
+        this.filterOptionsWithProject = [{
+          id: 7,
+          value: 'project',
+          placeholder: 'Project'
+        }].concat(this.filterOptions)
+      } else {
+        this.filterOptionsWithProject = this.filterOptions
+      }
+      return hasSon.has_child
+    },
+    async getProjectRelationData() {
+      const projectRelation = await getProjectRelation(this.selectedProjectId)
+      this.projectRelationList = []
+      projectRelation.data.forEach((item) => {
+        this.projectRelationList.push(...item.child)
+      })
     }
   }
 }
