@@ -101,6 +101,10 @@ export default {
       type: Boolean,
       default: false
     },
+    existedTemplateIds: {
+      type: Array,
+      default: () => []
+    },
     title: {
       type: String,
       default: ''
@@ -177,7 +181,13 @@ export default {
     },
     handleCreate() {
       this.$refs['form'].validate(async(valid) => {
-        if (valid) {
+        if (this.existedTemplateIds.includes(this.form.project)) {
+          this.$message({
+            title: this.$t('general.Error'),
+            message: this.$t('Activities.DuplicatedTemplate', [this.form.project]),
+            type: 'error'
+          })
+        } else if (valid) {
           this.isLoading = true
           try {
             const sendData = new FormData()

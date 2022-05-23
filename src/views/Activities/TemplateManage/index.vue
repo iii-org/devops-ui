@@ -148,6 +148,7 @@
     <TemplateDialog
       ref="templateDialog"
       :dialog-visible.sync="dialogVisible"
+      :existed-template-ids="existedTemplateIds"
       :title="title"
       @update="loadData"
     />
@@ -169,6 +170,11 @@ export default {
       dialogVisible: false,
       title: '',
       searchKeys: ['from_project_name']
+    }
+  },
+  computed: {
+    existedTemplateIds() {
+      return this.listData.map((item) => item.from_project_id)
     }
   },
   methods: {
