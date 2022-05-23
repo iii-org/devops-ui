@@ -188,6 +188,7 @@
         <el-table 
           v-else
           ref="assigneeList"
+          :key="tableKey"
           v-loading="listLoading"
           row-key="id"
           :element-loading-text="$t('Loading')"
@@ -359,6 +360,7 @@ export default {
       issueId: null,
       updatedData: {},
       elementIds: [],
+      tableKey: 0,
       relationIssue: {
         visible: false,
         id: null
@@ -467,6 +469,8 @@ export default {
   watch: {
     'groupBy.dimension'() {
       this.originalChildren = {}
+      this.assigneeVersionData = []
+      this.tableKey += 1
     },
     'groupBy.value'() {
       this.groupByValue()
@@ -694,6 +698,9 @@ export default {
         } else {
           this.oldParentId = evt.boardObject[this.groupBy.dimension + '_id']
         }
+        if (this.updatedData.status_id === evt.boardObject.id) {
+          delete this.updatedData.status_id
+        }
       }
 
       if (this.newParentId !== null && this.oldParentId !== null) {
@@ -807,7 +814,9 @@ export default {
                 this.classifyIssue(this.originalChildren[data[idx][dimension]])
               )
             }
-            
+            if (Object.keys(data[idx][this.groupBy.dimension]).length === 0) {
+              data[idx][this.groupBy.dimension].id = null
+            }
             const findIndex = this.originalChildren[data[idx][this.groupBy.dimension].id]
               .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
             if (findIndex >= 0) {

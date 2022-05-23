@@ -541,7 +541,9 @@ export default {
     },
     isAssigned(toClassObj, fromClassObj, element) {
       const isAssigned = this.checkAssigned(toClassObj, element)
-      if (!isAssigned) {
+      let isAllow = isAssigned
+      if (toClassObj.id === fromClassObj.id) isAllow = true
+      if (!isAllow) {
         const error = 'unassignedError'
         this.handleErrorAlert(error)
       } 
@@ -552,7 +554,7 @@ export default {
       //     isAssigned = !isAssigned
       //   }
       // }
-      return isAssigned
+      return isAllow
     },
     isChildrenIssuesClosed(element) {
       const isChildrenIssuesClosed = this.checkChildrenIssuesClosed(element)
