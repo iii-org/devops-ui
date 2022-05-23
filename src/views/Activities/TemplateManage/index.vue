@@ -228,26 +228,6 @@ export default {
   },
   methods: {
     async fetchData() {
-<<<<<<< HEAD
-      const res = await getProjectActivities(this.selectedProjectId, this.params)
-      this.setListData(res)
-    },
-    setListData(res) {
-      this.activitiesList = res.data.activities_list
-      this.listQuery = Object.assign({}, res.data.page)
-    },
-    async onPagination(listQuery) {
-      const { limit, page } = listQuery
-      const offset = limit * (page - 1)
-      this.params.offset = offset
-      this.params.limit = limit
-      if (this.keyword !== '') this.params.search = this.keyword
-      await this.loadData()
-      this.initParams()
-    },
-    initParams() {
-      this.params = params()
-=======
       return (await getTemplateFromProject()).data
     },
     onPagination(listQuery) {
@@ -259,7 +239,6 @@ export default {
       window.getSelection().selectAllChildren(target)
       document.execCommand('Copy')
       this.showSuccessMessage(message)
->>>>>>> selftemplate
     },
     handleCreate() {
       this.dialogVisible = true
@@ -268,10 +247,6 @@ export default {
     handleEdit(row) {
       this.dialogVisible = true
       this.title = this.$t('Activities.EditTemplate')
-<<<<<<< HEAD
-    },
-    handleDelete(row) { }
-=======
       this.$refs.templateDialog.row = row
     },
     async handleDelete(row) {
@@ -292,7 +267,6 @@ export default {
         type: 'success'
       })
     }
->>>>>>> selftemplate
   }
 }
 </script>
