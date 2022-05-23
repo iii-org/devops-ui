@@ -184,7 +184,7 @@ export default {
         if (this.existedTemplateIds.includes(this.form.project)) {
           this.$message({
             title: this.$t('general.Error'),
-            message: this.$t('Activities.DuplicatedTemplate', [this.form.project]),
+            message: this.$t('Activities.DuplicatedTemplate', [this.form.name]),
             type: 'error'
           })
         } else if (valid) {

@@ -924,7 +924,7 @@ export default {
     EditTemplate: 'Edit Template',
     LocalProject: 'Local Project',
     TemplateDescription: 'Template Description',
-    DuplicatedTemplate: 'One project only relates to one template, The project {0} has been used to a template, you can click \'edit\' on the template list if source code sync is needed.'
+    DuplicatedTemplate: 'One project only relates to one template, The project "{0}" has been used to a template, you can click \'edit\' on the template list if source code sync is needed.'
   },
   Maintenance: {
     AddSecret: 'Add Secret',
