@@ -287,9 +287,9 @@ export default {
       this.contextMenu.visible = false
       document.removeEventListener('click', this.hideContextMenu)
     },
-    onRelationIssueDialog(row, element) {
+    onRelationIssueDialog(id, element) {
       this.$set(this.relationIssue, 'visible', true)
-      this.$set(this.relationIssue, 'id', row.id)
+      this.$set(this.relationIssue, 'id', id)
       this.scrollTo(element)
     },
     handleRelationDelete() {

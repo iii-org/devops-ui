@@ -196,7 +196,7 @@
             :issue-project="issueProject"
             :form.sync="form"
             :parent="parent"
-            :relations="relations"
+            :relations.sync="relations"
             :children-issue="children.length"
           />
         </el-col>

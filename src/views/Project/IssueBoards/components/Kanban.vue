@@ -38,7 +38,7 @@
           <div class="title">
             <span
               class="text linkTextColor"
-              @click="handleClick(element)"
+              @click="handleClick(element.id)"
             >
               {{ element.name }}
               <el-tag
@@ -547,9 +547,9 @@ export default {
       this.$emit('update', updateData)
       this.$forceUpdate()
     },
-    handleClick(row) {
+    handleClick(id) {
       // this.$router.push({ name: 'issue-detail', params: { issueId: id }})
-      this.$emit('relationIssueId', row)
+      this.$emit('relationIssueId', id)
     },
     showErrorAlert(errorMsg) {
       const h = this.$createElement
