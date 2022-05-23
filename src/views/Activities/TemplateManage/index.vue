@@ -66,7 +66,7 @@
             </div>
             <el-link
               slot="reference"
-              :underline="false"
+              type="primary"
               :disabled="scope.row.disabled || scope.row.is_lock"
               style="font-size: 16px"
             >
@@ -79,7 +79,56 @@
         align="center"
         :label="$t('Activities.OriginalProject')"
         prop="from_project_name"
-      />
+      >
+        <template slot-scope="scope">
+          <el-popover
+            placement="top"
+            width="400"
+            trigger="hover"
+            :open-delay="300"
+            :close-delay="50"
+          >
+            <p
+              :id="`copy-${scope.row.from_project_name}`"
+              class="text-center"
+            >
+              <span class="text-title">
+                {{ scope.row.from_project_repo_url }}
+              </span>
+            </p>
+            <div class="flex justify-center">
+              <el-button
+                class="mr-2"
+                icon="el-icon-copy-document"
+                circle
+                size="mini"
+                @click="copyUrl(`copy-${scope.row.from_project_name}`)"
+              />
+              <a
+                :href="scope.row.from_project_repo_url"
+                target="_blank"
+              >
+                <el-button
+                  circle
+                  size="mini"
+                >
+                  <em class="ri-external-link-line" />
+                </el-button>
+              </a>
+            </div>
+            <template slot="reference">
+              {{ scope.row.from_project_name }}
+              <el-link
+                size="small"
+                :underline="false"
+                :disabled="scope.row.disabled || scope.row.is_lock"
+              >
+                <em class="ri-external-link-line" />
+              </el-link>
+            </template>
+          </el-popover>
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         :label="$t('Activities.QuoteTimes')"
