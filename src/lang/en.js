@@ -64,6 +64,7 @@ export default {
     PluginResource: 'Plugin Resource',
     ServiceMonitoring: 'Service Monitoring',
     Harbor: 'Harbor',
+    ProjectActivities: 'Project Activities',
     ProjectActivity: 'Project Activities',
     ParticipateProject: 'Participate In The Project',
 

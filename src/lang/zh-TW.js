@@ -64,6 +64,7 @@ export default {
     PluginResource: 'Plugin 資源',
     ServiceMonitoring: '服務監控',
     Harbor: 'Harbor 資源',
+    ProjectActivities: '操作紀錄',
     ProjectActivity: '操作紀錄',
     ParticipateProject: '參與專案',
 

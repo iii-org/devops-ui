@@ -17,9 +17,9 @@ export function getAsyncRoutes(routes) {
   routes.forEach((item) => {
     const newItem = {}
     if (item.component) {
-      if (item.component === 'Layout') {
+      if (item.component === 'layout') {
         newItem.component = Layout
-      } else if (item.component === 'ParentBlank') {
+      } else if (item.component === 'layout/components/parentBlank') {
         newItem.component = ParentBlank
       } else {
         newItem.component = (resolve) => require([`@/${item.component}`], resolve)
@@ -94,10 +94,9 @@ const actions = {
       if (route.disabled) return route.name
     })
     // views Plugin
-    const routes = asyncRoutes
-    // const result = asyncRoutes
-    // const routes = getAsyncRoutes(result)
-    // console.log(routes)
+    // const routes = asyncRoutes
+    const result = asyncRoutes(roles)
+    const routes = getAsyncRoutes(result)
     let accessedRoutes
     // Plugin
     // const req = require.context('@/views/Plugin', true, /(router.js)$/, 'lazy')
