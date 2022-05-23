@@ -294,7 +294,9 @@ export default {
             ? this.row.project.id : this.selectedProjectId
         const res = await getAPI[column][0](projectId, params)
         if (column === 'fixed_version') {
-          this[column] = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[getAPI[column][1]]]
+          this[column] = res.data[getAPI[column][1]]
+            ? [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[getAPI[column][1]]]
+            : [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[0].data[getAPI[column][1]]]
         }
         if (column === 'assigned_to') {
           this[column] = [

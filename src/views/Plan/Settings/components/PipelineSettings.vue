@@ -8,7 +8,7 @@
           <span class="text-title">{{ branch }}</span>
         </div>
         <el-button class="linkTextColor" type="text" size="medium" @click="handleClick">
-          {{ $t('route.advanceBranchSettings') }}
+          {{ $t('route.AdvanceBranchSettings') }}
         </el-button>
       </div>
       <template v-if="showWarning">

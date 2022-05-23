@@ -17,11 +17,6 @@ import ParentBlank from '@/layout/components/parentBlank'
  * 2. Lower Camel case if other conditions ex. lowerCamelCase
  */
 
-/* TODO: 1. i18n and title
-  2. name the same as path
-  3. component
-*/
-
 export const constantRoutes = [
   {
     path: '/login',
@@ -189,32 +184,53 @@ export const asyncRoutes = [
         children: [
           {
             path: '',
-            component: ParentBlank,
             name: 'ProjectSetting',
             hidden: true,
-            children: [
-              {
-                path: '',
-                name: 'Setting',
-                component: () => import('@/views/Plan/Settings/roles/QA'),
-                meta: { roles: ['QA'] }
-              },
-              {
-                path: 'participateProject/:userId',
-                name: 'ParticipateProject',
-                hidden: true,
-                component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
-                meta: { title: 'ParticipateProject', roles: ['QA'] }
-              },
-              {
-                path: 'issueTransfer/:userId',
-                name: 'IssueTransfer',
-                hidden: true,
-                component: () => import('@/views/Plan/Settings/components/ProjectIssueTransfer'),
-                meta: { title: 'IssueTransfer', roles: ['QA'] }
-              }
-            ]
+            component: () => import('@/views/Plan/Settings/roles/QA'),
+            meta: { roles: ['QA'] }
+          },
+          {
+            path: 'participateProject/:userId',
+            name: 'ParticipateProject',
+            hidden: true,
+            component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
+            meta: { title: 'ParticipateProject', roles: ['QA'] }
+          },
+          {
+            path: 'issueTransfer/:userId',
+            name: 'IssueTransfer',
+            hidden: true,
+            component: () => import('@/views/Plan/Settings/components/ProjectIssueTransfer'),
+            meta: { title: 'IssueTransfer', roles: ['QA'] }
           }
+          // {
+          //   path: '',
+          //   component: ParentBlank,
+          //   name: 'ProjectSetting',
+          //   hidden: true,
+          //   children: [
+          //     {
+          //       path: '',
+          //       name: 'Setting',
+          //       component: () => import('@/views/Plan/Settings/roles/QA'),
+          //       meta: { roles: ['QA'] }
+          //     },
+          //     {
+          //       path: 'participateProject/:userId',
+          //       name: 'ParticipateProject',
+          //       hidden: true,
+          //       component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
+          //       meta: { title: 'ParticipateProject', roles: ['QA'] }
+          //     },
+          //     {
+          //       path: 'issueTransfer/:userId',
+          //       name: 'IssueTransfer',
+          //       hidden: true,
+          //       component: () => import('@/views/Plan/Settings/components/ProjectIssueTransfer'),
+          //       meta: { title: 'IssueTransfer', roles: ['QA'] }
+          //     }
+          //   ]
+          // }
         ]
       }
     ]
@@ -991,16 +1007,16 @@ export const asyncRoutes = [
         path: 'accountManage',
         component: () => import('@/views/SystemSettings/AccountManage'),
         name: 'AccountManage',
-        meta: { title: 'AccountManage', roles: ['Administrator'] },
-        children: [
-          {
-            path: 'participateProject/:userId',
-            name: 'ParticipateProject',
-            hidden: true,
-            component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
-            meta: { title: 'ParticipateProject', roles: ['Administrator'] }
-          }
-        ]
+        meta: { title: 'AccountManage', roles: ['Administrator'] }
+        // children: [
+        //   {
+        //     path: 'participateProject/:userId',
+        //     name: 'ParticipateProject',
+        //     hidden: true,
+        //     component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
+        //     meta: { title: 'ParticipateProject', roles: ['Administrator'] }
+        //   }
+        // ]
       },
       {
         path: 'systemActivities',
