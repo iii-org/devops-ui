@@ -7,7 +7,7 @@ import Layout from '@/layout'
 import ParentBlank from '@/layout/components/parentBlank'
 import pmRoute from './pm.json'
 import adRoute from './ad.json'
-import rdRoute from './rd'
+import rdRoute from './rd.json'
 import qaRoute from './qa.json'
 // import allRoutes from './all'
 

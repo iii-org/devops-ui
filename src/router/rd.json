@@ -13,8 +13,13 @@
   },
   {
     "path": "/myWork/:projectName?",
+    "name": "MyWorks",
     "component": "layout",
+    "redirect": {
+      "name": "MyWork"
+    },
     "meta": {
+      "icon": "el-icon-s-home",
       "roles": [
         "Engineer"
       ]
@@ -25,8 +30,7 @@
         "name": "MyWork",
         "component": "views/MyWork",
         "meta": {
-          "title": "myWork",
-          "icon": "el-icon-s-home",
+          "title": "MyWork",
           "roles": [
             "Engineer"
           ]
@@ -36,8 +40,13 @@
   },
   {
     "path": "/projectList",
+    "name": "ProjectLists",
     "component": "layout",
+    "redirect": {
+      "name": "ProjectList"
+    },
     "meta": {
+      "icon": "list",
       "roles": [
         "Engineer"
       ]
@@ -45,11 +54,10 @@
     "children": [
       {
         "path": "",
-        "name": "projectList",
+        "name": "ProjectList",
         "component": "views/Overview/ProjectList/ProjectListRD",
         "meta": {
-          "title": "projectList",
-          "icon": "list",
+          "title": "ProjectList",
           "roles": [
             "Engineer"
           ]
@@ -58,13 +66,14 @@
     ]
   },
   {
-    "path": "/project/:projectName?/",
+    "path": "/project/:projectName?",
     "component": "layout",
+    "name": "Works",
     "redirect": {
-      "name": "Overview"
+      "name": "IssueBoards"
     },
     "meta": {
-      "title": "works",
+      "title": "Works",
       "icon": "el-icon-s-cooperation",
       "roles": [
         "Engineer"
@@ -73,10 +82,10 @@
     "children": [
       {
         "path": "issueBoards",
-        "name": "issueBoards",
+        "name": "IssueBoards",
         "component": "views/Project/IssueBoards",
         "meta": {
-          "title": "kanban",
+          "title": "Kanban",
           "roles": [
             "Engineer"
           ]
@@ -84,14 +93,21 @@
       },
       {
         "path": "issues",
+        "name": "IssueLists",
         "component": "layout/components/parentBlank",
+        "redirect": {
+          "name": "IssueList"
+        },
         "meta": {
-          "title": "issueList"
+          "title": "IssueList",
+          "roles": [
+            "Engineer"
+          ]
         },
         "children": [
           {
             "path": "",
-            "name": "issueList",
+            "name": "IssueList",
             "hidden": true,
             "component": "views/Project/IssueList",
             "meta": {
@@ -102,26 +118,24 @@
           },
           {
             "path": ":issueId",
-            "name": "issueDetail",
+            "name": "IssueDetail",
             "hidden": true,
             "component": "views/Project/IssueDetail",
             "meta": {
-              "title": "Issue Detail",
+              "title": "IssueDetail",
               "roles": [
                 "Engineer"
-              ],
-              "rolePage": false,
-              "subject": ""
+              ]
             }
           }
         ]
       },
       {
         "path": "notes",
-        "name": "wikiList",
+        "name": "WikiList",
         "component": "views/Project/Wiki",
         "meta": {
-          "title": "wikiList",
+          "title": "WikiList",
           "roles": [
             "Engineer"
           ]
@@ -129,10 +143,10 @@
       },
       {
         "path": "files",
-        "name": "fileList",
+        "name": "FileList",
         "component": "views/Project/Files",
         "meta": {
-          "title": "fileList",
+          "title": "FileList",
           "roles": [
             "Engineer"
           ]
@@ -140,10 +154,10 @@
       },
       {
         "path": "roadmap",
-        "name": "Project Roadmap",
+        "name": "ProjectRoadmap",
         "component": "views/Project/Roadmap",
         "meta": {
-          "title": "Project Roadmap",
+          "title": "ProjectRoadmap",
           "roles": [
             "Engineer"
           ]
@@ -151,12 +165,13 @@
       },
       {
         "path": "releaseVersion",
+        "name": "ReleaseVersions",
         "redirect": {
-          "name": "releaseVersion"
+          "name": "ReleaseVersion"
         },
         "component": "layout/components/parentBlank",
         "meta": {
-          "title": "releaseVersion",
+          "title": "ReleaseVersions",
           "roles": [
             "Engineer"
           ]
@@ -164,7 +179,7 @@
         "children": [
           {
             "path": "",
-            "name": "releaseVersion",
+            "name": "ReleaseVersion",
             "component": "views/Project/ReleaseVersion",
             "hidden": true,
             "meta": {
@@ -175,56 +190,40 @@
           },
           {
             "path": ":issueTag",
-            "name": "closedIssueList",
+            "name": "ClosedIssueList",
             "hidden": true,
             "component": "views/Project/ReleaseVersion/ClosedIssueList",
             "meta": {
-              "title": "Issue Detail",
-              "roles": [
-                "Engineer"
-              ],
-              "rolePage": false
-            }
-          }
-        ]
-      },
-      {
-        "path": "deploy",
-        "redirect": {
-          "name": "deploy"
-        },
-        "component": "layout/components/parentBlank",
-        "meta": {
-          "title": "deploy",
-          "roles": [
-            "Engineer"
-          ]
-        },
-        "children": [
-          {
-            "path": "",
-            "name": "deploy",
-            "component": "views/Project/Deploy",
-            "meta": {
-              "title": "deploy",
+              "title": "IssueDetail",
               "roles": [
                 "Engineer"
               ]
             }
           }
         ]
+      },
+      {
+        "path": "deploy",
+        "name": "Deploy",
+        "component": "views/Project/Deploy",
+        "meta": {
+          "title": "Deploy",
+          "roles": [
+            "Engineer"
+          ]
+        }
       }
     ]
   },
   {
-    "path": "/progress/:projectName?/",
+    "path": "/progress/:projectName?",
     "component": "layout",
-    "name": "progress",
+    "name": "Progress",
     "redirect": {
-      "name": "devEnvironment"
+      "name": "DevEnvironment"
     },
     "meta": {
-      "title": "devProgress",
+      "title": "DevProgress",
       "icon": "el-icon-odometer",
       "roles": [
         "Engineer"
@@ -236,7 +235,7 @@
         "name": "DevBranch",
         "component": "views/Progress/DevBranch",
         "meta": {
-          "title": "devBranch",
+          "title": "DevBranch",
           "roles": [
             "Engineer"
           ]
@@ -244,9 +243,13 @@
       },
       {
         "path": "pipelines",
+        "name": "Pipelines",
         "component": "layout/components/parentBlank",
+        "redirect": {
+          "name": "Pipeline"
+        },
         "meta": {
-          "title": "pipelines",
+          "title": "Pipelines",
           "roles": [
             "Engineer"
           ]
@@ -254,7 +257,7 @@
         "children": [
           {
             "path": "",
-            "name": "Pipelines",
+            "name": "Pipeline",
             "hidden": true,
             "component": "views/Progress/Pipelines",
             "meta": {
@@ -269,7 +272,7 @@
             "hidden": true,
             "component": "views/Progress/Pipelines/components/TestReport",
             "meta": {
-              "title": "testReport",
+              "title": "TestReport",
               "roles": [
                 "Engineer"
               ]
@@ -279,10 +282,10 @@
       },
       {
         "path": "devEnvironment",
-        "name": "devEnvironment",
+        "name": "DevEnvironment",
         "component": "views/Progress/DevEnvironment",
         "meta": {
-          "title": "devEnvironment",
+          "title": "DevEnvironment",
           "roles": [
             "Engineer"
           ]
@@ -291,8 +294,12 @@
       {
         "path": "kubernetesResources",
         "component": "layout/components/parentBlank",
+        "name": "KubernetesResources",
+        "redirect": {
+          "name": "KubernetesResource"
+        },
         "meta": {
-          "title": "kubernetesResources",
+          "title": "KubernetesResources",
           "roles": [
             "Engineer"
           ]
@@ -300,16 +307,25 @@
         "children": [
           {
             "path": "",
-            "name": "kubernetesResources",
+            "name": "KubernetesResource",
             "component": "views/Progress/KubernetesResources",
-            "hidden": true
+            "hidden": true,
+            "meta": {
+              "roles": [
+                "Engineer"
+              ]
+            }
           },
           {
-            "path": "podsList",
+            "path": "podsLists",
             "hidden": true,
             "component": "layout/components/parentBlank",
+            "name": "PodLists",
+            "redirect": {
+              "name": "PodsList"
+            },
             "meta": {
-              "title": "Pods List",
+              "title": "PodsLists",
               "roles": [
                 "Engineer"
               ]
@@ -317,17 +333,22 @@
             "children": [
               {
                 "path": "",
-                "name": "Pods List",
+                "name": "PodsList",
                 "hidden": true,
-                "component": "views/Progress/KubernetesResources/components/PodsList"
+                "component": "views/Progress/KubernetesResources/components/PodsList",
+                "meta": {
+                  "roles": [
+                    "Engineer"
+                  ]
+                }
               },
               {
                 "path": "podExecuteShell",
-                "name": "Pod Execute Shell",
+                "name": "PodExecuteShell",
                 "hidden": true,
                 "component": "views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell",
                 "meta": {
-                  "title": "Pod Execute Shell",
+                  "title": "PodExecuteShell",
                   "roles": [
                     "Engineer"
                   ]
@@ -337,11 +358,11 @@
           },
           {
             "path": "serviceList",
-            "name": "Service List",
+            "name": "ServiceList",
             "hidden": true,
             "component": "views/Progress/KubernetesResources/components/ServiceList",
             "meta": {
-              "title": "Service List",
+              "title": "ServiceList",
               "roles": [
                 "Engineer"
               ]
@@ -349,11 +370,11 @@
           },
           {
             "path": "secretList",
-            "name": "Secret List",
+            "name": "SecretList",
             "hidden": true,
             "component": "views/Progress/KubernetesResources/components/SecretList",
             "meta": {
-              "title": "Secret List",
+              "title": "SecretList",
               "roles": [
                 "Engineer"
               ]
@@ -361,11 +382,11 @@
           },
           {
             "path": "configmapsList",
-            "name": "ConfigMaps List",
+            "name": "ConfigMapsList",
             "hidden": true,
             "component": "views/Progress/KubernetesResources/components/ConfigMapsList",
             "meta": {
-              "title": "ConfigMaps List",
+              "title": "ConfigMapsList",
               "roles": [
                 "Engineer"
               ]
@@ -373,11 +394,11 @@
           },
           {
             "path": "deploymentList",
-            "name": "Deployment List",
+            "name": "DeploymentList",
             "hidden": true,
             "component": "views/Progress/KubernetesResources/components/DeploymentList",
             "meta": {
-              "title": "Deployment List",
+              "title": "DeploymentList",
               "roles": [
                 "Engineer"
               ]
@@ -385,11 +406,11 @@
           },
           {
             "path": "ingressesList",
-            "name": "Ingresses List",
+            "name": "IngressesList",
             "hidden": true,
             "component": "views/Progress/KubernetesResources/components/IngressesList",
             "meta": {
-              "title": "Ingresses List",
+              "title": "IngressesList",
               "roles": [
                 "Engineer"
               ]
@@ -400,39 +421,14 @@
     ]
   },
   {
-    "path": "/commitList/:rId/:branchName/:projectName",
-    "component": "layout",
-    "hidden": true,
-    "meta": {
-      "roles": [
-        "Engineer"
-      ]
-    },
-    "children": [
-      {
-        "path": "",
-        "name": "commitList",
-        "props": true,
-        "component": "views/Progress/CommitList",
-        "meta": {
-          "title": "Commit List",
-          "icon": "tree",
-          "roles": [
-            "Engineer"
-          ]
-        }
-      }
-    ]
-  },
-  {
-    "path": "/test/:projectName?/",
-    "name": "test",
+    "path": "/test/:projectName?",
+    "name": "Test",
     "component": "layout",
     "redirect": {
-      "name": "testPlan"
+      "name": "testPlans"
     },
     "meta": {
-      "title": "testManagement",
+      "title": "TestManagement",
       "icon": "el-icon-finished",
       "roles": [
         "Engineer"
@@ -441,19 +437,22 @@
     "children": [
       {
         "path": "testFile",
-        "name": "testFile",
+        "name": "TestFile",
         "component": "views/Test/TestFile",
         "meta": {
-          "title": "testFile",
+          "title": "TestFile",
           "roles": [
             "Engineer"
           ]
         }
       },
       {
-        "path": "testPlan",
-        "redirect": "/test/testPlan",
+        "path": "testPlans",
+        "name": "TestPlans",
         "component": "layout/components/parentBlank",
+        "redirect": {
+          "name": "TestPlan"
+        },
         "meta": {
           "roles": [
             "Engineer"
@@ -462,10 +461,10 @@
         "children": [
           {
             "path": "",
-            "name": "testPlan",
+            "name": "TestPlan",
             "component": "views/Test/TestPlan",
             "meta": {
-              "title": "testPlan",
+              "title": "TestPlan",
               "roles": [
                 "Engineer"
               ]
@@ -473,28 +472,26 @@
           },
           {
             "path": "create",
-            "name": "createTestPlan",
+            "name": "CreateTestPlan",
             "hidden": true,
             "component": "views/Project/IssueDetail",
             "meta": {
-              "title": "Issue Detail",
+              "title": "IssueDetail",
               "roles": [
                 "Engineer"
-              ],
-              "rolePage": false
+              ]
             }
           },
           {
             "path": ":issueId",
-            "name": "testPlanDetail",
+            "name": "TestPlanDetail",
             "hidden": true,
             "component": "views/Project/IssueDetail",
             "meta": {
-              "title": "Issue Detail",
+              "title": "IssueDetail",
               "roles": [
                 "Engineer"
-              ],
-              "rolePage": false
+              ]
             }
           }
         ]
@@ -502,38 +499,37 @@
     ]
   },
   {
-    "path": "/scan/:projectName?/",
+    "path": "/scan/:projectName?",
     "component": "layout",
-    "name": "scan",
-    "alwaysShow": true,
+    "name": "Scan",
     "meta": {
-      "title": "autoTesting",
+      "title": "AutoTesting",
       "icon": "el-icon-circle-check",
       "roles": [
         "Engineer"
       ]
     },
     "redirect": {
-      "name": "postman"
+      "name": "Postman"
     },
     "children": [
       {
         "path": "sonarqube",
-        "name": "sonarqube",
+        "name": "Sonarqube",
         "component": "views/Scan/SonarQube",
         "meta": {
-          "title": "sonarQube",
+          "title": "SonarQube",
           "roles": [
             "Engineer"
           ]
         }
       },
       {
-        "name": "checkmarx",
         "path": "checkmarx",
+        "name": "Checkmarx",
         "component": "views/Scan/Checkmarx",
         "meta": {
-          "title": "checkMarx",
+          "title": "CheckMarx",
           "roles": [
             "Engineer"
           ]
@@ -541,10 +537,10 @@
       },
       {
         "path": "zap",
-        "name": "zap",
+        "name": "Zap",
         "component": "views/Scan/Zap",
         "meta": {
-          "title": "zap",
+          "title": "Zap",
           "roles": [
             "Engineer"
           ]
@@ -552,10 +548,10 @@
       },
       {
         "path": "cmas",
-        "name": "cmas",
+        "name": "Cmas",
         "component": "views/Scan/Cmas",
         "meta": {
-          "title": "cmas",
+          "title": "Cmas",
           "roles": [
             "Engineer"
           ]
@@ -563,13 +559,13 @@
       },
       {
         "path": "webinspect",
-        "name": "webinspect",
+        "name": "Webinspects",
         "component": "layout/components/parentBlank",
         "redirect": {
-          "name": "webinspect"
+          "name": "Webinspect"
         },
         "meta": {
-          "title": "webInspect",
+          "title": "WebInspect",
           "roles": [
             "Engineer"
           ]
@@ -577,17 +573,22 @@
         "children": [
           {
             "path": "",
-            "name": "webinspectScans",
+            "name": "Webinspect",
             "hidden": true,
-            "component": "views/Scan/WebInspect"
+            "component": "views/Scan/WebInspect",
+            "meta": {
+              "roles": [
+                "Engineer"
+              ]
+            }
           },
           {
-            "path": "report/:scan_id",
-            "name": "webinspectReport",
+            "path": "report/:scanId",
+            "name": "WebinspectReport",
             "component": "views/Scan/WIEReportViewer",
             "hidden": true,
             "meta": {
-              "title": "webInspectReport",
+              "title": "WebInspectReport",
               "roles": [
                 "Engineer"
               ]
@@ -596,14 +597,14 @@
         ]
       },
       {
-        "path": "postman",
-        "name": "postman",
+        "path": "postmans",
+        "name": "Postmans",
         "component": "layout/components/parentBlank",
         "redirect": {
-          "name": "postmanTest"
+          "name": "Postman"
         },
         "meta": {
-          "title": "postman",
+          "title": "Postman",
           "roles": [
             "Engineer"
           ]
@@ -611,17 +612,22 @@
         "children": [
           {
             "path": "",
-            "name": "postmanTest",
+            "name": "Postman",
             "hidden": true,
-            "component": "views/Scan/Postman"
+            "component": "views/Scan/Postman",
+            "meta": {
+              "roles": [
+                "Engineer"
+              ]
+            }
           },
           {
             "path": "devops/:id",
-            "name": "",
+            "name": "DevopsTestCase",
             "hidden": true,
             "component": "views/Scan/TestCaseDevOps",
             "meta": {
-              "title": "fromDevops",
+              "title": "FromDevops",
               "roles": [
                 "Engineer"
               ]
@@ -629,11 +635,11 @@
           },
           {
             "path": "postman/:id",
-            "name": "postmanTestCase",
+            "name": "PostmanTestCase",
             "hidden": true,
             "component": "views/Scan/TestCasePostman",
             "meta": {
-              "title": "fromCollection",
+              "title": "FromCollection",
               "roles": [
                 "Engineer"
               ]
@@ -643,10 +649,10 @@
       },
       {
         "path": "sideex",
-        "name": "sideex",
+        "name": "Sideex",
         "component": "views/Scan/Sideex",
         "meta": {
-          "title": "sideex",
+          "title": "Sideex",
           "roles": [
             "Engineer"
           ]
@@ -657,6 +663,7 @@
   {
     "path": "/profile",
     "component": "layout",
+    "name": "UserProfile",
     "redirect": {
       "name": "Profile"
     },
@@ -674,7 +681,6 @@
         "meta": {
           "title": "Profile",
           "icon": "user",
-          "noCache": true,
           "roles": [
             "Engineer"
           ]
@@ -685,6 +691,7 @@
   {
     "path": "/SystemVersion",
     "component": "layout",
+    "name": "SystemVersions",
     "redirect": {
       "name": "SystemVersion"
     },
@@ -702,7 +709,6 @@
         "meta": {
           "title": "System Version",
           "icon": "user",
-          "noCache": true,
           "roles": [
             "Engineer"
           ]
