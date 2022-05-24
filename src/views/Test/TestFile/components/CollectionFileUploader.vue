@@ -35,7 +35,7 @@
 <script>
 import { isJSON, fileSizeToMB, containSpecialChar } from '@/utils/extension'
 
-const fileRegex = { Postman: '.postman_collection.json$', SideeX: '.sideex.json$' }
+const fileRegex = { Postman: '.postman_collection.json$', SideeX: '.json$' }
 
 export default {
   name: 'CollectionFileUploader',

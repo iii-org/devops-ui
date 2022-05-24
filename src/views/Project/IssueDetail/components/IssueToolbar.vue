@@ -97,6 +97,7 @@
       </div>
     </el-dialog>
     <el-dialog
+      :title="$t('Issue.AddIssue')"
       :visible.sync="addTopicDialogVisible"
       width="50%"
       top="5px"
@@ -105,15 +106,6 @@
       append-to-body
       @close="handleClose"
     >
-      <template slot="title">
-        {{ $t('Issue.AddIssue') }}
-        <el-button
-          class="buttonPrimary float-right mr-5"
-          @click="handleAdvancedImport"
-        >
-          {{ $t('Issue.ImportParentIssueData') }}
-        </el-button>
-      </template>
       <AddIssue
         ref="AddIssue"
         :save-data="saveIssue"
@@ -121,7 +113,6 @@
         :project-id="selectedProjectId"
         :parent-id="issueId"
         :parent-name="issueName"
-        :prefill="form"
         @loading="loadingUpdate($event, true)"
         @add-topic-visible="emitAddTopicDialogVisible"
       />
@@ -230,8 +221,7 @@ export default {
       uploadDialogVisible: false,
       addTopicDialogVisible: false,
       specialSymbols: '\ / : * ? " < > | # { } % ~ &',
-      relationDialog: false,
-      form: {}
+      relationDialog: false
     }
   },
   computed: {
@@ -299,12 +289,7 @@ export default {
       this.addTopicDialogVisible = visible
     },
     handleClose() {
-      this.form = {}
       this.$emit('close-dialog', false)
-    },
-    handleAdvancedImport() {
-      this.form = this.row
-      this.$refs['AddIssue'].handleImport()
     },
     handleAdvancedClose() {
       this.$refs['AddIssue'].handleClose()

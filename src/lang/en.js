@@ -609,8 +609,7 @@ export default {
     CustomFilter: 'Custom Filter',
     CustomFilterName: 'Custom Filter Name',
     InputFilterName: 'Input Filter Name',
-    RemoveCustomFilter: 'Are you sure to Remove Custom Filter?',
-    ImportParentIssueData: 'Import parent issue title and information'
+    RemoveCustomFilter: 'Are you sure to Remove Custom Filter?'
   },
   Milestone: {
     Saving: 'Saving',
@@ -633,7 +632,7 @@ export default {
       TestSoftware: 'Test Software',
       TestName: 'Test Name',
       PostmanUpload: 'Postman Filename Rule: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex Filename Rule: {file_name}.sideex.json'
+      SideeXUpload: 'Sideex Filename Rule: {file_name}.json'
     }
   },
   Wiki: {
@@ -925,8 +924,7 @@ export default {
     CreateTemplate: 'Create Template',
     EditTemplate: 'Edit Template',
     LocalProject: 'Local Project',
-    TemplateDescription: 'Template Description',
-    DuplicatedTemplate: 'One project only relates to one template, The project "{0}" has been used to a template, you can click \'edit\' on the template list if source code sync is needed.'
+    TemplateDescription: 'Template Description'
   },
   Maintenance: {
     AddSecret: 'Add Secret',
