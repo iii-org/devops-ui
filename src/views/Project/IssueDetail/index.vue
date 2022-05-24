@@ -617,6 +617,7 @@ export default {
       if (this.$refs.IssueForm) {
         this.$refs.IssueForm.getClosable()
       }
+      this.issueProject = data.project
     },
     async getRelationProjectList() {
       const hasSon = (await getHasSon(this.selectedProjectId)).has_child
