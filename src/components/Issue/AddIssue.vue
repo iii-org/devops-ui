@@ -496,11 +496,21 @@ export default {
           this.issueForm[item] = this.prefill[item]
         })
       } else {
-        Object.keys(this.prefill).forEach((item) => {
-          this.issueForm[item] = this.prefill[item]
-        })
+        this.handleImport()
       }
     },
+    isReplaceTrackerId() {
+      const trackerIds = this.getTracker.map((item) => item.id)
+      const isHasTracker = trackerIds.includes(this.issueForm.tracker_id)
+      if (!isHasTracker) { this.issueForm.tracker_id = trackerIds[0] }
+    },
+    handleImport() {
+      Object.keys(this.prefill).forEach((item) => {
+        this.issueForm[item] = this.prefill[item]
+      })
+      if (this.issueForm.tracker_id) { this.isReplaceTrackerId() }
+    },
+
     handleClose() {
       if (this.dialogVisible) {
         this.uploadFileList = []

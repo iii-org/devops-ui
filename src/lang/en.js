@@ -608,7 +608,8 @@ export default {
     CustomFilter: 'Custom Filter',
     CustomFilterName: 'Custom Filter Name',
     InputFilterName: 'Input Filter Name',
-    RemoveCustomFilter: 'Are you sure to Remove Custom Filter?'
+    RemoveCustomFilter: 'Are you sure to Remove Custom Filter?',
+    ImportParentIssueData: 'Import parent issue title and information'
   },
   Milestone: {
     Saving: 'Saving',
