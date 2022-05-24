@@ -175,7 +175,11 @@ export default {
       Object.keys(this.filterValue).forEach((item) => {
         if (!this.filterValue[item]) return
         const isArray = Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0
-        isArray ? selectedLabels.push(this.handleArrayLabels(item)) : selectedLabels.push(this.handleLabels(item))
+        //isArray ? selectedLabels.push(this.handleArrayLabels(item)) : selectedLabels.push(this.handleLabels(item))
+        if (isArray) selectedLabels.push(this.handleArrayLabels(item))
+        else if (!isArray && this.handleLabels(item)) {
+          selectedLabels.push(this.handleLabels(item))
+        }
       })
       return selectedLabels
     },
