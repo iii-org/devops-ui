@@ -409,12 +409,17 @@ export default {
       title: this.$t('Kanban.trackerErrorTitle'),
       content: this.$t('Kanban.trackerErrorContent')
     }
+    this.closedVersionError = {
+      title: this.$t('Kanban.closedVersionErrorTitle'),
+      content: this.$t('Kanban.closedVersionErrorContent')
+    }
     return {
       showDialog: false,
       showAlert: false,
       errorMsg: [],
       timeoutId: -1,
-      timeoutIdx: -1
+      timeoutIdx: -1,
+      toClosedVersionError: {}
     }
   },
   computed: {
@@ -512,8 +517,8 @@ export default {
       const version = this.fixedVersion.find(issue => parseInt(version_id) === parseInt(issue.id))
       if (version) {
         if (version.status === 'closed') {
-          // const error = 'unassignedError'
-          // this.handleErrorAlert(error)
+          const error = 'closedVersionError'
+          this.handleErrorAlert(error)
           return false
         }
       }
@@ -525,8 +530,8 @@ export default {
         const version_board = this.fixedVersion.find(issue => parseInt(version_board_id) === parseInt(issue.id))
         if (version_board) {
           if (version_board.status === 'closed') {
-            // const error = 'unassignedError'
-            // this.handleErrorAlert(error)
+            const error = 'toClosedVersionError'
+            this.handleErrorAlert(error, version_board)
             return false
           } 
           return true
@@ -612,7 +617,14 @@ export default {
     checkAssigned(to, element) {
       return !(Object.keys(element.assigned_to).length < 3 && to.id > 1)
     },
-    handleErrorAlert(key) {
+    handleErrorAlert(key, version) {
+      console.log(version.name)
+      if (version) {
+        this.toClosedVersionError = {
+          title: this.$t('Kanban.closedVersionErrorTitle'),
+          content: this.$t('Kanban.toClosedVersionErrorContent', { fixed_version: version.name }) 
+        }
+      }
       const { title, content } = this[key]
       this.errorMsg.push(this.getErrorAlert(title, content))
     },

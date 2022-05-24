@@ -1257,7 +1257,10 @@ export default {
     priorityErrorTitle: 'The parent issue cannot change priority:',
     priorityErrorContent: 'Priority will be based on the last children issue.',
     trackerErrorTitle: 'Tracker Issue:',
-    trackerErrorContent: 'Tracker type requires parent issue'
+    trackerErrorContent: 'Tracker type requires parent issue',
+    closedVersionErrorTitle: 'Closed Version Issue:',
+    closedVersionErrorContent: 'An issue assigned to a closed version cannot be reopened',
+    toClosedVersionErrorContent: 'You cannot change to version {fixed_version} that status is closed.'
   },
   Status: {
     Finished: 'Finished',
