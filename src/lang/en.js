@@ -300,7 +300,8 @@ export default {
     ChangeProjectManager: 'Confirming if you want to change the project manager?',
     ConnectSocket: 'Kanban is connecting Socket...',
     UpdateKanban: '{issueName} is updated',
-    NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.'
+    NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.',
+    ChangeProject: `Switching a project will empty the version, label, and distributor's information, confirm the transfer?`
   },
   RuleMsg: {
     PleaseInput: 'Please input',

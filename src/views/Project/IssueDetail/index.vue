@@ -83,10 +83,8 @@
                 :issue-id="issueId"
                 :issue-name="issueName"
                 :issue-tracker="formTrackerName"
-                :row="form"
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
-                @updateFamilyData="getIssueFamilyData(issue)"
               />
             </el-col>
           </el-row>
@@ -142,7 +140,7 @@
                     :popup="true"
                     :is-button-disabled="isButtonDisabled"
                     :reload="relationVisible"
-                    @update-list="getIssueFamilyData(issue)"
+                    @update-list="fetchIssueLink"
                     @on-context-menu="onContextMenu"
                     @popup-dialog="onRelationIssueDialog"
                   />
@@ -195,9 +193,10 @@
             ref="IssueForm"
             :is-button-disabled="isButtonDisabled"
             :issue-id="issueId"
+            :issue-project="issueProject"
             :form.sync="form"
             :parent="parent"
-            :relations="relations"
+            :relations.sync="relations"
             :children-issue="children.length"
           />
         </el-col>
@@ -248,6 +247,21 @@
         @update-issue="handleUpdated"
       />
     </el-dialog>
+    <el-dialog
+      :visible.sync="isShowDialog"
+      append-to-body
+      destroy-on-close
+      width="30%"
+    >
+      <span>
+        <em class="el-icon-warning" :style="getStyle('danger')" />
+        {{ $t('Notify.ChangeProject') }}
+      </span>
+      <span slot="footer">
+        <el-button @click="onCancel">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" @click="onConfirm">{{ $t('general.Confirm') }}</el-button>
+      </span>
+    </el-dialog>
     <ContextMenu
       ref="contextmenu"
       :visible="contextMenu.visible"
@@ -295,6 +309,8 @@ import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import getPageTitle from '@/utils/get-page-title'
 import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
+// import { getIssueFamily } from '@/api/issue'
+import variables from '@/styles/theme/variables.scss'
 
 const commitLimit = 10
 
@@ -390,7 +406,10 @@ export default {
       errorMsg: [],
       showAlert: false,
       isLoadingFamily: false,
-      projectRelationList: []
+      projectRelationList: [],
+      isShowDialog: false,
+      storagePId: '',
+      issueProject: {}
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -462,10 +481,11 @@ export default {
       return getTrackerName.name
     },
     isButtonDisabled() {
-      // return this.userRole === 'QA'
-      return this.$route.params.disableButton
+      return this.$route.params.hasOwnProperty('disableButton')
+        ? this.$route.params.disableButton
+        : false
     },
-    formProjectId () {
+    formProjectId() {
       return this.form.project_id ? this.form.project_id : this.selectedProjectId
     }
   },
@@ -480,11 +500,24 @@ export default {
     propsIssueId(val) {
       this.fetchIssueLink()
       this.$nextTick(() => this.$refs.IssueForm.$refs.form.clearValidate())
+    },
+    async relationVisible(val) {
+      if (val === 1) {
+        await this.getIssueFamilyData(this.issue)
+      }
+    },
+    'form.project_id': {
+      handler(newPId, oldPId) {
+        if (this.storagePId && newPId !== this.storagePId) {
+          this.isShowDialog = true
+        }
+      }
     }
   },
   async mounted() {
     await this.fetchIssueLink()
     await this.getRelationProjectList()
+    this.storagePId = this.form.project_id
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject']),
@@ -500,6 +533,7 @@ export default {
         await this.fetchIssue()
       } else if (this.$route.params.issueId) {
         this.issueId = parseInt(this.$route.params.issueId)
+        this.issueProject = this.$route.params.project
         await this.fetchIssue()
       } else {
         this.form.project_id = this.selectedProjectId
@@ -620,9 +654,9 @@ export default {
       this.issueProject = data.project
     },
     async getRelationProjectList() {
-      const hasSon = (await getHasSon(this.selectedProjectId)).has_child
+      const hasSon = (await getHasSon(this.formProjectId)).has_child
       if (hasSon) {
-        const projectRelation = (await getProjectRelation(this.selectedProjectId)).data
+        const projectRelation = (await getProjectRelation(this.formProjectId)).data
         this.projectRelationList.push(projectRelation[0].parent.id)
         projectRelation[0].child.forEach((item) => {
           this.projectRelationList.push(item.id)
@@ -643,7 +677,7 @@ export default {
       this.rootProjectId = res.root_project_id
     },
     async getGitCommitLogData() {
-      await this.getRootProject(this.selectedProjectId)
+      await this.getRootProject(this.formProjectId)
       this.setIssueId()
       const params = { limit: commitLimit }
       const res = await getIssueGitCommitLog(this.rootProjectId, this.issueId, params)
@@ -655,7 +689,6 @@ export default {
     },
     setFormData(data) {
       const {
-        id,
         project,
         parent,
         assigned_to,
@@ -670,16 +703,12 @@ export default {
         due_date,
         description
       } = data
-      this.form.id = id
       this.form.parent_id = parent ? parent.id : ''
-      this.form.project = project
       this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
       this.form.name = name
       this.form.fixed_version_id = fixed_version ? fixed_version.id : ''
-      this.form.tracker = tracker
       this.form.tracker_id = tracker.id
-      this.form.status = status
       this.form.status_id = status.id
       this.form.priority_id = priority.id
       this.form.estimated_hours = estimated_hours
@@ -1007,11 +1036,7 @@ export default {
         if (this.originForm[key] === null) {
           this.originForm[key] = 0
         }
-        if (
-          key === 'relation_ids'
-            ? this.originForm[key].length !== this.form[key].length
-            : this.originForm[key] !== this.form[key]
-        ) {
+        if (this.originForm[key] !== this.form[key]) {
           return true
         }
       }
@@ -1085,35 +1110,21 @@ export default {
       } finally {
         this.isLoadingFamily = false
       }
+      this.isLoadingFamily = false
       return Promise.resolve()
     },
     formatIssueFamilyData(row, data) {
       if (data.hasOwnProperty('parent')) {
         this.$set(row, 'parent', data.parent)
         this.$set(this, 'parent', data.parent)
-      } else {
-        this.originForm.parent_id = ''
-        this.form.parent_id = ''
-        this.$set(row, 'parent', {})
-        this.$set(this, 'parent', {})
       }
       if (data.hasOwnProperty('children')) {
         this.$set(row, 'children', data.children)
         this.$set(this, 'children', data.children)
-      } else {
-        this.$set(row, 'children', [])
-        this.$set(this, 'children', [])
       }
       if (data.hasOwnProperty('relations')) {
-        this.originForm.relation_ids = data.relations.map((item) => item.id)
-        this.form.relation_ids = data.relations.map((item) => item.id)
         this.$set(row, 'relations', data.relations)
         this.$set(this, 'relations', data.relations)
-      } else {
-        this.originForm.relation_ids = []
-        this.form.relation_ids = []
-        this.$set(row, 'relations', [])
-        this.$set(this, 'relations', [])
       }
     },
     toggleIssueMatrixDialog() {
@@ -1133,6 +1144,29 @@ export default {
     },
     UTCtoLocalTime(value) {
       return UTCtoLocalTime(value)
+    },
+    onResetPId(pId) {
+      this.form.project_id = pId
+    },
+    onCancel() {
+      this.form.project_id = this.storagePId
+      this.isShowDialog = false
+    },
+    onConfirm() {
+      this.storagePId = this.form.project_id
+      this.resetForm()
+      this.isShowDialog = false
+    },
+    resetForm() {
+      this.form.tags = []
+      this.form.assigned_to_id = ''
+      this.form.fixed_version_id = ''
+    },
+    getStyle(colorCode) {
+      const color = variables[`${colorCode}`]
+      return {
+        color
+      }
     }
   }
 }
