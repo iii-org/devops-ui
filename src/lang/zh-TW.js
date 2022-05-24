@@ -298,7 +298,8 @@ export default {
     ChangeProjectManager: '確認是否要變更專案經理人。',
     ConnectSocket: '看板正在連接 Socket...',
     UpdateKanban: '{issueName} 已更新',
-    NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。'
+    NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。',
+    ChangeProject: '切換專案將清空版本、標籤及受分配者的資訊，確認移轉嗎？'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
