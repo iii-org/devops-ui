@@ -197,7 +197,7 @@
             :issue-id="issueId"
             :form.sync="form"
             :parent="parent"
-            :relations.sync="relations"
+            :relations="relations"
             :children-issue="children.length"
           />
         </el-col>
