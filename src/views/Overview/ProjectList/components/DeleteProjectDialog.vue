@@ -1,6 +1,9 @@
 <template>
   <el-dialog :visible.sync="showDialog" width="40%" :close-on-click-modal="false" @closed="onDialogClosedDelete">
     <div slot="title">{{ `${$t('general.Delete')} 「${deleteProjectObj.name}」 ${$t('Project.Project')}` }}</div>
+    <p v-if="projectRelationList.length > 0" class="text-danger">
+      {{ $t('Project.deleteHasSonProjectText', [projectRelationList.map((item) => item.name)]) }}
+    </p>
     <p class="text-danger">{{ $t('Project.deleteProjectConfirmText') }}</p>
     <p>
       <span>{{ $t('Project.PleaseType') }} </span>
@@ -32,6 +35,10 @@ export default {
     isForceDelete: {
       type: Boolean,
       default: false
+    },
+    projectRelationList: {
+      type: Array,
+      default: () => []
     }
   },
   data() {

@@ -820,6 +820,8 @@ export default {
     UpdateTime: 'Update Time',
     deleteProjectConfirmText:
       'This action cannot be undone. This will permanently delete the project, including all commits, issues, test cases and files.',
+    deleteHasSonProjectText:
+      'Its subproject(s): {0} will also be deleted !',
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
     IdInvalid: 'Identifier is invalid.',
