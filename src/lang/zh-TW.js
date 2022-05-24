@@ -628,7 +628,7 @@ export default {
       TestSoftware: '測試軟體',
       TestName: '測試名稱',
       PostmanUpload: 'Postman檔案名稱: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex檔案名稱: {file_name}.json'
+      SideeXUpload: 'Sideex檔案名稱: {file_name}.sideex.json'
     }
   },
   Wiki: {
