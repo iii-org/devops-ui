@@ -815,6 +815,8 @@ export default {
     UpdateTime: '更新時間',
     deleteProjectConfirmText:
       '確認刪除？此操作將無法復原，也會永久刪除此專案相關內容，包括所有的程式碼、測試結果、議題及檔案等。',
+    deleteHasSonProjectText:
+      '將永久刪除此專案的子專案，包括{0}。',
     PleaseType: '請輸入',
     AndThen: '進行刪除或關閉本視窗以取消操作。',
     IdInvalid: 'ID 不符合格式，請修正',
