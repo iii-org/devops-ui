@@ -6,7 +6,7 @@ Vue.use(Router)
 import Layout from '@/layout'
 import ParentBlank from '@/layout/components/parentBlank'
 import pmRoute from './pm.json'
-import adRoute from './ad'
+import adRoute from './ad.json'
 import rdRoute from './rd'
 import qaRoute from './qa.json'
 // import allRoutes from './all'
