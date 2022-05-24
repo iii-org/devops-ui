@@ -263,8 +263,7 @@ export default {
     View: '已讀',
     SocketConnected: 'Socket 已連線成功',
     ReconnectByReload: '請重整頁面(F5)，以確保連線正常',
-    Reload: '頁面重整',
-    NoTestResult: '尚無測試結果'
+    Reload: '頁面重整'
   },
   Notify: {
     Updated: '已更新',
@@ -604,8 +603,7 @@ export default {
     CustomFilter: '自定義條件',
     CustomFilterName: '自定義條件名稱',
     InputFilterName: '請輸入篩選條件名稱',
-    RemoveCustomFilter: '確認要移除自定義條件嗎?',
-    ImportParentIssueData: '匯入父議題標題與敍述'
+    RemoveCustomFilter: '確認要移除自定義條件嗎?'
   },
   Milestone: {
     Saving: '儲存中',
@@ -628,7 +626,7 @@ export default {
       TestSoftware: '測試軟體',
       TestName: '測試名稱',
       PostmanUpload: 'Postman檔案名稱: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex檔案名稱: {file_name}.json'
+      SideeXUpload: 'Sideex檔案名稱: {file_name}.sideex.json'
     }
   },
   Wiki: {
@@ -919,7 +917,8 @@ export default {
     CreateTemplate: '新增自製範本',
     EditTemplate: '修改自製範本',
     LocalProject: '本地專案',
-    TemplateDescription: '範本簡述'
+    TemplateDescription: '範本簡述',
+    DuplicatedTemplate: '同一專案僅能生成一個範本，此專案"{0}"於日前已被轉成範本，若需同步程式碼，請至外層範本清單按下編輯鈕，即可執行。'
   },
   Maintenance: {
     AddSecret: '新增 Secret',
@@ -1321,25 +1320,6 @@ export default {
     Send: '傳送',
     NotifyClosed: '訊息已關閉',
     SearchLabel: '搜尋訊息標題或寄送者'
-  },
-  IssueMatrix: {
-    Relations: '關係',
-    SearchAllRelations: '尋找全部關係',
-    SearchFor: '僅往下找',
-    OnlyDown: '往下',
-    Layer: '層',
-    RelatedIssue: '@:Issue.RelatedIssue',
-    LayerWarning: '請填入數字，預設留空為全部。',
-    DisplayItem: '顯示項目',
-    SelectDisplayItem: '請選擇顯示項目',
-    ConditionSettings: '設定條件',
-    Id: '議題編號',
-    Name: '@:Issue.name',
-    Status: '@:Issue.FilterDimensions.status',
-    Tracker: '@:Issue.FilterDimensions.tracker',
-    Assignee: '@:Issue.Assignee',
-    Version: '版號',
-    DisplayItemWarning: '顯示項目不得為空'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

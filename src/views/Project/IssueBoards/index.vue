@@ -219,7 +219,6 @@
       :fixed_version="fixed_version"
       :assigned_to="assigned_to"
       :element-ids="elementIds"
-      :project-id="projectId"
       @getRelativeList="getRelativeList"
       @updateIssueList="updateIssueList"
       @updateData="updateData"
@@ -463,14 +462,10 @@ export default {
       this.setFixedVersionShowClosed({ board: value })
       this.loadVersionList(value)
     },
-    async 'filterValue.project'(value) {
+    'filterValue.project'(value) {
       if (value) this.projectId = value
       else this.projectId = this.selectedProjectId
-      await this.onCleanKeyWord()
-      if (value) this.filterValue.project = value
-      await this.loadSelectionList()
-      await this.getInitStoredData()
-      await this.loadVersionList()
+      this.loadSelectionList()
     }
   },
   async created() {
@@ -531,11 +526,6 @@ export default {
       const storedData = await this.fetchStoredData()
       const { storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed } = storedData
       this.filterValue = storedFilterValue[key] ? storedFilterValue[key] : {}
-      if (this.filterValue.hasOwnProperty('assigned_to')) {
-        const findChangeIndex = this.assigned_to.findIndex(issue => parseInt(this.filterValue.assigned_to) === parseInt(issue.id))
-        if (findChangeIndex < 0) this.$delete(this.filterValue, 'assigned_to')
-      }
-      this.$delete(this.filterValue, 'tags')
       this.keyword = storedKeyword[key] ? storedKeyword[key] : null
       this.displayClosed = storedDisplayClosed[key] ? storedDisplayClosed[key] : false
       this.fixed_version_closed = storedVersionClosed[key] ? storedVersionClosed[key] : false
@@ -653,22 +643,15 @@ export default {
       const versionList = await this.fetchVersionList(params)
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
       const version = this.getFilteredVersion
-      if (version.length > 0) {
-        this.setFilterValue(version)
-      } else {
-        this.$delete(this.originFilterValue, 'fixed_version')
-        this.$delete(this.filterValue, 'fixed_version')
-      } 
+      version.length > 0 ? this.setFilterValue(version) : this.$delete(this.originFilterValue, 'fixed_version')
       this.onChangeFilter()
     },
     setFilterValue(version) {
-      // const sessionValue = sessionStorage.getItem('issueFilter')
-      // if (!sessionValue || !JSON.parse(sessionValue)['board']) {
-      //   this.$set(this.filterValue, 'fixed_version', version[0].id)
-      // }
-      this.$set(this.filterValue, 'fixed_version', version[0].id)
+      const sessionValue = sessionStorage.getItem('issueFilter')
+      if (!sessionValue || !JSON.parse(sessionValue)['board']) {
+        this.$set(this.filterValue, 'fixed_version', version[0].id)
+      }
       this.$set(this.originFilterValue, 'fixed_version', version[0].id)
-
     },
     async fetchVersionList(params) {
       const res = await getProjectVersion(this.projectId, params)
@@ -878,19 +861,16 @@ export default {
       })
       this.socket.on('add_issue', async data => {
         for (const idx in data) {
-          if ((this.filterValue.project) && (this.filterValue.project === data[idx].project.id) || !this.filterValue.project) {
-            data[idx] = _this.socketDataFormat(data[idx])
-            const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-            if (findChangeIndex !== -1) {
-              this.$set(this.projectIssueList, findChangeIndex, data[idx])
-            } else {
-              this.$set(this.projectIssueList, this.projectIssueList.length, data[idx])
-            }
-            this.updateData()
-            this.showUpdateMessage(data[idx])
+          data[idx] = _this.socketDataFormat(data[idx])
+          const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+          if (findChangeIndex !== -1) {
+            this.$set(this.projectIssueList, findChangeIndex, data[idx])
+          } else {
+            this.$set(this.projectIssueList, this.projectIssueList.length, data[idx])
           }
+          this.updateData()
+          this.showUpdateMessage(data[idx])
         }
-        this.elementIds = data.map(s => s.id)
       })
       this.socket.on('disconnect', (reason) => {
         if (reason !== 'io client disconnect') {

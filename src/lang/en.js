@@ -263,8 +263,7 @@ export default {
     View: 'View',
     SocketConnected: 'Socket is connected',
     ReconnectByReload: 'Please reload the page to ensure the socket reconnected properly',
-    Reload: 'Reload the page',
-    NoTestResult: 'No Test Result'
+    Reload: 'Reload the page'
   },
   Notify: {
     Updated: 'update successful',
@@ -609,8 +608,7 @@ export default {
     CustomFilter: 'Custom Filter',
     CustomFilterName: 'Custom Filter Name',
     InputFilterName: 'Input Filter Name',
-    RemoveCustomFilter: 'Are you sure to Remove Custom Filter?',
-    ImportParentIssueData: 'Import parent issue title and information'
+    RemoveCustomFilter: 'Are you sure to Remove Custom Filter?'
   },
   Milestone: {
     Saving: 'Saving',
@@ -633,7 +631,7 @@ export default {
       TestSoftware: 'Test Software',
       TestName: 'Test Name',
       PostmanUpload: 'Postman Filename Rule: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex Filename Rule: {file_name}.json'
+      SideeXUpload: 'Sideex Filename Rule: {file_name}.sideex.json'
     }
   },
   Wiki: {
@@ -925,7 +923,8 @@ export default {
     CreateTemplate: 'Create Template',
     EditTemplate: 'Edit Template',
     LocalProject: 'Local Project',
-    TemplateDescription: 'Template Description'
+    TemplateDescription: 'Template Description',
+    DuplicatedTemplate: 'One project only relates to one template, The project "{0}" has been used to a template, you can click \'edit\' on the template list if source code sync is needed.'
   },
   Maintenance: {
     AddSecret: 'Add Secret',
@@ -1330,25 +1329,6 @@ export default {
     Send: 'Send',
     NotifyClosed: 'Message closed successfully',
     SearchLabel: 'Search Title or Sender'
-  },
-  IssueMatrix: {
-    Relations: 'Relationship',
-    SearchAllRelations: 'Show All',
-    SearchFor: 'Search For',
-    OnlyDown: 'Only Down',
-    Layer: 'Layer',
-    RelatedIssue: '@:Issue.RelatedIssue',
-    LayerWarning: 'Please fill in the number, and leave the blank as all.',
-    DisplayItem: 'Display Items',
-    SelectDisplayItem: 'Please select a display item',
-    ConditionSettings: 'Condition Settings',
-    Id: 'Id',
-    Name: '@:Issue.name',
-    Status: '@:Issue.FilterDimensions.status',
-    Tracker: '@:Issue.FilterDimensions.tracker',
-    Assignee: '@:Issue.Assignee',
-    Version: 'Version',
-    DisplayItemWarning: `Display items shouldn't be empty`
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }
