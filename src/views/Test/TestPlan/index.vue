@@ -45,7 +45,6 @@
     </ProjectListSelector>
     <el-divider />
     <QuickAddIssue
-      v-if="selectedProjectId > 0 && !disableAddIssue"
       ref="quickAddIssue"
       :save-data="saveIssue"
       :project-id="selectedProjectId"
