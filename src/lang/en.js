@@ -1236,7 +1236,8 @@ export default {
     LastUpdateTime: 'Last Update Time',
     true: 'Good',
     false: 'Abnormal',
-    loading: 'Loading'
+    loading: 'Loading',
+    CheckNow: 'Check Now'
   },
   SystemTemplates: {
     GithubAccount: 'Github @:general.Account',

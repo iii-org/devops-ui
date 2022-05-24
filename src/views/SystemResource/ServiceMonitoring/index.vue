@@ -24,6 +24,21 @@
             </template>
           </el-table-column>
           <el-table-column :label="$t('ServiceMonitoring.LastUpdateTime')" align="center" prop="datetime" width="200" />
+          <el-table-column
+            :label="$t('general.Actions')"
+            align="center"
+            width="200"
+          >
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                class="buttonPrimaryReverse"
+                @click="handleCheck(scope.row.name)"
+              >
+                {{ $t('ServiceMonitoring.CheckNow') }}
+              </el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-card>
     </el-col>
@@ -55,7 +70,8 @@ export default {
   data() {
     return {
       isLoading: false,
-      listData: []
+      listData: [],
+      harborStatus: false
     }
   },
   mounted() {
@@ -69,11 +85,12 @@ export default {
       await getHarborStatus().then(async (res) => {
         if (res.status) {
           await getHarborCapacity().then((item) => {
-            this.listData[0] = this.handleData(item)
+            this.$set(this.listData, 0, this.handleData(item))
           })
         } else {
-          this.listData[0] = this.handleData(res)
+          this.$set(this.listData, 0, this.handleData(res))
         }
+        this.harborStatus = res.status
       })
       const apis = [getRancherStatus, getK8sStatus, getRedmineStatus, getSonarqubeStatus, getGitlabStatus]
       apis.forEach(async (api) => { await this.fetchData(api) })
@@ -104,6 +121,21 @@ export default {
     },
     getTagType(status) {
       return status === 'loading' ? 'warning' : status ? 'success' : 'danger'
+    },
+    async handleCheck(name) {
+      const apis = {
+        Harbor: this.harborStatus ? getHarborCapacity : getHarborStatus,
+        Rancher: getRancherStatus,
+        K8s: getK8sStatus,
+        Redmine: getRedmineStatus,
+        Sonarqube: getSonarqubeStatus,
+        Gitlab: getGitlabStatus
+      }
+      const index = this.listData.findIndex((item) => item.name === name)
+      this.$set(this.listData[index], 'status', 'loading')
+      await apis[name]().then((res) => {
+        this.$set(this.listData, index, this.handleData(res))
+      })
     }
   }
 }

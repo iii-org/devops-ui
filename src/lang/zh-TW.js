@@ -1228,7 +1228,8 @@ export default {
     LastUpdateTime: '最後更新時間',
     true: '良好',
     false: '異常',
-    loading: '載入中'
+    loading: '載入中',
+    CheckNow: '立即檢核'
   },
   SystemTemplates: {
     GithubAccount: 'Github @:general.Account',
