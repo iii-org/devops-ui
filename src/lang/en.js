@@ -264,7 +264,9 @@ export default {
     SocketConnected: 'Socket is connected',
     ReconnectByReload: 'Please reload the page to ensure the socket reconnected properly',
     Reload: 'Reload the page',
-    NoTestResult: 'No Test Result'
+    NoTestResult: 'No Test Result',
+    Parent: 'P',
+    Child: 'C'
   },
   Notify: {
     Updated: 'update successful',

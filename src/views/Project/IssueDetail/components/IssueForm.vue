@@ -652,6 +652,11 @@ export default {
 >>> .el-form-item {
   margin-bottom: 10px;
 }
+.el-select-dropdown__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .round {
   width: 20px;
   height: 20px;
