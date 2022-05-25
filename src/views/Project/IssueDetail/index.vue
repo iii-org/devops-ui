@@ -83,8 +83,10 @@
                 :issue-id="issueId"
                 :issue-name="issueName"
                 :issue-tracker="formTrackerName"
+                :row="form"
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
+                @updateFamilyData="getIssueFamilyData(issue)"
               />
             </el-col>
           </el-row>
@@ -141,7 +143,7 @@
                     :popup="true"
                     :is-button-disabled="isButtonDisabled"
                     :reload="relationVisible"
-                    @update-list="fetchIssueLink"
+                    @update-list="getIssueFamilyData(issue)"
                     @on-context-menu="onContextMenu"
                     @popup-dialog="onRelationIssueDialog"
                   />
@@ -506,11 +508,6 @@ export default {
     propsIssueId(val) {
       this.fetchIssueLink()
       this.$nextTick(() => this.$refs.IssueForm.$refs.form.clearValidate())
-    },
-    async relationVisible(val) {
-      if (val === 1) {
-        await this.getIssueFamilyData(this.issue)
-      }
     },
     'form.project_id': {
       handler(newPId, oldPId) {
@@ -1042,7 +1039,11 @@ export default {
         if (this.originForm[key] === null) {
           this.originForm[key] = 0
         }
-        if (this.originForm[key] !== this.form[key]) {
+        if (
+          key === 'relation_ids'
+            ? this.originForm[key].length !== this.form[key].length
+            : this.originForm[key] !== this.form[key]
+        ) {
           return true
         }
       }
@@ -1116,21 +1117,35 @@ export default {
       } finally {
         this.isLoadingFamily = false
       }
-      this.isLoadingFamily = false
       return Promise.resolve()
     },
     formatIssueFamilyData(row, data) {
       if (data.hasOwnProperty('parent')) {
         this.$set(row, 'parent', data.parent)
         this.$set(this, 'parent', data.parent)
+      } else {
+        this.originForm.parent_id = ''
+        this.form.parent_id = ''
+        this.$set(row, 'parent', {})
+        this.$set(this, 'parent', {})
       }
       if (data.hasOwnProperty('children')) {
         this.$set(row, 'children', data.children)
         this.$set(this, 'children', data.children)
+      } else {
+        this.$set(row, 'children', [])
+        this.$set(this, 'children', [])
       }
       if (data.hasOwnProperty('relations')) {
+        this.originForm.relation_ids = data.relations.map((item) => item.id)
+        this.form.relation_ids = data.relations.map((item) => item.id)
         this.$set(row, 'relations', data.relations)
         this.$set(this, 'relations', data.relations)
+      } else {
+        this.originForm.relation_ids = []
+        this.form.relation_ids = []
+        this.$set(row, 'relations', [])
+        this.$set(this, 'relations', [])
       }
     },
     toggleIssueMatrixDialog() {
