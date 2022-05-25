@@ -104,8 +104,6 @@ import { getProjectIssueList } from '@/api_v2/projects'
 import { addIssue, getIssueFamily } from '@/api/issue'
 import AddIssue from '@/components/Issue/AddIssue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail'
-import GanttElastic from 'gantt-elastic'
-import GanttHeader from 'gantt-elastic-header'
 import theme from '@/theme.js'
 import { CancelRequest } from '@/newMixins'
 
@@ -114,8 +112,8 @@ export default {
   components: {
     AddIssue,
     ProjectIssueDetail,
-    GanttElastic,
-    GanttHeader
+    GanttElastic: () => import('gantt-elastic'),
+    GanttHeader: () => import('gantt-elastic-header')
   },
   mixins: [CancelRequest],
   props: {
