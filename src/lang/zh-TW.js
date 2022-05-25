@@ -263,7 +263,8 @@ export default {
     View: '已讀',
     SocketConnected: 'Socket 已連線成功',
     ReconnectByReload: '請重整頁面(F5)，以確保連線正常',
-    Reload: '頁面重整'
+    Reload: '頁面重整',
+    NoTestResult: '尚無測試結果'
   },
   Notify: {
     Updated: '已更新',
@@ -1324,6 +1325,25 @@ export default {
     Send: '傳送',
     NotifyClosed: '訊息已關閉',
     SearchLabel: '搜尋訊息標題或寄送者'
+  },
+  IssueMatrix: {
+    Relations: '關係',
+    SearchAllRelations: '尋找全部關係',
+    SearchFor: '僅往下找',
+    OnlyDown: '往下',
+    Layer: '層',
+    RelatedIssue: '@:Issue.RelatedIssue',
+    LayerWarning: '請填入數字，預設留空為全部。',
+    DisplayItem: '顯示項目',
+    SelectDisplayItem: '請選擇顯示項目',
+    ConditionSettings: '設定條件',
+    Id: '議題編號',
+    Name: '@:Issue.name',
+    Status: '@:Issue.FilterDimensions.status',
+    Tracker: '@:Issue.FilterDimensions.tracker',
+    Assignee: '@:Issue.Assignee',
+    Version: '版號',
+    DisplayItemWarning: '顯示項目不得為空'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

@@ -263,7 +263,8 @@ export default {
     View: 'View',
     SocketConnected: 'Socket is connected',
     ReconnectByReload: 'Please reload the page to ensure the socket reconnected properly',
-    Reload: 'Reload the page'
+    Reload: 'Reload the page',
+    NoTestResult: 'No Test Result'
   },
   Notify: {
     Updated: 'update successful',
@@ -1333,6 +1334,25 @@ export default {
     Send: 'Send',
     NotifyClosed: 'Message closed successfully',
     SearchLabel: 'Search Title or Sender'
+  },
+  IssueMatrix: {
+    Relations: 'Relationship',
+    SearchAllRelations: 'Show All',
+    SearchFor: 'Search For',
+    OnlyDown: 'Only Down',
+    Layer: 'Layer',
+    RelatedIssue: '@:Issue.RelatedIssue',
+    LayerWarning: 'Please fill in the number, and leave the blank as all.',
+    DisplayItem: 'Display Items',
+    SelectDisplayItem: 'Please select a display item',
+    ConditionSettings: 'Condition Settings',
+    Id: 'Id',
+    Name: '@:Issue.name',
+    Status: '@:Issue.FilterDimensions.status',
+    Tracker: '@:Issue.FilterDimensions.tracker',
+    Assignee: '@:Issue.Assignee',
+    Version: 'Version',
+    DisplayItemWarning: `Display items shouldn't be empty`
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }
