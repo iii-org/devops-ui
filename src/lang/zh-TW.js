@@ -55,6 +55,7 @@ export default {
     zap: '黑箱測試(OWASP ZAP)',
     sideex: 'ＷEB 測試(Sideex)',
     cmas: 'APP檢測(CMAS)',
+    clair: 'Clair',
 
     'System Resource': '系統資源',
     Kubernetes: 'Kubernetes',

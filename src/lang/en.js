@@ -55,6 +55,7 @@ export default {
     zap: 'OWASP ZAP',
     sideex: 'Sideex',
     cmas: 'CMAS',
+    clair: 'Clair',
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',

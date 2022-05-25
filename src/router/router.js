@@ -807,6 +807,28 @@ export const asyncRoutes = [
         meta: { title: 'zap', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
       },
       {
+        path: 'clair',
+        name: 'clair',
+        component: parentBlank,
+        redirect: { name: 'clair' },
+        meta: { title: 'clair', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
+        children: [
+          {
+            path: '',
+            name: 'clair-scans',
+            hidden: true,
+            component: () => import('@/views/Scan/Clair')
+          }
+          // {
+          //   path: 'report/:scan_id',
+          //   name: 'clair-report',
+          //   component: () => import('@/views/Scan/ClairReportViewer'),
+          //   hidden: true,
+          //   meta: { title: 'clairReport', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+          // }
+        ]
+      },
+      {
         path: 'cmas',
         name: 'cmas',
         component: () => import('@/views/Scan/Cmas'),
