@@ -1277,7 +1277,10 @@ export default {
     priorityErrorTitle: 'The parent issue cannot change priority:',
     priorityErrorContent: 'Priority will be based on the last children issue.',
     trackerErrorTitle: 'Tracker Issue:',
-    trackerErrorContent: 'Tracker type requires parent issue'
+    trackerErrorContent: 'Tracker type requires parent issue',
+    closedVersionErrorTitle: 'Closed Version Issue:',
+    closedVersionErrorContent: 'An issue assigned to a closed version cannot be reopened',
+    toClosedVersionErrorContent: 'You cannot change to version {fixed_version} that status is closed.'
   },
   Status: {
     Finished: 'Finished',
@@ -1326,7 +1329,7 @@ export default {
     IncludeSystemMessage: 'Include System Message',
     Apply: 'Apply',
     MessageConsole: 'Message Console',
-    MessageNote: '* The system only keeps 7 days messages. Pelase save the message in local if it\'s important.',
+    MessageNote: '* The system only keeps 7 days messages. Please save the message in local if it\'s important.',
     CreateMessage: 'Create Message',
     EditMessage: 'Edit Message',
     MessageContent: 'Message Content',

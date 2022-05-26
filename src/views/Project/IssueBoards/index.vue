@@ -365,7 +365,7 @@ export default {
       sort = dimension === 'assigned_to' ? this.filterMe(sort) : sort
       return sort
     },
-    filterClosedStatus(statusList) {
+    filterClosedStatus() {
       return function (statusList) {
         if (this.displayClosed) return statusList
         return statusList.filter((item) => item.is_closed === false)
@@ -560,7 +560,7 @@ export default {
     classifyIssue() {
       const issueList = this.projectIssueList
       this.checkGroupByValueOnBoard()
-      issueList.forEach((issue, index) => {
+      issueList.forEach((issue) => {
         if (issue) {
           let dimensionName = issue[this.groupBy.dimension].id
           dimensionName = dimensionName || 'null'
@@ -584,9 +584,11 @@ export default {
       Object.keys(this.filterValue).forEach((param) => {
         if (this.filterValue[param]) {
           const isArray = param === 'tags' && this.filterValue[param].length > 0
-          isArray
-            ? (result[param] = this.filterValue[param].join(','))
-            : (result[`${param}_id`] = this.filterValue[param])
+          if (isArray) {
+            result[param] = this.filterValue[param].join(',')
+          } else {
+            result[`${param}_id`] = this.filterValue[param]
+          }
         }
       })
       return result
@@ -714,7 +716,7 @@ export default {
       const fuse = new Fuse(this.classifyIssueList[item], searchBy)
       let pattern = `="${value}"`
       if (Array.isArray(value) && value.length > 0) {
-        pattern = { $or: value.map((item) => ({ $path: [searchBy['keys']], $val: `="${item}"` })) }
+        pattern = { $or: value.map((items) => ({ $path: [searchBy['keys']], $val: `="${items}"` })) }
       }
       const res = fuse.search(pattern)
       this.classifyIssueList[item] = res.map((items) => items.item)
@@ -807,7 +809,7 @@ export default {
       await this.setDisplayClosed(storedDisplayClosed)
       await this.loadData()
     },
-    onChangeGroupByDimension(value, loadData) {
+    onChangeGroupByDimension(value) {
       this.$set(this.groupBy, 'dimension', value)
       this.$set(this.groupBy, 'value', [])
       this.$refs['groupByValue'].selected = []

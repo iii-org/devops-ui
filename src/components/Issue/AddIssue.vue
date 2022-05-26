@@ -480,7 +480,7 @@ export default {
             !!this.issueFilter[this.importFrom][item] &&
             this.issueFilter[this.importFrom][item] !== ''
           ) {
-            if (item === 'tags') {
+            if (item === 'tags' || item === 'start_date' || item === 'due_date') {
               this.$set(this.issueForm, item, this.issueFilter[this.importFrom][item])
             } else {
               this.$set(this.issueForm, item + '_id', this.issueFilter[this.importFrom][item])
