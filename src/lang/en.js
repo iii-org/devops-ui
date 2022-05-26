@@ -266,7 +266,8 @@ export default {
     Reload: 'Reload the page',
     NoTestResult: 'No Test Result',
     Parent: 'P',
-    Child: 'C'
+    Child: 'C',
+    CopyUrl: 'Copy URL'
   },
   Notify: {
     Updated: 'update successful',
