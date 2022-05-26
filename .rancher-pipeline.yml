@@ -136,6 +136,7 @@ stages:
       - echart
       - sideexjson
       - missing
+      - clairreport
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -201,6 +202,7 @@ stages:
       - echart
       - sideexjson
       - missing
+      - clairreport
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -277,6 +279,7 @@ stages:
       - echart
       - sideexjson
       - missing
+      - clairreport
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -347,6 +350,7 @@ stages:
       - echart
       - sideexjson
       - missing
+      - clairreport
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -415,6 +419,7 @@ stages:
       - echart
       - sideexjson
       - missing
+      - clairreport
 - name: Test--ZAP
   iiidevops: zap
   steps:
