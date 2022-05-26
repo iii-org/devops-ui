@@ -17,7 +17,7 @@
       :element-loading-text="$t('Loading')"
       fit
       highlight-current-row
-      :data="pagedData"
+      :data="testList"
       height="100%"
     >
       <el-table-column
@@ -26,6 +26,11 @@
         prop="branch"
       />
       <el-table-column
+        align="center"
+        :label="$t('Git.Commit')"
+        prop="commit"
+      />
+      <!-- <el-table-column
         align="center"
         :label="$t('Git.Commit')"
         prop="commit_id"
@@ -41,12 +46,12 @@
             <svg-icon
               class="mr-1"
               icon-class="ion-git-commit-outline"
-            />{{ scope.row.commit_id }}
+            />{{ scope.row.commit }}
           </el-link>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column-tag
-        prop="status"
+        prop="scan_status"
         size="medium"
         location="zap"
         min-width="130"
@@ -54,59 +59,39 @@
       />
       <el-table-column
         align="center"
-        label="Critical"
-      >
-        <template slot-scope="scope">
-          <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['3'] }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
+        :label="$t('Zap.critical')"
+        prop="Critical"
+      />
       <el-table-column
         align="center"
         :label="$t('Zap.high')"
-      >
-        <template slot-scope="scope">
-          <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['3'] }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
+        prop="High"
+      />
       <el-table-column
         align="center"
         :label="$t('Zap.medium')"
-      >
-        <template slot-scope="scope">
-          <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['2'] }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
+        prop="Medium"
+      />
       <el-table-column
         align="center"
         :label="$t('Zap.low')"
-      >
-        <template slot-scope="scope">
-          <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['1'] }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
+        prop="Low"
+      />
       <el-table-column
         align="center"
         label="Fixable"
-      >
-        <template slot-scope="scope">
-          <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['0'] }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
+        prop="fixable"
+      />
       <el-table-column-time
         :label="$t('general.RunAt')"
-        prop="run_at"
+        prop="start_time"
       />
       <el-table-column
         align="center"
         :label="$t('Log.duration')"
       >
         <template slot-scope="scope">
-          {{ durationText(scope.row.run_at, scope.row.finished_at) }}
+          {{ durationText(scope.row.duration) }}
         </template>
       </el-table-column>
       <el-table-column
@@ -134,10 +119,10 @@
       </template>
     </el-table>
     <pagination
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
+      :total="listQuery.total"
+      :page.sync="listQuery.current"
+      :limit="listQuery.per_page"
+      :page-sizes="[listQuery.per_page]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
@@ -145,9 +130,16 @@
 </template>
 
 <script>
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+// import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
+import { getHarborScan } from '@/api_v2/harbor'
+import { BasicData, Pagination, Table, ProjectSelector } from '@/newMixins'
+
+const params = () => ({
+  per_page: 10,
+  page: 1
+})
 
 export default {
   name: 'Clair',
@@ -155,39 +147,55 @@ export default {
     ElTableColumnTime,
     ElTableColumnTag
   },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Pagination, Table, ProjectSelector],
   data() {
     return {
       confirmLoading: false,
-      searchKeys: ['commit_id'],
-      res: {
-        data: []
+      keyword: '',
+      params: params(),
+      testList: []
+    }
+  },
+  watch: {
+    keyword: {
+      handler(val) {
+        this.onSearch(val)
       }
     }
   },
   methods: {
     async fetchData() {
-      return this.handleScans(this.res.data)
+      console.log(this.params)
+      const res = await getHarborScan(this.selectedProjectId, this.params)
+      console.log(res.data.scan_list)
+      this.setListData(res)
     },
-    handleScans(scans) {
-      const sortedScans = scans.map((scan) => {
-        if (scan.result === 'None') scan.result = {}
-        return scan
-      })
-      sortedScans.sort((a, b) => new Date(b.run_at) - new Date(a.run_at))
-      return sortedScans
+    setListData(res) {
+      this.testList = res.data.scan_list
+      this.listQuery = Object.assign({}, res.data.page)
     },
-    durationText(start, end) {
-      if (end == null) {
-        return ''
-      }
-      const s = this.$dayjs.utc(start).unix()
-      const e = this.$dayjs.utc(end).unix()
-      return this.$dayjs.duration(e - s, 'seconds').humanize()
+    durationText(duration) {
+      return this.$dayjs.duration(duration, 'seconds').humanize()
     },
     showFullLog(log) {
       const wnd = window.open(' ')
       wnd.document.write(log)
+    },
+    async onSearch(keyword) {
+      this.params.search = keyword
+      if (keyword === '') delete this.params.search
+      await this.loadData()
+      this.initParams()
+    },
+    async onPagination(listQuery) {
+      const { current } = listQuery
+      this.params.page = current
+      if (this.keyword !== '') this.params.search = this.keyword
+      await this.loadData()
+      this.initParams()
+    },
+    initParams() {
+      this.params = params()
     }
   }
 }
