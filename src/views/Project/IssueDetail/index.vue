@@ -1199,7 +1199,8 @@ export default {
     copyUrl() {
       const message = this.$t('Notify.Copied')
       const input = document.createElement('input')
-      input.value = window.location.href
+      const url = `${window.location.origin}/#/project/issues/${this.issueId}`
+      input.value = url
       document.body.appendChild(input)
       input.select()
       document.execCommand('Copy')
