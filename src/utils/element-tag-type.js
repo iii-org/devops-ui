@@ -86,3 +86,11 @@ export const systemSecrets = {
   Active: 'success',
   Removing: 'warning'
 }
+
+export const clair = {
+  Success: 'success',
+  Complete: 'slow',
+  Scanning: 'warning',
+  Queued: 'info',
+  'Not Scanned': 'slow'
+}

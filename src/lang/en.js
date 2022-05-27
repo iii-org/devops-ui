@@ -1287,9 +1287,15 @@ export default {
     Failed: 'Failed',
     Complete: '@:Status.Finished',
     Running: '@:Status.Scanning',
-    Success: '@:general.Success',
     NotRunning: 'NotRunning',
     Interrupted: 'Interrupted'
+  },
+  Clair: {
+    Success: '@:general.Success',
+    Complete: '@:Status.Finished',
+    Scanning: 'Scanning',
+    Queued: 'Queued',
+    'Not Scanned': 'NotRunning'
   },
   Gantt: {
     Now: 'Now',

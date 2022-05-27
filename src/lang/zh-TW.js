@@ -1278,9 +1278,15 @@ export default {
     Failed: '失敗',
     Complete: '@:Status.Finished',
     Running: '@:Status.Scanning',
-    Success: '@:general.Success',
     NotRunning: '準備中',
     Interrupted: '已中斷'
+  },
+  Clair: {
+    Success: '@:general.Success',
+    Complete: '@:Status.Finished',
+    Scanning: '掃描中',
+    Queued: '排程中',
+    'Not Scanned': '準備中'
   },
   Gantt: {
     Now: '今天',

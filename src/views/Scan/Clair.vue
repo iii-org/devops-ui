@@ -16,7 +16,6 @@
       v-loading="listLoading"
       :element-loading-text="$t('Loading')"
       fit
-      highlight-current-row
       :data="testList"
       height="100%"
     >
@@ -29,11 +28,6 @@
         align="center"
         :label="$t('Git.Commit')"
         prop="commit"
-      />
-      <!-- <el-table-column
-        align="center"
-        :label="$t('Git.Commit')"
-        prop="commit_id"
         width="140"
       >
         <template slot-scope="scope">
@@ -41,7 +35,7 @@
             class="linkTextColor"
             target="_blank"
             style="font-size: 16px"
-            :href="scope.row.issue_link"
+            :href="scope.row.commit_url"
           >
             <svg-icon
               class="mr-1"
@@ -49,13 +43,13 @@
             />{{ scope.row.commit }}
           </el-link>
         </template>
-      </el-table-column> -->
+      </el-table-column>
       <el-table-column-tag
         prop="scan_status"
         size="medium"
-        location="zap"
+        location="clair"
         min-width="130"
-        i18n-key="Status"
+        i18n-key="Clair"
       />
       <el-table-column
         align="center"
@@ -175,7 +169,7 @@ export default {
       this.listQuery = Object.assign({}, res.data.page)
     },
     durationText(duration) {
-      return this.$dayjs.duration(duration, 'seconds').humanize()
+      return duration ? this.$dayjs.duration(duration, 'seconds').humanize() : '-'
     },
     showFullLog(log) {
       const wnd = window.open(' ')
