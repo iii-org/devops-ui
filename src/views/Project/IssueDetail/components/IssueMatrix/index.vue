@@ -346,21 +346,21 @@ export default {
 
       if (this.form.group) {
         if (this.form.isStatus) {
-          if (this.isConditionSelected('status')) point['text'] += `(${this.$t('Issue.' + issue.tracker.name)})`
-          point['group'] = `${this.$t('Issue.' + issue.status.name)}`
-          point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
-        } else {
           if (this.isConditionSelected('tracker')) point['text'] += `(${this.$t('Issue.' + issue.status.name)})`
           point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
           point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
+        } else {
+          if (this.isConditionSelected('status')) point['text'] += `(${this.$t('Issue.' + issue.tracker.name)})`
+          point['group'] = `${this.$t('Issue.' + issue.status.name)}`
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
         }
       } else {
         if (this.isConditionSelected('status')) point['text'] += `${this.$t('Issue.' + issue.status.name)}`
         if (this.isConditionSelected('tracker')) point['text'] += ` - (${this.$t('Issue.' + issue.tracker.name)})`
         if (this.form.isStatus) {
-          point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
-        } else {
           point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
+        } else {
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
         }
       }
       if (point['text'] !== `"`) point['text'] += `<br/>`
