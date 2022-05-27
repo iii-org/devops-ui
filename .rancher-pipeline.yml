@@ -138,6 +138,7 @@ stages:
       - missing
       - clairreport
       - copyurl
+      - tagdisplay
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -201,6 +202,7 @@ stages:
       - missing
       - clairreport
       - copyurl
+      - tagdisplay
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -279,6 +281,7 @@ stages:
       - missing
       - clairreport
       - copyurl
+      - tagdisplay
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -351,6 +354,7 @@ stages:
       - missing
       - clairreport
       - copyurl
+      - tagdisplay
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -421,6 +425,7 @@ stages:
       - missing
       - clairreport
       - copyurl
+      - tagdisplay
 - name: Test--ZAP
   iiidevops: zap
   steps:
