@@ -44,6 +44,13 @@
               >
                 {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
               </span>
+              <el-tooltip class="item" :content="$t('general.CopyUrl')" placement="bottom">
+                <el-button
+                  class="el-icon-copy-document"
+                  circle
+                  @click="copyUrl"
+                />
+              </el-tooltip>
             </el-col>
           </el-row>
           <el-col
@@ -1188,6 +1195,24 @@ export default {
       return {
         color
       }
+    },
+    copyUrl() {
+      const message = this.$t('Notify.Copied')
+      const input = document.createElement('input')
+      const url = `${window.location.origin}/#/project/issues/${this.issueId}`
+      input.value = url
+      document.body.appendChild(input)
+      input.select()
+      document.execCommand('Copy')
+      input.remove()
+      this.showSuccessMessage(message)
+    },
+    showSuccessMessage(message) {
+      this.$message({
+        title: this.$t('general.Success'),
+        message,
+        type: 'success'
+      })
     }
   }
 }

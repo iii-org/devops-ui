@@ -266,7 +266,8 @@ export default {
     Reload: '頁面重整',
     NoTestResult: '尚無測試結果',
     Parent: '父',
-    Child: '子'
+    Child: '子',
+    CopyUrl: '複製網址'
   },
   Notify: {
     Updated: '已更新',
