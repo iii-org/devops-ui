@@ -8,6 +8,7 @@
         ref="issueList"
         :data="listData"
         highlight-current-row
+        size="mini"
         row-key="id"
         :tree-props="{ children: 'child' }"
         :row-class-name="getRowClass"
@@ -59,16 +60,28 @@
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span class="text-success mr-2">#{{ scope.row.id }}</span>
-            <el-tag
-              v-for="item in scope.row.tags"
-              :key="item.id"
-              size="mini"
-              class="mr-1"
-            >
-              [{{ item.name }}]
-            </el-tag>
-            {{ scope.row.name }}
+            <span style="display:flex;">
+              <div
+                class="text-success mr-2"
+                style="display:flex; align-items:center;"
+              >
+                #{{ scope.row.id }}
+              </div>
+              <div class="ellipsis">
+                <template v-if="scope.row.tags.length > 0">
+                  <el-tag
+                    v-for="item in scope.row.tags"
+                    :key="item.id"
+                    size="mini"
+                    class="mr-1"
+                  >
+                    [{{ item.name }}]
+                  </el-tag>
+                  <br>
+                </template>
+                {{ scope.row.name }}
+              </div>
+            </span>
           </template>
         </el-table-column>
         <el-table-column
@@ -350,7 +363,7 @@ export default {
       if (column.type === 'expand' && this.hasRelationIssue(row)) {
         return this.refTable.toggleRowExpansion(row)
       }
-      //this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
+      // this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
       this.$router.push({ name: 'issue-detail', params: { issueId: row.id, project: row.project }})
     },
     async getIssueFamilyData(row, expandedRows) {
@@ -437,5 +450,11 @@ export default {
 
 >>> .context-menu {
   cursor: context-menu;
+}
+
+.ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>

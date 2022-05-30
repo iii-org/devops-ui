@@ -33,7 +33,7 @@
           </el-form-item>
           <el-form-item>
             <el-switch
-              v-model="form.isStatus"
+              v-model="form.isTracker"
               :active-text="$t('Issue.tracker')"
               :inactive-text="$t('Issue.status')"
             />
@@ -167,7 +167,7 @@ import theme from '@/theme.js'
 
 const Form = () => ({
   group: false,
-  isStatus: false, // status or tracker
+  isTracker: false, // status or tracker
   allRelation: false,
   // level: '',
   hasRelation: false,
@@ -239,6 +239,10 @@ export default {
     selectedProjectId() {
       this.initChart()
     },
+    'form.isTracker'(val) {
+      if (val && !this.form.displayConditions.includes('status')) this.form.displayConditions.push('status')
+      else if (!val && !this.form.displayConditions.includes('tracker')) this.form.displayConditions.push('tracker')
+    },
     'form.allRelation'(val) {
       if (val) this.form.level = ''
       this.initChart()
@@ -248,7 +252,13 @@ export default {
     },
     'form.displayConditions'(val) {
       this.$refs.form.validate((valid) => {
-        if (val.length === 0 || !valid) {
+        if (this.form.group && this.form.isTracker && !val.includes('status')) {
+          this.showWarning(this.$t('IssueMatrix.CancelStatusWarning'))
+          this.form.displayConditions.push('status')
+        } else if (this.form.group && !this.form.isTracker && !val.includes('tracker')) {
+          this.showWarning(this.$t('IssueMatrix.CancelTrackerWarning'))
+          this.form.displayConditions.push('tracker')
+        } else if (val.length === 0 || !valid) {
           this.showWarning(this.$t('IssueMatrix.DisplayItemWarning'))
           this.form.displayConditions.push('name')
         }
@@ -345,22 +355,22 @@ export default {
       }
 
       if (this.form.group) {
-        if (this.form.isStatus) {
-          if (this.isConditionSelected('status')) point['text'] += `(${this.$t('Issue.' + issue.tracker.name)})`
-          point['group'] = `${this.$t('Issue.' + issue.status.name)}`
-          point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
-        } else {
-          if (this.isConditionSelected('tracker')) point['text'] += `(${this.$t('Issue.' + issue.status.name)})`
+        if (this.form.isTracker) {
+          if (this.isConditionSelected('status')) point['text'] += `(${this.$t('Issue.' + issue.status.name)})`
           point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
           point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
+        } else {
+          if (this.isConditionSelected('tracker')) point['text'] += `(${this.$t('Issue.' + issue.tracker.name)})`
+          point['group'] = `${this.$t('Issue.' + issue.status.name)}`
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
         }
       } else {
-        if (this.isConditionSelected('status')) point['text'] += `${this.$t('Issue.' + issue.status.name)}`
-        if (this.isConditionSelected('tracker')) point['text'] += ` - (${this.$t('Issue.' + issue.tracker.name)})`
-        if (this.form.isStatus) {
-          point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
-        } else {
+        if (this.isConditionSelected('tracker')) point['text'] += `${this.$t('Issue.' + issue.status.name)}`
+        if (this.isConditionSelected('status')) point['text'] += ` - (${this.$t('Issue.' + issue.tracker.name)})`
+        if (this.form.isTracker) {
           point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
+        } else {
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
         }
       }
       if (point['text'] !== `"`) point['text'] += `<br/>`

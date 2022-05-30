@@ -9,29 +9,14 @@
             class="buttonSecondaryReverse"
             @click="onChangeFilter"
           />
-          <span
-            v-if="updateLoading"
-            class="headerTextColor"
+          <el-button
+            size="small"
+            class="buttonSecondary"
+            icon="el-icon-plus"
+            @click="handleShowAddDialog"
           >
-            <em class="el-icon-loading" /> {{ $t('Milestone.Saving') }}......
-          </span>
-          <span
-            v-else-if="lastUpdated && lastUpdated.time"
-            class="text-success"
-          >
-            <em class="el-icon-check" />
-            <strong>{{ $t('Milestone.Success') }}: </strong>{{ lastUpdated.time|relativeTime }}
-          </span>
-          <div
-            v-else-if="lastUpdated && lastUpdated.error"
-            class="text-danger"
-            style="max-width: 500px"
-          >
-            <em class="el-icon-check" />
-            <strong>{{ $t('Milestone.Error') }}: </strong>
-            {{ $t(`errorMessage.${lastUpdated.error.response.data.error.code}`,
-                  lastUpdated.error.response.data.error.details) }}
-          </div>
+            {{ $t('Issue.AddIssue') }}
+          </el-button>
         </el-col>
       </el-row>
       <SearchFilter
@@ -43,7 +28,7 @@
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
       >
-        <el-popover>
+        <el-popover v-if="activeTab === 'WBS'">
           <el-form>
             <el-form-item label="展開層數">
               <el-select v-model="downloadForm.levels">
@@ -81,16 +66,93 @@
             </template>
           </el-form>
           <el-button
+            v-if="activeTab === 'WBS'"
             slot="reference"
             icon="el-icon-download"
             class="buttonPrimaryReverse"
+            size="small"
             :disabled="selectedProjectId === -1"
           >
             {{ $t('File.Download') }}
           </el-button>
         </el-popover>
-        <el-divider direction="vertical" />
+        <el-divider v-if="activeTab === 'Board'" direction="vertical" />
         <el-popover
+          v-if="activeTab === 'Board'"
+          placement="bottom"
+          trigger="click"
+        >
+          <el-form v-loading="listLoading">
+            <el-form-item :label="$t('Issue.FilterDimensions.label')">
+              <el-select
+                v-model="groupBy.dimension"
+                class="mr-4"
+                filterable
+                @change="onChangeGroupByDimension($event)"
+              >
+                <template v-for="item in groupByOptions">
+                  <el-option
+                    :key="item.id"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </template>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-select-all
+                ref="groupByValue"
+                :value="groupBy.value"
+                filterable
+                multiple
+                collapse-tags
+                :loading="listLoading"
+                :options="groupByValueList"
+                value-key="id"
+                @change="onChangeGroupByValue($event)"
+              />
+              <div slot="label">
+                {{ $t(`Issue.${groupBy.dimension}`) }}
+                <el-tag
+                  v-if="groupBy.dimension === 'fixed_version'"
+                  type="info"
+                  class="flex-1"
+                >
+                  <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
+                </el-tag>
+              </div>
+            </el-form-item>
+            <el-form-item v-if="groupBy.dimension === 'status'" :label="$t('Issue.Issue')">
+              <el-select-all
+                ref="groupByRow"
+                :value="groupBy.list"
+                filterable
+                multiple
+                collapse-tags
+                :loading="listLoading"
+                :options="groupByRow"
+                value-key="id"
+                @change="onChangeGroupByRow($event)"
+              />
+            </el-form-item>
+          </el-form>
+          <el-button
+            v-if="activeTab === 'Board'"
+            slot="reference"
+            :loading="listLoading"
+            class="headerTextColor"
+            type="text"
+          >
+            <i18n path="Issue.GroupBy">
+              <strong slot="filter">{{ showSelectedGroupByName }}</strong>
+            </i18n>
+            ({{ showSelectedGroupByLength }})
+            <em class="el-icon-arrow-down el-icon--right" />
+          </el-button>
+        </el-popover>
+        <el-divider v-if="activeTab === 'WBS'" direction="vertical" />
+        <el-popover
+          v-if="activeTab === 'WBS'"
           placement="bottom"
           trigger="click"
         >
@@ -109,6 +171,7 @@
             </el-form-item>
           </el-form>
           <el-button
+            v-if="activeTab === 'WBS'"
             slot="reference"
             icon="el-icon-s-operation"
             type="text"
@@ -125,6 +188,7 @@
     <div
       ref="wrapper"
       class="wrapper"
+      :class="{'is-panel':relationIssue}"
     >
       <el-tabs
         v-model="activeTab"
@@ -164,8 +228,63 @@
             :table-height="tableHeight"
           />
         </el-tab-pane>
+        <el-tab-pane
+          name="Board"
+          label="Board"
+          lazy
+        >
+          <Board 
+            ref="Board"
+            :filter-value="filterValue"
+            :keyword="keyword"
+            :display-closed="displayClosed"
+            :assigned-to="assigned_to"
+            :fixed-version="fixed_version"
+            :tags="tags"
+            :group-by="groupBy"
+            @row-list="setGroupByRow"
+            @relation-issue="onRelationIssue"
+          />
+        </el-tab-pane>
       </el-tabs>
     </div>
+    <el-dialog
+      :title="$t('Issue.AddIssue')"
+      :visible.sync="showAddIssue"
+      width="50%"
+      top="50px"
+      :close-on-click-modal="false"
+      destroy-on-close
+      append-to-body
+      @close="handleCloseAddDialog"
+    >
+      <AddIssue
+        ref="AddIssue"
+        :project-id="projectId"
+        :prefill="form"
+        :save-data="saveIssue"
+        @add-topic-visible="handleCloseAddDialog"
+      />
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          id="dialog-btn-cancel"
+          class="buttonSecondaryReverse"
+          :disabled="loadingSave"
+          @click="handleAdvancedClose"
+        >{{ $t('general.Cancel') }}</el-button>
+        <el-button
+          id="dialog-btn-confirm"
+          :loading="loadingSave"
+          class="buttonPrimary"
+          @click="handleAdvancedSave"
+        >
+          {{ $t('general.Confirm') }}
+        </el-button>
+      </span>
+    </el-dialog>
   </el-row>
 </template>
 
@@ -174,6 +293,7 @@ import { mapActions, mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Gantt from '@/views/Plan/Milestone/components/Gantt'
 import WBS from '@/views/Plan/Milestone/components/WBS'
+import Board from '@/views/Plan/Milestone/components/Board'
 import SearchFilter from '@/components/Issue/SearchFilter'
 import {
   getIssueListDownload,
@@ -184,16 +304,21 @@ import {
   patchIssueListDownload,
   postIssueListDownload
 } from '@/api/projects'
-import { getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
+import { addIssue, getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
 import XLSX from 'xlsx'
+import ElSelectAll from '@/components/ElSelectAll'
+import AddIssue from '@/components/Issue/AddIssue'
 
 export default {
   name: 'ProjectMilestone',
   components: {
     SearchFilter,
     WBS,
+    Board,
     Gantt,
-    ProjectListSelector
+    ProjectListSelector,
+    ElSelectAll,
+    AddIssue
   },
   data() {
     return {
@@ -208,6 +333,16 @@ export default {
       searchVisible: false,
       displayClosed: false,
       tableHeight: 0,
+      relationIssue: false,
+      showAddIssue: false,
+      loadingSave: false,
+      fixed_version_closed: false,
+      form: {},
+      groupBy: {
+        dimension: 'status',
+        value: [],
+        list: []
+      },
       filterOptions: Object.freeze([
         {
           id: 1,
@@ -285,6 +420,7 @@ export default {
       keyword: null,
       listData: [],
       activeTab: 'WBS',
+      groupByRow: [],
       addTopicDialog: {
         visible: false,
         parentId: 0,
@@ -304,7 +440,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'selectedProjectId', 'tracker', 'fixedVersionShowClosed']),
+    ...mapGetters(['userId', 'selectedProjectId', 'status', 'tracker', 'fixedVersionShowClosed']),
     contextOptions() {
       const result = {}
       const getOptions = ['assigned_to', 'fixed_version', 'tags']
@@ -321,6 +457,61 @@ export default {
     },
     deploy_column() {
       return this.columnsOptions.filter((item) => this.columns.includes(item.field))
+    },
+    groupByOptions() {
+      return [{
+        id: 1,
+        label: this.$t('Issue.Issue'),
+        value: 'status',
+        placeholder: 'Status'
+      }, {
+        id: 2,
+        label: this.$t('Issue.assigned_to'),
+        value: 'assigned_to',
+        placeholder: 'Assignee'
+      }, {
+        id: 3,
+        label: this.$t('Issue.fixed_version'),
+        value: 'fixed_version',
+        placeholder: 'Version'
+      }]
+    },
+    groupByValueList() {
+      return this.getStatusSort.map((item, idx) => ({
+        id: idx,
+        label: this.getTranslateHeader(item),
+        value: item
+      }))
+    },
+    getStatusSort() {
+      const dimension = this.groupBy.dimension
+      let sort = []
+      if (dimension === 'status') {
+        sort = this.filterClosedStatus(this[dimension])
+      } else if (dimension === 'assigned_to') {
+        sort = this[dimension].filter((item) => item.login !== '-Me-')
+      } else {
+        sort = this[dimension]
+      }
+      return sort
+    },
+    filterClosedStatus() {
+      return function (statusList) {
+        if (this.displayClosed) return statusList
+        return statusList.filter((item) => item.is_closed === false)
+      }
+    },
+    showSelectedGroupByName() {
+      return this.groupByOptions.find((item) => item.value === this.groupBy.dimension).label
+    },
+    showSelectedGroupByLength() {
+      if (this.groupByValueList.length === this.groupBy.value.length || this.groupBy.value.length === 0) {
+        return this.$t('general.All')
+      }
+      return this.groupBy.value.length
+    },
+    projectId() {
+      return this.filterValue.project || this.selectedProjectId
     }
   },
   watch: {
@@ -329,7 +520,7 @@ export default {
       this.loadSelectionList()
       this.$refs['searchFilter'].cleanFilter()
     },
-    fixedVersionShowClosed(value) {
+    fixed_version_closed(value) {
       this.loadVersionList(value)
     }
   },
@@ -370,6 +561,9 @@ export default {
       'setKeyword',
       'setDisplayClosed'
     ]),
+    onRelationIssue(value) {
+      this.relationIssue = value
+    },
     loadSelectionList() {
       this.loadVersionList(this.fixedVersionShowClosed)
       this.loadAssignedToList()
@@ -416,6 +610,7 @@ export default {
       this.lastUpdated = value
     },
     async onChangeFilterForm(value) {
+      this.fixed_version_closed = false
       this.loadSelectionList()
       Object.keys(value).forEach((item) => {
         this[item] = value[item]
@@ -456,7 +651,10 @@ export default {
       this.displayFields = res.data
     },
     onChangeFilter() {
-      this.$refs[this.activeTab].loadData()
+      if (this.$refs['WBS']) this.$refs['WBS'].loadData()
+      if (this.$refs['Gantt']) this.$refs['Gantt'].loadData()
+      if (this.$refs['Board']) this.$refs['Board'].loadData()
+      // this.$refs[this.activeTab].loadData()
     },
     prepareExcel(result) {
       const worksheet = XLSX.utils.json_to_sheet(result)
@@ -518,6 +716,95 @@ export default {
         console.error(e)
         return Promise.reject(e)
       }
+    },
+    onChangeGroupByDimension(value) {
+      this.$set(this.groupBy, 'dimension', value)
+      this.$set(this.groupBy, 'value', [])
+      this.$refs['groupByValue'].selected = []
+    },
+    onChangeGroupByValue(value) {
+      this.$set(this.groupBy, 'value', value)
+      this.$set(this.groupBy, 'list', [])
+      if (this.$refs['groupByRow']) this.$refs['groupByRow'].selected = []
+    },
+    onChangeGroupByRow(value) {
+      this.$set(this.groupBy, 'list', value)
+    },
+    setGroupByRow(value) {
+      this.groupByRow = value.map((item) => ({
+        id: item.id,
+        label: item.name,
+        value: item
+      }))
+    },
+    getTranslateHeader(value) {
+      let label = this.$te('Issue.' + value.name) ? this.$t('Issue.' + value.name) : value.name
+      if (this.groupBy.dimension === 'fixed_version') {
+        if (value.status === 'closed') {
+          label = label + ' (' + this.$t('Version.closed') + ')'
+        }
+      }
+      return label
+    },
+    handleCloseAddDialog() {
+      this.showAddIssue = false
+    },
+    handleShowAddDialog() {
+      this.form = {
+        tracker_id: null,
+        name: null,
+        assigned_to_id: null,
+        status_id: 1,
+        priority_id: 3
+      }
+      const dimensions = ['fixed_version', 'tracker', 'status', 'assigned_to', 'version', 'priority']
+      dimensions.forEach((item) => {
+        if (
+          this.filterValue &&
+          this.filterValue[item] !== 'null' &&
+          !!this.filterValue[item] &&
+          this.filterValue[item] !== ''
+        ) {
+          this.$set(this.form, item + '_id', this.filterValue[item])
+        }
+      })
+      if (this.filterValue.hasOwnProperty('due_date_start')) {
+        if (this.filterValue.due_date_start !== null) {
+          this.$set(this.form, 'start_date', this.filterValue.due_date_start)
+        }
+      }
+      if (this.filterValue.hasOwnProperty('due_date_end')) {
+        if (this.filterValue.due_date_end !== null) {
+          this.$set(this.form, 'due_date', this.filterValue.due_date_end)
+        }
+      }
+      if (this.filterValue.hasOwnProperty('tags')) {
+        if (this.filterValue.tags && this.filterValue.tags.length > 0) {
+          this.$set(this.form, 'tags', this.filterValue.tags)
+        }
+      }
+      this.showAddIssue = true
+    },
+    handleAdvancedClose() {
+      this.$refs['AddIssue'].handleClose()
+    },
+    handleAdvancedSave() {
+      this.$refs['AddIssue'].handleSave()
+    },
+    async saveIssue(data) {
+      this.loadingSave = true
+      await addIssue(data)
+        .then((res) => {
+          this.onChangeFilter()
+          return res
+        })
+        .catch((error) => {
+          return error
+        })
+        .finally(() => {
+          this.showAddIssue = false
+          this.loadingSave = false
+        })
     }
   }
 }
@@ -526,6 +813,11 @@ export default {
 <style lang="scss" scoped>
 .wrapper {
   height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
+
+  &.is-panel {
+    width: calc(100% - 750px);
+    transition: width 1s;
+  }
 }
 
 .display-column {

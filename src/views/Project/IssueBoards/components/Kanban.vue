@@ -1,11 +1,12 @@
 <template>
   <div
     class="board-column"
+    :style="fromWbs ? 'background: transparent' : ''"
     :class="getHeaderBarClassName(boardObject.name)"
   >
-    <div class="board-column-header">
+    <div class="board-column-header" :style="!fromWbs ? '': 'height: 10px'">
       <div class="header-bar" />
-      <el-row class="flex">
+      <el-row v-if="!fromWbs" class="flex">
         <el-col class="text-center">
           {{ getTranslateHeader(boardObject.name) }} <strong>({{ list.length }})</strong>
         </el-col>
@@ -15,6 +16,7 @@
       :list="list"
       v-bind="$attrs"
       class="board-column-content"
+      :style="fromWbs ? 'border: 1px solid transparent' : ''"
       :class="boardObject.name"
       :move="canIssueMoved"
       :draggable="'.item'"
@@ -22,6 +24,7 @@
     >
       <div
         v-for="(element, idx) in list"
+        :id="element.id"
         :key="element.id"
         :ref="element.id"
         class="board-item item"
@@ -35,12 +38,25 @@
           :style="{width: `${element.done_ratio}%`}"
         />
         <div @contextmenu="handleContextMenu(element, '', $event)">
-          <div class="title">
+          <div class="title" :class="fromWbs ? 'cardTitle' : ''">
             <span
               class="text linkTextColor"
+              :class="fromWbs ? 'msg-text' : ''"
               @click="handleClick(element.id)"
             >
-              {{ element.name }}
+              <el-tooltip
+                v-if="fromWbs"
+                placement="bottom-start"
+                :open-delay="100"
+                :content="element.name"
+              >
+                <span>
+                  {{ element.name }}
+                </span>
+              </el-tooltip>
+              <span v-else>
+                {{ element.name }}
+              </span>
               <el-tag
                 v-for="item in element.tags"
                 :key="item.id"
@@ -84,9 +100,14 @@
                 :name="$t(`Issue.${element.tracker.name}`)"
                 :type="element.tracker.name"
                 class="tracker"
+                :style="
+                  fromWbs ? 
+                    'max-width: 80px; display: inline-block;' 
+                    : ''
+                "
               />
             </span>
-            <span v-if="element.done_ratio > 0">
+            <span v-if="element.done_ratio > 0 && !fromWbs">
               <el-tag
                 :type="getStatus(element)"
                 size="mini"
@@ -95,6 +116,28 @@
                 {{ element.done_ratio }}%
               </el-tag>
             </span>
+            <el-tooltip
+              v-if="Object.keys(element.assigned_to).length > 0"
+              :content="element.assigned_to.login"
+              placement="right-start"
+              :disabled="!element.assigned_to.login"
+            >
+              <span v-if="fromWbs" style="float:right;">
+                <span class="detail user">
+                  <em class="el-icon-user-solid" />
+                  <span 
+                    class="text" 
+                    style="
+                      font-size: 14px;
+                      max-width: 70px; 
+                      display: inline-block;
+                    "
+                  >
+                    {{ element.assigned_to.name }}
+                  </span>
+                </span>
+              </span>
+            </el-tooltip>
           </div>
         </div>
         <div
@@ -209,7 +252,7 @@
           </el-collapse>
         </div>
         <div
-          v-if="element.due_date || Object.keys(element.assigned_to).length > 0"
+          v-if="element.due_date || Object.keys(element.assigned_to).length > 0 && !fromWbs"
           class="info"
         >
           <div
@@ -252,7 +295,7 @@
           class="no-info"
         />
       </div>
-      <div slot="header">
+      <div v-if="!fromWbs" slot="header">
         <div
           :class="selectedProjectId === -1 ? 'board-item-ban' : 'board-item'"
           class="title board-item select-none"
@@ -267,7 +310,7 @@
           <QuickAddIssueOnBoard
             v-if="showDialog"
             class="board-item quick-add"
-            :project-id="selectedProjectId"
+            :project-id="projectId"
             :save-data="addIssue"
             :board-object="boardObject"
             @after-add="showDialog = !showDialog"
@@ -336,6 +379,18 @@ export default {
     elementIds: {
       type: Array,
       default: () => []
+    },
+    fromWbs: {
+      type: Boolean,
+      default: false
+    },
+    fixedVersion: {
+      type: Array,
+      default: () => []
+    },
+    projectId: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -359,12 +414,17 @@ export default {
       title: this.$t('Kanban.trackerErrorTitle'),
       content: this.$t('Kanban.trackerErrorContent')
     }
+    this.closedVersionError = {
+      title: this.$t('Kanban.closedVersionErrorTitle'),
+      content: this.$t('Kanban.closedVersionErrorContent')
+    }
     return {
       showDialog: false,
       showAlert: false,
       errorMsg: [],
       timeoutId: -1,
-      timeoutIdx: -1
+      timeoutIdx: -1,
+      toClosedVersionError: {}
     }
   },
   computed: {
@@ -415,7 +475,9 @@ export default {
   },
   watch: {
     async elementIds() {
-      this.updateAnimation()
+      this.$nextTick(() => {
+        this.updateAnimation()
+      })
     }
   },
   beforeDestroy() {
@@ -438,23 +500,51 @@ export default {
       const toClassObj = this.status.find((item) => item.name === toName)
       const fromClassObj = this.status.find((item) => item.name === fromName)
       const element = evt.draggedContext.element
-      const canIssueMoved = this.isIssueNormal(toClassObj, fromClassObj, element)
+      const canIssueMoved = this.isIssueNormal(toClassObj, fromClassObj, element, evt)
       return canIssueMoved
     },
-    isIssueNormal(toClassObj, fromClassObj, element) {
+    isIssueNormal(toClassObj, fromClassObj, element, evt) {
       switch (this.dimension) {
         case 'status':
-          return this.isStatusNormal(toClassObj, fromClassObj, element)
+          return this.isStatusNormal(toClassObj, fromClassObj, element, evt)
         case 'priority':
           return this.isPriorityNormal(element)
       }
     },
-    isStatusNormal(toClassObj, fromClassObj, element) {
+    isStatusNormal(toClassObj, fromClassObj, element, evt) {
       const isAssigned = this.isAssigned(toClassObj, fromClassObj, element)
       const isChildrenIssuesClosed = toClassObj.is_closed === true ? this.isChildrenIssuesClosed(element) : true
       const isForceTracker = this.isTrackerStrict(element)
+      const isVersionClosed = this.isClosedVersion(toClassObj, element, evt)
       if (this.errorMsg.length > 0) this.showErrorAlert(this.errorMsg)
-      return isAssigned && isChildrenIssuesClosed && isForceTracker
+      return isAssigned && isChildrenIssuesClosed && isForceTracker && isVersionClosed
+    },
+    isClosedVersion(toClassObj, element, evt) {
+      const version_id = element.fixed_version.id
+      const version = this.fixedVersion.find(issue => parseInt(version_id) === parseInt(issue.id))
+      if (version) {
+        if (version.status === 'closed') {
+          const error = 'closedVersionError'
+          this.handleErrorAlert(error)
+          return false
+        }
+      }
+      if (this.boardObject.hasOwnProperty('fixed_version_id')) {
+        const version_board_id = evt.to.id.substring(
+          evt.to.id.indexOf('_') + 1, 
+          evt.to.id.lastIndexOf('_')
+        )
+        const version_board = this.fixedVersion.find(issue => parseInt(version_board_id) === parseInt(issue.id))
+        if (version_board) {
+          if (version_board.status === 'closed') {
+            const error = 'toClosedVersionError'
+            this.handleErrorAlert(error, version_board)
+            return false
+          } 
+          return true
+        }
+      }
+      return true
     },
     isPriorityNormal(element, value) {
       const isPriorityUnchanged = this.isPriorityUnchanged(element, value)
@@ -463,7 +553,9 @@ export default {
     },
     isAssigned(toClassObj, fromClassObj, element) {
       const isAssigned = this.checkAssigned(toClassObj, element)
-      if (!isAssigned) {
+      let isAllow = isAssigned
+      if (toClassObj.id === fromClassObj.id) isAllow = true
+      if (!isAllow) {
         const error = 'unassignedError'
         this.handleErrorAlert(error)
       }
@@ -474,7 +566,7 @@ export default {
       //     isAssigned = !isAssigned
       //   }
       // }
-      return isAssigned
+      return isAllow
     },
     isChildrenIssuesClosed(element) {
       const isChildrenIssuesClosed = this.checkChildrenIssuesClosed(element)
@@ -532,7 +624,13 @@ export default {
     checkAssigned(to, element) {
       return !(Object.keys(element.assigned_to).length < 3 && to.id > 1)
     },
-    handleErrorAlert(key) {
+    handleErrorAlert(key, version) {
+      if (version) {
+        this.toClosedVersionError = {
+          title: this.$t('Kanban.closedVersionErrorTitle'),
+          content: this.$t('Kanban.toClosedVersionErrorContent', { fixed_version: version.name }) 
+        }
+      }
       const { title, content } = this[key]
       this.errorMsg.push(this.getErrorAlert(title, content))
     },
@@ -602,33 +700,38 @@ export default {
       })
     },
     handleContextMenu(row, context, event) {
-      this.$emit('contextmenu', { row, context, event })
+      this.fromWbs ? this.$emit('contextmenu', row, context, event) : this.$emit('contextmenu', { row, context, event })
     },
     updateAnimation() {
       for (const elementId of this.elementIds) {
         setTimeout(() => {
-          if (this.$refs[elementId]) {
-            const relation = this.$refs[elementId][0].getElementsByClassName('el-collapse-item__header')
+          var element = document.getElementById(elementId)
+          if (element) {
+            this.scrollTo(element)
+            const relation = element.getElementsByClassName('el-collapse-item__header')
             if (relation.length > 0) {
               relation[0].style.background = 'rgba(255,0,0,.2)'
               relation[0].style.transition = 'background 0.3s ease-in-out'
             }
-            this.$refs[elementId][0].style.boxShadow = '0px 0px 10px 2px rgba(255,0,0,.2)'
-            this.$refs[elementId][0].style.background = 'rgba(255,0,0,.2)'
-            this.$refs[elementId][0].style.transition = 'box-shadow 0.3s ease-in-out'
-            this.$refs[elementId][0].style.transition = 'background 0.3s ease-in-out'
+            element.style.boxShadow = '0px 0px 10px 2px rgba(255,0,0,.2)'
+            element.style.background = 'rgba(255,0,0,.2)'
+            element.style.transition = 'box-shadow 0.3s ease-in-out'
+            element.style.transition = 'background 0.3s ease-in-out'
             this.$nextTick(() => {
               window.setTimeout(() => {
-                if (this.$refs[elementId].length > 0) {
-                  this.$refs[elementId][0].style.boxShadow = ''
-                  this.$refs[elementId][0].style.background = ''
-                  if (relation.length > 0) relation[0].style.background = ''
-                }
+                element.style.boxShadow = ''
+                element.style.background = ''
+                if (relation.length > 0) relation[0].style.background = ''
               }, 500)
             })
           }
         }, 100)
       }
+    },
+    scrollTo(element) {
+      this.$nextTick(() => {
+        element.parentNode.scrollTo({ top: 0, behavior: 'smooth' })
+      })
     }
   }
 }
@@ -637,7 +740,7 @@ export default {
 <style lang="scss" scoped>
 .board-column {
   width: 280px;
-  margin: 0 5px 20px 5px;
+  margin: 10px 5px 10px 5px;
   flex: 0 0 280px;
   padding-bottom: 20px;
   @apply overflow-hidden bg-white rounded-md border-solid border border-gray-300;
@@ -656,6 +759,7 @@ export default {
   .board-column-content {
     border: 10px solid transparent;
     height: 95%;
+    min-height: 130px;
     @apply overflow-x-hidden overflow-y-auto space-y-4;
 
     .quick-add {
@@ -955,5 +1059,16 @@ export default {
       }
     }
   }
+}
+.cardTitle {
+  margin-top: 3px; 
+  margin-bottom: 3px;
+}
+.msg-text {
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+  overflow: hidden; 
+  width: 220px;
+  font-weight: bold;
 }
 </style>

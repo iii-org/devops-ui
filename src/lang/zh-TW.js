@@ -267,7 +267,8 @@ export default {
     Reload: '頁面重整',
     NoTestResult: '尚無測試結果',
     Parent: '父',
-    Child: '子'
+    Child: '子',
+    CopyUrl: '複製網址'
   },
   Notify: {
     Updated: '已更新',
@@ -1269,7 +1270,10 @@ export default {
     priorityErrorTitle: '父議題不能改變優先權：',
     priorityErrorContent: '優先權會依據最後的子議題。',
     trackerErrorTitle: '議題更動失敗:',
-    trackerErrorContent: '本專案已啟用強制引用父議題此議題異動須含有父議題'
+    trackerErrorContent: '本專案已啟用強制引用父議題此議題異動須含有父議題',
+    closedVersionErrorTitle: 'Closed Version Issue:',
+    closedVersionErrorContent: 'An issue assigned to a closed version cannot be reopened',
+    toClosedVersionErrorContent: '指定版本 {fixed_version} 的狀態為 關閉，因此無法變更。'
   },
   Status: {
     Finished: '掃描完成',
@@ -1354,7 +1358,9 @@ export default {
     Tracker: '@:Issue.FilterDimensions.tracker',
     Assignee: '@:Issue.Assignee',
     Version: '版號',
-    DisplayItemWarning: '顯示項目不得為空'
+    DisplayItemWarning: '顯示項目不得為空',
+    CancelTrackerWarning: '開啓群組且選擇狀態時，顯示項目必須勾選議題類別',
+    CancelStatusWarning: '開啓群組且選擇類別時，顯示項目必須勾選議題狀態'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

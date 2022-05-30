@@ -204,7 +204,12 @@
     </el-table>
     <contextmenu ref="contextmenu">
       <template v-if="Object.keys(contextMenu.row).length > 2">
-        <contextmenu-item class="menu-title">{{ contextMenu.row.name }}</contextmenu-item>
+        <contextmenu-item
+          class="menu-title"
+          @click="onRelationIssueDialog(contextMenu.row)"
+        >
+          {{ contextMenu.row.name }}
+        </contextmenu-item>
         <contextmenu-submenu
           v-permission="permission"
           :title="$t('Issue.tags')"

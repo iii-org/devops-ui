@@ -267,7 +267,8 @@ export default {
     Reload: 'Reload the page',
     NoTestResult: 'No Test Result',
     Parent: 'P',
-    Child: 'C'
+    Child: 'C',
+    CopyUrl: 'Copy URL'
   },
   Notify: {
     Updated: 'update successful',
@@ -1278,7 +1279,10 @@ export default {
     priorityErrorTitle: 'The parent issue cannot change priority:',
     priorityErrorContent: 'Priority will be based on the last children issue.',
     trackerErrorTitle: 'Tracker Issue:',
-    trackerErrorContent: 'Tracker type requires parent issue'
+    trackerErrorContent: 'Tracker type requires parent issue',
+    closedVersionErrorTitle: 'Closed Version Issue:',
+    closedVersionErrorContent: 'An issue assigned to a closed version cannot be reopened',
+    toClosedVersionErrorContent: 'You cannot change to version {fixed_version} that status is closed.'
   },
   Status: {
     Finished: 'Finished',
@@ -1334,7 +1338,7 @@ export default {
     IncludeSystemMessage: 'Include System Message',
     Apply: 'Apply',
     MessageConsole: 'Message Console',
-    MessageNote: '* The system only keeps 7 days messages. Pelase save the message in local if it\'s important.',
+    MessageNote: '* The system only keeps 7 days messages. Please save the message in local if it\'s important.',
     CreateMessage: 'Create Message',
     EditMessage: 'Edit Message',
     MessageContent: 'Message Content',
@@ -1363,7 +1367,9 @@ export default {
     Tracker: '@:Issue.FilterDimensions.tracker',
     Assignee: '@:Issue.Assignee',
     Version: 'Version',
-    DisplayItemWarning: `Display items shouldn't be empty`
+    DisplayItemWarning: `Display items shouldn't be empty`,
+    CancelTrackerWarning: 'When turning on the Group and selecting the Status, the Display Items must have the Type',
+    CancelStatusWarning: 'When turning on the Group and selecting the Type, the Display Items must have the Status'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }
