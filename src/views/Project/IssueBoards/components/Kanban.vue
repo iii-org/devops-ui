@@ -625,7 +625,6 @@ export default {
       return !(Object.keys(element.assigned_to).length < 3 && to.id > 1)
     },
     handleErrorAlert(key, version) {
-      console.log(version.name)
       if (version) {
         this.toClosedVersionError = {
           title: this.$t('Kanban.closedVersionErrorTitle'),
