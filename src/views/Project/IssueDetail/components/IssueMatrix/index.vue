@@ -69,6 +69,7 @@
           <el-form-item :label="$t('IssueMatrix.RelatedIssue')">
             <el-switch
               v-model="form.hasRelation"
+              :disabled="!hasRelations"
               :active-text="$t('general.on')"
               :inactive-text="$t('general.off')"
             />
@@ -237,8 +238,13 @@ export default {
     },
     hasParent() {
       const rowIssue = this.chartIssueList.find((item) => item.id === this.row.id)
-      if (!rowIssue || !rowIssue.id) return
+      if (!rowIssue || !rowIssue.id) return false
       return !!(rowIssue.parent && rowIssue.parent.id)
+    },
+    hasRelations() {
+      const rowIssue = this.chartIssueList.find((item) => item.id === this.row.id)
+      if (!rowIssue || !rowIssue.id) return false
+      return !!(rowIssue.relations && rowIssue.relations[0].id)
     }
   },
   watch: {
