@@ -103,7 +103,8 @@ export default {
     'test-result': '測試彙整',
     testReport: 'III DevOps 測試彙整',
     monitoring: 'III DevOps 服務監控',
-    deploy: '遠端部署'
+    deploy: '遠端部署',
+    clairReport: 'Clair 測試彙整'
   },
   navbar: {
     logOut: '登出',

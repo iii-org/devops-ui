@@ -95,11 +95,11 @@
       >
         <template slot-scope="scope">
           <el-link
-            v-if="scope.row.status === 'Finished'"
+            v-if="scope.row.scan_status === 'Success'"
             class="linkTextColor"
             style="font-size: 16px"
             :underline="false"
-            @click="showFullLog(scope.row.full_log)"
+            @click="handleToTestReport(scope.row)"
           >
             <em
               class="el-icon-tickets"
@@ -127,7 +127,7 @@
 // import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
-import { getHarborScan } from '@/api_v2/harbor'
+import { getHarborScan, getHarborScanReport } from '@/api_v2/harbor'
 import { BasicData, Pagination, Table, ProjectSelector } from '@/newMixins'
 
 const params = () => ({
@@ -190,6 +190,36 @@ export default {
     },
     initParams() {
       this.params = params()
+    },
+    async handleToTestReport(row) {
+      this.$router.push({
+        name: 'ClairReport',
+        params: { 
+          commitId: row.commit, 
+          commitBranch: row.branch,
+          summary: [
+            {
+              severity: 'Critical',
+              value: row.Critical
+            }, {
+              severity: 'High',
+              value: row.High
+            }, {
+              severity: 'Low',
+              value: row.Low
+            }, {
+              severity: 'Medium',
+              value: row.Medium
+            }, {
+              severity: 'Negligible',
+              value: row.Negligible
+            }, {
+              severity: 'Unknown',
+              value: row.Unknown
+            }
+          ]
+        }
+      })
     }
   }
 }

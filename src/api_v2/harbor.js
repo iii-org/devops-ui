@@ -25,3 +25,4 @@ export const getHarborRepoStorageSummary = (project_id) =>
 export const getPluginResource = (project_id) =>
   request.get(`/v2/project/${project_id}/plugin/resource`)
 export const getHarborScan = (project_id, params) => request.get(`/v2/harbor/${project_id}/list`, { params })
+export const getHarborScanReport = (project_name, params) => request.get(`/v2/harbor/${project_name}/scan/report`, { params })

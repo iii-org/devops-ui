@@ -818,14 +818,14 @@ export const asyncRoutes = [
             name: 'clair-scans',
             hidden: true,
             component: () => import('@/views/Scan/Clair')
+          },
+          {
+            path: 'report/:commitId',
+            name: 'ClairReport',
+            hidden: true,
+            component: () => import('@/views/Scan/ClairReport'),
+            meta: { title: 'clairReport', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
           }
-          // {
-          //   path: 'report/:scan_id',
-          //   name: 'clair-report',
-          //   component: () => import('@/views/Scan/ClairReportViewer'),
-          //   hidden: true,
-          //   meta: { title: 'clairReport', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
-          // }
         ]
       },
       {
