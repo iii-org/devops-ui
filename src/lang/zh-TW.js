@@ -849,7 +849,9 @@ export default {
     closed: '已完成',
     ProjectPeriod: '專案期間(結束日)',
     ProjectOwner: '@:general.owner_name',
-    DueDate: '@:general.DueDate'
+    DueDate: '@:general.DueDate',
+    ParentProject: '父專案',
+    InheritParentProjectMember: '繼承父專案成員'
   },
   ProcessDevBranch: {
     Commit: 'Commit',

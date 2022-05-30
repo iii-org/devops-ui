@@ -117,6 +117,51 @@
               />
             </el-form-item>
           </el-col>
+          <el-col :span="24">
+            <el-form-item :label="$t('Project.ParentProject')">
+              <el-col
+                :xl="18"
+                :md="18"
+                :sm="14"
+                :xs="24"
+              >
+                <el-select
+                  v-model="form.parent_id"
+                  :placeholder="$t('Project.SelectProject')"
+                  class="mr-3"
+                  style="width:100%"
+                  filterable
+                  clearable
+                  @clear="form.is_inherit_members=false"
+                >
+                  <el-option-group
+                    v-for="group in categoryProjectList"
+                    :key="group.label"
+                    :label="group.label"
+                  >
+                    <el-option
+                      v-for="item in group.options"
+                      :key="item.id"
+                      :label="item.display"
+                      :value="item.id"
+                    />
+                  </el-option-group>
+                </el-select>
+              </el-col>
+              <el-col
+                :xl="6"
+                :md="6"
+                :sm="10"
+                :xs="24"
+              >
+                <el-switch
+                  v-model="form.is_inherit_members"
+                  :disabled="!form.parent_id"
+                  :active-text="$t('Project.InheritParentProjectMember')"
+                />
+              </el-col>
+            </el-form-item>
+          </el-col>
         </el-col>
       </el-row>
       <el-row
@@ -274,7 +319,9 @@ const formTemplate = () => ({
   start_date: dayjs().format('YYYY-MM-DD'),
   due_date: '',
   tag_name: '',
-  argumentsForm: []
+  argumentsForm: [],
+  parent_id: '',
+  is_inherit_members: false
 })
 
 export default {
@@ -338,11 +385,12 @@ export default {
       templateLoadingInstance: {},
       timer: '',
       focusSources: 'Public Templates',
-      cachedTemplates: {}
+      cachedTemplates: {},
+      categoryProjectList: []
     }
   },
   computed: {
-    ...mapGetters(['userRole']),
+    ...mapGetters(['userRole', 'projectOptions', 'selectedProjectId']),
     versionList() {
       return this.focusTemplate.version || []
     },
@@ -425,6 +473,25 @@ export default {
       if (this.userRole !== 'Engineer') {
         this.getTemplateList(isForceUpdate)
       }
+      this.getCategoryProjectList()
+    },
+    getCategoryProjectList() {
+      if ((this.selectedProjectId === -1 || !this.selectedProjectId)) {
+        return []
+      }
+      const filteredArray = this.projectOptions.filter(obj => {
+        return obj.is_lock !== true && obj.disabled !== true
+      })
+      this.allProjects = filteredArray
+      const starred = filteredArray.filter((item) => item.starred)
+      const projects = filteredArray.filter((item) => !item.starred)
+      this.categoryProjectList = [
+        {
+          label: this.$t('Project.Starred'),
+          options: starred
+        },
+        { options: projects }
+      ]
     },
     getCachedTemplateId(path = 'default-dev') {
       return this.activeTemplateList.find((item) => item.path === path).id
@@ -488,6 +555,10 @@ export default {
       if (result.description === '') delete result.description
       if (result.template_id === '') delete result.template_id
       if (result.tag_name === '') delete result.tag_name
+      if (result.parent_id === '') {
+        delete result.parent_id
+        delete result.is_inherit_members
+      }
       delete result.argumentsForm
       return result
     },

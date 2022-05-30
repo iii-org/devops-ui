@@ -854,7 +854,9 @@ export default {
     closed: 'Closed',
     ProjectPeriod: 'Project Period(due date)',
     ProjectOwner: '@:general.owner_name',
-    DueDate: '@:general.DueDate'
+    DueDate: '@:general.DueDate',
+    ParentProject: 'Parent Project',
+    InheritParentProjectMember: 'Inherit parent project member'
   },
   ProcessDevBranch: {
     Commit: 'Commit',
