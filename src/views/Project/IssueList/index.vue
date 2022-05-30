@@ -103,6 +103,7 @@
           :data="listData"
           fit
           highlight-current-row
+          size="mini"
           row-key="id"
           :height="tableHeight"
           :tree-props="{ children: 'child' }"
@@ -171,14 +172,28 @@
             sortable="custom"
           >
             <template slot-scope="scope">
-              <span class="text-success mr-2">#{{ scope.row.id }}</span>
-              <el-tag
-                v-for="item in scope.row.tags"
-                :key="item.id"
-                size="mini"
-                class="mr-1"
-              >[{{ item.name }}]</el-tag>
-              {{ scope.row.name }}
+              <span style="display:flex;">
+                <div
+                  class="text-success mr-2"
+                  style="display:flex; align-items:center;"
+                >
+                  #{{ scope.row.id }}
+                </div>
+                <div class="ellipsis">
+                  <template v-if="scope.row.tags.length > 0">
+                    <el-tag
+                      v-for="item in scope.row.tags"
+                      :key="item.id"
+                      size="mini"
+                      class="mr-1"
+                    >
+                      [{{ item.name }}]
+                    </el-tag>
+                    <br>
+                  </template>
+                  {{ scope.row.name }}
+                </div>
+              </span>
             </template>
           </el-table-column>
           <el-table-column
@@ -417,6 +432,7 @@ export default {
   },
   async mounted() {
     this.fetchInitData()
+    this.rowHeight = 46
   },
   methods: {
     ...mapActions('projects', [
@@ -683,5 +699,11 @@ export default {
   .el-form-item {
     margin: 0;
   }
+}
+
+.ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>
