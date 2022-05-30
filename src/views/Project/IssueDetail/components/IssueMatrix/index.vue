@@ -41,6 +41,7 @@
           <el-form-item :label="$t('IssueMatrix.Relations')">
             <el-switch
               v-model="form.allRelation"
+              :disabled="!hasParent"
               :active-text="$t('general.All')"
               :inactive-text="$t('IssueMatrix.OnlyDown')"
             />
@@ -233,6 +234,11 @@ export default {
         .filter((issue) => issue)
       testFileList = testFileList.flat().map((test_file) => this.formatTestFile(test_file)).flat()
       return chartData.concat(testFileList)
+    },
+    hasParent() {
+      const rowIssue = this.chartIssueList.find((item) => item.id === this.row.id)
+      if (!rowIssue || !rowIssue.id) return
+      return !!(rowIssue.parent && rowIssue.parent.id)
     }
   },
   watch: {
