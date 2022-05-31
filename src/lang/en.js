@@ -55,7 +55,7 @@ export default {
     zap: 'OWASP ZAP',
     sideex: 'Sideex',
     cmas: 'CMAS',
-    clair: 'Clair',
+    dockerImage: 'Image Scan​',
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',
@@ -104,7 +104,7 @@ export default {
     testReport: 'III DevOps Test Report',
     monitoring: 'III DevOps Service Monitoring',
     deploy: 'Deploy',
-    clairReport: 'Clair Test Report'
+    dockerReport: 'Docker Test Report'
   },
   navbar: {
     logOut: 'Log Out',
@@ -1295,13 +1295,6 @@ export default {
     NotRunning: 'NotRunning',
     Interrupted: 'Interrupted'
   },
-  Clair: {
-    Success: '@:general.Success',
-    Complete: '@:Status.Finished',
-    Scanning: 'Scanning',
-    Queued: 'Queued',
-    'Not Scanned': 'NotRunning'
-  },
   Gantt: {
     Now: 'Now',
     XScale: 'X-Scale',
@@ -1371,6 +1364,30 @@ export default {
     DisplayItemWarning: `Display items shouldn't be empty`,
     CancelTrackerWarning: 'When turning on the Group and selecting the Status, the Display Items must have the Type',
     CancelStatusWarning: 'When turning on the Group and selecting the Type, the Display Items must have the Status'
+  },
+  Docker: {
+    Title: 'Docker Image Vulnerability Scan Report​',
+    Overview: 'Overview',
+    Severity: 'Severity',
+    Count: 'Count',
+    Critical: 'Critical',
+    High: 'High',
+    Medium: 'Medium',
+    Low: 'Low',
+    Negligible: 'Negligible',
+    Unknown: 'Unknown',
+    Fixable: 'Fixable',
+    AlertDetail: 'Alert Detail​',
+    Reference: 'Reference',
+    Vulnerability: 'Vulnerability',
+    Package: 'Package',
+    CurrentVersion: 'Current Version',
+    FixedVersion: 'Fixed in Version',
+    Success: '@:general.Success',
+    Complete: '@:Status.Finished',
+    Scanning: 'Scanning',
+    Queued: 'Queued',
+    'Not Scanned': 'NotRunning'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

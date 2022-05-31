@@ -807,24 +807,24 @@ export const asyncRoutes = [
         meta: { title: 'zap', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
       },
       {
-        path: 'clair',
-        name: 'clair',
+        path: 'docker',
+        name: 'docker',
         component: parentBlank,
-        redirect: { name: 'clair' },
-        meta: { title: 'clair', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
+        redirect: { name: 'docker' },
+        meta: { title: 'dockerImage', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
         children: [
           {
             path: '',
-            name: 'clair-scans',
+            name: 'docker-scans',
             hidden: true,
-            component: () => import('@/views/Scan/Clair')
+            component: () => import('@/views/Scan/DockerImage')
           },
           {
             path: 'report/:commitId',
-            name: 'ClairReport',
+            name: 'DockerReport',
             hidden: true,
-            component: () => import('@/views/Scan/ClairReport'),
-            meta: { title: 'clairReport', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+            component: () => import('@/views/Scan/DockerReport'),
+            meta: { title: 'dockerReport', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
           }
         ]
       },

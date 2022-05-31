@@ -87,10 +87,16 @@ export const systemSecrets = {
   Removing: 'warning'
 }
 
-export const clair = {
+export const docker = {
   Success: 'success',
   Complete: 'slow',
   Scanning: 'warning',
   Queued: 'info',
-  'Not Scanned': 'slow'
+  'Not Scanned': 'slow',
+  Critical: 'danger',
+  High: 'warning',
+  Medium: 'slow',
+  Low: 'info',
+  Negligible: 'success',
+  Unknown: 'info'
 }

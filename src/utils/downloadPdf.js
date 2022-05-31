@@ -26,21 +26,21 @@ PDF.install = function(Vue, options) {
       const timeNow = time.toLocaleString()
       const fullFileName = `${fileName}_${timeNow}`
 
-      var imgData = canvas.toDataURL('image/png')
-      var imgWidth = 210
-      var pageHeight = 295
-      var imgHeight = canvas.height * imgWidth / canvas.width
+      var imgData = canvas.toDataURL('image/jpeg')
+      var imgWidth = 595
+      var pageHeight = 841
+      var imgHeight = canvas.height * (imgWidth / canvas.width)
       var heightLeft = imgHeight
-      var doc = new JsPDF('p', 'mm', 'a4')
+      var doc = new JsPDF('p', 'pt', 'a4')
       var position = 0
 
-      doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+      doc.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight)
       heightLeft -= pageHeight
 
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight
         doc.addPage()
-        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+        doc.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight)
         heightLeft -= pageHeight
       }
       doc.save(fullFileName)

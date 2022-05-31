@@ -45,11 +45,12 @@
         </template>
       </el-table-column>
       <el-table-column-tag
+        :label="$t('general.Status')"
         prop="scan_status"
         size="medium"
-        location="clair"
+        location="docker"
         min-width="130"
-        i18n-key="Clair"
+        i18n-key="Docker"
       />
       <el-table-column
         align="center"
@@ -73,7 +74,7 @@
       />
       <el-table-column
         align="center"
-        label="Fixable"
+        :label="$t('Docker.Fixable')"
         prop="fixable"
       />
       <el-table-column-time
@@ -127,7 +128,7 @@
 // import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
-import { getHarborScan, getHarborScanReport } from '@/api_v2/harbor'
+import { getHarborScan } from '@/api_v2/harbor'
 import { BasicData, Pagination, Table, ProjectSelector } from '@/newMixins'
 
 const params = () => ({
@@ -136,7 +137,7 @@ const params = () => ({
 })
 
 export default {
-  name: 'Clair',
+  name: 'DockerImage',
   components: {
     ElTableColumnTime,
     ElTableColumnTag
@@ -159,9 +160,7 @@ export default {
   },
   methods: {
     async fetchData() {
-      console.log(this.params)
       const res = await getHarborScan(this.selectedProjectId, this.params)
-      console.log(res.data.scan_list)
       this.setListData(res)
     },
     setListData(res) {
@@ -170,10 +169,6 @@ export default {
     },
     durationText(duration) {
       return duration ? this.$dayjs.duration(duration, 'seconds').humanize() : '-'
-    },
-    showFullLog(log) {
-      const wnd = window.open(' ')
-      wnd.document.write(log)
     },
     async onSearch(keyword) {
       this.params.search = keyword
@@ -192,32 +187,18 @@ export default {
       this.params = params()
     },
     async handleToTestReport(row) {
+      const severity = ['Critical', 'High', 'Medium', 'Low', 'Negligible', 'Unknown']
+      var summary = []
+      for (const item of severity) {
+        const obj = { severity: item, value: row[item] }
+        summary.push(obj)
+      }
       this.$router.push({
-        name: 'ClairReport',
+        name: 'DockerReport',
         params: { 
           commitId: row.commit, 
           commitBranch: row.branch,
-          summary: [
-            {
-              severity: 'Critical',
-              value: row.Critical
-            }, {
-              severity: 'High',
-              value: row.High
-            }, {
-              severity: 'Low',
-              value: row.Low
-            }, {
-              severity: 'Medium',
-              value: row.Medium
-            }, {
-              severity: 'Negligible',
-              value: row.Negligible
-            }, {
-              severity: 'Unknown',
-              value: row.Unknown
-            }
-          ]
+          summary: summary
         }
       })
     }

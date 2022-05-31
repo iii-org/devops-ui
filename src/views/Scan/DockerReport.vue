@@ -1,6 +1,6 @@
 <template>
-  <div class="app-container">
-    <div class="mr-3 flex justify-between">
+  <div class="app-container" style="padding-top: 0px">
+    <div class="flex justify-between fix-header">
       <div>
         <el-button
           type="text"
@@ -11,8 +11,8 @@
         >
           {{ $t('general.Back') }}
         </el-button>
-        <span class="ml-2 text-xl">
-          <span>Docker Image Vulnerability Scan Report</span>
+        <span class="ml-2 text-l">
+          <span>{{ $t('Docker.Title') }}</span>
         </span>
       </div>
       <div>
@@ -30,7 +30,7 @@
     <div ref="pdfPage">
       <el-card class="shadow-md">
         <div class="logo-container">
-          <img src="@/assets/logo.png" class="logo">
+          <img src="@/assets/logo.png" class="logo" alt="logo">
           <h1 class="title">{{ title }} </h1>
         </div>
         <div
@@ -41,7 +41,10 @@
             font-size: 32px;
             text-shadow: #b3b1b1 0.05em 0.05em 0.1em;
           "
-        >Docker Image Vulnerability Scan Report</div>
+        >{{ $t('Docker.Title') }}</div>
+        <div class="text-center font-bold" style="padding-top: 20px;">
+          {{ scanner.name }} {{ scanner.version }}
+        </div>
         <div style="padding: 40px;">
           <ul class="text-base mb-10 font-semibold">
             <li>{{ $t('general.project_name') }}: {{ selectedProject.display }}</li>
@@ -53,6 +56,16 @@
             </li>
           </ul>
           <!-- white box test -->
+          <div 
+            class="text-center font-bold" 
+            style="
+              padding: 10px;
+              background: #606260;
+              color: #fff;
+            "
+          >
+            {{ $t('Docker.Overview') }}
+          </div>
           <el-table
             ref="table_checkmarx"
             v-loading="listLoading"
@@ -63,9 +76,26 @@
             border
             fit
           >
-            <el-table-column align="center" label="Severity" prop="severity" />
-            <el-table-column align="center" label="Count" prop="value" />
+            <el-table-column-tag
+              :label="$t('Docker.Severity')"
+              prop="severity"
+              size="small"
+              location="docker"
+              min-width="130"
+              i18n-key="Docker"
+            />
+            <el-table-column align="center" :label="$t('Docker.Count')" prop="value" />
           </el-table>
+          <div 
+            class="text-center font-bold" 
+            style="
+              padding: 10px;
+              background: #606260;
+              color: #fff;
+            "
+          >
+            {{ $t('Docker.AlertDetail') }}
+          </div>
           <el-table
             ref="table_checkmarx"
             v-loading="listLoading"
@@ -76,12 +106,41 @@
             border
             fit
           >
-            <el-table-column align="center" width="180px" label="Vulnerability" prop="id" />
-            <el-table-column align="center" label="Severity" prop="severity" />
-            <el-table-column align="center" label="Package" prop="package" />
-            <el-table-column align="center" label="Current Version" prop="version" />
-            <el-table-column align="center" label="Fixed in Version" prop="fix_version" />
+            <el-table-column align="center" type="index" width="50" />
+            <el-table-column align="center" width="180px" :label="$t('Docker.Vulnerability')" prop="id">
+              <template slot-scope="scope">
+                <el-link
+                  class="linkTextColor"
+                  target="_blank"
+                  style="font-size: 16px"
+                  :href="scope.row.links[0]"
+                >
+                  {{ scope.row.id }}
+                </el-link>
+              </template>
+            </el-table-column>
+            <el-table-column-tag
+              :label="$t('Docker.Severity')"
+              prop="severity"
+              size="small"
+              location="docker"
+              min-width="130"
+              i18n-key="Docker"
+            />
+            <el-table-column align="center" :label="$t('Docker.Package')" prop="package" />
+            <el-table-column align="center" :label="$t('Docker.CurrentVersion')" prop="version" />
+            <el-table-column align="center" :label="$t('Docker.FixedVersion')" prop="fix_version" />
           </el-table>
+          <div 
+            class="text-center font-bold" 
+            style="
+              padding: 10px;
+              background: #606260;
+              color: #fff;
+            "
+          >
+            {{ $t('Docker.Reference') }}
+          </div>
           <el-table
             ref="table_checkmarx"
             v-loading="listLoading"
@@ -92,8 +151,24 @@
             border
             fit
           >
-            <el-table-column align="center" width="180px" label="Vulnerability" prop="id" />
-            <el-table-column align="center" label="Description" prop="description" />
+            <el-table-column align="center" type="index" width="50" />
+            <el-table-column align="center" width="180px" :label="$t('Docker.Vulnerability')" prop="id">
+              <template slot-scope="scope">
+                <el-link
+                  class="linkTextColor"
+                  target="_blank"
+                  style="font-size: 16px"
+                  :href="scope.row.links[0]"
+                >
+                  {{ scope.row.id }}
+                </el-link>
+              </template>
+            </el-table-column>
+            <el-table-column header-align="center" :label="$t('general.Description')" prop="description">
+              <template slot-scope="scope">
+                {{ scope.row.description || '-' }}
+              </template>
+            </el-table-column>
           </el-table>
         </div>
       </el-card>
@@ -105,11 +180,13 @@
 import { mapGetters } from 'vuex'
 import { UTCtoLocalTime } from '@/filters/index'
 import { getHarborScanReport } from '@/api_v2/harbor'
+import ElTableColumnTag from '@/components/ElTableColumnTag'
 
 const downloadFileName = 'Docker_Image_Vulnerability_Scan_Report'
 
 export default {
-  name: 'ClairReport',
+  name: 'DockerReport',
+  components: { ElTableColumnTag },
   data() {
     return {
       title: 'III DevOps',
@@ -145,10 +222,8 @@ export default {
       this.listLoading = true
       try {
         const res = await getHarborScanReport(this.selectedProject.name, { branch: this.branch, commit_id: this.commitId })
-        // this.listData = res.data.vulnerabilities
         this.listData = this.sortVulnerabilityData(res.data.vulnerabilities)
         this.scanner = res.data.scanner
-        console.log(res)
       } catch (error) {
         console.error(error)
       } finally {
@@ -158,11 +233,9 @@ export default {
     sortVulnerabilityData(data) {
       var sortedData = []
       for (const severity of this.summaryData.map(s => s.severity)) {
-        console.log(severity)
         const sorted = data.filter(item => item.severity === severity)
         sortedData = [...sortedData, ...sorted]
       }
-      console.log(sortedData)
       return sortedData
     },
     handleBackPage() {
@@ -176,6 +249,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+
 >>> .el-divider__text {
   font-size: 18px;
 }
@@ -205,5 +280,16 @@ export default {
     font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
     vertical-align: middle;
   }
+}
+
+.fix-header {
+  top: 0px;
+  z-index: 2;
+  position: sticky;
+  position: -webkit-sticky;
+  background: $appMainBg;
+  padding-top: 20px;
+  // outline: solid 8px $appMainBg;
+  box-shadow: -20px 0px 0px 0px $appMainBg, 20px 0px 0px 0px $appMainBg;
 }
 </style>
