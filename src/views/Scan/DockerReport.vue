@@ -28,7 +28,7 @@
       </div>
     </div>
     <div ref="pdfPage">
-      <el-card class="shadow-md">
+      <el-card shadow="never">
         <div class="logo-container">
           <img src="@/assets/logo.png" class="logo" alt="logo">
           <h1 class="title">{{ title }} </h1>
@@ -62,6 +62,7 @@
               padding: 10px;
               background: #606260;
               color: #fff;
+              max-width: 300px
             "
           >
             {{ $t('Docker.Overview') }}
@@ -70,6 +71,7 @@
             ref="table_checkmarx"
             v-loading="listLoading"
             class="mb-10"
+            style="max-width: 300px"
             :element-loading-text="$t('Loading')"
             :data="summaryData"
             size="small"
