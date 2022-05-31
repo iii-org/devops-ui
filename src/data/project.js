@@ -20,6 +20,9 @@ function Project(project) {
   this.starred = project.starred
   this.is_lock = project.is_lock
   this.lock_reason = project.lock_reason
+  this.base_example = project.base_example
+  this.parent_id = project.parent_id
+  this.is_inheritance_member = project.is_inheritance_member
 
   this.creator_id = project.creator_id
   this.owner_id = project.owner_id
@@ -29,7 +32,6 @@ function Project(project) {
   this.redmine_url = project.redmine_url
   this.repository_ids = project.repository_ids
   this.harbor_url = project.harbor_url
-  this.base_example = project.base_example
 
   // PM project list fields
   this.updated_time = project.updated_time

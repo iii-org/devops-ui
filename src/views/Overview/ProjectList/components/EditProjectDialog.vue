@@ -61,6 +61,52 @@
               />
             </el-form-item>
           </el-col>
+          <el-col :span="24">
+            <el-form-item :label="$t('Project.ParentProject')">
+              <el-col
+                :xl="18"
+                :md="18"
+                :sm="14"
+                :xs="24"
+              >
+                <el-select
+                  v-model="form.parent_id"
+                  :placeholder="$t('Project.SelectProject')"
+                  class="mr-3"
+                  style="width:100%"
+                  filterable
+                  clearable
+                  @change="handleInheritanceMemberChange()"
+                  @clear="form.is_inheritance_member=false"
+                >
+                  <el-option-group
+                    v-for="group in categoryProjectList"
+                    :key="group.label"
+                    :label="group.label"
+                  >
+                    <el-option
+                      v-for="item in group.options"
+                      :key="item.id"
+                      :label="item.display"
+                      :value="item.id"
+                    />
+                  </el-option-group>
+                </el-select>
+              </el-col>
+              <el-col
+                :xl="6"
+                :md="6"
+                :sm="10"
+                :xs="24"
+              >
+                <el-switch
+                  v-model="form.is_inheritance_member"
+                  :disabled="isInheritanceMemberChange"
+                  :active-text="$t('Project.InheritParentProjectMember')"
+                />
+              </el-col>
+            </el-form-item>
+          </el-col>
           <el-col
             v-if="form.base_example && baseExampleInfo"
             :span="24"
@@ -109,7 +155,9 @@ const formTemplate = () => ({
   due_date: '',
   owner_id: '',
   base_example: '',
-  disabled: false
+  disabled: false,
+  parent_id: '',
+  is_inheritance_member: false
 })
 
 export default {
@@ -118,6 +166,10 @@ export default {
     editProjectObj: {
       type: Object,
       default: () => ({})
+    },
+    categoryProjectList: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -149,6 +201,10 @@ export default {
       },
       assignableList: [],
       baseExampleInfo: '',
+      originProject: {
+        parent_id: '',
+        is_inheritance_member: false
+      },
       pickerOptions(startDate) {
         return {
           disabledDate(time) {
@@ -166,6 +222,10 @@ export default {
     disabledEditOwner() {
       if (this.userRole === 'Administrator') return false
       return this.userId !== this.editProjectObj.owner_id
+    },
+    isInheritanceMemberChange() {
+      return (this.originProject.parent_id === this.form.parent_id &&
+      this.originProject.is_inheritance_member) || !this.form.parent_id
     }
   },
   watch: {
@@ -186,6 +246,8 @@ export default {
     },
     async getExampleInfo() {
       if (this.userRole !== 'Engineer') {
+        this.originProject.parent_id = this.editProjectObj.parent_id
+        this.originProject.is_inheritance_member = this.editProjectObj.is_inheritance_member
         await getTemplateList().then((res) => {
           res.data.forEach((item) => {
             item.options.forEach((element) => {
@@ -195,6 +257,11 @@ export default {
             })
           })
         })
+      }
+    },
+    handleInheritanceMemberChange() {
+      if (this.originProject.parent_id === this.form.parent_id) {
+        this.form.is_inheritance_member = this.originProject.is_inheritance_member
       }
     },
     onDialogClosed() {
@@ -222,6 +289,16 @@ export default {
           due_date: this.form.due_date,
           disabled: this.form.disabled
         }
+      }
+      if (!this.form.parent_id) {
+        sendData.data.parent_id = ''
+        sendData.data.is_inheritance_member = false
+      } else if (
+        (this.originProject.parent_id !== this.form.parent_id) ||
+        (!this.originProject.is_inheritance_member && this.form.is_inheritance_member)
+      ) {
+        sendData.data.parent_id = this.form.parent_id
+        sendData.data.is_inheritance_member = this.form.is_inheritance_member
       }
       this.editProject(sendData).then(res => {
         this.isLoading = false

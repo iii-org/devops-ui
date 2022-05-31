@@ -286,12 +286,14 @@
 
     <CreateProjectDialog
       ref="createProjectDialog"
+      :category-project-list="categoryProjectList"
       @update="fetchData"
     />
     <EditProjectDialog
       v-if="userRole !== 'QA'"
       ref="editProjectDialog"
       :edit-project-obj="editProjectObject"
+      :category-project-list="categoryProjectList"
       @update="fetchData"
     />
     <DeleteProjectDialog
@@ -356,11 +358,20 @@ export default {
       listData: [],
       forceDelete: false,
       timeoutId: -1,
-      projectRelationList: []
+      projectRelationList: [],
+      categoryProjectList: []
     }
   },
   computed: {
-    ...mapGetters(['userId', 'userRole', 'projectList', 'projectListTotal', 'userProjectList', 'selectedProjectId']),
+    ...mapGetters([
+      'userId',
+      'userRole',
+      'projectList',
+      'projectListTotal',
+      'userProjectList',
+      'projectOptions',
+      'selectedProjectId'
+    ]),
     getButtonType() {
       return function (disabled) {
         return disabled ? 'success' : 'danger'
@@ -396,6 +407,7 @@ export default {
       if (filteredArray.length > 0) {
         this.getCalculateProjectData(filteredArray)
       }
+      this.getCategoryProjectList()
       return this.projectList
     },
     getParams() {
@@ -407,6 +419,24 @@ export default {
       } else {
         delete this.params.disabled
       }
+    },
+    getCategoryProjectList() {
+      if ((this.selectedProjectId === -1 || !this.selectedProjectId)) {
+        return []
+      }
+      const filteredArray = this.projectOptions.filter(obj => {
+        return obj.is_lock !== true && obj.disabled !== true
+      })
+      this.allProjects = filteredArray
+      const starred = filteredArray.filter((item) => item.starred)
+      const projects = filteredArray.filter((item) => !item.starred)
+      this.categoryProjectList = [
+        {
+          label: this.$t('Project.Starred'),
+          options: starred
+        },
+        { options: projects }
+      ]
     },
     async getCalculateProjectData(project) {
       const ids = project.map(function (el) {
