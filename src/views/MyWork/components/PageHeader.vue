@@ -15,9 +15,8 @@
           {{ $t('Project.AddProject') }}
         </el-button>
       </template>
-
       <el-button
-        v-else
+        v-if="focusedProjectId"
         v-permission="['Administrator','Project Manager', 'Engineer']"
         class="buttonSecondary"
         icon="el-icon-plus"
