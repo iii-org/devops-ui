@@ -37,6 +37,7 @@
         {{ $t('Issue.CleanFilter') }}
       </el-button>
     </template>
+    <slot name="updateButton" />
   </div>
 </template>
 

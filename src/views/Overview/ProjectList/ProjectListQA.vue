@@ -90,14 +90,14 @@
               {{ $t('File.Download') }}
             </el-button>
           </el-popover>
+          <UpdateButton
+            :list-loading.sync="listLoading"
+            @update="fetchData"
+          />
         </span>
       </div>
     </div>
     <el-divider />
-    <UpdateButton
-      :list-loading.sync="listLoading"
-      @update="fetchData"
-    />
     <el-table
       v-loading="listLoading"
       :data="listData"

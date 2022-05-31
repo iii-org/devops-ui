@@ -1,15 +1,13 @@
 <template>
-  <div class="text-right mb-3">
-    <el-button
-      size="small"
-      icon="el-icon-refresh"
-      class="buttonPrimaryReverse"
-      :loading="listLoading"
-      @click="syncCalculateProjectList"
-    >
-      {{ $t('Dashboard.ADMIN.UpdateNow') }}
-    </el-button>
-  </div>
+  <el-button
+    size="small"
+    icon="el-icon-refresh"
+    class="buttonPrimaryReverse"
+    :loading="listLoading"
+    @click="syncCalculateProjectList"
+  >
+    {{ $t('Dashboard.ADMIN.UpdateNow') }}
+  </el-button>
 </template>
 
 <script>
