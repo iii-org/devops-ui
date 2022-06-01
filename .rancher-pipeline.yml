@@ -32,17 +32,6 @@ stages:
       include:
       - master
       - develop
-      - projectlist
-      - projectfilter
-      - sysconfig
-      - messagebubble
-      - packrelease
-      - sonarqubelogs
-      - tracker
-      - mywork
-      - testsocket
-      - issuerelationchart
-      - wbsboard
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -63,9 +52,6 @@ stages:
       include:
       - master
       - develop
-      - packrelease
-      - mywork
-      - testsocket
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
   steps:
@@ -91,55 +77,6 @@ stages:
       include:
       - master
       - develop
-      - githubwebsocket
-      - GitGraph
-      - projectlist
-      - projectfilter
-      - sysconfig
-      - trysocket
-      - milestonefreeze
-      - milestonehandleedit
-      - router
-      - expandrow
-      - issueboarddrawer
-      - socket
-      - temp
-      - tmprelease
-      - sonarqubelogs
-      - themebyclay
-      - userlist
-      - messagebubble
-      - packrelease
-      - parentchildproject
-      - tracker
-      - routeset
-      - issuedescription
-      - forcetracker
-      - issueboard
-      - contextmenu
-      - parentfilter
-      - filter
-      - sortingwbs
-      - parentproject
-      - parent02
-      - clayfilterdetail
-      - tryonlyfilter
-      - new
-      - mywork
-      - testsocket
-      - mergeissueandfile
-      - attachment
-      - rmbubbles
-      - issuerelationchart
-      - wbsboard
-      - selftemplate
-      - echart
-      - sideexjson
-      - missing
-      - clairreport
-      - copyurl
-      - tagdisplay
-      - disableallrelation
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -160,51 +97,6 @@ stages:
       include:
       - master
       - develop
-      - trysocket
-      - milestonefreeze
-      - milestoneEdit
-      - milestonehandleedit
-      - router
-      - expandrow
-      - issueboarddrawer
-      - socket
-      - temp
-      - tmprelease
-      - sonarqubelogs
-      - themebyclay
-      - userlist
-      - messagebubble
-      - packrelease
-      - parentchildproject
-      - tracker
-      - routeset
-      - issuedescription
-      - forcetracker
-      - issueboard
-      - contextmenu
-      - parentfilter
-      - filter
-      - sortingwbs
-      - parentproject
-      - parent02
-      - clayfilterdetail
-      - tryonlyfilter
-      - new
-      - mywork
-      - testsocket
-      - mergeissueandfile
-      - attachment
-      - rmbubbles
-      - issuerelationchart
-      - wbsboard
-      - selftemplate
-      - echart
-      - sideexjson
-      - missing
-      - clairreport
-      - copyurl
-      - tagdisplay
-      - disableallrelation
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -236,55 +128,22 @@ stages:
       include:
       - master
       - develop
-      - githubwebsocket
-      - GitGraph
-      - projectlist
-      - projectfilter
-      - sysconfig
-      - trysocket
-      - milestonefreeze
-      - milestonehandleedit
-      - router
-      - expandrow
-      - issueboarddrawer
-      - socket
-      - temp
-      - tmprelease
-      - sonarqubelogs
-      - themebyclay
-      - userlist
-      - messagebubble
-      - packrelease
-      - parentchildproject
-      - tracker
-      - routeset
-      - issuedescription
-      - forcetracker
-      - issueboard
-      - contextmenu
-      - parentfilter
-      - filter
-      - sortingwbs
-      - parentproject
-      - parent02
-      - clayfilterdetail
-      - tryonlyfilter
-      - new
-      - mywork
-      - testsocket
-      - mergeissueandfile
-      - attachment
-      - rmbubbles
-      - issuerelationchart
-      - wbsboard
-      - selftemplate
-      - echart
-      - sideexjson
-      - missing
-      - clairreport
-      - copyurl
-      - tagdisplay
-      - disableallrelation
+- name: Build--Scan docker image
+  iiidevops: deployed-environments
+  steps:
+  - envFrom:
+    - sourceKey: api-origin
+      sourceName: nexus
+      targetKey: api_origin
+    runScriptConfig:
+      image: iiiorg/rancher-cli:v2.4.6
+      shellScript: curl --location -s --request POST ${api_origin}/v2/harbor/${CICD_GIT_REPO_NAME}/scan
+        --form branch=${CICD_GIT_BRANCH} --form commit_id=${CICD_GIT_COMMIT}
+  when:
+    branch:
+      include:
+      - develop
+      - master
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -310,55 +169,6 @@ stages:
       include:
       - master
       - develop
-      - githubwebsocket
-      - GitGraph
-      - projectlist
-      - projectfilter
-      - sysconfig
-      - trysocket
-      - milestonefreeze
-      - milestonehandleedit
-      - router
-      - expandrow
-      - issueboarddrawer
-      - socket
-      - temp
-      - tmprelease
-      - sonarqubelogs
-      - themebyclay
-      - userlist
-      - messagebubble
-      - packrelease
-      - parentchildproject
-      - tracker
-      - routeset
-      - issuedescription
-      - forcetracker
-      - issueboard
-      - contextmenu
-      - parentfilter
-      - filter
-      - sortingwbs
-      - parentproject
-      - parent02
-      - clayfilterdetail
-      - tryonlyfilter
-      - new
-      - mywork
-      - testsocket
-      - mergeissueandfile
-      - attachment
-      - rmbubbles
-      - issuerelationchart
-      - wbsboard
-      - selftemplate
-      - echart
-      - sideexjson
-      - missing
-      - clairreport
-      - copyurl
-      - tagdisplay
-      - disableallrelation
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -382,55 +192,6 @@ stages:
       include:
       - master
       - develop
-      - githubwebsocket
-      - GitGraph
-      - projectlist
-      - projectfilter
-      - sysconfig
-      - trysocket
-      - milestonefreeze
-      - milestonehandleedit
-      - router
-      - expandrow
-      - issueboarddrawer
-      - socket
-      - temp
-      - tmprelease
-      - sonarqubelogs
-      - themebyclay
-      - userlist
-      - messagebubble
-      - packrelease
-      - parentchildproject
-      - tracker
-      - routeset
-      - issuedescription
-      - forcetracker
-      - issueboard
-      - contextmenu
-      - parentfilter
-      - filter
-      - sortingwbs
-      - parentproject
-      - parent02
-      - clayfilterdetail
-      - tryonlyfilter
-      - new
-      - mywork
-      - testsocket
-      - mergeissueandfile
-      - attachment
-      - rmbubbles
-      - issuerelationchart
-      - wbsboard
-      - selftemplate
-      - echart
-      - sideexjson
-      - missing
-      - clairreport
-      - copyurl
-      - tagdisplay
-      - disableallrelation
 - name: Test--ZAP
   iiidevops: zap
   steps:
@@ -451,7 +212,7 @@ stages:
   when:
     branch:
       include:
-      - packrelease
+      - skip-master
 - name: Test--WebInspect
   iiidevops: webinspect
   steps:
@@ -493,7 +254,6 @@ stages:
     branch:
       include:
       - develop
-      - packrelease
 - name: Test--SideeX
   iiidevops: sideex
   steps:
@@ -514,6 +274,4 @@ stages:
   when:
     branch:
       include:
-      - GitGraph
       - develop
-      - packrelease

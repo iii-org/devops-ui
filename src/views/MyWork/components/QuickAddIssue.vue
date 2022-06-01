@@ -183,6 +183,8 @@ export default {
       this.isLoading = value
     },
     async handleIssueSave(data) {
+      const assignedToId = data instanceof FormData
+        ? Number(data.get('assigned_to_id')) : data.assigned_to_id
       this.isLoading = true
       await addIssue(data)
         .then(() => {
@@ -192,7 +194,7 @@ export default {
           //   type: 'success'
           // })
           this.formData = getDefaultFormData()
-          this.$emit('update')
+          this.$emit('update', assignedToId)
         })
         .catch((error) => {
           return error

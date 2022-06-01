@@ -219,6 +219,7 @@
       :fixed_version="fixed_version"
       :assigned_to="assigned_to"
       :element-ids="elementIds"
+      :project-id="projectId"
       @getRelativeList="getRelativeList"
       @updateIssueList="updateIssueList"
       @updateData="updateData"
@@ -365,7 +366,7 @@ export default {
       sort = dimension === 'assigned_to' ? this.filterMe(sort) : sort
       return sort
     },
-    filterClosedStatus(statusList) {
+    filterClosedStatus() {
       return function (statusList) {
         if (this.displayClosed) return statusList
         return statusList.filter((item) => item.is_closed === false)
@@ -449,6 +450,7 @@ export default {
         this.socket.emit('join', { project_id: newId })
         await this.onCleanKeyWord()
         this.projectId = this.selectedProjectId
+        this.filterValue = {}
         await this.fetchInitData()
       },
       immediate: true
@@ -462,13 +464,18 @@ export default {
       this.setFixedVersionShowClosed({ board: value })
       this.loadVersionList(value)
     },
-    'filterValue.project'(value) {
+    async 'filterValue.project'(value) {
       if (value) this.projectId = value
       else this.projectId = this.selectedProjectId
-      this.loadSelectionList()
+      await this.onCleanKeyWord()
+      if (value) this.filterValue.project = value
+      await this.loadSelectionList()
+      await this.getInitStoredData()
+      await this.loadVersionList()
     }
   },
   async created() {
+    this.connectSocket()
     this.projectId = this.selectedProjectId
     this.connectSocket()
     this.intervalTimer = window.setInterval(() => this.connectSocket(), 30000)
@@ -526,6 +533,11 @@ export default {
       const storedData = await this.fetchStoredData()
       const { storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed } = storedData
       this.filterValue = storedFilterValue[key] ? storedFilterValue[key] : {}
+      if (this.filterValue.hasOwnProperty('assigned_to')) {
+        const findChangeIndex = this.assigned_to.findIndex(issue => parseInt(this.filterValue.assigned_to) === parseInt(issue.id))
+        if (findChangeIndex < 0) this.$delete(this.filterValue, 'assigned_to')
+      }
+      this.$delete(this.filterValue, 'tags')
       this.keyword = storedKeyword[key] ? storedKeyword[key] : null
       this.displayClosed = storedDisplayClosed[key] ? storedDisplayClosed[key] : false
       this.fixed_version_closed = storedVersionClosed[key] ? storedVersionClosed[key] : false
@@ -560,7 +572,7 @@ export default {
     classifyIssue() {
       const issueList = this.projectIssueList
       this.checkGroupByValueOnBoard()
-      issueList.forEach((issue, index) => {
+      issueList.forEach((issue) => {
         if (issue) {
           let dimensionName = issue[this.groupBy.dimension].id
           dimensionName = dimensionName || 'null'
@@ -584,9 +596,11 @@ export default {
       Object.keys(this.filterValue).forEach((param) => {
         if (this.filterValue[param]) {
           const isArray = param === 'tags' && this.filterValue[param].length > 0
-          isArray
-            ? (result[param] = this.filterValue[param].join(','))
-            : (result[`${param}_id`] = this.filterValue[param])
+          if (isArray) {
+            result[param] = this.filterValue[param].join(',')
+          } else {
+            result[`${param}_id`] = this.filterValue[param]
+          }
         }
       })
       return result
@@ -643,15 +657,22 @@ export default {
       const versionList = await this.fetchVersionList(params)
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
       const version = this.getFilteredVersion
-      version.length > 0 ? this.setFilterValue(version) : this.$delete(this.originFilterValue, 'fixed_version')
+      if (version.length > 0) {
+        this.setFilterValue(version)
+      } else {
+        this.$delete(this.originFilterValue, 'fixed_version')
+        this.$delete(this.filterValue, 'fixed_version')
+      } 
       this.onChangeFilter()
     },
     setFilterValue(version) {
-      const sessionValue = sessionStorage.getItem('issueFilter')
-      if (!sessionValue || !JSON.parse(sessionValue)['board']) {
-        this.$set(this.filterValue, 'fixed_version', version[0].id)
-      }
+      // const sessionValue = sessionStorage.getItem('issueFilter')
+      // if (!sessionValue || !JSON.parse(sessionValue)['board']) {
+      //   this.$set(this.filterValue, 'fixed_version', version[0].id)
+      // }
+      this.$set(this.filterValue, 'fixed_version', version[0].id)
       this.$set(this.originFilterValue, 'fixed_version', version[0].id)
+
     },
     async fetchVersionList(params) {
       const res = await getProjectVersion(this.projectId, params)
@@ -714,7 +735,7 @@ export default {
       const fuse = new Fuse(this.classifyIssueList[item], searchBy)
       let pattern = `="${value}"`
       if (Array.isArray(value) && value.length > 0) {
-        pattern = { $or: value.map((item) => ({ $path: [searchBy['keys']], $val: `="${item}"` })) }
+        pattern = { $or: value.map((items) => ({ $path: [searchBy['keys']], $val: `="${items}"` })) }
       }
       const res = fuse.search(pattern)
       this.classifyIssueList[item] = res.map((items) => items.item)
@@ -807,7 +828,7 @@ export default {
       await this.setDisplayClosed(storedDisplayClosed)
       await this.loadData()
     },
-    onChangeGroupByDimension(value, loadData) {
+    onChangeGroupByDimension(value) {
       this.$set(this.groupBy, 'dimension', value)
       this.$set(this.groupBy, 'value', [])
       this.$refs['groupByValue'].selected = []
@@ -857,20 +878,23 @@ export default {
         const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
         this.$delete(this.projectIssueList, findChangeIndex)
         this.updateData()
-        this.showUpdateMessage(data)
+        // this.showUpdateMessage(data)
       })
       this.socket.on('add_issue', async data => {
         for (const idx in data) {
-          data[idx] = _this.socketDataFormat(data[idx])
-          const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
-          if (findChangeIndex !== -1) {
-            this.$set(this.projectIssueList, findChangeIndex, data[idx])
-          } else {
-            this.$set(this.projectIssueList, this.projectIssueList.length, data[idx])
+          if ((this.filterValue.project) && (this.filterValue.project === data[idx].project.id) || !this.filterValue.project) {
+            data[idx] = _this.socketDataFormat(data[idx])
+            const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+            if (findChangeIndex !== -1) {
+              this.$set(this.projectIssueList, findChangeIndex, data[idx])
+            } else {
+              this.$set(this.projectIssueList, this.projectIssueList.length, data[idx])
+            }
+            this.updateData()
+            // this.showUpdateMessage(data[idx])
           }
-          this.updateData()
-          this.showUpdateMessage(data[idx])
         }
+        this.elementIds = data.map(s => s.id)
       })
       this.socket.on('disconnect', (reason) => {
         if (reason !== 'io client disconnect') {

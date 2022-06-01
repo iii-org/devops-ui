@@ -5,13 +5,15 @@
         ref="filter"
         :keyword.sync="keyword"
         @changeFilter="fetchData"
-      />
+      >
+        <UpdateButton
+          slot="updateButton"
+          :list-loading.sync="listLoading"
+          @update="fetchData"
+        />
+      </SearchFilter>
     </div>
     <el-divider />
-    <UpdateButton
-      :list-loading.sync="listLoading"
-      @update="fetchData"
-    />
     <el-table
       v-loading="listLoading"
       :data="listData"

@@ -55,6 +55,7 @@ export default {
     zap: '黑箱測試(OWASP ZAP)',
     sideex: 'ＷEB 測試(Sideex)',
     cmas: 'APP檢測(CMAS)',
+    dockerImage: '映像檔掃描(Clair)​',
 
     'System Resource': '系統資源',
     Kubernetes: 'Kubernetes',
@@ -68,8 +69,9 @@ export default {
     'Service Monitoring': '服務監控',
     Harbor: 'Harbor 資源',
 
-    Activities: '操作記錄',
+    Activities: '服務操作',
     'Project Activities': '操作紀錄',
+    'Template Manage': '範本管理',
 
     Settings: '設定管理',
     'Participate Project': '參與專案',
@@ -101,7 +103,8 @@ export default {
     'test-result': '測試彙整',
     testReport: 'III DevOps 測試彙整',
     monitoring: 'III DevOps 服務監控',
-    deploy: '遠端部署'
+    deploy: '遠端部署',
+    dockerReport: 'Docker 測試彙整'
   },
   navbar: {
     logOut: '登出',
@@ -262,7 +265,11 @@ export default {
     View: '已讀',
     SocketConnected: 'Socket 已連線成功',
     ReconnectByReload: '請重整頁面(F5)，以確保連線正常',
-    Reload: '頁面重整'
+    Reload: '頁面重整',
+    NoTestResult: '尚無測試結果',
+    Parent: '父',
+    Child: '子',
+    CopyUrl: '複製網址'
   },
   Notify: {
     Updated: '已更新',
@@ -297,7 +304,8 @@ export default {
     ChangeProjectManager: '確認是否要變更專案經理人。',
     ConnectSocket: '看板正在連接 Socket...',
     UpdateKanban: '{issueName} 已更新',
-    NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。'
+    NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。',
+    ChangeProject: '切換專案將清空版本、標籤及受分配者的資訊，確認移轉嗎？'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -602,7 +610,8 @@ export default {
     CustomFilter: '自定義條件',
     CustomFilterName: '自定義條件名稱',
     InputFilterName: '請輸入篩選條件名稱',
-    RemoveCustomFilter: '確認要移除自定義條件嗎?'
+    RemoveCustomFilter: '確認要移除自定義條件嗎?',
+    ImportParentIssueData: '匯入父議題標題與敍述'
   },
   Milestone: {
     Saving: '儲存中',
@@ -813,6 +822,8 @@ export default {
     UpdateTime: '更新時間',
     deleteProjectConfirmText:
       '確認刪除？此操作將無法復原，也會永久刪除此專案相關內容，包括所有的程式碼、測試結果、議題及檔案等。',
+    deleteHasSonProjectText:
+      '將永久刪除此專案的子專案，包括{0}。',
     PleaseType: '請輸入',
     AndThen: '進行刪除或關閉本視窗以取消操作。',
     IdInvalid: 'ID 不符合格式，請修正',
@@ -840,7 +851,9 @@ export default {
     closed: '已完成',
     ProjectPeriod: '專案期間(結束日)',
     ProjectOwner: '@:general.owner_name',
-    DueDate: '@:general.DueDate'
+    DueDate: '@:general.DueDate',
+    ParentProject: '父專案',
+    InheritParentProjectMember: '繼承父專案成員'
   },
   ProcessDevBranch: {
     Commit: 'Commit',
@@ -906,7 +919,18 @@ export default {
     ActionType: '動作',
     ActionParts: '內容',
     ActAt: '發生時間',
-    SearchPlaceholder: '搜尋 使用者、動作或內容'
+    SearchPlaceholder: '搜尋 使用者、動作或內容',
+    AddTemplate: '新增範本',
+    TemplateName: '範本名稱',
+    OriginalProject: '原始專案',
+    QuoteTimes: '引用次數',
+    OriginalProjectUpdatedTime: '原專案更新時間',
+    SyncTime: '同步時間',
+    CreateTemplate: '新增自製範本',
+    EditTemplate: '修改自製範本',
+    LocalProject: '本地專案',
+    TemplateDescription: '範本簡述',
+    DuplicatedTemplate: '同一專案僅能生成一個範本，此專案"{0}"於日前已被轉成範本，若需同步程式碼，請至外層範本清單按下編輯鈕，即可執行。'
   },
   Maintenance: {
     AddSecret: '新增 Secret',
@@ -1213,7 +1237,8 @@ export default {
     LastUpdateTime: '最後更新時間',
     true: '良好',
     false: '異常',
-    loading: '載入中'
+    loading: '載入中',
+    CheckNow: '立即檢核'
   },
   SystemTemplates: {
     GithubAccount: 'Github @:general.Account',
@@ -1248,7 +1273,10 @@ export default {
     priorityErrorTitle: '父議題不能改變優先權：',
     priorityErrorContent: '優先權會依據最後的子議題。',
     trackerErrorTitle: '議題更動失敗:',
-    trackerErrorContent: '本專案已啟用強制引用父議題此議題異動須含有父議題'
+    trackerErrorContent: '本專案已啟用強制引用父議題此議題異動須含有父議題',
+    closedVersionErrorTitle: 'Closed Version Issue:',
+    closedVersionErrorContent: 'An issue assigned to a closed version cannot be reopened',
+    toClosedVersionErrorContent: '指定版本 {fixed_version} 的狀態為 關閉，因此無法變更。'
   },
   Status: {
     Finished: '掃描完成',
@@ -1308,6 +1336,51 @@ export default {
     Send: '傳送',
     NotifyClosed: '訊息已關閉',
     SearchLabel: '搜尋訊息標題或寄送者'
+  },
+  IssueMatrix: {
+    Relations: '關係',
+    SearchAllRelations: '尋找全部關係',
+    SearchFor: '僅往下找',
+    OnlyDown: '往下',
+    Layer: '層',
+    RelatedIssue: '@:Issue.RelatedIssue',
+    LayerWarning: '請填入數字，預設留空為全部。',
+    DisplayItem: '顯示項目',
+    SelectDisplayItem: '請選擇顯示項目',
+    ConditionSettings: '設定條件',
+    Id: '議題編號',
+    Name: '@:Issue.name',
+    Status: '@:Issue.FilterDimensions.status',
+    Tracker: '@:Issue.FilterDimensions.tracker',
+    Assignee: '@:Issue.Assignee',
+    Version: '版號',
+    DisplayItemWarning: '顯示項目不得為空',
+    CancelTrackerWarning: '開啓群組且選擇狀態時，顯示項目必須勾選議題類別',
+    CancelStatusWarning: '開啓群組且選擇類別時，顯示項目必須勾選議題狀態'
+  },
+  Docker: {
+    Title: 'Docker鏡像安全掃描​',
+    Overview: '總覽​',
+    Severity: '風險等級​',
+    Count: '數量​',
+    Critical: '嚴重​',
+    High: '高',
+    Medium: '中',
+    Low: '低',
+    Negligible: '可忽略',
+    Unknown: '其他',
+    Fixable: '可被修復',
+    AlertDetail: '詳細風險列表​',
+    Reference: '風險敍述參照',
+    Vulnerability: '弱點項目​',
+    Package: '資源套件​​',
+    CurrentVersion: '目前版本​',
+    FixedVersion: '已修復版本​',
+    Success: '@:general.Success',
+    Complete: '@:Status.Finished',
+    Scanning: '掃描中',
+    Queued: '排程中',
+    'Not Scanned': '準備中'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

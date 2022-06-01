@@ -44,6 +44,13 @@
               >
                 {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
               </span>
+              <el-tooltip class="item" :content="$t('general.CopyUrl')" placement="bottom">
+                <el-button
+                  class="el-icon-copy-document"
+                  circle
+                  @click="copyUrl"
+                />
+              </el-tooltip>
             </el-col>
           </el-row>
           <el-col
@@ -86,7 +93,7 @@
                 :row="form"
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
-                @update="getData()"
+                @updateFamilyData="getIssueFamilyData(issue)"
               />
             </el-col>
           </el-row>
@@ -101,18 +108,18 @@
               :span="24"
               class="mb-3"
             >
-              <issue-description
+              <IssueDescription
                 v-model="form.description"
                 :old-value="originForm.description"
                 :issue-id="issueId"
                 :is-button-disabled="isButtonDisabled"
               />
-              <issue-files
+              <IssueFiles
                 v-if="files.length > 0"
                 :is-button-disabled="isButtonDisabled"
                 :issue-file.sync="files"
               />
-              <issue-collection
+              <IssueCollection
                 v-if="test_files.length > 0"
                 :is-button-disabled="isButtonDisabled"
                 :issue-test.sync="test_files"
@@ -129,8 +136,9 @@
                     {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
                     <el-button
                       size="mini"
-                      class="buttonPrimary"
+                      :class="isOpenMatrix ? 'buttonInfo' : 'buttonPrimary'"
                       icon="el-icon-data-line"
+                      :disabled="isOpenMatrix"
                       @click.native.stop="toggleIssueMatrixDialog"
                     >
                       {{ $t('Issue.TraceabilityMatrix') }}
@@ -142,7 +150,7 @@
                     :popup="true"
                     :is-button-disabled="isButtonDisabled"
                     :reload="relationVisible"
-                    @update-list="fetchIssueLink"
+                    @update-list="getIssueFamilyData(issue)"
                     @on-context-menu="onContextMenu"
                     @popup-dialog="onRelationIssueDialog"
                   />
@@ -195,9 +203,10 @@
             ref="IssueForm"
             :is-button-disabled="isButtonDisabled"
             :issue-id="issueId"
+            :issue-project="issueProject"
             :form.sync="form"
             :parent="parent"
-            :relations="relations"
+            :relations.sync="relations"
             :children-issue="children.length"
           />
         </el-col>
@@ -213,6 +222,7 @@
         <ProjectIssueDetail
           v-if="relationIssue.visible"
           ref="children"
+          :is-open-matrix="isOpenMatrix"
           :props-issue-id="relationIssue.id"
           :is-in-dialog="true"
           @update="showLoading"
@@ -247,6 +257,21 @@
         :row.sync="issue"
         @update-issue="handleUpdated"
       />
+    </el-dialog>
+    <el-dialog
+      :visible.sync="isShowDialog"
+      append-to-body
+      destroy-on-close
+      width="30%"
+    >
+      <span>
+        <em class="el-icon-warning" :style="getStyle('danger')" />
+        {{ $t('Notify.ChangeProject') }}
+      </span>
+      <span slot="footer">
+        <el-button @click="onCancel">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" @click="onConfirm">{{ $t('general.Confirm') }}</el-button>
+      </span>
     </el-dialog>
     <ContextMenu
       ref="contextmenu"
@@ -295,6 +320,8 @@ import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import getPageTitle from '@/utils/get-page-title'
 import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
+// import { getIssueFamily } from '@/api/issue'
+import variables from '@/styles/theme/variables.scss'
 
 const commitLimit = 10
 
@@ -328,6 +355,10 @@ export default {
       default: false
     },
     isFromBoard: {
+      type: Boolean,
+      default: false
+    },
+    isOpenMatrix: {
       type: Boolean,
       default: false
     }
@@ -390,7 +421,10 @@ export default {
       errorMsg: [],
       showAlert: false,
       isLoadingFamily: false,
-      projectRelationList: []
+      projectRelationList: [],
+      isShowDialog: false,
+      storagePId: '',
+      issueProject: {}
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -462,10 +496,11 @@ export default {
       return getTrackerName.name
     },
     isButtonDisabled() {
-      // return this.userRole === 'QA'
-      return this.$route.params.disableButton
+      return this.$route.params.hasOwnProperty('disableButton')
+        ? this.$route.params.disableButton
+        : false
     },
-    formProjectId () {
+    formProjectId() {
       return this.form.project_id ? this.form.project_id : this.selectedProjectId
     }
   },
@@ -481,15 +516,18 @@ export default {
       this.fetchIssueLink()
       this.$nextTick(() => this.$refs.IssueForm.$refs.form.clearValidate())
     },
-    async relationVisible(val) {
-      if (val === 1) {
-        await this.getIssueFamilyData(this.issue)
+    'form.project_id': {
+      handler(newPId, oldPId) {
+        if (this.storagePId && newPId !== this.storagePId) {
+          this.isShowDialog = true
+        }
       }
     }
   },
   async mounted() {
     await this.fetchIssueLink()
     await this.getRelationProjectList()
+    this.storagePId = this.form.project_id
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject']),
@@ -505,6 +543,7 @@ export default {
         await this.fetchIssue()
       } else if (this.$route.params.issueId) {
         this.issueId = parseInt(this.$route.params.issueId)
+        this.issueProject = this.$route.params.project
         await this.fetchIssue()
       } else {
         this.form.project_id = this.selectedProjectId
@@ -622,11 +661,12 @@ export default {
       if (this.$refs.IssueForm) {
         this.$refs.IssueForm.getClosable()
       }
+      this.issueProject = data.project
     },
     async getRelationProjectList() {
-      const hasSon = (await getHasSon(this.selectedProjectId)).has_child
+      const hasSon = (await getHasSon(this.formProjectId)).has_child
       if (hasSon) {
-        const projectRelation = (await getProjectRelation(this.selectedProjectId)).data
+        const projectRelation = (await getProjectRelation(this.formProjectId)).data
         this.projectRelationList.push(projectRelation[0].parent.id)
         projectRelation[0].child.forEach((item) => {
           this.projectRelationList.push(item.id)
@@ -647,7 +687,7 @@ export default {
       this.rootProjectId = res.root_project_id
     },
     async getGitCommitLogData() {
-      await this.getRootProject(this.selectedProjectId)
+      await this.getRootProject(this.formProjectId)
       this.setIssueId()
       const params = { limit: commitLimit }
       const res = await getIssueGitCommitLog(this.rootProjectId, this.issueId, params)
@@ -659,7 +699,6 @@ export default {
     },
     setFormData(data) {
       const {
-        id,
         project,
         parent,
         assigned_to,
@@ -674,16 +713,12 @@ export default {
         due_date,
         description
       } = data
-      this.form.id = id
       this.form.parent_id = parent ? parent.id : ''
-      this.form.project = project
       this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
       this.form.name = name
       this.form.fixed_version_id = fixed_version ? fixed_version.id : ''
-      this.form.tracker = tracker
       this.form.tracker_id = tracker.id
-      this.form.status = status
       this.form.status_id = status.id
       this.form.priority_id = priority.id
       this.form.estimated_hours = estimated_hours
@@ -1011,7 +1046,11 @@ export default {
         if (this.originForm[key] === null) {
           this.originForm[key] = 0
         }
-        if (this.originForm[key] !== this.form[key]) {
+        if (
+          key === 'relation_ids'
+            ? this.originForm[key].length !== this.form[key].length
+            : this.originForm[key] !== this.form[key]
+        ) {
           return true
         }
       }
@@ -1085,21 +1124,35 @@ export default {
       } finally {
         this.isLoadingFamily = false
       }
-      this.isLoadingFamily = false
       return Promise.resolve()
     },
     formatIssueFamilyData(row, data) {
       if (data.hasOwnProperty('parent')) {
         this.$set(row, 'parent', data.parent)
         this.$set(this, 'parent', data.parent)
+      } else {
+        this.originForm.parent_id = ''
+        this.form.parent_id = ''
+        this.$set(row, 'parent', {})
+        this.$set(this, 'parent', {})
       }
       if (data.hasOwnProperty('children')) {
         this.$set(row, 'children', data.children)
         this.$set(this, 'children', data.children)
+      } else {
+        this.$set(row, 'children', [])
+        this.$set(this, 'children', [])
       }
       if (data.hasOwnProperty('relations')) {
+        this.originForm.relation_ids = data.relations.map((item) => item.id)
+        this.form.relation_ids = data.relations.map((item) => item.id)
         this.$set(row, 'relations', data.relations)
         this.$set(this, 'relations', data.relations)
+      } else {
+        this.originForm.relation_ids = []
+        this.form.relation_ids = []
+        this.$set(row, 'relations', [])
+        this.$set(this, 'relations', [])
       }
     },
     toggleIssueMatrixDialog() {
@@ -1119,6 +1172,47 @@ export default {
     },
     UTCtoLocalTime(value) {
       return UTCtoLocalTime(value)
+    },
+    onResetPId(pId) {
+      this.form.project_id = pId
+    },
+    onCancel() {
+      this.form.project_id = this.storagePId
+      this.isShowDialog = false
+    },
+    onConfirm() {
+      this.storagePId = this.form.project_id
+      this.resetForm()
+      this.isShowDialog = false
+    },
+    resetForm() {
+      this.form.tags = []
+      this.form.assigned_to_id = ''
+      this.form.fixed_version_id = ''
+    },
+    getStyle(colorCode) {
+      const color = variables[`${colorCode}`]
+      return {
+        color
+      }
+    },
+    copyUrl() {
+      const message = this.$t('Notify.Copied')
+      const input = document.createElement('input')
+      const url = `${window.location.origin}/#/project/issues/${this.issueId}`
+      input.value = url
+      document.body.appendChild(input)
+      input.select()
+      document.execCommand('Copy')
+      input.remove()
+      this.showSuccessMessage(message)
+    },
+    showSuccessMessage(message) {
+      this.$message({
+        title: this.$t('general.Success'),
+        message,
+        type: 'success'
+      })
     }
   }
 }

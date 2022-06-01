@@ -45,6 +45,7 @@
     </ProjectListSelector>
     <el-divider />
     <QuickAddIssue
+      v-if="selectedProjectId > 0 && !disableAddIssue"
       ref="quickAddIssue"
       :save-data="saveIssue"
       :project-id="selectedProjectId"
@@ -201,15 +202,15 @@ export default {
       form: {},
       filterOptions: Object.freeze([
         { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
-        { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
+        { id: 2, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
         {
-          id: 4,
+          id: 3,
           label: this.$t('Issue.FilterDimensions.fixed_version'),
           value: 'fixed_version',
           placeholder: 'Version'
         },
         {
-          id: 5,
+          id: 4,
           label: this.$t('Issue.FilterDimensions.priority'),
           value: 'priority',
           placeholder: 'Priority',

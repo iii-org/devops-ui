@@ -55,6 +55,7 @@ export default {
     zap: 'OWASP ZAP',
     sideex: 'Sideex',
     cmas: 'CMAS',
+    dockerImage: 'Image Scan​',
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',
@@ -70,6 +71,7 @@ export default {
 
     Activities: 'Activities',
     'Project Activities': 'Project Activities',
+    'Template Manage': 'Template Manage',
 
     Settings: 'Settings',
     'Participate Project': 'Participate In The Project',
@@ -101,7 +103,8 @@ export default {
     'test-result': 'Test Result',
     testReport: 'III DevOps Test Report',
     monitoring: 'III DevOps Service Monitoring',
-    deploy: 'Deploy'
+    deploy: 'Deploy',
+    dockerReport: 'Docker Test Report'
   },
   navbar: {
     logOut: 'Log Out',
@@ -262,7 +265,11 @@ export default {
     View: 'View',
     SocketConnected: 'Socket is connected',
     ReconnectByReload: 'Please reload the page to ensure the socket reconnected properly',
-    Reload: 'Reload the page'
+    Reload: 'Reload the page',
+    NoTestResult: 'No Test Result',
+    Parent: 'P',
+    Child: 'C',
+    CopyUrl: 'Copy URL'
   },
   Notify: {
     Updated: 'update successful',
@@ -299,7 +306,8 @@ export default {
     ChangeProjectManager: 'Confirming if you want to change the project manager?',
     ConnectSocket: 'Kanban is connecting Socket...',
     UpdateKanban: '{issueName} is updated',
-    NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.'
+    NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.',
+    ChangeProject: `Switching a project will empty the version, label, and distributor's information, confirm the transfer?`
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -607,7 +615,8 @@ export default {
     CustomFilter: 'Custom Filter',
     CustomFilterName: 'Custom Filter Name',
     InputFilterName: 'Input Filter Name',
-    RemoveCustomFilter: 'Are you sure to Remove Custom Filter?'
+    RemoveCustomFilter: 'Are you sure to Remove Custom Filter?',
+    ImportParentIssueData: 'Import parent issue title and information'
   },
   Milestone: {
     Saving: 'Saving',
@@ -818,6 +827,8 @@ export default {
     UpdateTime: 'Update Time',
     deleteProjectConfirmText:
       'This action cannot be undone. This will permanently delete the project, including all commits, issues, test cases and files.',
+    deleteHasSonProjectText:
+      'Its subproject(s): {0} will also be deleted !',
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
     IdInvalid: 'Identifier is invalid.',
@@ -845,7 +856,9 @@ export default {
     closed: 'Closed',
     ProjectPeriod: 'Project Period(due date)',
     ProjectOwner: '@:general.owner_name',
-    DueDate: '@:general.DueDate'
+    DueDate: '@:general.DueDate',
+    ParentProject: 'Parent Project',
+    InheritParentProjectMember: 'Inherit parent project member'
   },
   ProcessDevBranch: {
     Commit: 'Commit',
@@ -912,7 +925,18 @@ export default {
     ActionType: 'Action Type',
     ActionParts: 'Action Parts',
     ActAt: 'Act At',
-    SearchPlaceholder: 'Search User, Action Type or Action Parts'
+    SearchPlaceholder: 'Search User, Action Type or Action Parts',
+    AddTemplate: 'Add Template',
+    TemplateName: 'Template Name',
+    OriginalProject: 'Original Project',
+    QuoteTimes: 'Quote Times',
+    OriginalProjectUpdatedTime: 'Original Project Updated Time',
+    SyncTime: 'Sync Time',
+    CreateTemplate: 'Create Template',
+    EditTemplate: 'Edit Template',
+    LocalProject: 'Local Project',
+    TemplateDescription: 'Template Description',
+    DuplicatedTemplate: 'One project only relates to one template, The project "{0}" has been used to a template, you can click \'edit\' on the template list if source code sync is needed.'
   },
   Maintenance: {
     AddSecret: 'Add Secret',
@@ -1221,7 +1245,8 @@ export default {
     LastUpdateTime: 'Last Update Time',
     true: 'Good',
     false: 'Abnormal',
-    loading: 'Loading'
+    loading: 'Loading',
+    CheckNow: 'Check Now'
   },
   SystemTemplates: {
     GithubAccount: 'Github @:general.Account',
@@ -1257,7 +1282,10 @@ export default {
     priorityErrorTitle: 'The parent issue cannot change priority:',
     priorityErrorContent: 'Priority will be based on the last children issue.',
     trackerErrorTitle: 'Tracker Issue:',
-    trackerErrorContent: 'Tracker type requires parent issue'
+    trackerErrorContent: 'Tracker type requires parent issue',
+    closedVersionErrorTitle: 'Closed Version Issue:',
+    closedVersionErrorContent: 'An issue assigned to a closed version cannot be reopened',
+    toClosedVersionErrorContent: 'You cannot change to version {fixed_version} that status is closed.'
   },
   Status: {
     Finished: 'Finished',
@@ -1306,7 +1334,7 @@ export default {
     IncludeSystemMessage: 'Include System Message',
     Apply: 'Apply',
     MessageConsole: 'Message Console',
-    MessageNote: '* The system only keeps 7 days messages. Pelase save the message in local if it\'s important.',
+    MessageNote: '* The system only keeps 7 days messages. Please save the message in local if it\'s important.',
     CreateMessage: 'Create Message',
     EditMessage: 'Edit Message',
     MessageContent: 'Message Content',
@@ -1317,6 +1345,51 @@ export default {
     Send: 'Send',
     NotifyClosed: 'Message closed successfully',
     SearchLabel: 'Search Title or Sender'
+  },
+  IssueMatrix: {
+    Relations: 'Relationship',
+    SearchAllRelations: 'Show All',
+    SearchFor: 'Search For',
+    OnlyDown: 'Only Down',
+    Layer: 'Layer',
+    RelatedIssue: '@:Issue.RelatedIssue',
+    LayerWarning: 'Please fill in the number, and leave the blank as all.',
+    DisplayItem: 'Display Items',
+    SelectDisplayItem: 'Please select a display item',
+    ConditionSettings: 'Condition Settings',
+    Id: 'Id',
+    Name: '@:Issue.name',
+    Status: '@:Issue.FilterDimensions.status',
+    Tracker: '@:Issue.FilterDimensions.tracker',
+    Assignee: '@:Issue.Assignee',
+    Version: 'Version',
+    DisplayItemWarning: `Display items shouldn't be empty`,
+    CancelTrackerWarning: 'When turning on the Group and selecting the Status, the Display Items must have the Type',
+    CancelStatusWarning: 'When turning on the Group and selecting the Type, the Display Items must have the Status'
+  },
+  Docker: {
+    Title: 'Docker Image Vulnerability Scan Report​',
+    Overview: 'Overview',
+    Severity: 'Severity',
+    Count: 'Count',
+    Critical: 'Critical',
+    High: 'High',
+    Medium: 'Medium',
+    Low: 'Low',
+    Negligible: 'Negligible',
+    Unknown: 'Unknown',
+    Fixable: 'Fixable',
+    AlertDetail: 'Alert Detail​',
+    Reference: 'Reference',
+    Vulnerability: 'Vulnerability',
+    Package: 'Package',
+    CurrentVersion: 'Current Version',
+    FixedVersion: 'Fixed in Version',
+    Success: '@:general.Success',
+    Complete: '@:Status.Finished',
+    Scanning: 'Scanning',
+    Queued: 'Queued',
+    'Not Scanned': 'NotRunning'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

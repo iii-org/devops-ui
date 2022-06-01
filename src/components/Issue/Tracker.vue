@@ -1,7 +1,7 @@
 <template>
   <span>
     <span v-if="name" :class="`point ${mapTagType(type)}`" />
-    {{ name }}
+    <span>{{ name }}</span>
   </span>
 </template>
 

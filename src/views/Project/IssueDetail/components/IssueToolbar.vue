@@ -97,7 +97,6 @@
       </div>
     </el-dialog>
     <el-dialog
-      :title="$t('Issue.AddIssue')"
       :visible.sync="addTopicDialogVisible"
       width="50%"
       top="5px"
@@ -106,6 +105,15 @@
       append-to-body
       @close="handleClose"
     >
+      <template slot="title">
+        {{ $t('Issue.AddIssue') }}
+        <el-button
+          class="buttonPrimary float-right mr-5"
+          @click="handleAdvancedImport"
+        >
+          {{ $t('Issue.ImportParentIssueData') }}
+        </el-button>
+      </template>
       <AddIssue
         ref="AddIssue"
         :save-data="saveIssue"
@@ -113,7 +121,8 @@
         :project-id="selectedProjectId"
         :parent-id="issueId"
         :parent-name="issueName"
-        @loading="loadingUpdate($event, false)"
+        :prefill="form"
+        @loading="loadingUpdate($event, true)"
         @add-topic-visible="emitAddTopicDialogVisible"
       />
       <span
@@ -221,7 +230,8 @@ export default {
       uploadDialogVisible: false,
       addTopicDialogVisible: false,
       specialSymbols: '\ / : * ? " < > | # { } % ~ &',
-      relationDialog: false
+      relationDialog: false,
+      form: {}
     }
   },
   computed: {
@@ -237,10 +247,8 @@ export default {
       this.uploadDialogVisible = false
     },
     async uploadFiles(sendForm, fileList) {
-      this.loadingUpdate(true, false)
       // use one by one edit issue to upload file
       const { issueId } = this
-      // use one by one edit issue to upload file
       try {
         const uploadApi = fileList.map(function (item) {
           const sendForm = new FormData()
@@ -281,7 +289,7 @@ export default {
           return error
         })
         .finally(() => {
-          this.loadingUpdate(false, false)
+          this.$emit('updateFamilyData')
         })
     },
     handleCollectionDialog() {
@@ -291,7 +299,12 @@ export default {
       this.addTopicDialogVisible = visible
     },
     handleClose() {
+      this.form = {}
       this.$emit('close-dialog', false)
+    },
+    handleAdvancedImport() {
+      this.form = this.row
+      this.$refs['AddIssue'].handleImport()
     },
     handleAdvancedClose() {
       this.$refs['AddIssue'].handleClose()
@@ -326,7 +339,7 @@ export default {
           message: this.$t('Notify.Updated'),
           type: 'success'
         })
-        this.$emit('update')
+        this.$emit('updateFamilyData')
       } catch (e) {
         console.error(e)
       }

@@ -204,7 +204,12 @@
     </el-table>
     <contextmenu ref="contextmenu">
       <template v-if="Object.keys(contextMenu.row).length > 2">
-        <contextmenu-item class="menu-title">{{ contextMenu.row.name }}</contextmenu-item>
+        <contextmenu-item
+          class="menu-title"
+          @click="onRelationIssueDialog(contextMenu.row)"
+        >
+          {{ contextMenu.row.name }}
+        </contextmenu-item>
         <contextmenu-submenu
           v-permission="permission"
           :title="$t('Issue.tags')"
@@ -230,7 +235,7 @@
           v-permission="permission"
           divider
         />
-        <contextmenu-item @click="onRelationIssueDialog(contextMenu.row.id)">
+        <contextmenu-item @click="onRelationIssueDialog(contextMenu.row)">
           {{ $t('route.Issue Detail') }}
         </contextmenu-item>
         <contextmenu-item @click="toggleIssueMatrixDialog(contextMenu.row)">
@@ -364,7 +369,6 @@ import WBSSelectColumn from '@/views/Plan/Milestone/components/WBSSelectColumn'
 import WBSDateColumn from '@/views/Plan/Milestone/components/WBSDateColumn'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
-import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import { addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
 import { CancelRequest } from '@/newMixins'
@@ -380,7 +384,7 @@ export default {
     ContextmenuSubmenu,
     ProjectIssueDetail,
     SettingRelationIssue,
-    IssueMatrix,
+    IssueMatrix: () => import('@/views/Project/IssueDetail/components/IssueMatrix'),
     // eslint-disable-next-line vue/no-unused-components
     Tracker, Status
   },
@@ -1043,9 +1047,9 @@ export default {
         console.error(e)
       }
     },
-    onRelationIssueDialog(id) {
+    onRelationIssueDialog(row) {
       this.$set(this.relationIssue, 'visible', true)
-      this.$set(this.relationIssue, 'id', id)
+      this.$set(this.relationIssue, 'id', row.id)
     },
     onCloseRelationIssueDialog() {
       this.$set(this.relationIssue, 'visible', false)

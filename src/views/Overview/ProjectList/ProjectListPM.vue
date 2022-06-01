@@ -13,14 +13,16 @@
           ref="filter"
           :keyword.sync="keyword"
           @changeFilter="fetchData"
-        />
+        >
+          <UpdateButton
+            slot="updateButton"
+            :list-loading.sync="listLoading"
+            @update="fetchData"
+          />
+        </SearchFilter>
       </div>
     </div>
     <el-divider />
-    <UpdateButton
-      :list-loading.sync="listLoading"
-      @update="fetchData"
-    />
     <el-table
       v-loading="listLoading"
       :data="listData"
@@ -284,18 +286,21 @@
 
     <CreateProjectDialog
       ref="createProjectDialog"
+      :category-project-list="categoryProjectList"
       @update="fetchData"
     />
     <EditProjectDialog
       v-if="userRole !== 'QA'"
       ref="editProjectDialog"
       :edit-project-obj="editProjectObject"
+      :category-project-list="categoryProjectList"
       @update="fetchData"
     />
     <DeleteProjectDialog
       ref="deleteProjectDialog"
       :delete-project-obj="deleteProject"
       :is-force-delete="forceDelete"
+      :project-relation-list="projectRelationList"
       @update="fetchData"
     />
   </div>
@@ -314,7 +319,7 @@ import { BasicData, SearchBar, Pagination, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'
-import { syncProject } from '@/api_v2/projects'
+import { syncProject, getHasSon, getProjectRelation } from '@/api_v2/projects'
 
 const params = () => ({
   limit: 10,
@@ -352,11 +357,21 @@ export default {
       params: params(),
       listData: [],
       forceDelete: false,
-      timeoutId: -1
+      timeoutId: -1,
+      projectRelationList: [],
+      categoryProjectList: []
     }
   },
   computed: {
-    ...mapGetters(['userId', 'userRole', 'projectList', 'projectListTotal', 'userProjectList', 'selectedProjectId']),
+    ...mapGetters([
+      'userId',
+      'userRole',
+      'projectList',
+      'projectListTotal',
+      'userProjectList',
+      'projectOptions',
+      'selectedProjectId'
+    ]),
     getButtonType() {
       return function (disabled) {
         return disabled ? 'success' : 'danger'
@@ -392,6 +407,7 @@ export default {
       if (filteredArray.length > 0) {
         this.getCalculateProjectData(filteredArray)
       }
+      this.getCategoryProjectList()
       return this.projectList
     },
     getParams() {
@@ -403,6 +419,24 @@ export default {
       } else {
         delete this.params.disabled
       }
+    },
+    getCategoryProjectList() {
+      if ((this.selectedProjectId === -1 || !this.selectedProjectId)) {
+        return []
+      }
+      const filteredArray = this.projectOptions.filter(obj => {
+        return obj.is_lock !== true && obj.disabled !== true
+      })
+      this.allProjects = filteredArray
+      const starred = filteredArray.filter((item) => item.starred)
+      const projects = filteredArray.filter((item) => !item.starred)
+      this.categoryProjectList = [
+        {
+          label: this.$t('Project.Starred'),
+          options: starred
+        },
+        { options: projects }
+      ]
     },
     async getCalculateProjectData(project) {
       const ids = project.map(function (el) {
@@ -442,11 +476,21 @@ export default {
       this.editProjectObject = Object.assign({}, row)
       this.$refs.editProjectDialog.showDialog = true
     },
-    handleDelete(row, isForce) {
+    async handleDelete(row, isForce) {
       this.deleteProject.id = row.id
       this.deleteProject.name = row.name
       if (isForce) this.forceDelete = true
+      await this.isHasSon(row.id)
       this.$refs.deleteProjectDialog.showDialog = true
+    },
+    async isHasSon(projectId) {
+      const hasSon = await getHasSon(projectId)
+      if (hasSon.has_child) {
+        const projectRelation = await getProjectRelation(projectId)
+        this.projectRelationList = projectRelation.data[0].child
+      } else {
+        this.projectRelationList = []
+      }
     },
     returnProgress(current, total) {
       if (current) return Math.round((current / total) * 100)
