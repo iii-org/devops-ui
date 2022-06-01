@@ -55,6 +55,7 @@ export default {
     zap: '黑箱測試(OWASP ZAP)',
     sideex: 'ＷEB 測試(Sideex)',
     cmas: 'APP檢測(CMAS)',
+    dockerImage: '映像檔掃描(Clair)​',
 
     'System Resource': '系統資源',
     Kubernetes: 'Kubernetes',
@@ -102,7 +103,8 @@ export default {
     'test-result': '測試彙整',
     testReport: 'III DevOps 測試彙整',
     monitoring: 'III DevOps 服務監控',
-    deploy: '遠端部署'
+    deploy: '遠端部署',
+    dockerReport: 'Docker 測試彙整'
   },
   navbar: {
     logOut: '登出',
@@ -1355,6 +1357,30 @@ export default {
     DisplayItemWarning: '顯示項目不得為空',
     CancelTrackerWarning: '開啓群組且選擇狀態時，顯示項目必須勾選議題類別',
     CancelStatusWarning: '開啓群組且選擇類別時，顯示項目必須勾選議題狀態'
+  },
+  Docker: {
+    Title: 'Docker鏡像安全掃描​',
+    Overview: '總覽​',
+    Severity: '風險等級​',
+    Count: '數量​',
+    Critical: '嚴重​',
+    High: '高',
+    Medium: '中',
+    Low: '低',
+    Negligible: '可忽略',
+    Unknown: '其他',
+    Fixable: '可被修復',
+    AlertDetail: '詳細風險列表​',
+    Reference: '風險敍述參照',
+    Vulnerability: '弱點項目​',
+    Package: '資源套件​​',
+    CurrentVersion: '資源套件​',
+    FixedVersion: '目前版本​',
+    Success: '@:general.Success',
+    Complete: '@:Status.Finished',
+    Scanning: '掃描中',
+    Queued: '排程中',
+    'Not Scanned': '準備中'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }
