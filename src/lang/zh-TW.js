@@ -1359,7 +1359,7 @@ export default {
     CancelStatusWarning: '開啓群組且選擇類別時，顯示項目必須勾選議題狀態'
   },
   Docker: {
-    Title: 'Docker鏡像安全掃描​',
+    Title: 'Docker映像檔安全掃描​',
     Overview: '總覽​',
     Severity: '風險等級​',
     Count: '數量​',
