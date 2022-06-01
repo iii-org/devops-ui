@@ -125,28 +125,7 @@
                 :sm="14"
                 :xs="24"
               >
-                <el-select
-                  v-model="form.parent_id"
-                  :placeholder="$t('Project.SelectProject')"
-                  class="mr-3"
-                  style="width:100%"
-                  filterable
-                  clearable
-                  @clear="form.is_inheritance_member=false"
-                >
-                  <el-option-group
-                    v-for="group in categoryProjectList"
-                    :key="group.label"
-                    :label="group.label"
-                  >
-                    <el-option
-                      v-for="item in group.options"
-                      :key="item.id"
-                      :label="item.display"
-                      :value="item.id"
-                    />
-                  </el-option-group>
-                </el-select>
+                <ProjectList :form="form" />
               </el-col>
               <el-col
                 :xl="6"
@@ -309,6 +288,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { getTemplateList, getTemplateParams, getTemplateParamsByVersion } from '@/api/template'
 import { refreshRancherCatalogs } from '@/api/rancher'
 import { getUserListByFilter } from '@/api/user'
+import ProjectList from './ProjectList'
 
 const formTemplate = () => ({
   name: '',
@@ -326,12 +306,7 @@ const formTemplate = () => ({
 
 export default {
   name: 'CreateDialog',
-  props: {
-    categoryProjectList: {
-      type: Array,
-      default: () => []
-    }
-  },
+  components: { ProjectList },
   data() {
     return {
       showDialog: false,
