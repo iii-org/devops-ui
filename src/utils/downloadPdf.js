@@ -10,8 +10,8 @@ import JsPDF from 'jspdf'
 
 const PDF = {}
 
-PDF.install = function(Vue, options) {
-  Vue.prototype.$pdf = function(dom, fileName) {
+PDF.install = async function(Vue, options) {
+  Vue.prototype.$pdf = await function(dom, fileName) {
     html2canvas(dom).then(canvas => {
       // const [A4Width, A4Height] = [595, 841] // a4
       // const { width: CanvasWidth, height: CanvasHeight } = canvas

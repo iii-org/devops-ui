@@ -16,7 +16,7 @@
         </span>
       </div>
       <div>
-        <el-button
+        <!-- <el-button
           v-show="!listLoading"
           type="text"
           class="linkTextColor"
@@ -24,7 +24,7 @@
           @click="downloadPdf"
         >
           {{ $t('TestReport.DownloadPdf') }}
-        </el-button>
+        </el-button> -->
       </div>
     </div>
     <div ref="pdfPage">
