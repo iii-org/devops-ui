@@ -360,7 +360,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'userRole', 'projectList', 'projectListTotal', 'userProjectList', 'selectedProjectId']),
+    ...mapGetters([
+      'userId',
+      'userRole',
+      'projectList',
+      'projectListTotal',
+      'userProjectList',
+      'selectedProjectId'
+    ]),
     getButtonType() {
       return function (disabled) {
         return disabled ? 'success' : 'danger'

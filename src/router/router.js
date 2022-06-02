@@ -807,6 +807,28 @@ export const asyncRoutes = [
         meta: { title: 'zap', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
       },
       {
+        path: 'docker',
+        name: 'docker',
+        component: parentBlank,
+        redirect: { name: 'docker' },
+        meta: { title: 'dockerImage', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
+        children: [
+          {
+            path: '',
+            name: 'docker-scans',
+            hidden: true,
+            component: () => import('@/views/Scan/DockerImage')
+          },
+          {
+            path: 'report/:commitBranch/:commitId',
+            name: 'DockerReport',
+            hidden: true,
+            component: () => import('@/views/Scan/DockerReport'),
+            meta: { title: 'dockerReport', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+          }
+        ]
+      },
+      {
         path: 'cmas',
         name: 'cmas',
         component: () => import('@/views/Scan/Cmas'),

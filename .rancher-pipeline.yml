@@ -26,7 +26,7 @@ stages:
       catalogTemplate: cattle-global-data:iii-dev-charts3-scan-sonarqube
       name: ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-sq
       targetNamespace: ${CICD_GIT_REPO_NAME}
-      version: 0.2.4
+      version: 0.2.5
   when:
     branch:
       include:
@@ -99,6 +99,22 @@ stages:
       - master
       - develop
       - clairreport
+- name: Build--Scan docker image
+  iiidevops: deployed-environments
+  steps:
+  - envFrom:
+    - sourceKey: api-origin
+      sourceName: nexus
+      targetKey: api_origin
+    runScriptConfig:
+      image: iiiorg/rancher-cli:v2.4.6
+      shellScript: curl --location -s --request POST ${api_origin}/v2/harbor/${CICD_GIT_REPO_NAME}/scan
+        --form branch=${CICD_GIT_BRANCH} --form commit_id=${CICD_GIT_COMMIT}
+  when:
+    branch:
+      include:
+      - develop
+      - master
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -131,22 +147,6 @@ stages:
       - master
       - develop
       - clairreport
-- name: Build--Scan docker image
-  iiidevops: deployed-environments
-  steps:
-  - envFrom:
-    - sourceKey: api-origin
-      sourceName: nexus
-      targetKey: api_origin
-    runScriptConfig:
-      image: iiiorg/rancher-cli:v2.4.6
-      shellScript: curl --location -s --request POST ${api_origin}/v2/harbor/${CICD_GIT_REPO_NAME}/scan
-        --form branch=${CICD_GIT_BRANCH} --form commit_id=${CICD_GIT_COMMIT}
-  when:
-    branch:
-      include:
-      - develop
-      - master
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -166,7 +166,7 @@ stages:
       catalogTemplate: cattle-global-data:iii-dev-charts3-web
       name: ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-serv
       targetNamespace: ${CICD_GIT_REPO_NAME}
-      version: 0.5.10
+      version: 0.5.12
   when:
     branch:
       include:
