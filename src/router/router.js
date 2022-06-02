@@ -820,7 +820,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Scan/DockerImage')
           },
           {
-            path: 'report/:commitId',
+            path: 'report/:commitBranch/:commitId',
             name: 'DockerReport',
             hidden: true,
             component: () => import('@/views/Scan/DockerReport'),

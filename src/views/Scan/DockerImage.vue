@@ -187,18 +187,11 @@ export default {
       this.params = params()
     },
     async handleToTestReport(row) {
-      const severity = ['Critical', 'High', 'Medium', 'Low', 'Negligible', 'Unknown']
-      var summary = []
-      for (const item of severity) {
-        const obj = { severity: item, value: row[item] }
-        summary.push(obj)
-      }
       this.$router.push({
         name: 'DockerReport',
         params: { 
           commitId: row.commit, 
-          commitBranch: row.branch,
-          summary: summary
+          commitBranch: row.branch
         }
       })
     }
