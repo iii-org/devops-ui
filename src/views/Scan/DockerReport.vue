@@ -195,7 +195,16 @@ export default {
       listLoading: false,
       listData: [],
       scanner: [],
-      dataTimeArr: []
+      summaryData: [],
+      severityLevel: [
+        'Critical', 
+        'High', 
+        'Medium', 
+        'Low', 
+        'Negligible', 
+        'Unknown'
+      ],
+      timeNow: null
     }
   },
   computed: {
@@ -203,17 +212,11 @@ export default {
     selectedProjectId() {
       return this.selectedProject.id
     },
-    timeNow() {
-      return UTCtoLocalTime(this.dataTimeArr[0])
-    },
     branch() {
       return this.$route.params.commitBranch
     },
     commitId() {
       return this.$route.params.commitId
-    },
-    summaryData() {
-      return JSON.parse(sessionStorage.getItem('summary'))
     }
   },
   mounted() {
@@ -224,7 +227,9 @@ export default {
       this.listLoading = true
       try {
         const res = await getHarborScanReport(this.selectedProject.name, { branch: this.branch, commit_id: this.commitId })
+        this.summaryData = this.setSummaryData(res.data.overview)
         this.listData = this.sortVulnerabilityData(res.data.vulnerabilities)
+        this.timeNow = UTCtoLocalTime(res.data.generated_at)
         this.scanner = res.data.scanner
       } catch (error) {
         console.error(error)
@@ -239,6 +244,14 @@ export default {
         sortedData = [...sortedData, ...sorted]
       }
       return sortedData
+    },
+    setSummaryData(data) {
+      var summary = []
+      for (const item of this.severityLevel) {
+        const obj = { severity: item, value: data[item] }
+        summary.push(obj)
+      }
+      return summary
     },
     handleBackPage() {
       this.$router.go(-1)
