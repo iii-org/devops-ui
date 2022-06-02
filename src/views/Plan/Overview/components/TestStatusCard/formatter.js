@@ -164,7 +164,7 @@ const zapFormatter = (testResult) => {
 const cmasFormatter = (testResult) => {
   const ret = {}
   const status = testResult.status
-  if (Object.keys(testResult.result).length === 0) {
+  if (!testResult.hasOwnProperty('result') || Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
       Software: 'cmas',
       informationText: [{ status: getCheckmarxStatusText(status), count: '' }],
