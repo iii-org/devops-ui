@@ -193,12 +193,12 @@ export default {
         const obj = { severity: item, value: row[item] }
         summary.push(obj)
       }
+      sessionStorage.setItem('summary', JSON.stringify(summary))
       this.$router.push({
         name: 'DockerReport',
         params: { 
           commitId: row.commit, 
-          commitBranch: row.branch,
-          summary: summary
+          commitBranch: row.branch
         }
       })
     }

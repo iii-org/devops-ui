@@ -213,7 +213,7 @@ export default {
       return this.$route.params.commitId
     },
     summaryData() {
-      return this.$route.params.summary
+      return JSON.parse(sessionStorage.getItem('summary'))
     }
   },
   mounted() {
