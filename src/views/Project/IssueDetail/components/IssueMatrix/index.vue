@@ -413,11 +413,11 @@ export default {
       let last_result = null
       // const commit_icon = '<svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' aria-hidden=\'true\' role=\'img\' class=\'iconify iconify--ion\' width=\'32\' height=\'32\' preserveAspectRatio=\'xMidYMid meet\' viewBox=\'0 0 512 512\'><circle cx=\'256\' cy=\'256\' r=\'96\' fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\'></circle><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M160 256H48\'></path><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M464 256H352\'></path></svg>'
       if (test_file.software_name === 'Postman') {
-        const success = test_file.the_last_test_result && test_file.the_last_test_result.success
+        const success = test_file.the_last_test_result && test_file.the_last_test_result.success >= 0
           ? test_file.the_last_test_result.success : '-'
-        const failure = test_file.the_last_test_result && test_file.the_last_test_result.failure
+        const failure = test_file.the_last_test_result && test_file.the_last_test_result.failure >= 0
           ? test_file.the_last_test_result.failure : '-'
-        const total = test_file.the_last_test_result && test_file.the_last_test_result.success && test_file.the_last_test_result.failure
+        const total = test_file.the_last_test_result && test_file.the_last_test_result.success >= 0 && test_file.the_last_test_result.failure >= 0
           ? success + failure : '-'
         last_result = this.getTestLayout(success, total, test_file)
       } else if (test_file.software_name === 'SideeX') {
@@ -457,7 +457,7 @@ export default {
         status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
         count_result = `${status_light} <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
       }
-      if (!test_file.the_last_test_result.result) {
+      if (!test_file.the_last_test_result) {
         last_result = `${count_result}<br/>${this.$t('general.NoTestResult')}`
       } else {
         last_result =

@@ -754,46 +754,20 @@ export default {
       }
       result.push(file)
       let last_result = null
-      const commit_icon = 'Commit: '
-      let status_light = ''
-      const color = { pass: 'rgba(103,194,80,100)', failure: 'rgba(245,108,108,100)' }
       if (test_file.software_name === 'Postman') {
-        const success = test_file.the_last_test_result.success
-        const failure = test_file.the_last_test_result.failure
-        const total = success + failure
-        let count_result
-        if (success === total) {
-          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['pass']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = `${status_light} <span style=\'color: ${color['pass']}; font-weight:600;\'>Pass</span>`
-        } else {
-          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = `${status_light}  <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
-        }
-        last_result =
-          count_result +
-          '<br/>' +
-          test_file.the_last_test_result.branch +
-          '<br/> ' +
-          commit_icon +
-          test_file.the_last_test_result.commit_id
+        const success = test_file.the_last_test_result && test_file.the_last_test_result.success >= 0
+          ? test_file.the_last_test_result.success : '-'
+        const failure = test_file.the_last_test_result && test_file.the_last_test_result.failure >= 0
+          ? test_file.the_last_test_result.failure : '-'
+        const total = test_file.the_last_test_result && test_file.the_last_test_result.success >= 0 && test_file.the_last_test_result.failure >= 0
+          ? success + failure : '-'
+        last_result = this.getTestLayout(success, total, test_file)
       } else if (test_file.software_name === 'SideeX') {
-        const success = test_file.the_last_test_result.result.casesPassed
-        const total = test_file.the_last_test_result.result.casesTotal
-        let count_result
-        if (success === total) {
-          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['pass']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = `${status_light} <span style=\'color: ${color['pass']}; font-weight:600;\'>Pass</span>`
-        } else {
-          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = ` ${status_light} <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
-        }
-        last_result =
-          count_result +
-          '<br/>' +
-          test_file.the_last_test_result.branch +
-          '<br/> ' +
-          commit_icon +
-          test_file.the_last_test_result.commit_id
+        const success = test_file.the_last_test_result && test_file.the_last_test_result.result
+          ? test_file.the_last_test_result.result.casesPassed : '-'
+        const total = test_file.the_last_test_result && test_file.the_last_test_result.result
+          ? test_file.the_last_test_result.result.casesTotal : '-'
+        last_result = this.getTestLayout(success, total, test_file)
       }
       const file_result = {
         id: `${test_file.software_name}.${test_file.file_name}_result`,
@@ -810,6 +784,32 @@ export default {
       }
       result.push(file_result)
       return result
+    },
+    getTestLayout(success, total, test_file) {
+      const color = { pass: 'rgba(103,194,80,100)', failure: 'rgba(245,108,108,100)' }
+      const commit_icon = 'Commit: '
+      let status_light = ''
+      let count_result = ''
+      let last_result = null
+      if (success === total && success !== '-' && total !== '-') {
+        status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['pass']}; display:inline-block; border-radius: 99999px; \'></div>`
+        count_result = `${status_light} <span style=\'color: ${color['pass']}; font-weight:600;\'>Pass</span>`
+      } else {
+        status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
+        count_result = `${status_light} <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
+      }
+      if (!test_file.the_last_test_result) {
+        last_result = `${count_result}<br/>${this.$t('general.NoTestResult')}`
+      } else {
+        last_result =
+          count_result +
+          '<br/>' +
+          test_file.the_last_test_result.branch +
+          '<br/> ' +
+          commit_icon +
+          test_file.the_last_test_result.commit_id
+      }
+      return last_result
     },
     async onPaintChart() {
       this.chartLoading = true
