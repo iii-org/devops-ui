@@ -15,13 +15,13 @@
           }"
           class="el-backtop"
         >
-          <el-button 
-            slot="button" 
-            icon="el-icon-connection" 
-            circle 
+          <el-button
+            slot="button"
+            icon="el-icon-connection"
+            circle
             class="socket-button"
-            :type="(socket.connected)? 'success': 'danger'" 
-            @click="onSocketConnect" 
+            :type="(socket.connected)? 'success': 'danger'"
+            @click="onSocketConnect"
           />
         </div>
       </transition>
@@ -40,9 +40,9 @@
           }"
           class="el-backtop"
         >
-          <el-button 
-            slot="button" 
-            icon="el-icon-refresh" 
+          <el-button
+            slot="button"
+            icon="el-icon-refresh"
             class="buttonPrimaryReverse"
             circle
             @click="reloadPage"
@@ -73,8 +73,8 @@
           </div>
         </div>
       </div>
-      <div 
-        class="header" 
+      <div
+        class="header"
         :style="displayClosed ? 'width: 1740px' : 'width: 1450px'"
       >
         <el-table
@@ -92,8 +92,8 @@
         >
           <el-table-column type="expand">
             <template slot-scope="{row}">
-              <el-row 
-                v-loading="row.hasOwnProperty('isLoadingFamily') 
+              <el-row
+                v-loading="row.hasOwnProperty('isLoadingFamily')
                   && row.isLoadingFamily"
                 style="background: #f5f5f5"
               >
@@ -159,10 +159,10 @@
             align="center"
           >
             <template slot-scope="scope">
-              {{ 
-                (scope.row.due_date) ? 
-                  $dayjs(scope.row.due_date).format('YYYY-MM-DD') : 
-                  '-' 
+              {{
+                (scope.row.due_date) ?
+                  $dayjs(scope.row.due_date).format('YYYY-MM-DD') :
+                  '-'
               }}
             </template>
           </el-table-column>
@@ -185,7 +185,7 @@
             />
           </template>
         </el-table>
-        <el-table 
+        <el-table
           v-else
           ref="assigneeList"
           :key="tableKey"
@@ -199,8 +199,8 @@
         >
           <el-table-column type="expand">
             <template slot-scope="{row}">
-              <el-row 
-                v-loading="row.hasOwnProperty('isLoadingFamily') 
+              <el-row
+                v-loading="row.hasOwnProperty('isLoadingFamily')
                   && row.isLoadingFamily"
                 style="background: #f5f5f5"
               >
@@ -210,8 +210,8 @@
                     :id="'card_' + row.id + '_' + classObj.id"
                     :key="classObj.id"
                     :board-object="{[groupBy.dimension + '_id']: row.id, ...classObj}"
-                    :list="boardAssigneeVersionData[row.id] ? 
-                      boardAssigneeVersionData[row.id].children[classObj.id] : 
+                    :list="boardAssigneeVersionData[row.id] ?
+                      boardAssigneeVersionData[row.id].children[classObj.id] :
                       []
                     "
                     :status="status"
@@ -230,15 +230,15 @@
           </el-table-column>
           <el-table-column
             prop="name"
-            :label="groupBy.dimension === 'assigned_to' ? 
+            :label="groupBy.dimension === 'assigned_to' ?
               $t('Issue.assigned_to') : $t('Issue.fixed_version')"
           >
             <template slot-scope="{row}">
-              {{ groupBy.dimension === 'fixed_version' 
-                ? ( row.status === 'closed' 
-                  ? row.name + ' (' + $t('Version.closed') + ')' 
-                  : row.name) 
-                : row.name 
+              {{ groupBy.dimension === 'fixed_version'
+                ? ( row.status === 'closed'
+                  ? row.name + ' (' + $t('Version.closed') + ')'
+                  : row.name)
+                : row.name
               }}
             </template>
           </el-table-column>
@@ -365,25 +365,6 @@ export default {
         visible: false,
         id: null
       },
-      boardHeader: [{
-        id: 1,
-        name: 'Active'
-      }, {
-        id: 2,
-        name: 'Assigned'
-      }, {
-        id: 3,
-        name: 'InProgress'
-      }, {
-        id: 4,
-        name: 'Solved'
-      }, {
-        id: 5,
-        name: 'Verified'
-      }, {
-        id: 6,
-        name: 'Closed'
-      }],
       filterOptions: [{
         id: 1,
         label: this.$t('Issue.FilterDimensions.status'),
@@ -431,12 +412,12 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'selectedProjectId', 
-      'priority', 
-      'tracker', 
-      'status', 
-      'userId', 
-      'userRole', 
+      'selectedProjectId',
+      'priority',
+      'tracker',
+      'status',
+      'userId',
+      'userRole',
       'strictTracker'
     ]),
     assigned_to() {
@@ -446,8 +427,8 @@ export default {
       return this.fixedVersion
     },
     boardHeaderName() {
-      return this.displayClosed ? this.boardHeader 
-        : this.boardHeader.filter(row => row.id !== 6)
+      return this.displayClosed ? this.status
+        : this.status.filter(row => row.id !== 6)
     },
     contextOptions() {
       const result = {}
@@ -539,8 +520,8 @@ export default {
       if (!this.selectedProjectId) return
       this.listLoading = true
       const res = await getProjectIssueList(
-        this.filterValue.project || this.selectedProjectId, 
-        this.getParams(), 
+        this.filterValue.project || this.selectedProjectId,
+        this.getParams(),
         { cancelToken: this.cancelToken }
       )
       if (res.hasOwnProperty('data')) {
@@ -640,8 +621,8 @@ export default {
             [this.groupBy.dimension + '_id']: row.id
           }
           const res = await getProjectIssueList(
-            this.filterValue.project || this.selectedProjectId, 
-            params, 
+            this.filterValue.project || this.selectedProjectId,
+            params,
             { cancelToken: this.cancelToken }
           )
           this.originalChildren[row.id] = res.data
@@ -768,19 +749,19 @@ export default {
               }
               continue
             }
-            
+
             data[idx] = _this.socketDataFormat(data[idx])
             if (data[idx].hasOwnProperty('origin_parent_id')) {
               const findChangeIndex = this.originalChildren[data[idx].origin_parent_id]
                 .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
               this.$delete(this.originalChildren[data[idx].origin_parent_id], findChangeIndex)
               this.$set(
-                this.boardData[data[idx].origin_parent_id], 
-                'children', 
+                this.boardData[data[idx].origin_parent_id],
+                'children',
                 this.classifyIssue(this.originalChildren[data[idx].origin_parent_id])
               )
               if (data[idx].hasOwnProperty('parent')) {
-                const findIdx = this.originalChildren[data[idx].parent.id] 
+                const findIdx = this.originalChildren[data[idx].parent.id]
                   .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
                 if (findIdx >= 0) {
                   this.$set(this.originalChildren[data[idx].parent.id], findIdx, data[idx])
@@ -794,8 +775,8 @@ export default {
               this.$set(this.originalChildren[data[idx].parent.id], findChangeIndex, data[idx])
             }
             this.$set(
-              this.boardData[data[idx].parent.id], 
-              'children', 
+              this.boardData[data[idx].parent.id],
+              'children',
               this.classifyIssue(this.originalChildren[data[idx].parent.id])
             )
             elementId.push(data[idx].id)
@@ -809,8 +790,8 @@ export default {
                 .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
               this.$delete(this.originalChildren[data[idx][dimension]], findChangeIndex)
               this.$set(
-                this.boardAssigneeVersionData[data[idx][dimension]], 
-                'children', 
+                this.boardAssigneeVersionData[data[idx][dimension]],
+                'children',
                 this.classifyIssue(this.originalChildren[data[idx][dimension]])
               )
             }
@@ -826,8 +807,8 @@ export default {
             }
 
             this.$set(
-              this.boardAssigneeVersionData[data[idx][this.groupBy.dimension].id], 
-              'children', 
+              this.boardAssigneeVersionData[data[idx][this.groupBy.dimension].id],
+              'children',
               this.classifyIssue(this.originalChildren[data[idx][this.groupBy.dimension].id])
             )
             elementId.push(data[idx].id)
@@ -855,8 +836,8 @@ export default {
               if (parseInt(child.id) === parseInt(data.id)) {
                 this.originalChildren[key].splice(idx, 1)
                 this.$set(
-                  this.boardData[key], 
-                  'children', 
+                  this.boardData[key],
+                  'children',
                   this.classifyIssue(this.originalChildren[key])
                 )
               }
@@ -898,8 +879,8 @@ export default {
             }
 
             this.$set(
-              this.boardData[data[idx].parent.id], 
-              'children', 
+              this.boardData[data[idx].parent.id],
+              'children',
               this.classifyIssue(this.originalChildren[data[idx].parent.id])
             )
           } else {
@@ -908,7 +889,7 @@ export default {
               const findChangeIndex = this.originalChildren[data[idx][this.groupBy.dimension].id]
                 .findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
               if (findChangeIndex !== -1) {
-                this.$set(this.originalChildren[data[idx][this.groupBy.dimension].id], 
+                this.$set(this.originalChildren[data[idx][this.groupBy.dimension].id],
                   findChangeIndex, data[idx])
               } else {
                 this.originalChildren[data[idx][this.groupBy.dimension].id].push(data[idx])
@@ -917,8 +898,8 @@ export default {
             } else continue
 
             this.$set(
-              this.boardAssigneeVersionData[data[idx][this.groupBy.dimension].id], 
-              'children', 
+              this.boardAssigneeVersionData[data[idx][this.groupBy.dimension].id],
+              'children',
               this.classifyIssue(this.originalChildren[data[idx][this.groupBy.dimension].id])
             )
           }
@@ -1100,13 +1081,13 @@ export default {
     flex-wrap: nowrap;
   }
   .resizeHeight {
-    max-height: 420px; 
-    resize: vertical; 
+    max-height: 420px;
+    resize: vertical;
     overflow: auto;
   }
   .resizeHeight[style*="height"] {
-    max-height: unset; 
-} 
+    max-height: unset;
+}
 }
 .current {
   @apply text-success font-bold;
