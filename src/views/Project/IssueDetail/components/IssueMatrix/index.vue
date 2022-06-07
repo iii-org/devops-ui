@@ -256,7 +256,6 @@ export default {
       else if (!val && !this.form.displayConditions.includes('tracker')) this.form.displayConditions.push('tracker')
     },
     'form.allRelation'(val) {
-      if (val) this.form.level = ''
       this.initChart()
     },
     'form.hasRelation'(val) {

@@ -89,7 +89,6 @@
             />
           </el-form-item>
           <el-form-item
-            v-show="!chartSettingVisible"
             :label="$t('Issue.tracker')"
           >
             <el-select
@@ -112,7 +111,6 @@
             </el-select>
           </el-form-item>
           <el-form-item
-            v-show="!chartSettingVisible"
             :label="$t('Issue.Issue')"
           >
             <el-select
@@ -147,7 +145,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-show="!chartSettingVisible">
+          <el-form-item>
             <el-button
               icon="el-icon-s-operation"
               class="buttonPrimary"
@@ -231,25 +229,6 @@
                     :inactive-text="$t('general.off')"
                   />
                 </el-form-item>
-                <!-- <el-form-item
-                  :label="$t('IssueMatrix.DisplayItem')"
-                  prop="displayConditions"
-                  required
-                >
-                  <el-select
-                    v-model="form.displayConditions"
-                    :placeholder="$t('IssueMatrix.SelectDisplayItem')"
-                    multiple
-                    collapse-tags
-                  >
-                    <el-option
-                      v-for="condition in displayConditionsList"
-                      :key="condition.value"
-                      :label="condition.label"
-                      :value="condition.value"
-                    />
-                  </el-select>
-                </el-form-item> -->
                 <el-form-item
                   :label="$t('Issue.fixed_version')"
                 >
@@ -279,43 +258,6 @@
               </el-button>
             </el-popover>
           </el-form-item>
-          <!-- <el-form-item
-            v-show="chartSettingVisible"
-            :label="$t('general.group')"
-          >
-            <el-switch
-              v-model="group"
-              :active-text="$t('general.on')"
-              :inactive-text="$t('general.off')"
-            />
-          </el-form-item>
-          <el-form-item v-show="chartSettingVisible">
-            <el-switch
-              v-model="status_toggle"
-              :active-text="$t('Issue.status')"
-              :inactive-text="$t('Issue.tracker')"
-            />
-          </el-form-item>
-          <el-form-item
-            v-show="chartSettingVisible"
-            :label="$t('Issue.fixed_version')"
-          >
-            <el-select
-              v-model="filterValue.fixed_version_id"
-              multiple
-              :placeholder="$t('Issue.SelectVersion')"
-              :disabled="selectedProjectId === -1"
-              clearable
-              filterable
-            >
-              <el-option
-                v-for="version in versionFilterList"
-                :key="version.id"
-                :label="version.name"
-                :value="version.id"
-              />
-            </el-select>
-          </el-form-item> -->
         </el-form>
 
         <div
@@ -502,8 +444,6 @@ import { camelCase, cloneDeep } from 'lodash'
 import OrderListDialog from './components/OrderListDialog'
 import { dragscroll } from 'vue-dragscroll'
 import axios from 'axios'
-// import TraceCheck from '@/views/Plan/TraceabilityMatrix/components/TraceCheck'
-// import ProjectIssueDetail from '@/views/Project/IssueDetail'
 import theme from '@/theme.js'
 
 const Form = () => ({
@@ -552,7 +492,7 @@ export default {
       chartIssueList: [],
       issueLoading: false,
       chartLoading: false,
-      chartSettingVisible: false,
+      // chartSettingVisible: false,
       filterSettingVisible: true,
       listLoading: false,
       jobLoading: false,
@@ -560,8 +500,6 @@ export default {
         now: 0,
         total: 0
       },
-      // group: false,
-      // status_toggle: true,
       accessedIssueId: [],
       relationLine: {},
       testFilesResult: [],
@@ -636,23 +574,11 @@ export default {
       let testFileList = chartIssueList
         .map((issue) => (issue.test_files ? issue.test_files : null))
         .filter((issue) => issue)
-      // testFileList = [].concat.apply([], testFileList).map((test_file) => this.formatTestFile(test_file, this.form.group))
-      // testFileList = [].concat.apply([], testFileList)
       testFileList = testFileList.flat().map((test_file) => this.formatTestFile(test_file)).flat()
       const result = chartData.concat(testFileList)
       const unique_check = [...new Set(result.map((issue) => issue.id))]
       return unique_check.map((item) => result.find((issue) => issue.id === item))
     }
-    // hasParent() {
-    //   const rowIssue = this.chartIssueList.find((item) => item.id === this.row.id)
-    //   if (!rowIssue || !rowIssue.id) return false
-    //   return !!(rowIssue.parent && rowIssue.parent.id)
-    // },
-    // hasRelations() {
-    //   const rowIssue = this.chartIssueList.find((item) => item.id === this.row.id)
-    //   if (!rowIssue || !rowIssue.id) return false
-    //   return !!(rowIssue.relations && rowIssue.relations[0].id)
-    // }
   },
   watch: {
     async selectedProjectId() {
@@ -692,7 +618,6 @@ export default {
       }
     },
     'form.onlyChildren'(val) {
-      // if (val) this.form.level = ''
       this.onPaintChart()
     },
     'form.hasRelation'(val) {
@@ -989,12 +914,11 @@ export default {
           vueInstance.chartIssueList.push({ ...issue, ...issueFamily })
         }
         const getFamilyList = await this.combineFamilyList(issue, issueFamily)
-        console.log(getFamilyList)
         const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
         for (const [index, subIssue] of getFamilyList.entries()) {
-          if (findRelationTargets.includes(subIssue.tracker.name)) {
-            await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
-          }
+          // if (findRelationTargets.includes(subIssue.tracker.name)) {
+          await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
+          // }
           vueInstance.chartProgress.now += 1
         }
         return Promise.resolve(issue)
@@ -1002,7 +926,6 @@ export default {
 
       this.combineFamilyList = function (issue, family) {
         let getFamilyList = []
-        console.log(family)
         Object.keys(family).forEach((relationType) => {
           if (!vueInstance.form.hasRelation && relationType === 'relations') return
           if (vueInstance.form.onlyChildren && relationType === 'parent') return
@@ -1013,7 +936,6 @@ export default {
           getFamilyList = getFamilyList.concat(family[relationType])
         })
         getFamilyList = getFamilyList.filter((item) => !this.accessedIssueId.includes(item.id))
-        console.log(getFamilyList)
         return Promise.resolve(getFamilyList)
       }
 
