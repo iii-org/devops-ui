@@ -184,14 +184,102 @@
               >{{ $t('Track.Download') }}</el-button>
             </el-popover>
           </el-form-item>
-          <el-form-item>
+          <!-- <el-form-item>
             <el-button
               :icon="(chartSettingVisible)?'el-icon-takeaway-box':'el-icon-setting'"
               class="buttonSecondary"
               @click="chartSettingVisible=!chartSettingVisible"
             />
+          </el-form-item> -->
+          <el-form-item>
+            <el-popover
+              placement="bottom"
+              trigger="click"
+            >
+              <el-form
+                ref="form"
+                :model="form"
+                :disabled="chartLoading"
+                label-width="150px"
+                label-position="left"
+              >
+                <el-form-item :label="$t('general.group')">
+                  <el-switch
+                    v-model="form.group"
+                    :active-text="$t('general.on')"
+                    :inactive-text="$t('general.off')"
+                  />
+                </el-form-item>
+                <el-form-item>
+                  <el-switch
+                    v-model="form.isTracker"
+                    :active-text="$t('Issue.tracker')"
+                    :inactive-text="$t('Issue.status')"
+                  />
+                </el-form-item>
+                <el-form-item>
+                  <el-switch
+                    v-model="form.onlyChildren"
+                    :active-text="$t('IssueMatrix.OnlyDown')"
+                    :inactive-text="$t('general.All')"
+                  />
+                </el-form-item>
+                <el-form-item :label="$t('IssueMatrix.RelatedIssue')">
+                  <el-switch
+                    v-model="form.hasRelation"
+                    :active-text="$t('general.on')"
+                    :inactive-text="$t('general.off')"
+                  />
+                </el-form-item>
+                <!-- <el-form-item
+                  :label="$t('IssueMatrix.DisplayItem')"
+                  prop="displayConditions"
+                  required
+                >
+                  <el-select
+                    v-model="form.displayConditions"
+                    :placeholder="$t('IssueMatrix.SelectDisplayItem')"
+                    multiple
+                    collapse-tags
+                  >
+                    <el-option
+                      v-for="condition in displayConditionsList"
+                      :key="condition.value"
+                      :label="condition.label"
+                      :value="condition.value"
+                    />
+                  </el-select>
+                </el-form-item> -->
+                <el-form-item
+                  :label="$t('Issue.fixed_version')"
+                >
+                  <el-select
+                    v-model="filterValue.fixed_version_id"
+                    multiple
+                    :placeholder="$t('Issue.SelectVersion')"
+                    :disabled="selectedProjectId === -1"
+                    clearable
+                    filterable
+                  >
+                    <el-option
+                      v-for="version in versionFilterList"
+                      :key="version.id"
+                      :label="version.name"
+                      :value="version.id"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-form>
+              <el-button
+                slot="reference"
+                type="text"
+                icon="el-icon-s-tools"
+              >
+                {{ $t('IssueMatrix.ConditionSettings') }}
+              </el-button>
+            </el-popover>
           </el-form-item>
-          <el-form-item
+          <!-- <el-form-item
             v-show="chartSettingVisible"
             :label="$t('general.group')"
           >
@@ -227,7 +315,7 @@
                 :value="version.id"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
 
         <div
@@ -272,7 +360,7 @@
             <h3>{{ $t('Track.DemandTraceability') }}
               <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
             </h3>
-            <vue-mermaid
+            <VueMermaid
               ref="mermaid"
               :nodes="data"
               type="flowchart LR"
@@ -397,7 +485,7 @@
 </template>
 
 <script>
-import VueMermaid from './components/vue-mermaid'
+import VueMermaid from './components/VueMermaid'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getIssue, getIssueFamily } from '@/api/issue'
 import Tracker from '@/components/Issue/Tracker'
@@ -412,21 +500,43 @@ import {
 } from '@/api/qa'
 import { camelCase, cloneDeep } from 'lodash'
 import OrderListDialog from './components/OrderListDialog'
-import TraceCheck from '@/views/Plan/TraceabilityMatrix/components/TraceCheck'
 import { dragscroll } from 'vue-dragscroll'
-
 import axios from 'axios'
-import ProjectIssueDetail from '@/views/Project/IssueDetail'
-
+// import TraceCheck from '@/views/Plan/TraceabilityMatrix/components/TraceCheck'
+// import ProjectIssueDetail from '@/views/Project/IssueDetail'
 import theme from '@/theme.js'
+
+const Form = () => ({
+  group: false,
+  isTracker: false, // status or tracker
+  onlyChildren: false,
+  // level: '',
+  hasRelation: false
+  // displayConditions: ['id', 'name', 'status', 'tracker', 'version']
+})
 
 export default {
   name: 'TraceabilityMatrix',
-  components: { ProjectIssueDetail, TraceCheck, OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
+  components: {
+    ProjectIssueDetail: () => import('@/views/Project/IssueDetail'),
+    TraceCheck: () => import('@/views/Plan/TraceabilityMatrix/components/TraceCheck'),
+    OrderListDialog,
+    ProjectListSelector,
+    Tracker,
+    VueMermaid
+  },
   directives: {
     dragscroll
   },
   data() {
+    // this.displayConditionsList = [
+    //   { value: 'id', label: this.$t('IssueMatrix.Id') },
+    //   { value: 'name', label: this.$t('IssueMatrix.Name') },
+    //   { value: 'status', label: this.$t('IssueMatrix.Status') },
+    //   { value: 'tracker', label: this.$t('IssueMatrix.Tracker') },
+    //   { value: 'assignee', label: this.$t('IssueMatrix.Assignee') },
+    //   { value: 'version', label: this.$t('IssueMatrix.Version') }
+    // ]
     return {
       activeTab: 'map',
       tableHeight: 0,
@@ -450,8 +560,8 @@ export default {
         now: 0,
         total: 0
       },
-      group: false,
-      status_toggle: true,
+      // group: false,
+      // status_toggle: true,
       accessedIssueId: [],
       relationLine: {},
       testFilesResult: [],
@@ -467,7 +577,8 @@ export default {
       },
       isRotate: false,
       cancelToken: null,
-      trackerColor: Object.freeze(theme.backgroundColor)
+      trackerColor: Object.freeze(theme.backgroundColor),
+      form: new Form()
     }
   },
   computed: {
@@ -521,16 +632,27 @@ export default {
     },
     data() {
       const chartIssueList = this.chartIssueList
-      const chartData = chartIssueList.map((issue) => this.formatChartData(issue, this.group, this.status_toggle))
+      const chartData = chartIssueList.map((issue) => this.formatChartData(issue, this.form.group, this.form.isTracker))
       let testFileList = chartIssueList
         .map((issue) => (issue.test_files ? issue.test_files : null))
         .filter((issue) => issue)
-      testFileList = [].concat.apply([], testFileList).map((test_file) => this.formatTestFile(test_file, this.group))
-      testFileList = [].concat.apply([], testFileList)
+      // testFileList = [].concat.apply([], testFileList).map((test_file) => this.formatTestFile(test_file, this.form.group))
+      // testFileList = [].concat.apply([], testFileList)
+      testFileList = testFileList.flat().map((test_file) => this.formatTestFile(test_file)).flat()
       const result = chartData.concat(testFileList)
       const unique_check = [...new Set(result.map((issue) => issue.id))]
       return unique_check.map((item) => result.find((issue) => issue.id === item))
     }
+    // hasParent() {
+    //   const rowIssue = this.chartIssueList.find((item) => item.id === this.row.id)
+    //   if (!rowIssue || !rowIssue.id) return false
+    //   return !!(rowIssue.parent && rowIssue.parent.id)
+    // },
+    // hasRelations() {
+    //   const rowIssue = this.chartIssueList.find((item) => item.id === this.row.id)
+    //   if (!rowIssue || !rowIssue.id) return false
+    //   return !!(rowIssue.relations && rowIssue.relations[0].id)
+    // }
   },
   watch: {
     async selectedProjectId() {
@@ -568,6 +690,13 @@ export default {
           this.$refs['TraceCheck'].resetData()
         }
       }
+    },
+    'form.onlyChildren'(val) {
+      // if (val) this.form.level = ''
+      this.onPaintChart()
+    },
+    'form.hasRelation'(val) {
+      this.onPaintChart()
     }
   },
   created() {
@@ -658,8 +787,7 @@ export default {
       if (!object) return true
       return [...object.relation.children, object.name].includes(subIssue_tracker)
     },
-    formatChartData(issue, group, status) {
-      const checkIssueName = issue.name.replace(/"/g, '&quot;')
+    formatChartData(issue) {
       const link = []
       let children = []
       let relations = []
@@ -691,6 +819,11 @@ export default {
         }
         children = children.concat(test_files)
       }
+      const point = this.getChartLayout(issue, link, children)
+      return point
+    },
+    getChartLayout(issue, link, children) {
+      const checkIssueName = issue.name.replace(/"/g, '&quot;')
       const point = {
         id: issue.id,
         link: link,
@@ -704,8 +837,8 @@ export default {
         ] += `<span style=\'border-radius: 0.25rem; background: white; font-size: 0.75em; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
       }
 
-      if (group) {
-        if (status) {
+      if (this.form.group) {
+        if (this.form.isTracker) {
           point['text'] += `(${this.$t('Issue.' + issue.tracker.name)})"`
           point['group'] = `${this.$t('Issue.' + issue.status.name)}`
           point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
@@ -715,7 +848,7 @@ export default {
           point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
         }
       } else {
-        if (status) {
+        if (this.form.isTracker) {
           point['text'] += `${this.$t('Issue.' + issue.status.name)} - (${this.$t('Issue.' + issue.tracker.name)})"`
           point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
         } else {
@@ -856,6 +989,7 @@ export default {
           vueInstance.chartIssueList.push({ ...issue, ...issueFamily })
         }
         const getFamilyList = await this.combineFamilyList(issue, issueFamily)
+        console.log(getFamilyList)
         const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
         for (const [index, subIssue] of getFamilyList.entries()) {
           if (findRelationTargets.includes(subIssue.tracker.name)) {
@@ -868,7 +1002,10 @@ export default {
 
       this.combineFamilyList = function (issue, family) {
         let getFamilyList = []
+        console.log(family)
         Object.keys(family).forEach((relationType) => {
+          if (!vueInstance.form.hasRelation && relationType === 'relations') return
+          if (vueInstance.form.onlyChildren && relationType === 'parent') return
           if (!Array.isArray(family[relationType])) {
             family[relationType] = [family[relationType]]
           }
@@ -876,6 +1013,7 @@ export default {
           getFamilyList = getFamilyList.concat(family[relationType])
         })
         getFamilyList = getFamilyList.filter((item) => !this.accessedIssueId.includes(item.id))
+        console.log(getFamilyList)
         return Promise.resolve(getFamilyList)
       }
 

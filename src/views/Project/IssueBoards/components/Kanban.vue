@@ -101,8 +101,8 @@
                 :type="element.tracker.name"
                 class="tracker"
                 :style="
-                  fromWbs ? 
-                    'max-width: 80px; display: inline-block;' 
+                  fromWbs ?
+                    'max-width: 80px; display: inline-block;'
                     : ''
                 "
               />
@@ -125,11 +125,11 @@
               <span v-if="fromWbs" style="float:right;">
                 <span class="detail user">
                   <em class="el-icon-user-solid" />
-                  <span 
-                    class="text" 
+                  <span
+                    class="text"
                     style="
                       font-size: 14px;
-                      max-width: 70px; 
+                      max-width: 70px;
                       display: inline-block;
                     "
                   >
@@ -531,7 +531,7 @@ export default {
       }
       if (this.boardObject.hasOwnProperty('fixed_version_id')) {
         const version_board_id = evt.to.id.substring(
-          evt.to.id.indexOf('_') + 1, 
+          evt.to.id.indexOf('_') + 1,
           evt.to.id.lastIndexOf('_')
         )
         const version_board = this.fixedVersion.find(issue => parseInt(version_board_id) === parseInt(issue.id))
@@ -540,7 +540,7 @@ export default {
             const error = 'toClosedVersionError'
             this.handleErrorAlert(error, version_board)
             return false
-          } 
+          }
           return true
         }
       }
@@ -628,7 +628,7 @@ export default {
       if (version) {
         this.toClosedVersionError = {
           title: this.$t('Kanban.closedVersionErrorTitle'),
-          content: this.$t('Kanban.toClosedVersionErrorContent', { fixed_version: version.name }) 
+          content: this.$t('Kanban.toClosedVersionErrorContent', { fixed_version: version.name })
         }
       }
       const { title, content } = this[key]
@@ -1061,13 +1061,13 @@ export default {
   }
 }
 .cardTitle {
-  margin-top: 3px; 
+  margin-top: 3px;
   margin-bottom: 3px;
 }
 .msg-text {
-  white-space: nowrap; 
-  text-overflow: ellipsis; 
-  overflow: hidden; 
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
   width: 220px;
   font-weight: bold;
 }
