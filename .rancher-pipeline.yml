@@ -31,17 +31,7 @@ stages:
       include:
       - master
       - develop
-      - projectlist
-      - projectfilter
-      - sysconfig
-      - messagebubble
-      - packrelease
-      - sonarqubelogs
-      - tracker
-      - mywork
-      - testsocket
-      - issuerelationchart
-      - wbsboard
+      - traceability
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -62,9 +52,6 @@ stages:
       include:
       - master
       - develop
-      - packrelease
-      - mywork
-      - testsocket
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
   steps:
@@ -90,55 +77,16 @@ stages:
       include:
       - master
       - develop
-      - githubwebsocket
       - GitGraph
-      - projectlist
-      - projectfilter
-      - sysconfig
-      - trysocket
-      - milestonefreeze
-      - milestonehandleedit
       - router
-      - expandrow
-      - issueboarddrawer
-      - socket
-      - temp
-      - tmprelease
-      - sonarqubelogs
       - themebyclay
-      - userlist
-      - messagebubble
-      - packrelease
-      - parentchildproject
-      - tracker
       - routeset
-      - issuedescription
-      - forcetracker
-      - issueboard
-      - contextmenu
-      - parentfilter
-      - filter
-      - sortingwbs
-      - parentproject
-      - parent02
-      - clayfilterdetail
-      - tryonlyfilter
-      - new
-      - mywork
-      - testsocket
-      - mergeissueandfile
-      - attachment
-      - rmbubbles
-      - issuerelationchart
-      - wbsboard
-      - selftemplate
       - echart
-      - sideexjson
-      - missing
       - clairreport
       - copyurl
       - tagdisplay
       - disableallrelation
+      - traceability
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -159,55 +107,16 @@ stages:
       include:
       - master
       - develop
-      - githubwebsocket
       - GitGraph
-      - projectlist
-      - projectfilter
-      - sysconfig
-      - trysocket
-      - milestonefreeze
-      - milestonehandleedit
       - router
-      - expandrow
-      - issueboarddrawer
-      - socket
-      - temp
-      - tmprelease
-      - sonarqubelogs
       - themebyclay
-      - userlist
-      - messagebubble
-      - packrelease
-      - parentchildproject
-      - tracker
       - routeset
-      - issuedescription
-      - forcetracker
-      - issueboard
-      - contextmenu
-      - parentfilter
-      - filter
-      - sortingwbs
-      - parentproject
-      - parent02
-      - clayfilterdetail
-      - tryonlyfilter
-      - new
-      - mywork
-      - testsocket
-      - mergeissueandfile
-      - attachment
-      - rmbubbles
-      - issuerelationchart
-      - wbsboard
-      - selftemplate
       - echart
-      - sideexjson
-      - missing
       - clairreport
       - copyurl
       - tagdisplay
       - disableallrelation
+      - traceability
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -239,55 +148,16 @@ stages:
       include:
       - master
       - develop
-      - githubwebsocket
       - GitGraph
-      - projectlist
-      - projectfilter
-      - sysconfig
-      - trysocket
-      - milestonefreeze
-      - milestonehandleedit
       - router
-      - expandrow
-      - issueboarddrawer
-      - socket
-      - temp
-      - tmprelease
-      - sonarqubelogs
       - themebyclay
-      - userlist
-      - messagebubble
-      - packrelease
-      - parentchildproject
-      - tracker
       - routeset
-      - issuedescription
-      - forcetracker
-      - issueboard
-      - contextmenu
-      - parentfilter
-      - filter
-      - sortingwbs
-      - parentproject
-      - parent02
-      - clayfilterdetail
-      - tryonlyfilter
-      - new
-      - mywork
-      - testsocket
-      - mergeissueandfile
-      - attachment
-      - rmbubbles
-      - issuerelationchart
-      - wbsboard
-      - selftemplate
       - echart
-      - sideexjson
-      - missing
       - clairreport
       - copyurl
       - tagdisplay
       - disableallrelation
+      - traceability
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -312,55 +182,16 @@ stages:
       include:
       - master
       - develop
-      - githubwebsocket
       - GitGraph
-      - projectlist
-      - projectfilter
-      - sysconfig
-      - trysocket
-      - milestonefreeze
-      - milestonehandleedit
       - router
-      - expandrow
-      - issueboarddrawer
-      - socket
-      - temp
-      - tmprelease
-      - sonarqubelogs
       - themebyclay
-      - userlist
-      - messagebubble
-      - packrelease
-      - parentchildproject
-      - tracker
       - routeset
-      - issuedescription
-      - forcetracker
-      - issueboard
-      - contextmenu
-      - parentfilter
-      - filter
-      - sortingwbs
-      - parentproject
-      - parent02
-      - clayfilterdetail
-      - tryonlyfilter
-      - new
-      - mywork
-      - testsocket
-      - mergeissueandfile
-      - attachment
-      - rmbubbles
-      - issuerelationchart
-      - wbsboard
-      - selftemplate
       - echart
-      - sideexjson
-      - missing
       - clairreport
       - copyurl
       - tagdisplay
       - disableallrelation
+      - traceability
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -384,55 +215,16 @@ stages:
       include:
       - master
       - develop
-      - githubwebsocket
       - GitGraph
-      - projectlist
-      - projectfilter
-      - sysconfig
-      - trysocket
-      - milestonefreeze
-      - milestonehandleedit
       - router
-      - expandrow
-      - issueboarddrawer
-      - socket
-      - temp
-      - tmprelease
-      - sonarqubelogs
       - themebyclay
-      - userlist
-      - messagebubble
-      - packrelease
-      - parentchildproject
-      - tracker
       - routeset
-      - issuedescription
-      - forcetracker
-      - issueboard
-      - contextmenu
-      - parentfilter
-      - filter
-      - sortingwbs
-      - parentproject
-      - parent02
-      - clayfilterdetail
-      - tryonlyfilter
-      - new
-      - mywork
-      - testsocket
-      - mergeissueandfile
-      - attachment
-      - rmbubbles
-      - issuerelationchart
-      - wbsboard
-      - selftemplate
       - echart
-      - sideexjson
-      - missing
       - clairreport
       - copyurl
       - tagdisplay
       - disableallrelation
+      - traceability
 - name: Test--ZAP
   iiidevops: zap
   steps:
@@ -453,7 +245,7 @@ stages:
   when:
     branch:
       include:
-      - packrelease
+      - skip
 - name: Test--WebInspect
   iiidevops: webinspect
   steps:
@@ -495,7 +287,6 @@ stages:
     branch:
       include:
       - develop
-      - packrelease
 - name: Test--SideeX
   iiidevops: sideex
   steps:
@@ -518,4 +309,3 @@ stages:
       include:
       - GitGraph
       - develop
-      - packrelease
