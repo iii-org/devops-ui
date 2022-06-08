@@ -80,6 +80,7 @@ stages:
       - develop
       - clairreport
       - traceability
+      - testreport
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -102,6 +103,7 @@ stages:
       - develop
       - clairreport
       - traceability
+      - testreport
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -119,6 +121,7 @@ stages:
       - develop
       - master
       - traceability
+      - testreport
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -152,6 +155,7 @@ stages:
       - develop
       - clairreport
       - traceability
+      - testreport
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -179,6 +183,7 @@ stages:
       - develop
       - clairreport
       - traceability
+      - testreport
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -204,6 +209,7 @@ stages:
       - develop
       - clairreport
       - traceability
+      - testreport
 - name: Test--ZAP
   iiidevops: zap
   steps:
