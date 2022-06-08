@@ -1363,7 +1363,7 @@ export default {
     Tracker: '@:Issue.FilterDimensions.tracker',
     Assignee: '@:Issue.Assignee',
     Version: 'Version',
-    DisplayItemWarning: `Display items shouldn't be empty`,
+    DisplayItemWarning: `Display items should include at least the Name or ID`,
     CancelTrackerWarning: 'When turning on the Group and selecting the Status, the Display Items must have the Type',
     CancelStatusWarning: 'When turning on the Group and selecting the Type, the Display Items must have the Status'
   },

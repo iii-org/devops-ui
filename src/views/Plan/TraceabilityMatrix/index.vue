@@ -182,13 +182,6 @@
               >{{ $t('Track.Download') }}</el-button>
             </el-popover>
           </el-form-item>
-          <!-- <el-form-item>
-            <el-button
-              :icon="(chartSettingVisible)?'el-icon-takeaway-box':'el-icon-setting'"
-              class="buttonSecondary"
-              @click="chartSettingVisible=!chartSettingVisible"
-            />
-          </el-form-item> -->
           <el-form-item>
             <el-popover
               placement="bottom"
@@ -225,9 +218,29 @@
                 <el-form-item :label="$t('IssueMatrix.RelatedIssue')">
                   <el-switch
                     v-model="form.hasRelation"
+                    :disabled="!hasRelations"
                     :active-text="$t('general.on')"
                     :inactive-text="$t('general.off')"
                   />
+                </el-form-item>
+                <el-form-item
+                  :label="$t('IssueMatrix.DisplayItem')"
+                  prop="displayConditions"
+                  required
+                >
+                  <el-select
+                    v-model="form.displayConditions"
+                    :placeholder="$t('IssueMatrix.SelectDisplayItem')"
+                    multiple
+                    collapse-tags
+                  >
+                    <el-option
+                      v-for="condition in displayConditionsList"
+                      :key="condition.value"
+                      :label="condition.label"
+                      :value="condition.value"
+                    />
+                  </el-select>
                 </el-form-item>
                 <el-form-item
                   :label="$t('Issue.fixed_version')"
@@ -451,8 +464,8 @@ const Form = () => ({
   isTracker: false, // status or tracker
   onlyChildren: false,
   // level: '',
-  hasRelation: false
-  // displayConditions: ['id', 'name', 'status', 'tracker', 'version']
+  hasRelation: false,
+  displayConditions: ['id', 'name', 'status', 'tracker', 'version']
 })
 
 export default {
@@ -469,14 +482,14 @@ export default {
     dragscroll
   },
   data() {
-    // this.displayConditionsList = [
-    //   { value: 'id', label: this.$t('IssueMatrix.Id') },
-    //   { value: 'name', label: this.$t('IssueMatrix.Name') },
-    //   { value: 'status', label: this.$t('IssueMatrix.Status') },
-    //   { value: 'tracker', label: this.$t('IssueMatrix.Tracker') },
-    //   { value: 'assignee', label: this.$t('IssueMatrix.Assignee') },
-    //   { value: 'version', label: this.$t('IssueMatrix.Version') }
-    // ]
+    this.displayConditionsList = [
+      { value: 'id', label: this.$t('IssueMatrix.Id') },
+      { value: 'name', label: this.$t('IssueMatrix.Name') },
+      { value: 'status', label: this.$t('IssueMatrix.Status') },
+      { value: 'tracker', label: this.$t('IssueMatrix.Tracker') },
+      { value: 'assignee', label: this.$t('IssueMatrix.Assignee') },
+      { value: 'version', label: this.$t('IssueMatrix.Version') }
+    ]
     return {
       activeTab: 'map',
       tableHeight: 0,
@@ -492,7 +505,6 @@ export default {
       chartIssueList: [],
       issueLoading: false,
       chartLoading: false,
-      // chartSettingVisible: false,
       filterSettingVisible: true,
       listLoading: false,
       jobLoading: false,
@@ -578,6 +590,24 @@ export default {
       const result = chartData.concat(testFileList)
       const unique_check = [...new Set(result.map((issue) => issue.id))]
       return unique_check.map((item) => result.find((issue) => issue.id === item))
+    },
+    hasRelations() {
+      const rowIssue = []
+      let hasRelations = false
+      this.chartIssueList.forEach((item) => {
+        this.filterValue.issue_id.forEach((issueId) => {
+          if (item.id === issueId) {
+            rowIssue.push(item)
+          }
+        })
+      })
+      if (rowIssue.length === 0) return false
+      rowIssue.forEach((issue) => {
+        if (issue.relations && issue.relations[0].id) {
+          hasRelations = true
+        }
+      })
+      return hasRelations
     }
   },
   watch: {
@@ -617,11 +647,32 @@ export default {
         }
       }
     },
+    'form.isTracker'(val) {
+      if (val && !this.form.displayConditions.includes('status')) this.form.displayConditions.push('status')
+      else if (!val && !this.form.displayConditions.includes('tracker')) this.form.displayConditions.push('tracker')
+    },
+    'filterValue.fixed_version_id'(val) {
+      this.onPaintChart()
+    },
     'form.onlyChildren'(val) {
       this.onPaintChart()
     },
     'form.hasRelation'(val) {
       this.onPaintChart()
+    },
+    'form.displayConditions'(val) {
+      this.$refs.form.validate((valid) => {
+        if (this.form.group && this.form.isTracker && !val.includes('status')) {
+          this.showWarning(this.$t('IssueMatrix.CancelStatusWarning'))
+          this.form.displayConditions.push('status')
+        } else if (this.form.group && !this.form.isTracker && !val.includes('tracker')) {
+          this.showWarning(this.$t('IssueMatrix.CancelTrackerWarning'))
+          this.form.displayConditions.push('tracker')
+        } else if ((!val.includes('id') && !val.includes('name')) || !valid) {
+          this.showWarning(this.$t('IssueMatrix.DisplayItemWarning'))
+          this.form.displayConditions.push('name')
+        }
+      })
     }
   },
   created() {
@@ -751,12 +802,15 @@ export default {
       const checkIssueName = issue.name.replace(/"/g, '&quot;')
       const point = {
         id: issue.id,
-        link: link,
+        link,
         next: children,
         editable: true
       }
-      point['text'] = `"#${issue.id} - ${checkIssueName}<br/>`
-      if (issue.fixed_version && issue.fixed_version.name) {
+      point['text'] = `"`
+      if (this.isConditionSelected('id')) point['text'] += `#${issue.id}`
+      if (this.isConditionSelected('name')) point['text'] += ` - ${checkIssueName}`
+      if (point['text'] !== `"`) point['text'] += `<br/>`
+      if (this.isConditionSelected('version') && issue.fixed_version && issue.fixed_version.name) {
         point[
           'text'
         ] += `<span style=\'border-radius: 0.25rem; background: white; font-size: 0.75em; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
@@ -764,23 +818,26 @@ export default {
 
       if (this.form.group) {
         if (this.form.isTracker) {
-          point['text'] += `(${this.$t('Issue.' + issue.tracker.name)})"`
-          point['group'] = `${this.$t('Issue.' + issue.status.name)}`
-          point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
-        } else {
-          point['text'] += `(${this.$t('Issue.' + issue.status.name)})"`
+          if (this.isConditionSelected('status')) point['text'] += `(${this.$t('Issue.' + issue.status.name)})`
           point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
           point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
-        }
-      } else {
-        if (this.form.isTracker) {
-          point['text'] += `${this.$t('Issue.' + issue.status.name)} - (${this.$t('Issue.' + issue.tracker.name)})"`
-          point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
         } else {
-          point['text'] += `${this.$t('Issue.' + issue.status.name)} - (${this.$t('Issue.' + issue.tracker.name)})"`
+          if (this.isConditionSelected('tracker')) point['text'] += `(${this.$t('Issue.' + issue.tracker.name)})`
+          point['group'] = `${this.$t('Issue.' + issue.status.name)}`
           point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
         }
+      } else {
+        if (this.isConditionSelected('tracker')) point['text'] += `${this.$t('Issue.' + issue.status.name)}`
+        if (this.isConditionSelected('status')) point['text'] += ` - (${this.$t('Issue.' + issue.tracker.name)})`
+        if (this.form.isTracker) {
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
+        } else {
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
+        }
       }
+      if (point['text'] !== `"`) point['text'] += `<br/>`
+      if (this.isConditionSelected('assignee') && issue.assigned_to && issue.assigned_to.name) point['text'] += `${issue.assigned_to.name}`
+      point['text'] += `"`
 
       if (issue.fixed_version && issue.fixed_version.id) {
         if (
@@ -794,6 +851,9 @@ export default {
         point['edgeType'] = 'stadium'
       }
       return point
+    },
+    isConditionSelected(item) {
+      return this.form.displayConditions.includes(item)
     },
     formatTestFile(test_file, group) {
       const result = []
@@ -877,7 +937,6 @@ export default {
       this.chartProgress.now = 0
       this.chartProgress.total = 0
       const issueList = []
-      this.chartIssueList = []
       for (const item of this.nowFilterValue.issue_id) {
         this.chartProgress.total += 1
         const issue = await getIssue(item)
@@ -1065,6 +1124,13 @@ export default {
       } else {
         done()
       }
+    },
+    showWarning(message) {
+      this.$message({
+        title: this.$t('general.Warning'),
+        type: 'warning',
+        message
+      })
     }
   }
 }
