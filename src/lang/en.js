@@ -10,6 +10,7 @@ export default {
   route: {
     myWork: 'My Work',
     inbox: 'Inbox',
+    whiteboard: 'Whiteboard',
     dashboard: 'Dashboard',
     projectOverview: 'Project Overview',
     projectList: 'Project List',
@@ -639,7 +640,7 @@ export default {
       TestSoftware: 'Test Software',
       TestName: 'Test Name',
       PostmanUpload: 'Postman Filename Rule: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex Filename Rule: {file_name}.sideex.json'
+      SideeXUpload: 'Sideex Filename Rule: {file_name}.json'
     }
   },
   Wiki: {
@@ -1345,6 +1346,10 @@ export default {
     Send: 'Send',
     NotifyClosed: 'Message closed successfully',
     SearchLabel: 'Search Title or Sender'
+  },
+  Excalidraw: {
+    CreateBoard: 'Create WhiteBoard',
+    EditBoard: 'Edit WhiteBoard'
   },
   IssueMatrix: {
     Relations: 'Relationship',

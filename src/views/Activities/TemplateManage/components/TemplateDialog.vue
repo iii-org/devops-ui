@@ -97,10 +97,6 @@ export default {
   name: 'TemplateDialog',
   components: { VueEditor },
   props: {
-    dialogVisible: {
-      type: Boolean,
-      default: false
-    },
     existedTemplateIds: {
       type: Array,
       default: () => []
@@ -112,6 +108,7 @@ export default {
   },
   data() {
     return {
+      dialogVisible: false,
       isLoading: false,
       form: formTemplate(),
       row: {},
@@ -236,7 +233,7 @@ export default {
     onDialogClosed() {
       this.row = {}
       this.$refs['form'].resetFields()
-      this.$emit('update:dialogVisible', false)
+      this.dialogVisible = false
     }
   }
 }

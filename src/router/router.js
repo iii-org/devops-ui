@@ -375,6 +375,25 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/whiteboard',
+    component: Layout,
+    redirect: { name: 'whiteboard' },
+    meta: {
+      title: 'whiteboard',
+      icon: 'el-icon-data-board'
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/WhiteBoard'),
+        name: 'whiteboard',
+        meta: {
+          title: 'whiteboard'
+        }
+      }
+    ]
+  },
+  {
     path: '/project-list',
     component: Layout,
     meta: { roles: ['Project Manager', 'Engineer'] },

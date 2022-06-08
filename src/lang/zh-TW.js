@@ -10,6 +10,7 @@ export default {
   route: {
     myWork: '我的工作',
     inbox: '收件匣',
+    whiteboard: '白板',
     dashboard: '儀表板',
     projectOverview: '專案概述',
     projectList: '專案列表',
@@ -634,7 +635,7 @@ export default {
       TestSoftware: '測試軟體',
       TestName: '測試名稱',
       PostmanUpload: 'Postman檔案名稱: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex檔案名稱: {file_name}.sideex.json'
+      SideeXUpload: 'Sideex檔案名稱: {file_name}.json'
     }
   },
   Wiki: {
@@ -1336,6 +1337,10 @@ export default {
     Send: '傳送',
     NotifyClosed: '訊息已關閉',
     SearchLabel: '搜尋訊息標題或寄送者'
+  },
+  Excalidraw: {
+    CreateBoard: '新增白板',
+    EditBoard: '編輯白板'
   },
   IssueMatrix: {
     Relations: '關係',
