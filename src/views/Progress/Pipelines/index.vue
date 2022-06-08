@@ -350,7 +350,12 @@ export default {
       const commitBranch = row.commit_branch
       this.$router.push({
         name: 'TestReport',
-        params: { commitId, commitBranch, projectName: this.$store.getters.selectedProject.name }
+        params: {
+          commitId,
+          commitBranch,
+          projectId: this.selectedProject.id,
+          projectName: this.selectedProject.name
+        }
       })
     }
   }

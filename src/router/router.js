@@ -253,7 +253,7 @@ export const asyncRoutes = [
             }
           },
           {
-            path: 'test-report/:commitId',
+            path: 'test-report/:projectId/:commitBranch/:commitId',
             name: 'TestReport',
             hidden: true,
             component: () => import('@/views/Progress/Pipelines/components/TestReport'),
@@ -593,7 +593,7 @@ export const asyncRoutes = [
             meta: { roles: ['Administrator', 'Project Manager', 'Engineer'] }
           },
           {
-            path: 'test-report/:commitId',
+            path: 'test-report/:projectId/:commitBranch/:commitId',
             name: 'TestReport',
             hidden: true,
             component: () => import('@/views/Progress/Pipelines/components/TestReport'),

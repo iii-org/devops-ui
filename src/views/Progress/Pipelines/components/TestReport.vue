@@ -62,7 +62,7 @@
         >{{ $t('route.testReport') }}</div>
         <div style="padding: 40px;">
           <ul class="text-base mb-10 font-semibold">
-            <li>{{ $t('general.project_name') }}: {{ selectedProject.display }}</li>
+            <li>{{ $t('general.project_name') }}: {{ projectName }}</li>
             <li>{{ $t('TestReport.TestTime') }}: {{ timeNow }}</li>
             <li>
               {{ $t('general.Branch') }} / {{ $t('TestReport.Commit') }}:
@@ -187,12 +187,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProject']),
-    selectedProjectId() {
-      return this.selectedProject.id
-    },
     timeNow() {
       return UTCtoLocalTime(this.dataTimeArr[0])
+    },
+    projectId () {
+      return this.$route.params.projectId
+    },
+    projectName() {
+      return this.$route.params.projectName
     },
     branch() {
       return this.$route.params.commitBranch
@@ -255,7 +257,7 @@ export default {
     async loadTestReport() {
       this.listLoading = true
       try {
-        const res = await getProjectCommitTestSummary(this.selectedProjectId, this.$route.params.commitId)
+        const res = await getProjectCommitTestSummary(this.projectId, this.commitId)
         dataName.forEach(name => this.setTestReportData(res.data, name))
         this.dataTimeArr = this.getDataTime
       } catch (error) {
