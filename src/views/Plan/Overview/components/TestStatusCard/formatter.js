@@ -168,7 +168,7 @@ const cmasFormatter = (testResult) => {
     Object.assign(ret, {
       Software: 'cmas',
       informationText: [{ status: getCheckmarxStatusText(status), count: '' }],
-      status: testResult.status
+      status
     })
   } else {
     const { MOEA, OWASP } = testResult.result
@@ -189,6 +189,34 @@ const cmasFormatter = (testResult) => {
   }
   return ret
 }
+
+const harborFormatter = (testResult) => {
+  const ret = {}
+  const status = testResult.status
+  if (Object.keys(testResult.result).length === 0) {
+    Object.assign(ret, {
+      Software: 'harbor',
+      informationText: [{ status: getCheckmarxStatusText(status), count: '' }],
+      status
+    })
+  } else {
+    const { Critical, High, Low, Medium, Negligible, Unknown } = testResult.result
+    Object.assign(ret, {
+      Software: 'harbor',
+      runAt: testResult.run_at,
+      informationText: [
+        { status: i18n.t('Docker.Critical'), count: Critical },
+        { status: i18n.t('Docker.High'), count: High },
+        { status: i18n.t('Docker.Low'), count: Low },
+        { status: i18n.t('Docker.Medium'), count: Medium },
+        { status: i18n.t('Docker.Negligible'), count: Negligible },
+        { status: i18n.t('Docker.Unknown'), count: Unknown }
+      ]
+    })
+  }
+  return ret
+}
+
 export {
   postmanFormatter,
   checkmarxFormatter,
@@ -196,5 +224,6 @@ export {
   sonarqubeFormatter,
   sideexFormatter,
   zapFormatter,
-  cmasFormatter
+  cmasFormatter,
+  harborFormatter
 }

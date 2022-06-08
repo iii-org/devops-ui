@@ -85,7 +85,8 @@ import {
   sonarqubeFormatter,
   sideexFormatter,
   zapFormatter,
-  cmasFormatter
+  cmasFormatter,
+  harborFormatter
 } from './formatter'
 
 export default {
@@ -124,7 +125,8 @@ export default {
         sonarqube: sonarqubeFormatter,
         sideex: sideexFormatter,
         zap: zapFormatter,
-        cmas: cmasFormatter
+        cmas: cmasFormatter,
+        harbor: harborFormatter
       }
       keys.forEach((key) => {
         result.push(mapFormatter[key](testResult[key]))
