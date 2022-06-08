@@ -329,7 +329,7 @@ export default {
     },
     async getAllGitCommitLogData() {
       await this.getRootProject(this.selectedProjectId)
-      const { data } = await getIssueGitCommitLog(this.rootProjectId, parseInt(this.$route.params.issueId))
+      const { data } = await getIssueGitCommitLog(this.rootProjectId, parseInt(this.issueId))
       const commitLogs = data.map((item) => new CommitLogItem(item))
       commitLogs.forEach(async(item, index) => {
         item['id'] = index
