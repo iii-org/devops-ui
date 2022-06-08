@@ -87,6 +87,7 @@ stages:
       - tagdisplay
       - disableallrelation
       - traceability
+      - testreport
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -117,6 +118,7 @@ stages:
       - tagdisplay
       - disableallrelation
       - traceability
+      - testreport
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -158,6 +160,7 @@ stages:
       - tagdisplay
       - disableallrelation
       - traceability
+      - testreport
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -192,6 +195,7 @@ stages:
       - tagdisplay
       - disableallrelation
       - traceability
+      - testreport
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -225,6 +229,7 @@ stages:
       - tagdisplay
       - disableallrelation
       - traceability
+      - testreport
 - name: Test--ZAP
   iiidevops: zap
   steps:
