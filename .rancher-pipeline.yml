@@ -82,6 +82,7 @@ stages:
       - traceability
       - testreport
       - excalidraw
+      - addmember
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -106,6 +107,7 @@ stages:
       - traceability
       - testreport
       - excalidraw
+      - addmember
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -125,6 +127,7 @@ stages:
       - traceability
       - testreport
       - excalidraw
+      - addmember
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -160,6 +163,7 @@ stages:
       - traceability
       - testreport
       - excalidraw
+      - addmember
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -189,6 +193,7 @@ stages:
       - traceability
       - testreport
       - excalidraw
+      - addmember
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -216,6 +221,7 @@ stages:
       - traceability
       - testreport
       - excalidraw
+      - addmember
 - name: Test--ZAP
   iiidevops: zap
   steps:
