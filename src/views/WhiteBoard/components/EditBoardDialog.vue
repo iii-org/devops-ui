@@ -55,7 +55,7 @@
       <el-collapse-item title="Excalidraw" name="1">
         <iframe
           title="excalidraw"
-          :src="url + '#' + userName"
+          :src="row.url + '#' + userName"
           :height="computedItemHeight"
           width="100%"
         />
@@ -112,8 +112,7 @@ export default {
             trigger: 'blur'
           }
         ]
-      },
-      url: 'https://excalidraw.ingress-dev3.iiidevops.org/'
+      }
     }
   },
   computed: {
