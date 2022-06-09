@@ -3,6 +3,7 @@
     :title="$t(`Member.AddMember`)"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
+    destroy-on-close
     width="80%"
     top="3vh"
     @closed="onDialogClosed"
@@ -111,7 +112,7 @@ export default {
       if (this.keyword.length <= 0) return this.assignableUserList
       const fuse = new Fuse(this.assignableUserList, {
         // includeScore: true,
-        threshold: 0.35,
+        threshold: 0.5,
         keys: ['name', 'login', 'department', 'title']
       })
       const res = fuse.search('!' + this.keyword)
@@ -126,10 +127,16 @@ export default {
       this.selectedUser.forEach(row => {
         this.$refs['userTable'].toggleRowSelection(row)
       })
+    },
+    async dialogVisible(val) {
+      if (!val) {
+        this.keyword = ''
+      }
+      await this.fetchData()
     }
   },
   async mounted() {
-    this.assignableUserList = await this.fetchData()
+    await this.fetchData()
   },
   methods: {
     async fetchData() {
@@ -143,7 +150,6 @@ export default {
             login: user.login,
             role_name: user.role_name
           }))
-          return this.assignableUserList
         })
         .catch(e => {
           return Promise.reject(e)
