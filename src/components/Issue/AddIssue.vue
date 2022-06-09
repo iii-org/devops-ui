@@ -5,6 +5,10 @@
     :rules="issueFormRules"
     class="custom-list"
   >
+    <div class="ml-3 text-base font-bold">
+      {{ $t('general.project_name') }}:
+      {{ issueForm.project_name }}
+    </div>
     <el-row>
       <el-row v-if="parentId !== 0">
         <el-col :span="24">
@@ -13,15 +17,6 @@
           </el-form-item>
         </el-col>
       </el-row>
-
-      <el-col :span="24">
-        <el-form-item :label="$t('general.project_name')" prop="project_name">
-          <el-input
-            v-model="issueForm.project_name"
-            disabled
-          />
-        </el-form-item>
-      </el-col>
 
       <el-col
         :md="12"
