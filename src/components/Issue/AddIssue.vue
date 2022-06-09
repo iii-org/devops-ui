@@ -14,6 +14,15 @@
         </el-col>
       </el-row>
 
+      <el-col :span="24">
+        <el-form-item :label="$t('general.project_name')" prop="project_name">
+          <el-input
+            v-model="issueForm.project_name"
+            disabled
+          />
+        </el-form-item>
+      </el-col>
+
       <el-col
         :md="12"
         :span="24"
@@ -335,7 +344,8 @@ const getFormTemplate = () => ({
   done_ratio: '',
   estimated_hours: '',
   parent_id: '',
-  tags: []
+  tags: [],
+  project_name: ''
 })
 
 export default {
@@ -412,7 +422,16 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['userId', 'status', 'priority', 'groupBy', 'issueFilter', 'strictTracker', 'tracker']),
+    ...mapGetters([
+      'userId',
+      'status',
+      'priority',
+      'groupBy',
+      'issueFilter',
+      'strictTracker',
+      'tracker',
+      'selectedProject'
+    ]),
     getTracker() {
       if (this.trackerList.length > 0) return this.trackerList
       else if (this.parentId) return this.tracker
@@ -441,6 +460,7 @@ export default {
   mounted() {
     this.fetchData()
     this.setFilterValue()
+    this.issueForm.project_name = this.selectedProject.display
   },
 
   methods: {
