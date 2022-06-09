@@ -67,7 +67,7 @@
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
-      <add-member-dialog ref="addMemberDialog" @update="loadData" />
+      <AddMemberDialog ref="addMemberDialog" @update="loadData" />
     </template>
   </div>
 </template>
@@ -242,4 +242,3 @@ export default {
   }
 }
 </script>
-
