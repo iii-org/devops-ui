@@ -86,7 +86,7 @@ import {
   sideexFormatter,
   zapFormatter,
   cmasFormatter,
-  harborFormatter
+  clairFormatter
 } from './formatter'
 
 export default {
@@ -126,7 +126,7 @@ export default {
         sideex: sideexFormatter,
         zap: zapFormatter,
         cmas: cmasFormatter,
-        harbor: harborFormatter
+        harbor: clairFormatter
       }
       keys.forEach((key) => {
         result.push(mapFormatter[key](testResult[key]))
