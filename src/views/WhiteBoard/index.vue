@@ -35,14 +35,14 @@
             slot="reference"
             type="primary"
             style="font-size: 16px"
-            @click="handleEdit(scope.row,false)"
+            @click="handleEdit(scope.row,true)"
           >
             {{ scope.row.name }}
           </el-link>
           <el-link
             size="small"
             :underline="false"
-            @click="handleEdit(scope.row,false)"
+            @click="handleEdit(scope.row,true)"
           >
             <em class="ri-external-link-line" />
           </el-link>
@@ -83,7 +83,7 @@
             size="mini"
             class="buttonPrimaryReverse"
             icon="el-icon-edit"
-            @click="handleEdit(scope.row,true)"
+            @click="handleEdit(scope.row,false)"
           >
             {{ $t('general.Edit') }}
           </el-button>
