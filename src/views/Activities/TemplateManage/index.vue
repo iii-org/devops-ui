@@ -196,7 +196,6 @@
     />
     <TemplateDialog
       ref="templateDialog"
-      :dialog-visible.sync="dialogVisible"
       :existed-template-ids="existedTemplateIds"
       :title="title"
       @update="loadData"
@@ -241,12 +240,12 @@ export default {
       this.showSuccessMessage(message)
     },
     handleCreate() {
-      this.dialogVisible = true
+      this.$refs.templateDialog.dialogVisible = true
       this.title = this.$t('Activities.CreateTemplate')
     },
     handleEdit(row) {
-      this.dialogVisible = true
       this.title = this.$t('Activities.EditTemplate')
+      this.$refs.templateDialog.dialogVisible = true
       this.$refs.templateDialog.row = row
     },
     async handleDelete(row) {

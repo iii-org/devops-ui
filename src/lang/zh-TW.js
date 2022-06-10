@@ -10,6 +10,7 @@ export default {
   route: {
     myWork: '我的工作',
     inbox: '收件匣',
+    whiteboard: '白板',
     dashboard: '儀表板',
     projectOverview: '專案概述',
     projectList: '專案列表',
@@ -151,6 +152,8 @@ export default {
     7007: `參數 $arg 需要以 'ghp_'做開為開頭。`,
     8001: '{service_name} 回報錯誤：{response}',
     8101: '父議題設定異常，請確認設定之議題非為本議題之子議題或關係議題。',
+    8901: '插件軟體的設定是關閉的狀態。',
+    8902: '插件服務目前沒有存活。',
     9001: '內部錯誤：{type}: {exception}',
     9002: '出現無效的代碼路徑: {message}',
     9003: '發生未被預期的資料庫錯誤：{message}',
@@ -634,7 +637,7 @@ export default {
       TestSoftware: '測試軟體',
       TestName: '測試名稱',
       PostmanUpload: 'Postman檔案名稱: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex檔案名稱: {file_name}.sideex.json'
+      SideeXUpload: 'Sideex檔案名稱: {file_name}.json'
     }
   },
   Wiki: {
@@ -1336,6 +1339,10 @@ export default {
     Send: '傳送',
     NotifyClosed: '訊息已關閉',
     SearchLabel: '搜尋訊息標題或寄送者'
+  },
+  Excalidraw: {
+    CreateBoard: '新增白板',
+    EditBoard: '編輯白板'
   },
   IssueMatrix: {
     Relations: '關係',

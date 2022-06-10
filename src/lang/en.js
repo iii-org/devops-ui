@@ -10,6 +10,7 @@ export default {
   route: {
     myWork: 'My Work',
     inbox: 'Inbox',
+    whiteboard: 'Whiteboard',
     dashboard: 'Dashboard',
     projectOverview: 'Project Overview',
     projectList: 'Project List',
@@ -151,6 +152,8 @@ export default {
     7007: `$arg should begin with 'ghp_'.`,
     8001: '{service_name} error: {response}',
     8101: 'Parent issue setting error! Please confirm that the setting issue is not a sub-issue or related issue of this issue.',
+    8901: 'Plugin Software is disabled',
+    8902: 'Plugin Server is not alive',
     9001: 'Internal exception: {type}: {exception}',
     9002: 'An invalid code path happens: {message}',
     9003: 'An unexpected database error has occurred: {message}',
@@ -639,7 +642,7 @@ export default {
       TestSoftware: 'Test Software',
       TestName: 'Test Name',
       PostmanUpload: 'Postman Filename Rule: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex Filename Rule: {file_name}.sideex.json'
+      SideeXUpload: 'Sideex Filename Rule: {file_name}.json'
     }
   },
   Wiki: {
@@ -1345,6 +1348,10 @@ export default {
     Send: 'Send',
     NotifyClosed: 'Message closed successfully',
     SearchLabel: 'Search Title or Sender'
+  },
+  Excalidraw: {
+    CreateBoard: 'Create WhiteBoard',
+    EditBoard: 'Edit WhiteBoard'
   },
   IssueMatrix: {
     Relations: 'Relationship',
