@@ -152,12 +152,11 @@ export default {
     },
     handleToTestReport(scope) {
       this.$router.push({
-        name: 'TestReport',
+        name: 'TestReports',
         params: {
           commitId: scope.row.commit,
           commitBranch: scope.row.branch,
-          projectId: this.selectedProject.id,
-          projectName: this.selectedProject.name
+          projectId: this.selectedProject.id
         }
       })
     },

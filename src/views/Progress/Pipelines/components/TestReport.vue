@@ -137,9 +137,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import { UTCtoLocalTime } from '@/filters/index'
-import { getProjectCommitTestSummary } from '@/api/projects'
+import { getProjectCommitTestSummary, getProjectInfos } from '@/api/projects'
 import XLSX from 'xlsx'
 import SonarQubeReport from '@/views/Progress/Pipelines/components/SonarQubeReport'
 import CheckMarxReport from '@/views/Progress/Pipelines/components/CheckMarxReport'
@@ -173,6 +172,7 @@ export default {
   },
   data() {
     return {
+      projectName: '',
       title: 'III DevOps',
       listLoading: false,
       sonarqube: [],
@@ -192,9 +192,6 @@ export default {
     },
     projectId () {
       return this.$route.params.projectId
-    },
-    projectName() {
-      return this.$route.params.projectName
     },
     branch() {
       return this.$route.params.commitBranch
@@ -251,10 +248,19 @@ export default {
     }
   },
   mounted() {
-    this.loadTestReport()
+    this.fetchProjectInfo()
+    this.fetchTestReport()
   },
   methods: {
-    async loadTestReport() {
+    async fetchProjectInfo() {
+      try {
+        const res = await getProjectInfos(this.projectId)
+        this.projectName = res.data.display
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async fetchTestReport() {
       this.listLoading = true
       try {
         const res = await getProjectCommitTestSummary(this.projectId, this.commitId)

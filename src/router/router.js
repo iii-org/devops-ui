@@ -251,13 +251,6 @@ export const asyncRoutes = [
               roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
               rolePage: false
             }
-          },
-          {
-            path: 'test-report/:projectId/:commitBranch/:commitId',
-            name: 'TestReport',
-            hidden: true,
-            component: () => import('@/views/Progress/Pipelines/components/TestReport'),
-            meta: { title: 'testReport', roles: ['QA'] }
           }
         ]
       },
@@ -591,13 +584,6 @@ export const asyncRoutes = [
             hidden: true,
             component: () => import('@/views/Progress/Pipelines'),
             meta: { roles: ['Administrator', 'Project Manager', 'Engineer'] }
-          },
-          {
-            path: 'test-report/:projectId/:commitBranch/:commitId',
-            name: 'TestReport',
-            hidden: true,
-            component: () => import('@/views/Progress/Pipelines/components/TestReport'),
-            meta: { title: 'testReport', roles: ['Administrator', 'Project Manager', 'Engineer'] }
           }
         ]
       },
@@ -1058,6 +1044,26 @@ export const asyncRoutes = [
         name: 'System Plugin Manage',
         component: () => import('@/views/SystemSettings/SystemPluginManage'),
         meta: { title: 'System Plugin Manage', roles: ['Administrator'] }
+      }
+    ]
+  },
+
+  {
+    path: '/test-report',
+    name: 'TestReports',
+    component: Layout,
+    redirect: { name: 'TestReport' },
+    hidden: true,
+    meta: { roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
+    children: [
+      {
+        path: ':projectId/:commitBranch/:commitId',
+        component: () => import('@/views/Progress/Pipelines/components/TestReport'),
+        name: 'TestReport',
+        meta: {
+          title: 'testReport',
+          roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
+        }
       }
     ]
   },
