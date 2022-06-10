@@ -1354,7 +1354,7 @@ export default {
     Tracker: '@:Issue.FilterDimensions.tracker',
     Assignee: '@:Issue.Assignee',
     Version: '版號',
-    DisplayItemWarning: '顯示項目不得為空',
+    DisplayItemWarning: '顯示項目請至少包含議題名稱或議題編號',
     CancelTrackerWarning: '開啓群組且選擇狀態時，顯示項目必須勾選議題類別',
     CancelStatusWarning: '開啓群組且選擇類別時，顯示項目必須勾選議題狀態'
   },

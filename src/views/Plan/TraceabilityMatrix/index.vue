@@ -89,7 +89,6 @@
             />
           </el-form-item>
           <el-form-item
-            v-show="!chartSettingVisible"
             :label="$t('Issue.tracker')"
           >
             <el-select
@@ -112,7 +111,6 @@
             </el-select>
           </el-form-item>
           <el-form-item
-            v-show="!chartSettingVisible"
             :label="$t('Issue.Issue')"
           >
             <el-select
@@ -147,7 +145,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-show="!chartSettingVisible">
+          <el-form-item>
             <el-button
               icon="el-icon-s-operation"
               class="buttonPrimary"
@@ -185,48 +183,93 @@
             </el-popover>
           </el-form-item>
           <el-form-item>
-            <el-button
-              :icon="(chartSettingVisible)?'el-icon-takeaway-box':'el-icon-setting'"
-              class="buttonSecondary"
-              @click="chartSettingVisible=!chartSettingVisible"
-            />
-          </el-form-item>
-          <el-form-item
-            v-show="chartSettingVisible"
-            :label="$t('general.group')"
-          >
-            <el-switch
-              v-model="group"
-              :active-text="$t('general.on')"
-              :inactive-text="$t('general.off')"
-            />
-          </el-form-item>
-          <el-form-item v-show="chartSettingVisible">
-            <el-switch
-              v-model="status_toggle"
-              :active-text="$t('Issue.status')"
-              :inactive-text="$t('Issue.tracker')"
-            />
-          </el-form-item>
-          <el-form-item
-            v-show="chartSettingVisible"
-            :label="$t('Issue.fixed_version')"
-          >
-            <el-select
-              v-model="filterValue.fixed_version_id"
-              multiple
-              :placeholder="$t('Issue.SelectVersion')"
-              :disabled="selectedProjectId === -1"
-              clearable
-              filterable
+            <el-popover
+              placement="bottom"
+              trigger="click"
             >
-              <el-option
-                v-for="version in versionFilterList"
-                :key="version.id"
-                :label="version.name"
-                :value="version.id"
-              />
-            </el-select>
+              <el-form
+                ref="form"
+                :model="form"
+                :disabled="chartLoading"
+                label-width="150px"
+                label-position="left"
+              >
+                <el-form-item :label="$t('general.group')">
+                  <el-switch
+                    v-model="form.group"
+                    :active-text="$t('general.on')"
+                    :inactive-text="$t('general.off')"
+                  />
+                </el-form-item>
+                <el-form-item>
+                  <el-switch
+                    v-model="form.isTracker"
+                    :active-text="$t('Issue.tracker')"
+                    :inactive-text="$t('Issue.status')"
+                  />
+                </el-form-item>
+                <el-form-item>
+                  <el-switch
+                    v-model="form.onlyChildren"
+                    :active-text="$t('IssueMatrix.OnlyDown')"
+                    :inactive-text="$t('general.All')"
+                  />
+                </el-form-item>
+                <el-form-item :label="$t('IssueMatrix.RelatedIssue')">
+                  <el-switch
+                    v-model="form.hasRelation"
+                    :disabled="!hasRelations"
+                    :active-text="$t('general.on')"
+                    :inactive-text="$t('general.off')"
+                  />
+                </el-form-item>
+                <el-form-item
+                  :label="$t('IssueMatrix.DisplayItem')"
+                  prop="displayConditions"
+                  required
+                >
+                  <el-select
+                    v-model="form.displayConditions"
+                    :placeholder="$t('IssueMatrix.SelectDisplayItem')"
+                    multiple
+                    collapse-tags
+                  >
+                    <el-option
+                      v-for="condition in displayConditionsList"
+                      :key="condition.value"
+                      :label="condition.label"
+                      :value="condition.value"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item
+                  :label="$t('Issue.fixed_version')"
+                >
+                  <el-select
+                    v-model="filterValue.fixed_version_id"
+                    multiple
+                    :placeholder="$t('Issue.SelectVersion')"
+                    :disabled="selectedProjectId === -1"
+                    clearable
+                    filterable
+                  >
+                    <el-option
+                      v-for="version in versionFilterList"
+                      :key="version.id"
+                      :label="version.name"
+                      :value="version.id"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-form>
+              <el-button
+                slot="reference"
+                type="text"
+                icon="el-icon-s-tools"
+              >
+                {{ $t('IssueMatrix.ConditionSettings') }}
+              </el-button>
+            </el-popover>
           </el-form-item>
         </el-form>
 
@@ -272,7 +315,7 @@
             <h3>{{ $t('Track.DemandTraceability') }}
               <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
             </h3>
-            <vue-mermaid
+            <VueMermaid
               ref="mermaid"
               :nodes="data"
               type="flowchart LR"
@@ -397,7 +440,7 @@
 </template>
 
 <script>
-import VueMermaid from './components/vue-mermaid'
+import VueMermaid from './components/VueMermaid'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getIssue, getIssueFamily } from '@/api/issue'
 import Tracker from '@/components/Issue/Tracker'
@@ -412,21 +455,41 @@ import {
 } from '@/api/qa'
 import { camelCase, cloneDeep } from 'lodash'
 import OrderListDialog from './components/OrderListDialog'
-import TraceCheck from '@/views/Plan/TraceabilityMatrix/components/TraceCheck'
 import { dragscroll } from 'vue-dragscroll'
-
 import axios from 'axios'
-import ProjectIssueDetail from '@/views/Project/IssueDetail'
-
 import theme from '@/theme.js'
+
+const Form = () => ({
+  group: false,
+  isTracker: false, // status or tracker
+  onlyChildren: false,
+  // level: '',
+  hasRelation: false,
+  displayConditions: ['id', 'name', 'status', 'tracker', 'version']
+})
 
 export default {
   name: 'TraceabilityMatrix',
-  components: { ProjectIssueDetail, TraceCheck, OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
+  components: {
+    ProjectIssueDetail: () => import('@/views/Project/IssueDetail'),
+    TraceCheck: () => import('@/views/Plan/TraceabilityMatrix/components/TraceCheck'),
+    OrderListDialog,
+    ProjectListSelector,
+    Tracker,
+    VueMermaid
+  },
   directives: {
     dragscroll
   },
   data() {
+    this.displayConditionsList = [
+      { value: 'id', label: this.$t('IssueMatrix.Id') },
+      { value: 'name', label: this.$t('IssueMatrix.Name') },
+      { value: 'status', label: this.$t('IssueMatrix.Status') },
+      { value: 'tracker', label: this.$t('IssueMatrix.Tracker') },
+      { value: 'assignee', label: this.$t('IssueMatrix.Assignee') },
+      { value: 'version', label: this.$t('IssueMatrix.Version') }
+    ]
     return {
       activeTab: 'map',
       tableHeight: 0,
@@ -442,7 +505,6 @@ export default {
       chartIssueList: [],
       issueLoading: false,
       chartLoading: false,
-      chartSettingVisible: false,
       filterSettingVisible: true,
       listLoading: false,
       jobLoading: false,
@@ -450,8 +512,6 @@ export default {
         now: 0,
         total: 0
       },
-      group: false,
-      status_toggle: true,
       accessedIssueId: [],
       relationLine: {},
       testFilesResult: [],
@@ -467,7 +527,8 @@ export default {
       },
       isRotate: false,
       cancelToken: null,
-      trackerColor: Object.freeze(theme.backgroundColor)
+      trackerColor: Object.freeze(theme.backgroundColor),
+      form: new Form()
     }
   },
   computed: {
@@ -521,15 +582,32 @@ export default {
     },
     data() {
       const chartIssueList = this.chartIssueList
-      const chartData = chartIssueList.map((issue) => this.formatChartData(issue, this.group, this.status_toggle))
+      const chartData = chartIssueList.map((issue) => this.formatChartData(issue, this.form.group, this.form.isTracker))
       let testFileList = chartIssueList
         .map((issue) => (issue.test_files ? issue.test_files : null))
         .filter((issue) => issue)
-      testFileList = [].concat.apply([], testFileList).map((test_file) => this.formatTestFile(test_file, this.group))
-      testFileList = [].concat.apply([], testFileList)
+      testFileList = testFileList.flat().map((test_file) => this.formatTestFile(test_file)).flat()
       const result = chartData.concat(testFileList)
       const unique_check = [...new Set(result.map((issue) => issue.id))]
       return unique_check.map((item) => result.find((issue) => issue.id === item))
+    },
+    hasRelations() {
+      const rowIssue = []
+      let hasRelations = false
+      this.chartIssueList.forEach((item) => {
+        this.filterValue.issue_id.forEach((issueId) => {
+          if (item.id === issueId) {
+            rowIssue.push(item)
+          }
+        })
+      })
+      if (rowIssue.length === 0) return false
+      rowIssue.forEach((issue) => {
+        if (issue.relations && issue.relations[0].id) {
+          hasRelations = true
+        }
+      })
+      return hasRelations
     }
   },
   watch: {
@@ -568,6 +646,30 @@ export default {
           this.$refs['TraceCheck'].resetData()
         }
       }
+    },
+    'form.isTracker'(val) {
+      if (val && !this.form.displayConditions.includes('status')) this.form.displayConditions.push('status')
+      else if (!val && !this.form.displayConditions.includes('tracker')) this.form.displayConditions.push('tracker')
+    },
+    'form.onlyChildren'(val) {
+      this.onPaintChart()
+    },
+    'form.hasRelation'(val) {
+      this.onPaintChart()
+    },
+    'form.displayConditions'(val) {
+      this.$refs.form.validate((valid) => {
+        if (this.form.group && this.form.isTracker && !val.includes('status')) {
+          this.showWarning(this.$t('IssueMatrix.CancelStatusWarning'))
+          this.form.displayConditions.push('status')
+        } else if (this.form.group && !this.form.isTracker && !val.includes('tracker')) {
+          this.showWarning(this.$t('IssueMatrix.CancelTrackerWarning'))
+          this.form.displayConditions.push('tracker')
+        } else if ((!val.includes('id') && !val.includes('name')) || !valid) {
+          this.showWarning(this.$t('IssueMatrix.DisplayItemWarning'))
+          this.form.displayConditions.push('name')
+        }
+      })
     }
   },
   created() {
@@ -658,8 +760,7 @@ export default {
       if (!object) return true
       return [...object.relation.children, object.name].includes(subIssue_tracker)
     },
-    formatChartData(issue, group, status) {
-      const checkIssueName = issue.name.replace(/"/g, '&quot;')
+    formatChartData(issue) {
       const link = []
       let children = []
       let relations = []
@@ -691,38 +792,49 @@ export default {
         }
         children = children.concat(test_files)
       }
+      const point = this.getChartLayout(issue, link, children)
+      return point
+    },
+    getChartLayout(issue, link, children) {
+      const checkIssueName = issue.name.replace(/"/g, '&quot;')
       const point = {
         id: issue.id,
-        link: link,
+        link,
         next: children,
         editable: true
       }
-      point['text'] = `"#${issue.id} - ${checkIssueName}<br/>`
-      if (issue.fixed_version && issue.fixed_version.name) {
+      point['text'] = `"`
+      if (this.isConditionSelected('id')) point['text'] += `#${issue.id}`
+      if (this.isConditionSelected('name')) point['text'] += ` - ${checkIssueName}`
+      if (point['text'] !== `"`) point['text'] += `<br/>`
+      if (this.isConditionSelected('version') && issue.fixed_version && issue.fixed_version.name) {
         point[
           'text'
         ] += `<span style=\'border-radius: 0.25rem; background: white; font-size: 0.75em; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
       }
 
-      if (group) {
-        if (status) {
-          point['text'] += `(${this.$t('Issue.' + issue.tracker.name)})"`
-          point['group'] = `${this.$t('Issue.' + issue.status.name)}`
-          point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
-        } else {
-          point['text'] += `(${this.$t('Issue.' + issue.status.name)})"`
+      if (this.form.group) {
+        if (this.form.isTracker) {
+          if (this.isConditionSelected('status')) point['text'] += `(${this.$t('Issue.' + issue.status.name)})`
           point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
           point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
-        }
-      } else {
-        if (status) {
-          point['text'] += `${this.$t('Issue.' + issue.status.name)} - (${this.$t('Issue.' + issue.tracker.name)})"`
-          point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
         } else {
-          point['text'] += `${this.$t('Issue.' + issue.status.name)} - (${this.$t('Issue.' + issue.tracker.name)})"`
+          if (this.isConditionSelected('tracker')) point['text'] += `(${this.$t('Issue.' + issue.tracker.name)})`
+          point['group'] = `${this.$t('Issue.' + issue.status.name)}`
           point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
         }
+      } else {
+        if (this.isConditionSelected('tracker')) point['text'] += `${this.$t('Issue.' + issue.status.name)}`
+        if (this.isConditionSelected('status')) point['text'] += ` - (${this.$t('Issue.' + issue.tracker.name)})`
+        if (this.form.isTracker) {
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
+        } else {
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
+        }
       }
+      if (point['text'] !== `"`) point['text'] += `<br/>`
+      if (this.isConditionSelected('assignee') && issue.assigned_to && issue.assigned_to.name) point['text'] += `${issue.assigned_to.name}`
+      point['text'] += `"`
 
       if (issue.fixed_version && issue.fixed_version.id) {
         if (
@@ -736,6 +848,9 @@ export default {
         point['edgeType'] = 'stadium'
       }
       return point
+    },
+    isConditionSelected(item) {
+      return this.form.displayConditions.includes(item)
     },
     formatTestFile(test_file, group) {
       const result = []
@@ -754,46 +869,20 @@ export default {
       }
       result.push(file)
       let last_result = null
-      const commit_icon = 'Commit: '
-      let status_light = ''
-      const color = { pass: 'rgba(103,194,80,100)', failure: 'rgba(245,108,108,100)' }
       if (test_file.software_name === 'Postman') {
-        const success = test_file.the_last_test_result.success
-        const failure = test_file.the_last_test_result.failure
-        const total = success + failure
-        let count_result
-        if (success === total) {
-          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['pass']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = `${status_light} <span style=\'color: ${color['pass']}; font-weight:600;\'>Pass</span>`
-        } else {
-          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = `${status_light}  <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
-        }
-        last_result =
-          count_result +
-          '<br/>' +
-          test_file.the_last_test_result.branch +
-          '<br/> ' +
-          commit_icon +
-          test_file.the_last_test_result.commit_id
+        const success = test_file.the_last_test_result && test_file.the_last_test_result.success >= 0
+          ? test_file.the_last_test_result.success : '-'
+        const failure = test_file.the_last_test_result && test_file.the_last_test_result.failure >= 0
+          ? test_file.the_last_test_result.failure : '-'
+        const total = test_file.the_last_test_result && test_file.the_last_test_result.success >= 0 && test_file.the_last_test_result.failure >= 0
+          ? success + failure : '-'
+        last_result = this.getTestLayout(success, total, test_file)
       } else if (test_file.software_name === 'SideeX') {
-        const success = test_file.the_last_test_result.result.casesPassed
-        const total = test_file.the_last_test_result.result.casesTotal
-        let count_result
-        if (success === total) {
-          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['pass']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = `${status_light} <span style=\'color: ${color['pass']}; font-weight:600;\'>Pass</span>`
-        } else {
-          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = ` ${status_light} <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
-        }
-        last_result =
-          count_result +
-          '<br/>' +
-          test_file.the_last_test_result.branch +
-          '<br/> ' +
-          commit_icon +
-          test_file.the_last_test_result.commit_id
+        const success = test_file.the_last_test_result && test_file.the_last_test_result.result
+          ? test_file.the_last_test_result.result.casesPassed : '-'
+        const total = test_file.the_last_test_result && test_file.the_last_test_result.result
+          ? test_file.the_last_test_result.result.casesTotal : '-'
+        last_result = this.getTestLayout(success, total, test_file)
       }
       const file_result = {
         id: `${test_file.software_name}.${test_file.file_name}_result`,
@@ -811,6 +900,32 @@ export default {
       result.push(file_result)
       return result
     },
+    getTestLayout(success, total, test_file) {
+      const color = { pass: 'rgba(103,194,80,100)', failure: 'rgba(245,108,108,100)' }
+      const commit_icon = 'Commit: '
+      let status_light = ''
+      let count_result = ''
+      let last_result = null
+      if (success === total && success !== '-' && total !== '-') {
+        status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['pass']}; display:inline-block; border-radius: 99999px; \'></div>`
+        count_result = `${status_light} <span style=\'color: ${color['pass']}; font-weight:600;\'>Pass</span>`
+      } else {
+        status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
+        count_result = `${status_light} <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
+      }
+      if (!test_file.the_last_test_result) {
+        last_result = `${count_result}<br/>${this.$t('general.NoTestResult')}`
+      } else {
+        last_result =
+          count_result +
+          '<br/>' +
+          test_file.the_last_test_result.branch +
+          '<br/> ' +
+          commit_icon +
+          test_file.the_last_test_result.commit_id
+      }
+      return last_result
+    },
     async onPaintChart() {
       this.chartLoading = true
       this.nowFilterValue = Object.assign({}, this.filterValue)
@@ -819,7 +934,6 @@ export default {
       this.chartProgress.now = 0
       this.chartProgress.total = 0
       const issueList = []
-      this.chartIssueList = []
       for (const item of this.nowFilterValue.issue_id) {
         this.chartProgress.total += 1
         const issue = await getIssue(item)
@@ -858,9 +972,9 @@ export default {
         const getFamilyList = await this.combineFamilyList(issue, issueFamily)
         const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
         for (const [index, subIssue] of getFamilyList.entries()) {
-          if (findRelationTargets.includes(subIssue.tracker.name)) {
-            await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
-          }
+          // if (findRelationTargets.includes(subIssue.tracker.name)) {
+          await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
+          // }
           vueInstance.chartProgress.now += 1
         }
         return Promise.resolve(issue)
@@ -869,6 +983,8 @@ export default {
       this.combineFamilyList = function (issue, family) {
         let getFamilyList = []
         Object.keys(family).forEach((relationType) => {
+          if (!vueInstance.form.hasRelation && relationType === 'relations') return
+          if (vueInstance.form.onlyChildren && relationType === 'parent') return
           if (!Array.isArray(family[relationType])) {
             family[relationType] = [family[relationType]]
           }
@@ -1005,6 +1121,13 @@ export default {
       } else {
         done()
       }
+    },
+    showWarning(message) {
+      this.$message({
+        title: this.$t('general.Warning'),
+        type: 'warning',
+        message
+      })
     }
   }
 }
