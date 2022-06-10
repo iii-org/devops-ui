@@ -7,7 +7,7 @@
   >
     <div class="ml-3 text-base font-bold">
       {{ $t('general.project_name') }}:
-      {{ issueForm.project_name }}
+      {{ projectName }}
     </div>
     <el-row>
       <el-row v-if="parentId !== 0">
@@ -339,8 +339,7 @@ const getFormTemplate = () => ({
   done_ratio: '',
   estimated_hours: '',
   parent_id: '',
-  tags: [],
-  project_name: ''
+  tags: []
 })
 
 export default {
@@ -412,7 +411,8 @@ export default {
       fileTypeLimit: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
       fileTypeList: {},
       specialSymbols: '\ / : * ? " < > | # { } % ~ &',
-      tagsString: ''
+      tagsString: '',
+      projectName: ''
     }
   },
 
@@ -455,7 +455,7 @@ export default {
   mounted() {
     this.fetchData()
     this.setFilterValue()
-    this.issueForm.project_name = this.selectedProject.display
+    this.projectName = this.selectedProject.display
   },
 
   methods: {
