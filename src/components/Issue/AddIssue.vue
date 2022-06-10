@@ -5,6 +5,10 @@
     :rules="issueFormRules"
     class="custom-list"
   >
+    <div class="ml-3 text-base font-bold">
+      {{ $t('general.project_name') }}:
+      {{ projectName }}
+    </div>
     <el-row>
       <el-row v-if="parentId !== 0">
         <el-col :span="24">
@@ -407,12 +411,22 @@ export default {
       fileTypeLimit: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
       fileTypeList: {},
       specialSymbols: '\ / : * ? " < > | # { } % ~ &',
-      tagsString: ''
+      tagsString: '',
+      projectName: ''
     }
   },
 
   computed: {
-    ...mapGetters(['userId', 'status', 'priority', 'groupBy', 'issueFilter', 'strictTracker', 'tracker']),
+    ...mapGetters([
+      'userId',
+      'status',
+      'priority',
+      'groupBy',
+      'issueFilter',
+      'strictTracker',
+      'tracker',
+      'selectedProject'
+    ]),
     getTracker() {
       if (this.trackerList.length > 0) return this.trackerList
       else if (this.parentId) return this.tracker
@@ -441,6 +455,7 @@ export default {
   mounted() {
     this.fetchData()
     this.setFilterValue()
+    this.projectName = this.selectedProject.display
   },
 
   methods: {

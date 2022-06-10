@@ -66,6 +66,7 @@ export default {
     },
     hasData() {
       return function (result) {
+        if (!result) return false
         return result !== 'None' && Object.keys(result).length > 0
       }
     }

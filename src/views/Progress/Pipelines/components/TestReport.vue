@@ -62,7 +62,7 @@
         >{{ $t('route.testReport') }}</div>
         <div style="padding: 40px;">
           <ul class="text-base mb-10 font-semibold">
-            <li>{{ $t('general.project_name') }}: {{ selectedProject.display }}</li>
+            <li>{{ $t('general.project_name') }}: {{ projectName }}</li>
             <li>{{ $t('TestReport.TestTime') }}: {{ timeNow }}</li>
             <li>
               {{ $t('general.Branch') }} / {{ $t('TestReport.Commit') }}:
@@ -137,9 +137,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import { UTCtoLocalTime } from '@/filters/index'
-import { getProjectCommitTestSummary } from '@/api/projects'
+import { getProjectCommitTestSummary, getProjectInfos } from '@/api/projects'
 import XLSX from 'xlsx'
 import SonarQubeReport from '@/views/Progress/Pipelines/components/SonarQubeReport'
 import CheckMarxReport from '@/views/Progress/Pipelines/components/CheckMarxReport'
@@ -173,6 +172,7 @@ export default {
   },
   data() {
     return {
+      projectName: '',
       title: 'III DevOps',
       listLoading: false,
       sonarqube: [],
@@ -187,12 +187,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProject']),
-    selectedProjectId() {
-      return this.selectedProject.id
-    },
     timeNow() {
       return UTCtoLocalTime(this.dataTimeArr[0])
+    },
+    projectId () {
+      return this.$route.params.projectId
     },
     branch() {
       return this.$route.params.commitBranch
@@ -249,13 +248,22 @@ export default {
     }
   },
   mounted() {
-    this.loadTestReport()
+    this.fetchProjectInfo()
+    this.fetchTestReport()
   },
   methods: {
-    async loadTestReport() {
+    async fetchProjectInfo() {
+      try {
+        const res = await getProjectInfos(this.projectId)
+        this.projectName = res.data.display
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async fetchTestReport() {
       this.listLoading = true
       try {
-        const res = await getProjectCommitTestSummary(this.selectedProjectId, this.$route.params.commitId)
+        const res = await getProjectCommitTestSummary(this.projectId, this.commitId)
         dataName.forEach(name => this.setTestReportData(res.data, name))
         this.dataTimeArr = this.getDataTime
       } catch (error) {
