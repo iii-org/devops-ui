@@ -651,9 +651,6 @@ export default {
       if (val && !this.form.displayConditions.includes('status')) this.form.displayConditions.push('status')
       else if (!val && !this.form.displayConditions.includes('tracker')) this.form.displayConditions.push('tracker')
     },
-    'filterValue.fixed_version_id'(val) {
-      this.onPaintChart()
-    },
     'form.onlyChildren'(val) {
       this.onPaintChart()
     },
