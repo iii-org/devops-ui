@@ -94,8 +94,15 @@ export default {
       this.filterMsg()
     },
     filterMsg() {
-      this.alert = this.msgList.filter((item) => item.alert_level.id !== 1 && item.alert_level.id !== 101)
-      this.info = this.msgList.filter((item) => item.alert_level.id === 1)
+      this.alert = this.msgList.filter((item) => 
+        item.alert_level.id === 2 || item.alert_level.id === 3 ||
+        item.alert_level.id === 102 || item.alert_level.id === 103 ||
+        (item.alert_level.id >= 300 && item.alert_level.id < 400)
+      )
+      this.info = this.msgList.filter((item) => 
+        item.alert_level.id === 1 ||
+        (item.alert_level.id >= 200 && item.alert_level.id < 300)
+      )
       this.update = this.msgList.filter((item) => item.alert_level.id === 101)
     },
     async readMessage(msg) {

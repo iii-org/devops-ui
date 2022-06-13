@@ -149,7 +149,7 @@ export default {
         label: this.$t('Inbox.SystemWarning'),
         color: '#e6d53c'
       }]
-    } 
+    }
   },
   watch: {
     keyword: {
@@ -196,10 +196,15 @@ export default {
       this.params = params()
     },
     messageType(level) {
-      return this.options.find(x => x.id === level.id).label
+      const alert = this.options.find(x => x.id === level.id)
+      return alert ? alert.label : this.$t('Inbox.' + level.name)
     },
     tagColor(level) {
-      return this.options.find(x => x.id === level.id).color
+      const alert = this.options.find(x => x.id === level.id)
+      return alert 
+        ? alert.color : level.id >= 200 && level.id < 300 
+          ? '#67c23a' : level.id >= 300 && level.id < 400 
+            ? '#f56c6c' : ''
     },
     tableRowStyle({ row }) {
       if (row.read === false) {

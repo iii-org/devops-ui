@@ -1320,6 +1320,8 @@ export default {
     NewVersion: 'New Version',
     SystemAlert: 'System Alert',
     SystemWarning: 'System Warning',
+    'Merge Request': 'Merge Request',
+    'GitHub Token Invalid': 'GitHub Token Invalid',
     GroupReceiver: {
       Project: 'Project',
       User: 'User',
