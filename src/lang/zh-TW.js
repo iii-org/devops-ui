@@ -10,7 +10,7 @@ export default {
   route: {
     myWork: '我的工作',
     inbox: '收件匣',
-    whiteboard: '白板',
+    whiteboard: '協作白板',
     dashboard: '儀表板',
     projectOverview: '專案概述',
     projectList: '專案列表',

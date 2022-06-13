@@ -107,6 +107,12 @@ export const asyncRoutes = [
     },
     children: [
       {
+        path: 'whiteboard',
+        name: 'whiteboard',
+        component: () => import('@/views/WhiteBoard'),
+        meta: { title: 'whiteboard', roles: ['QA'] }
+      },
+      {
         path: 'milestone',
         name: 'milestone',
         component: () => import('@/views/Plan/Milestone'),
@@ -339,11 +345,12 @@ export const asyncRoutes = [
   {
     path: '/inbox',
     component: Layout,
+    name: 'inboxs',
     redirect: { name: 'inbox' },
     meta: {
       title: 'inbox',
-      icon: 'el-icon-message'
-      // roles: ['Administrator', 'Project Manager']
+      icon: 'el-icon-message',
+      roles: ['Administrator', 'Project Manager']
     },
     children: [
       {
@@ -351,8 +358,8 @@ export const asyncRoutes = [
         component: () => import('@/views/Inbox'),
         name: 'inbox',
         meta: {
-          title: 'inbox'
-          // roles: ['Administrator', 'Project Manager']
+          title: 'inbox',
+          roles: ['Administrator', 'Project Manager']
         }
       },
       {
@@ -363,25 +370,6 @@ export const asyncRoutes = [
         meta: {
           title: 'Message Console',
           roles: ['Administrator']
-        }
-      }
-    ]
-  },
-  {
-    path: '/whiteboard',
-    component: Layout,
-    redirect: { name: 'whiteboard' },
-    meta: {
-      title: 'whiteboard',
-      icon: 'el-icon-data-board'
-    },
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/WhiteBoard'),
-        name: 'whiteboard',
-        meta: {
-          title: 'whiteboard'
         }
       }
     ]
@@ -486,6 +474,12 @@ export const asyncRoutes = [
       roles: ['Administrator', 'Project Manager', 'Engineer']
     },
     children: [
+      {
+        path: 'whiteboard',
+        name: 'whiteboard',
+        component: () => import('@/views/WhiteBoard'),
+        meta: { title: 'whiteboard', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+      },
       {
         path: 'issue-boards',
         name: 'issue-boards',
@@ -976,7 +970,7 @@ export const asyncRoutes = [
     meta: {
       title: 'Activities',
       icon: 'el-icon-s-order',
-      roles: ['Administrator', 'Project Manager']
+      roles: ['Administrator', 'Project Manager', 'Engineer']
     },
     children: [
       {
@@ -989,13 +983,13 @@ export const asyncRoutes = [
         path: 'template-manage',
         name: 'Template Manage',
         component: () => import('@/views/Activities/TemplateManage'),
-        meta: { title: 'Template Manage', roles: ['Administrator', 'Project Manager'] }
+        meta: { title: 'Template Manage', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       {
         path: 'project-activities',
         name: 'Project Activities',
         component: () => import('@/views/Activities/ProjectActivities'),
-        meta: { title: 'Project Activities', roles: ['Administrator', 'Project Manager'] }
+        meta: { title: 'Project Activities', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       }
     ]
   },
