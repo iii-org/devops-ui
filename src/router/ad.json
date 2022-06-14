@@ -51,6 +51,46 @@
     ]
   },
   {
+    "path": "/inbox",
+    "component": "layout",
+    "name": "Inboxs",
+    "redirect": {
+      "name": "Inbox"
+    },
+    "meta": {
+      "title": "Inbox",
+      "icon": "el-icon-message",
+      "roles": [
+        "Administrator"
+      ]
+    },
+    "children": [
+      {
+        "path": "",
+        "component": "views/Inbox",
+        "name": "Inbox",
+        "meta": {
+          "title": "Inbox",
+          "roles": [
+            "Administrator"
+          ]
+        }
+      },
+      {
+        "path": "message-console",
+        "name": "MessageConsole",
+        "hidden": true,
+        "component": "views/Inbox/MessageConsole",
+        "meta": {
+          "title": "MessageConsole",
+          "roles": [
+            "Administrator"
+          ]
+        }
+      }
+    ]
+  },
+  {
     "path": "/plan/:projectName?",
     "component": "layout",
     "name": "Management",
@@ -179,6 +219,17 @@
     },
     "children": [
       {
+        "path": "whiteboard",
+        "name": "Whiteboard",
+        "component": "views/WhiteBoard",
+        "meta": {
+          "title": "Whiteboard",
+          "roles": [
+            "Administrator"
+          ]
+        }
+      },
+      {
         "path": "issueBoards",
         "name": "IssueBoards",
         "component": "views/Project/IssueBoards",
@@ -299,17 +350,6 @@
             }
           }
         ]
-      },
-      {
-        "path": "deploy",
-        "name": "Deploy",
-        "component": "views/Project/Deploy",
-        "meta": {
-          "title": "Deploy",
-          "roles": [
-            "Administrator"
-          ]
-        }
       }
     ]
   },
@@ -755,6 +795,30 @@
             "Administrator"
           ]
         }
+      },
+      {
+        "path": "clair",
+        "name": "DockerImage",
+        "component": "views/Scan/DockerImage",
+        "meta": {
+          "title": "DockerImage",
+          "roles": [
+            "Administrator"
+          ]
+        },
+        "children": [
+          {
+            "path": "report",
+            "name": "DockerReport",
+            "hidden": true,
+            "component": "views/Scan/DockerReport",
+            "meta": {
+              "roles": [
+                "Administrator"
+              ]
+            }
+          }
+        ]
       }
     ]
   },
@@ -854,12 +918,14 @@
     ]
   },
   {
-    "path": "/projectActivities/:projectName?",
+    "path": "/activities/:projectName?",
     "component": "layout",
+    "name": "Activities",
     "redirect": {
-      "name": "ProjectActivities"
+      "name": "Activities"
     },
     "meta": {
+      "title": "Activities",
       "icon": "el-icon-s-order",
       "roles": [
         "Administrator"
@@ -867,9 +933,31 @@
     },
     "children": [
       {
-        "path": "",
-        "component": "views/Activities/ProjectActivities",
+        "path": "deploy",
+        "name": "Deploy",
+        "component": "views/Project/Deploy",
+        "meta": {
+          "title": "Deploy",
+          "roles": [
+            "Administrator"
+          ]
+        }
+      },
+      {
+        "path": "template-manage",
+        "name": "TemplateManage",
+        "component": "views/Activities/TemplateManage",
+        "meta": {
+          "title": "TemplateManage",
+          "roles": [
+            "Administrator"
+          ]
+        }
+      },
+      {
+        "path": "project-activities",
         "name": "ProjectActivities",
+        "component": "views/Activities/ProjectActivities",
         "meta": {
           "title": "ProjectActivities",
           "roles": [

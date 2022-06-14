@@ -12,6 +12,7 @@ function hasPermission(roles, route) {
 }
 
 export function getAsyncRoutes(routes) {
+  console.log(routes)
   const res = []
   const keys = ['path', 'name', 'children', 'redirect', 'meta', 'hidden']
   routes.forEach((item) => {
@@ -40,6 +41,7 @@ export function getAsyncRoutes(routes) {
 }
 
 export function filterAsyncRoutes(routes, roles) {
+  console.log(routes)
   const res = []
   routes.forEach(route => {
     const tmp = { ...route }

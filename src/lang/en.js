@@ -10,6 +10,7 @@ export default {
   route: {
     MyWork: 'My Work',
     Inbox: 'Inbox',
+    MessageConsole: 'Message Console',
     Whiteboard: 'Whiteboard',
     Dashboard: 'Dashboard',
     ProjectOverview: 'Project Overview',

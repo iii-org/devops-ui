@@ -115,6 +115,12 @@ export const allRoutes = [
     },
     children: [
       {
+        path: 'whiteboard',
+        name: 'whiteboard',
+        component: () => import('@/views/WhiteBoard'),
+        meta: { title: 'whiteboard', roles: ['QA'] }
+      },
+      {
         path: 'milestone',
         name: 'Milstone',
         component: () => import('@/views/Plan/Milestone'),
@@ -382,6 +388,38 @@ export const allRoutes = [
     ]
   },
   {
+    path: '/inbox',
+    component: Layout,
+    name: 'Inboxs',
+    redirect: { name: 'Inbox' },
+    meta: {
+      title: 'Inbox',
+      icon: 'el-icon-message',
+      roles: ['Administrator', 'Project Manager']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/Inbox'),
+        name: 'Inbox',
+        meta: {
+          title: 'Inbox',
+          roles: ['Administrator', 'Project Manager']
+        }
+      },
+      {
+        path: 'message-console',
+        name: 'MessageConsole',
+        hidden: true,
+        component: () => import('@/views/Inbox/MessageConsole'),
+        meta: {
+          title: 'Message Console',
+          roles: ['Administrator']
+        }
+      }
+    ]
+  },
+  {
     path: '/projectList',
     component: Layout,
     name: 'ProjectLists',
@@ -489,6 +527,12 @@ export const allRoutes = [
       roles: ['Administrator', 'Project Manager', 'Engineer']
     },
     children: [
+      {
+        path: 'whiteboard',
+        name: 'whiteboard',
+        component: () => import('@/views/WhiteBoard'),
+        meta: { title: 'whiteboard', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+      },
       {
         path: 'issueBoards',
         name: 'IssueBoards',
@@ -977,20 +1021,33 @@ export const allRoutes = [
   },
 
   {
-    path: '/projectActivities/:projectName?',
+    path: '/activities/:projectName?',
     component: Layout,
-    name: 'ProjectActivities',
-    redirect: { name: 'ProjectActivity' },
+    name: 'Activities',
+    redirect: { name: 'Activities' },
     meta: {
+      title: 'Activities',
       icon: 'el-icon-s-order',
-      roles: ['Administrator', 'Project Manager']
+      roles: ['Administrator', 'Project Manager', 'Engineer']
     },
     children: [
       {
-        path: '',
+        path: 'deploy',
+        name: 'deploy',
+        component: () => import('@/views/Project/Deploy'),
+        meta: { title: 'deploy', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+      },
+      {
+        path: 'template-manage',
+        name: 'Template Manage',
+        component: () => import('@/views/Activities/TemplateManage'),
+        meta: { title: 'Template Manage', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+      },
+      {
+        path: 'project-activities',
+        name: 'Project Activities',
         component: () => import('@/views/Activities/ProjectActivities'),
-        name: 'ProjectActivity',
-        meta: { title: 'ProjectActivity', roles: ['Administrator', 'Project Manager'] }
+        meta: { title: 'Project Activities', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       }
     ]
   },

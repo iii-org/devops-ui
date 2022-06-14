@@ -39,6 +39,46 @@
     ]
   },
   {
+    "path": "/inbox",
+    "component": "layout",
+    "name": "Inboxs",
+    "redirect": {
+      "name": "Inbox"
+    },
+    "meta": {
+      "title": "Inbox",
+      "icon": "el-icon-message",
+      "roles": [
+        "Engineer"
+      ]
+    },
+    "children": [
+      {
+        "path": "",
+        "component": "views/Inbox",
+        "name": "Inbox",
+        "meta": {
+          "title": "Inbox",
+          "roles": [
+            "Engineer"
+          ]
+        }
+      },
+      {
+        "path": "message-console",
+        "name": "MessageConsole",
+        "hidden": true,
+        "component": "views/Inbox/MessageConsole",
+        "meta": {
+          "title": "MessageConsole",
+          "roles": [
+            "Engineer"
+          ]
+        }
+      }
+    ]
+  },
+  {
     "path": "/projectList",
     "name": "ProjectLists",
     "component": "layout",
@@ -80,6 +120,17 @@
       ]
     },
     "children": [
+      {
+        "path": "whiteboard",
+        "name": "Whiteboard",
+        "component": "views/WhiteBoard",
+        "meta": {
+          "title": "Whiteboard",
+          "roles": [
+            "Engineer"
+          ]
+        }
+      },
       {
         "path": "issueBoards",
         "name": "IssueBoards",
@@ -657,6 +708,30 @@
             "Engineer"
           ]
         }
+      },
+      {
+        "path": "clair",
+        "name": "DockerImage",
+        "component": "views/Scan/DockerImage",
+        "meta": {
+          "title": "DockerImage",
+          "roles": [
+            "Engineer"
+          ]
+        },
+        "children": [
+          {
+            "path": "report",
+            "name": "DockerReport",
+            "hidden": true,
+            "component": "views/Scan/DockerReport",
+            "meta": {
+              "roles": [
+                "Engineer"
+              ]
+            }
+          }
+        ]
       }
     ]
   },

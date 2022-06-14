@@ -39,6 +39,46 @@
     ]
   },
   {
+    "path": "/inbox",
+    "component": "layout",
+    "name": "Inboxs",
+    "redirect": {
+      "name": "Inbox"
+    },
+    "meta": {
+      "title": "Inbox",
+      "icon": "el-icon-message",
+      "roles": [
+        "Project Manager"
+      ]
+    },
+    "children": [
+      {
+        "path": "",
+        "component": "views/Inbox",
+        "name": "Inbox",
+        "meta": {
+          "title": "Inbox",
+          "roles": [
+            "Project Manager"
+          ]
+        }
+      },
+      {
+        "path": "message-console",
+        "name": "MessageConsole",
+        "hidden": true,
+        "component": "views/Inbox/MessageConsole",
+        "meta": {
+          "title": "MessageConsole",
+          "roles": [
+            "Project Manager"
+          ]
+        }
+      }
+    ]
+  },
+  {
     "path": "/projectList",
     "name": "ProjectLists",
     "component": "layout",
@@ -194,6 +234,17 @@
     },
     "children": [
       {
+        "path": "whiteboard",
+        "name": "Whiteboard",
+        "component": "views/WhiteBoard",
+        "meta": {
+          "title": "Whiteboard",
+          "roles": [
+            "Project Manager"
+          ]
+        }
+      },
+      {
         "path": "issueBoards",
         "name": "IssueBoards",
         "component": "views/Project/IssueBoards",
@@ -314,17 +365,6 @@
             }
           }
         ]
-      },
-      {
-        "path": "deploy",
-        "name": "Deploy",
-        "component": "views/Project/Deploy",
-        "meta": {
-          "title": "Deploy",
-          "roles": [
-            "Project Manager"
-          ]
-        }
       }
     ]
   },
@@ -770,6 +810,30 @@
             "Project Manager"
           ]
         }
+      },
+      {
+        "path": "clair",
+        "name": "DockerImage",
+        "component": "views/Scan/DockerImage",
+        "meta": {
+          "title": "DockerImage",
+          "roles": [
+            "Project Manager"
+          ]
+        },
+        "children": [
+          {
+            "path": "report",
+            "name": "DockerReport",
+            "hidden": true,
+            "component": "views/Scan/DockerReport",
+            "meta": {
+              "roles": [
+                "Project Manager"
+              ]
+            }
+          }
+        ]
       }
     ]
   },
@@ -869,12 +933,14 @@
     ]
   },
   {
-    "path": "/projectActivities/:projectName?",
+    "path": "/activities/:projectName?",
     "component": "layout",
+    "name": "Activities",
     "redirect": {
-      "name": "ProjectActivities"
+      "name": "Activities"
     },
     "meta": {
+      "title": "Activities",
       "icon": "el-icon-s-order",
       "roles": [
         "Project Manager"
@@ -882,9 +948,31 @@
     },
     "children": [
       {
-        "path": "",
-        "component": "views/Activities/ProjectActivities",
+        "path": "deploy",
+        "name": "Deploy",
+        "component": "views/Project/Deploy",
+        "meta": {
+          "title": "Deploy",
+          "roles": [
+            "Project Manager"
+          ]
+        }
+      },
+      {
+        "path": "template-manage",
+        "name": "TemplateManage",
+        "component": "views/Activities/TemplateManage",
+        "meta": {
+          "title": "TemplateManage",
+          "roles": [
+            "Project Manager"
+          ]
+        }
+      },
+      {
+        "path": "project-activities",
         "name": "ProjectActivities",
+        "component": "views/Activities/ProjectActivities",
         "meta": {
           "title": "ProjectActivities",
           "roles": [

@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
-    <div 
+    <div
       :class="userId === 1 ? 'flex justify-between' : ''"
       :style="userId === 1 ? '' : 'text-align: right'"
     >
-      <el-button 
+      <el-button
         v-if="userId === 1"
         class="buttonPrimary"
         @click="messageConsole"
@@ -79,7 +79,7 @@
       :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
-    <el-row 
+    <el-row
       type="flex"
       class="ps"
       justify="end"
@@ -201,9 +201,9 @@ export default {
     },
     tagColor(level) {
       const alert = this.options.find(x => x.id === level.id)
-      return alert 
-        ? alert.color : level.id >= 200 && level.id < 300 
-          ? '#67c23a' : level.id >= 300 && level.id < 400 
+      return alert
+        ? alert.color : level.id >= 200 && level.id < 300
+          ? '#67c23a' : level.id >= 300 && level.id < 400
             ? '#f56c6c' : ''
     },
     tableRowStyle({ row }) {
@@ -236,7 +236,7 @@ export default {
       this.$set(this.messageList, idx, this.message)
     },
     messageConsole() {
-      this.$router.push({ name: 'message-console' })
+      this.$router.push({ name: 'MessageConsole' })
     }
   }
 }
@@ -245,7 +245,7 @@ export default {
 <style lang="scss">
 .ps {
   /* color: #e66262;  */
-  margin-top: 12px 
+  margin-top: 12px
 }
 .readRow {
   font-weight: bold !important;
