@@ -27,7 +27,7 @@
         <el-table-column-time :label="$t('general.LastUpdateTime')" prop="update_at" width="200" />
         <el-table-column :label="$t('general.Actions')" align="center">
           <template slot-scope="scope">
-            <el-button size="mini" class="buttonPrimaryReverse" icon="el-icon-edit" @click="handleEditClick(scope.row.name)">
+            <el-button v-if="!scope.row.disabled" size="mini" class="buttonPrimaryReverse" icon="el-icon-edit" @click="handleEditClick(scope.row.name)">
               {{ $t('general.Edit') }}
             </el-button>
             <el-button size="mini" @click="handleActiveClick(scope.row)">
@@ -77,8 +77,8 @@
               </el-button>
             </el-popconfirm>
             <el-button class="buttonSecondaryReverse" size="mini" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
-            <el-button class="buttonPrimary" size="mini" @click="handleConfirm">
-              {{ $t('general.Save') }}
+            <el-button class="buttonPrimary" size="mini" :disabled="!isFormFilled" @click="handleConfirm">
+              {{ form.disabled ? $t('general.Enable') : $t('general.Save') }}
             </el-button>
           </div>
         </div>
@@ -153,6 +153,9 @@ export default {
   computed: {
     hasArguments() {
       return this.form.arguments.length > 0
+    },
+    isFormFilled() {
+      return this.form.arguments.every((item) => item.value !== '')
     }
   },
   mounted() {
@@ -177,10 +180,14 @@ export default {
     },
     async handleActiveClick(row) {
       const { name, disabled } = row
-      this.isLoading = true
-      await updatePlugin(name, { disabled: !disabled })
-      this.fetchData()
-      this.isLoading = false
+      if (disabled) {
+        this.handleEditClick(name)
+      } else {
+        this.isLoading = true
+        await updatePlugin(name, { disabled: !disabled })
+        this.fetchData()
+        this.isLoading = false
+      }
     },
     handleClose() {
       this.isDialogVisible = false
@@ -190,19 +197,30 @@ export default {
         this.form = formTemplate()
       })
     },
-    handleConfirm() {
-      this.$refs['form'].validate(async valid => {
-        if (valid) {
-          const sendData = Object.assign({}, this.form)
-          sendData.arguments = this.form.arguments.reduce(
-            (result, cur) => Object.assign(result, { [cur.key]: cur.value }),
-            {}
-          )
-          await updatePlugin(this.pluginName, sendData)
-          this.handleClose()
-          this.fetchData()
+    async handleConfirm() {
+      if (!this.hasArguments) {
+        if (this.form.disabled) {
+          await updatePlugin(this.pluginName, { disabled: !this.form.disabled })
         }
-      })
+        this.handleClose()
+        this.fetchData()
+      } else {
+        this.$refs['form'].validate(async (valid) => {
+          if (valid) {
+            const sendData = Object.assign({}, this.form)
+            sendData.arguments = this.form.arguments.reduce(
+              (result, cur) => Object.assign(result, { [cur.key]: cur.value }),
+              {}
+            )
+            if (this.form.disabled) {
+              sendData.disabled = !this.form.disabled
+            }
+            await updatePlugin(this.pluginName, sendData)
+            this.handleClose()
+            this.fetchData()
+          }
+        })
+      }
     },
     handleDelete(pluginName) {
       this.isLoading = true
