@@ -95,9 +95,8 @@ const actions = {
     })
     // views Plugin
     // const result = asyncRoutes(roles)
-    const routes = asyncRoutes
-    // const routes = getAsyncRoutes(result)
-    // console.log(routes)
+    const result = asyncRoutes(roles)
+    const routes = getAsyncRoutes(result)
     let accessedRoutes
     // Plugin
     // const req = require.context('@/views/Plugin', true, /(router.js)$/, 'lazy')
