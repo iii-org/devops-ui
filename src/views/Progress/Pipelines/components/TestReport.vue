@@ -12,7 +12,7 @@
           {{ $t('general.Back') }}
         </el-button>
         <span class="ml-2 text-xl">
-          <span>{{ $t('route.testReport') }}</span>
+          <span>{{ $t('route.TestReport') }}</span>
         </span>
       </div>
       <div>
@@ -59,7 +59,7 @@
             font-size: 36px;
             text-shadow: #b3b1b1 0.05em 0.05em 0.1em;
           "
-        >{{ $t('route.testReport') }}</div>
+        >{{ $t('route.TestReport') }}</div>
         <div style="padding: 40px;">
           <ul class="text-base mb-10 font-semibold">
             <li>{{ $t('general.project_name') }}: {{ projectName }}</li>

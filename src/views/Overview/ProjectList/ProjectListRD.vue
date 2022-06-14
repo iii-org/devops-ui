@@ -380,7 +380,7 @@ export default {
       })[0]
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
-      this.$router.push({ name: 'issue-boards', params: { projectName: selectedProject.name }})
+      this.$router.push({ name: 'IssueBoards', params: { projectName: selectedProject.name }})
     }
   }
 }

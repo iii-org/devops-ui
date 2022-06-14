@@ -185,7 +185,7 @@ export default {
     },
     handleIssueClick(row) {
       const { id, name } = row
-      this.$router.push({ name: 'Issue Transfer', params: { userId: id, userName: name }})
+      this.$router.push({ name: 'IssueTransfer', params: { userId: id, userName: name }})
     },
     showConfirmTransferDialog(row) {
       const { id, name } = row
@@ -237,7 +237,7 @@ export default {
       })
     },
     handleParticipateDialog(user_id) {
-      this.$router.push({ name: 'ParticipateProject', params: { user_id }})
+      this.$router.push({ name: 'ParticipateProject', params: { userId: user_id }})
     }
   }
 }

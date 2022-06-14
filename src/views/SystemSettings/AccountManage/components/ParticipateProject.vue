@@ -81,11 +81,11 @@ export default {
   computed: {
     ...mapGetters(['userId']),
     isDisabled() {
-      return this.$route.params.user_id === this.userId
+      return this.$route.params.userId === this.userId
     }
   },
   watch: {
-    '$route.params.user_id': {
+    '$route.params.userId': {
       handler(val) {
         this.fetchData(val)
         this.getUserInfo(val)
@@ -111,13 +111,13 @@ export default {
     async handleDelete(project_id) {
       this.listLoading = true
       try {
-        await deleteProjectMember(project_id, this.$route.params.user_id)
+        await deleteProjectMember(project_id, this.$route.params.userId)
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Deleted'),
           type: 'success'
         })
-        await this.fetchData(this.$route.params.user_id)
+        await this.fetchData(this.$route.params.userId)
       } catch (error) {
         console.error(error)
         this.listLoading = false
@@ -127,11 +127,11 @@ export default {
       this.$router.go(-1)
     },
     handleParticipateDialog(owner_id) {
-      this.$router.push({ name: 'ParticipateProject', params: { user_id: owner_id }})
+      this.$router.push({ name: 'ParticipateProject', params: { userId: owner_id }})
     },
     handleIssueClick(row) {
       const { owner_id, name } = row
-      this.$router.push({ name: 'Issue Transfer', params: { userId: owner_id, userName: name }})
+      this.$router.push({ name: 'IssueTransfer', params: { userId: owner_id, userName: name }})
     }
   }
 }

@@ -322,7 +322,7 @@ export default {
       return this.filters.filter((item) => item.type === this.type)
     },
     focusProjectId() {
-      if (this.$route.name === 'my-works') {
+      if (this.$route.name === 'MyWork') {
         return this.projectId ? this.projectId : -1 // -1 means all projects (dump project)
       } else {
         return this.selectedProjectId
@@ -452,7 +452,7 @@ export default {
       this.formData[itemName] = null
     },
     checkEditable(formItemName) {
-      const isMyWork = this.$route.name === 'my-works'
+      const isMyWork = this.$route.name === 'MyWork'
       if (isMyWork) {
         return this.checkIsMyWorkFilterDisplayRule(formItemName)
       } else {

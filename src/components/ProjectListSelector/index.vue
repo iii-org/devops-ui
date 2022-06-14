@@ -215,7 +215,7 @@ export default {
       if (storedProjectId) {
         this.$emit('update:project-id', storedProjectId)
       } else {
-        this.$router.push({ name: 'my-works' })
+        this.$router.push({ name: 'MyWork' })
       }
     },
     showNoProjectWarning() {
@@ -242,7 +242,7 @@ export default {
     },
     getQuery() {
       const changeProject = this.$route.params.projectName !== this.selectedProject.name
-      return changeProject ? {} : this.$route.query 
+      return changeProject ? {} : this.$route.query
     },
     onProjectChange(projectId) {
       this.setSelectedProject(this.projectOptions.find((elm) => elm.id === projectId) || { id: -1 })

@@ -648,7 +648,7 @@ export default {
       this.$forceUpdate()
     },
     handleClick(id) {
-      // this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      // this.$router.push({ name: 'IssueDetail', params: { issueId: id }})
       this.$emit('relationIssueId', id)
     },
     showErrorAlert(errorMsg) {

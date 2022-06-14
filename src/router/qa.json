@@ -2,10 +2,12 @@
   {
     "path": "/",
     "component": "layout",
-    "redirect": "/overview",
+    "redirect": {
+      "name": "Dashboard"
+    },
     "meta": {
       "icon": "list",
-      "title": "overview",
+      "title": "Overview",
       "roles": [
         "QA"
       ]
@@ -15,10 +17,13 @@
   {
     "path": "/overview",
     "component": "layout",
-    "redirect": "/overview/dashboard",
+    "name": "Dashboards",
+    "redirect": {
+      "name": "Dashboard"
+    },
     "meta": {
       "icon": "dashboard",
-      "title": "overview",
+      "title": "Overview",
       "roles": [
         "QA"
       ]
@@ -26,21 +31,21 @@
     "children": [
       {
         "path": "dashboard",
-        "name": "dashboard-admin",
+        "name": "Dashboard",
         "component": "views/Overview/Dashboard/roles/admin",
         "meta": {
-          "title": "dashboard",
+          "title": "Dashboard",
           "roles": [
             "QA"
           ]
         }
       },
       {
-        "path": "project-list",
-        "name": "project-list",
+        "path": "projectList",
+        "name": "ProjectList",
         "component": "views/Overview/ProjectList/ProjectListQA",
         "meta": {
-          "title": "projectList",
+          "title": "ProjectList",
           "roles": [
             "QA"
           ]
@@ -49,13 +54,14 @@
     ]
   },
   {
-    "path": "/project/:projectName?/",
+    "path": "/project/:projectName?",
     "component": "layout",
+    "name": "Works",
     "redirect": {
-      "name": "milestone"
+      "name": "Milestone"
     },
     "meta": {
-      "title": "singleProject",
+      "title": "SingleProject",
       "icon": "el-icon-data-analysis",
       "roles": [
         "QA"
@@ -64,10 +70,10 @@
     "children": [
       {
         "path": "milestone",
-        "name": "milestone",
+        "name": "Milstone",
         "component": "views/Plan/Milestone",
         "meta": {
-          "title": "milestone",
+          "title": "Milestone",
           "roles": [
             "QA"
           ]
@@ -75,91 +81,85 @@
       },
       {
         "path": "issues",
-        "redirect": {
-          "name": "issue-list"
-        },
         "component": "layout/components/parentBlank",
+        "name": "IssueLists",
+        "redirect": {
+          "name": "IssueList"
+        },
         "meta": {
-          "title": "issueList",
+          "title": "IssueList",
           "roles": [
-            "Administrator",
-            "QA",
-            "Project Manager",
-            "Engineer"
+            "QA"
           ]
         },
         "children": [
           {
             "path": "",
-            "name": "issue-list",
+            "name": "IssueList",
             "hidden": true,
             "component": "views/Project/IssueList",
             "meta": {
               "roles": [
-                "Administrator",
-                "QA",
-                "Project Manager",
-                "Engineer"
+                "QA"
               ]
             }
           },
           {
             "path": ":issueId",
-            "name": "issue-detail",
+            "name": "IssueDetail",
             "hidden": true,
             "component": "views/Project/IssueDetail",
             "meta": {
-              "title": "Issue Detail",
+              "title": "IssueDetail",
               "roles": [
-                "Administrator",
-                "QA",
-                "Project Manager",
-                "Engineer"
-              ],
-              "rolePage": false,
-              "subject": ""
+                "QA"
+              ]
             }
           }
         ]
       },
       {
         "path": "track",
-        "name": "track",
+        "name": "Track",
         "component": "views/Project/TrackManagement",
         "meta": {
-          "title": "changeManagement",
+          "title": "ChangeManagement",
           "roles": [
             "QA"
           ]
         }
       },
       {
-        "path": "exception",
-        "name": "exception-management",
+        "path": "exceptionManagement",
+        "name": "ExceptionManagement",
         "component": "views/Project/ExceptionManagement",
         "meta": {
-          "title": "Fail Management",
+          "title": "FailManagement",
           "roles": [
             "QA"
           ]
         }
       },
       {
-        "path": "traceability-matrix",
-        "name": "TraceMatrix",
+        "path": "traceabilityMatrix",
+        "name": "TraceabilityMatrix",
         "component": "views/Plan/TraceabilityMatrix",
         "meta": {
-          "title": "traceabilityMatrix",
+          "title": "TraceabilityMatrix",
           "roles": [
             "QA"
           ]
         }
       },
       {
-        "path": "settings",
+        "path": "projectSettings",
         "component": "layout/components/parentBlank",
+        "name": "ProjectSettings",
+        "redirect": {
+          "name": "ProjectSetting"
+        },
         "meta": {
-          "title": "Project Settings",
+          "title": "ProjectSettings",
           "roles": [
             "QA"
           ]
@@ -167,40 +167,34 @@
         "children": [
           {
             "path": "",
-            "component": "layout/components/parentBlank",
+            "name": "ProjectSetting",
             "hidden": true,
-            "children": [
-              {
-                "path": "",
-                "name": "Project Settings",
-                "component": "views/Plan/Settings/roles/QA",
-                "meta": {
-                  "roles": [
-                    "QA"
-                  ]
-                }
-              },
-              {
-                "path": "participate-project/:user_id",
-                "name": "ParticipateProject",
-                "hidden": true,
-                "component": "views/SystemSettings/AccountManage/components/ParticipateProject",
-                "meta": {
-                  "title": "Participate Project",
-                  "roles": [
-                    "QA"
-                  ]
-                }
-              }
-            ]
+            "component": "views/Plan/Settings/roles/QA",
+            "meta": {
+              "roles": [
+                "QA"
+              ]
+            }
           },
           {
-            "path": "issue-transfer/:userId",
-            "name": "Issue Transfer",
+            "path": "participateProject/:userId",
+            "name": "ParticipateProject",
+            "hidden": true,
+            "component": "views/SystemSettings/AccountManage/components/ParticipateProject",
+            "meta": {
+              "title": "ParticipateProject",
+              "roles": [
+                "QA"
+              ]
+            }
+          },
+          {
+            "path": "issueTransfer/:userId",
+            "name": "IssueTransfer",
             "hidden": true,
             "component": "views/Plan/Settings/components/ProjectIssueTransfer",
             "meta": {
-              "title": "Issue Transfer",
+              "title": "IssueTransfer",
               "roles": [
                 "QA"
               ]
@@ -211,14 +205,14 @@
     ]
   },
   {
-    "path": "/test/:projectName?/",
-    "name": "test",
+    "path": "/test/:projectName?",
+    "name": "Test",
     "component": "layout",
     "redirect": {
-      "name": "test-plan"
+      "name": "TestPlans"
     },
     "meta": {
-      "title": "test-report",
+      "title": "TestReport",
       "icon": "el-icon-finished",
       "roles": [
         "QA"
@@ -226,8 +220,11 @@
     },
     "children": [
       {
-        "path": "test-plan",
-        "redirect": "/test/test-plan",
+        "path": "testPlan",
+        "redirect": {
+          "name": "TestPlan"
+        },
+        "name": "TestPlans",
         "component": "layout/components/parentBlank",
         "meta": {
           "roles": [
@@ -237,10 +234,10 @@
         "children": [
           {
             "path": "",
-            "name": "test-plan",
+            "name": "TestPlan",
             "component": "views/Test/TestPlan",
             "meta": {
-              "title": "test-case",
+              "title": "TestCase",
               "roles": [
                 "QA"
               ]
@@ -248,40 +245,35 @@
           },
           {
             "path": "create",
-            "name": "create-test-plan",
+            "name": "CreateTestPlan",
             "hidden": true,
             "component": "views/Project/IssueDetail",
             "meta": {
-              "title": "Issue Detail",
+              "title": "IssueDetail",
               "roles": [
                 "QA"
-              ],
-              "rolePage": false
+              ]
             }
           },
           {
             "path": ":issueId",
-            "name": "test-plan-detail",
+            "name": "TestPlanDetail",
             "hidden": true,
             "component": "views/Project/IssueDetail",
             "meta": {
-              "title": "Issue Detail",
+              "title": "IssueDetail",
               "roles": [
-                "Administrator",
-                "QA",
-                "Project Manager",
-                "Engineer"
-              ],
-              "rolePage": false
+                "QA"
+              ]
             }
           },
           {
-            "path": "test-report/:commitId",
+            "path": "testReport/:commitId",
             "name": "TestReport",
             "hidden": true,
             "component": "views/Progress/Pipelines/components/TestReport",
             "meta": {
-              "title": "testReport",
+              "title": "TestReport",
               "roles": [
                 "QA"
               ]
@@ -290,13 +282,14 @@
         ]
       },
       {
-        "path": "release-version",
-        "redirect": {
-          "name": "release-version"
-        },
+        "path": "releaseVersion",
+        "name": "ReleaseVersions",
         "component": "layout/components/parentBlank",
+        "redirect": {
+          "name": "ReleaseVersion"
+        },
         "meta": {
-          "title": "test-result",
+          "title": "TestResult",
           "roles": [
             "QA"
           ]
@@ -304,7 +297,7 @@
         "children": [
           {
             "path": "",
-            "name": "release-version",
+            "name": "ReleaseVersion",
             "component": "views/Project/ReleaseVersion",
             "hidden": true,
             "meta": {
@@ -315,15 +308,14 @@
           },
           {
             "path": ":issueTag",
-            "name": "closed-issue-list",
+            "name": "ClosedIssueList",
             "hidden": true,
             "component": "views/Project/ReleaseVersion/ClosedIssueList",
             "meta": {
-              "title": "Issue Detail",
+              "title": "IssueDetail",
               "roles": [
                 "QA"
-              ],
-              "rolePage": false
+              ]
             }
           }
         ]
@@ -331,38 +323,37 @@
     ]
   },
   {
-    "path": "/scan/:projectName?/",
+    "path": "/scan/:projectName?",
     "component": "layout",
-    "name": "scan",
-    "alwaysShow": true,
+    "name": "Scan",
     "meta": {
-      "title": "autoTesting",
+      "title": "AutoTesting",
       "icon": "el-icon-circle-check",
       "roles": [
         "QA"
       ]
     },
     "redirect": {
-      "name": "postman"
+      "name": "Postman"
     },
     "children": [
       {
         "path": "sonarqube",
-        "name": "sonarqube",
+        "name": "Sonarqube",
         "component": "views/Scan/SonarQube",
         "meta": {
-          "title": "sonarQube",
+          "title": "SonarQube",
           "roles": [
             "QA"
           ]
         }
       },
       {
-        "name": "checkmarx",
         "path": "checkmarx",
+        "name": "Checkmarx",
         "component": "views/Scan/Checkmarx",
         "meta": {
-          "title": "checkMarx",
+          "title": "CheckMarx",
           "roles": [
             "QA"
           ]
@@ -370,10 +361,10 @@
       },
       {
         "path": "zap",
-        "name": "zap",
+        "name": "Zap",
         "component": "views/Scan/Zap",
         "meta": {
-          "title": "zap",
+          "title": "Zap",
           "roles": [
             "QA"
           ]
@@ -381,10 +372,10 @@
       },
       {
         "path": "cmas",
-        "name": "cmas",
+        "name": "Cmas",
         "component": "views/Scan/Cmas",
         "meta": {
-          "title": "cmas",
+          "title": "Cmas",
           "roles": [
             "QA"
           ]
@@ -392,13 +383,13 @@
       },
       {
         "path": "webinspect",
-        "name": "webinspect",
+        "name": "Webinspects",
         "component": "layout/components/parentBlank",
         "redirect": {
-          "name": "webinspect"
+          "name": "Webinspect"
         },
         "meta": {
-          "title": "webInspect",
+          "title": "WebInspect",
           "roles": [
             "QA"
           ]
@@ -406,17 +397,22 @@
         "children": [
           {
             "path": "",
-            "name": "webinspect-scans",
+            "name": "Webinspect",
             "hidden": true,
-            "component": "views/Scan/WebInspect"
+            "component": "views/Scan/WebInspect",
+            "meta": {
+              "roles": [
+                "QA"
+              ]
+            }
           },
           {
-            "path": "report/:scan_id",
-            "name": "webinspect-report",
+            "path": "report/:scanId",
+            "name": "WebinspectReport",
             "component": "views/Scan/WIEReportViewer",
             "hidden": true,
             "meta": {
-              "title": "webInspectReport",
+              "title": "WebInspectReport",
               "roles": [
                 "QA"
               ]
@@ -425,14 +421,14 @@
         ]
       },
       {
-        "path": "postman",
-        "name": "postman",
+        "path": "postmans",
+        "name": "Postmans",
         "component": "layout/components/parentBlank",
         "redirect": {
-          "name": "postman-test"
+          "name": "Postman"
         },
         "meta": {
-          "title": "postman",
+          "title": "Postman",
           "roles": [
             "QA"
           ]
@@ -440,17 +436,22 @@
         "children": [
           {
             "path": "",
-            "name": "postman-test",
+            "name": "Postman",
             "hidden": true,
-            "component": "views/Scan/Postman"
+            "component": "views/Scan/Postman",
+            "meta": {
+              "roles": [
+                "QA"
+              ]
+            }
           },
           {
             "path": "devops/:id",
-            "name": "devops-test-case",
+            "name": "DevopsTestCase",
             "hidden": true,
             "component": "views/Scan/TestCaseDevOps",
             "meta": {
-              "title": "fromDevops",
+              "title": "FromDevops",
               "roles": [
                 "QA"
               ]
@@ -458,11 +459,11 @@
           },
           {
             "path": "postman/:id",
-            "name": "postman-test-case",
+            "name": "PostmanTestCase",
             "hidden": true,
             "component": "views/Scan/TestCasePostman",
             "meta": {
-              "title": "fromCollection",
+              "title": "FromCollection",
               "roles": [
                 "QA"
               ]
@@ -472,10 +473,10 @@
       },
       {
         "path": "sideex",
-        "name": "sideex",
+        "name": "Sideex",
         "component": "views/Scan/Sideex",
         "meta": {
-          "title": "sideex",
+          "title": "Sideex",
           "roles": [
             "QA"
           ]
@@ -486,6 +487,7 @@
   {
     "path": "/profile",
     "component": "layout",
+    "name": "UserProfile",
     "redirect": {
       "name": "Profile"
     },
@@ -503,7 +505,6 @@
         "meta": {
           "title": "Profile",
           "icon": "user",
-          "noCache": true,
           "roles": [
             "QA"
           ]
@@ -514,6 +515,7 @@
   {
     "path": "/SystemVersion",
     "component": "layout",
+    "name": "SystemVersions",
     "redirect": {
       "name": "SystemVersion"
     },
@@ -531,7 +533,6 @@
         "meta": {
           "title": "System Version",
           "icon": "user",
-          "noCache": true,
           "roles": [
             "QA"
           ]

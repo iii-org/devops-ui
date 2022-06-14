@@ -137,7 +137,7 @@ export default {
     },
     handleEdit(issueId) {
       if (!this.popup) {
-        this.$router.push({ name: 'issue-detail', params: { issueId }})
+        this.$router.push({ name: 'IssueDetail', params: { issueId }})
       } else {
         this.$emit('popup-dialog', issueId)
       }

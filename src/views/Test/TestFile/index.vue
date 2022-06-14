@@ -278,7 +278,7 @@ export default {
       data = data.data
       this.software = [
         { id: 1, name: 'Postman' },
-        { id: 2, name: 'SideeX' }
+        { id: 2, name: 'Sideex' }
       ]
       this.software.forEach((item, idx) => {
         this.$set(this.software[idx], 'visible', true)
@@ -312,7 +312,7 @@ export default {
     },
     handleCreatePlan(collection) {
       this['qa/setFileName'](collection)
-      this.$router.push({ name: 'create-test-plan' })
+      this.$router.push({ name: 'CreateTestPlan' })
     },
     resetFilterVersionSoftwareData() {
       this.listFilterSoftwareData = this.listData
@@ -347,7 +347,7 @@ export default {
       this.listFilterSoftwareData = res.map((items) => items.item)
     },
     handleEdit(id) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      this.$router.push({ name: 'IssueDetail', params: { issueId: id }})
     },
     emitAddTopicDialogVisible(visible) {
       this.addTopicDialogVisible = visible
@@ -408,7 +408,7 @@ export default {
       this.form = form
     },
     onRelationIssueDialog(id) {
-      this.$router.push({ name: 'test-plan-detail', params: { issueId: id }})
+      this.$router.push({ name: 'TestPlanDetail', params: { issueId: id }})
     },
     async removeTestPlanRelation(file_relation, file_name) {
       this.listLoading = true

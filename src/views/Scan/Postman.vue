@@ -84,7 +84,7 @@
               :id="`btn-postman-${scope.$index}`"
               size="mini"
               class="buttonPrimaryReverse"
-              @click="handleClick('postman-test-case', scope.row.id)"
+              @click="handleClick('PostmanTestCase', scope.row.id)"
             >
               {{ $t('Postman.Postman') }}
             </el-button>

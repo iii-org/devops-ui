@@ -56,7 +56,7 @@ import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
 import { getCheckMarxReport, registerCheckMarxReport } from '@/api/checkMarx'
 
 export default {
-  name: 'CheckMarx',
+  name: 'Checkmarx',
   components: { ToolBar },
   props: {
     checkmarx: {
@@ -114,7 +114,7 @@ export default {
       this.listLoading = false
     },
     openDevCheckMarx() {
-      const routeUrl = this.$router.resolve({ name: 'checkmarx' })
+      const routeUrl = this.$router.resolve({ name: 'Checkmarx' })
       window.open(routeUrl.href, '_blank')
     }
   }

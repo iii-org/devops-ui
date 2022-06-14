@@ -177,7 +177,7 @@ export default {
       this.listLoading = false
     },
     handleCommandClick(podName, containerName) {
-      this.$router.push({ name: 'Pod Execute Shell', query: { podName, containerName }})
+      this.$router.push({ name: 'PodExecuteShell', query: { podName, containerName }})
     },
     handleLogClick(podName, containerName) {
       this.focusPodName = podName

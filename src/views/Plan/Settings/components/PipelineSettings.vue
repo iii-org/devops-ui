@@ -8,7 +8,7 @@
           <span class="text-title">{{ branch }}</span>
         </div>
         <el-button class="linkTextColor" type="text" size="medium" @click="handleClick">
-          {{ $t('route.advanceBranchSettings') }}
+          {{ $t('route.AdvanceBranchSettings') }}
         </el-button>
       </div>
       <template v-if="showWarning">
@@ -151,7 +151,7 @@ export default {
       this.branch = ''
     },
     handleClick() {
-      this.$router.push({ name: 'advance-branch-settings', params: { projectName: this.selectedProject.name }})
+      this.$router.push({ name: 'AdvanceBranchSettings', params: { projectName: this.selectedProject.name }})
     },
     handleStageChange(stage) {
       const { key, has_default_branch } = stage

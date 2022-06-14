@@ -317,7 +317,7 @@ export default {
     toIssueDetail(tag) {
       const pound = new RegExp(/#/)
       const issueId = tag.toString().match(pound) ? tag.split('#')[1] : tag
-      this.$router.push({ name: 'issue-detail', params: { issueId }})
+      this.$router.push({ name: 'IssueDetail', params: { issueId }})
     },
     toGitlab(url) {
       window.open(url, '_blank')

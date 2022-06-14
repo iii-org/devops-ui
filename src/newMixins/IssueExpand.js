@@ -33,7 +33,7 @@ export default {
       this.listLoading = false
     },
     handleEdit(issueId) {
-      this.$router.push({ name: 'issue-detail', params: { issueId }})
+      this.$router.push({ name: 'IssueDetail', params: { issueId }})
     }
   }
 }

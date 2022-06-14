@@ -64,7 +64,7 @@
       />
     </component>
     <el-dialog v-if="!inDialog" :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectList.NAME')" top="3vh">
-      <admin-project-list :data="getProjectListDetailData" :in-dialog="true" />
+      <AdminProjectList :data="getProjectListDetailData" :in-dialog="true" />
     </el-dialog>
   </el-row>
 </template>

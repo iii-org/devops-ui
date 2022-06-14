@@ -250,7 +250,7 @@ export default {
     },
     handleTestReportDetail(row) {
       const { scan_id, run_at } = row
-      this.$router.push({ name: 'webinspect-report', params: { scan_id, run_at }})
+      this.$router.push({ name: 'WebinspectReport', params: { scanId: scan_id, run_at }})
     },
     onPagination(listQuery) {
       this.listQuery = listQuery

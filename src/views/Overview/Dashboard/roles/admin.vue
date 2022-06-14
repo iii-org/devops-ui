@@ -171,7 +171,7 @@
       </el-empty>
       <CreateProjectDialog
         ref="createProjectDialog"
-        @update="$router.push({name: 'project-list'})"
+        @update="$router.push({name: 'ProjectList'})"
       />
     </div>
   </div>

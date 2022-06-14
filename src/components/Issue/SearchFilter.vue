@@ -298,7 +298,7 @@ export default {
       this.$refs.saveFilterButton.reset()
     },
     checkSaveFilterButtonDisplay() {
-      const whiteList = ['issue-list']
+      const whiteList = ['issueList']
       return whiteList.includes(this.$route.name)
     },
     async fetchHasSon(pId) {
