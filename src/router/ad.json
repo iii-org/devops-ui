@@ -446,7 +446,7 @@
             "path": "podsLists",
             "hidden": true,
             "component": "layout/components/parentBlank",
-            "name": "PodLists",
+            "name": "PodsLists",
             "redirect": {
               "name": "PodsList"
             },

@@ -697,7 +697,7 @@ export const allRoutes = [
             path: 'podsLists',
             hidden: true,
             component: ParentBlank,
-            name: 'PodLists',
+            name: 'PodsLists',
             redirect: { name: 'PodsList' },
             meta: { title: 'PodsLists', roles: ['Administrator', 'Project Manager', 'Engineer'] },
             children: [
