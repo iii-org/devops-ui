@@ -79,7 +79,7 @@ export default {
       if (!this.hasDetail(target)) {
         return
       }
-      this.$router.push({ name: `${target} List`, params: { projectName: this.selectedProject.name }})
+      this.$router.push({ name: `${target}List`, params: { projectName: this.selectedProject.name }})
     },
     handleChartData(data) {
       const titleList = ['CPU', 'Memory', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Deployment', 'Ingresses']
