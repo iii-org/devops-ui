@@ -122,7 +122,7 @@
     "children": [
       {
         "path": "whiteboard",
-        "name": "Whiteboard",
+        "name": "Excalidraw",
         "component": "views/WhiteBoard",
         "meta": {
           "title": "Whiteboard",

@@ -12,7 +12,6 @@ function hasPermission(roles, route) {
 }
 
 export function getAsyncRoutes(routes) {
-  console.log(routes)
   const res = []
   const keys = ['path', 'name', 'children', 'redirect', 'meta', 'hidden']
   routes.forEach((item) => {
@@ -41,7 +40,6 @@ export function getAsyncRoutes(routes) {
 }
 
 export function filterAsyncRoutes(routes, roles) {
-  console.log(routes)
   const res = []
   routes.forEach(route => {
     const tmp = { ...route }
@@ -57,8 +55,8 @@ export function filterAsyncRoutes(routes, roles) {
 
 export function filterAsyncPluginRoutes(accessedRoutes, disabledPluginRoutes) {
   const result = accessedRoutes.map(item => item)
-  const idx = result.findIndex(item => item.name === 'Scan')
-  result[idx].children = result[idx].children.filter(item => !disabledPluginRoutes.includes(item.name))
+  const idx = result.findIndex(item => item.name === 'Scan' || item.name === 'Works')
+  result[idx].children = result[idx].children.filter(item => !disabledPluginRoutes.includes(item.name.toLowerCase()))
   if (result[idx].children.length === 0) result.splice(idx, 1)
   return result
 }
