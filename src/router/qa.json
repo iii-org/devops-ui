@@ -306,18 +306,6 @@
                 "QA"
               ]
             }
-          },
-          {
-            "path": "testReport/:commitId",
-            "name": "TestReport",
-            "hidden": true,
-            "component": "views/Progress/Pipelines/components/TestReport",
-            "meta": {
-              "title": "TestReport",
-              "roles": [
-                "QA"
-              ]
-            }
           }
         ]
       },
@@ -545,6 +533,33 @@
             }
           }
         ]
+      }
+    ]
+  },
+  {
+    "path": "/test-report",
+    "name": "TestReports",
+    "component": "layout",
+    "redirect": {
+      "name": "TestReport"
+    },
+    "hidden": true,
+    "meta": {
+      "roles": [
+        "QA"
+      ]
+    },
+    "children": [
+      {
+        "path": ":projectId/:commitBranch/:commitId",
+        "component": "views/Progress/Pipelines/components/TestReport",
+        "name": "TestReport",
+        "meta": {
+          "title": "TestReport",
+          "roles": [
+            "QA"
+          ]
+        }
       }
     ]
   },

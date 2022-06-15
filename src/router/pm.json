@@ -418,18 +418,6 @@
                 "Project Manager"
               ]
             }
-          },
-          {
-            "path": "testReport/:commitId",
-            "name": "TestReport",
-            "hidden": true,
-            "component": "views/Progress/Pipelines/components/TestReport",
-            "meta": {
-              "title": "TestReport",
-              "roles": [
-                "Project Manager"
-              ]
-            }
           }
         ]
       },
@@ -975,6 +963,33 @@
         "component": "views/Activities/ProjectActivities",
         "meta": {
           "title": "ProjectActivities",
+          "roles": [
+            "Project Manager"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "path": "/test-report",
+    "name": "TestReports",
+    "component": "layout",
+    "redirect": {
+      "name": "TestReport"
+    },
+    "hidden": true,
+    "meta": {
+      "roles": [
+        "Project Manager"
+      ]
+    },
+    "children": [
+      {
+        "path": ":projectId/:commitBranch/:commitId",
+        "component": "views/Progress/Pipelines/components/TestReport",
+        "name": "TestReport",
+        "meta": {
+          "title": "TestReport",
           "roles": [
             "Project Manager"
           ]
