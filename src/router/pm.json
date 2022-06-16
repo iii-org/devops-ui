@@ -1,6 +1,7 @@
 [
   {
     "path": "/",
+    "name": "LandingPage",
     "redirect": {
       "name": "MyWork"
     },
@@ -925,7 +926,7 @@
     "component": "layout",
     "name": "Activities",
     "redirect": {
-      "name": "Activities"
+      "name": "Deploy"
     },
     "meta": {
       "title": "Activities",
@@ -1055,6 +1056,7 @@
   },
   {
     "path": "*",
+    "name": "ErrorPage",
     "redirect": "/404",
     "hidden": true
   }

@@ -1,6 +1,7 @@
 [
   {
     "path": "/",
+    "name": "LandingPage",
     "component": "layout",
     "redirect": {
       "name": "Dashboard"
@@ -621,6 +622,7 @@
   },
   {
     "path": "*",
+    "name": "ErrorPage",
     "redirect": "/404",
     "hidden": true
   }

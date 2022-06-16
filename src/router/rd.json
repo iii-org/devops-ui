@@ -1,6 +1,7 @@
 [
   {
     "path": "/",
+    "name": "LandingPage",
     "redirect": {
       "name": "MyWork"
     },
@@ -808,6 +809,7 @@
   },
   {
     "path": "*",
+    "name": "ErrorPage",
     "redirect": "/404",
     "hidden": true
   }
