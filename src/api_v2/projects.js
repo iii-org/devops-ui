@@ -150,3 +150,5 @@ export const forceDeleteProject = (project_id) =>
   request.delete(`/v2/project/${project_id}?force_delete_project=true`)
 export const syncProject = (project_id) =>
   request.patch(`/v2/sync_projects/${project_id}`)
+export const getProject = (project_id) =>
+  request.get(`/v2/project/${project_id}`)

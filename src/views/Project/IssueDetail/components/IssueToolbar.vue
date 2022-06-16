@@ -118,7 +118,7 @@
         ref="AddIssue"
         :save-data="saveIssue"
         :dialog-visible.sync="addTopicDialogVisible"
-        :project-id="selectedProjectId"
+        :project-id="projectId || selectedProjectId"
         :parent-id="issueId"
         :parent-name="issueName"
         :prefill="form"
@@ -222,6 +222,10 @@ export default {
     isButtonDisabled: {
       type: Boolean,
       default: false
+    },
+    projectId: {
+      type: Number,
+      default: null
     }
   },
   data() {

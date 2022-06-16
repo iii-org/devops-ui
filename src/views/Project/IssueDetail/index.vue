@@ -91,6 +91,7 @@
                 :issue-name="issueName"
                 :issue-tracker="formTrackerName"
                 :row="form"
+                :project-id="form.project_id"
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
                 @updateFamilyData="getIssueFamilyData(issue)"

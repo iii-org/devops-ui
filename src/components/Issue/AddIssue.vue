@@ -313,6 +313,7 @@
 <script>
 import dayjs from 'dayjs'
 import { getProjectAssignable, getProjectVersion, addProjectTags } from '@/api/projects'
+import { getProject } from '@/api_v2/projects'
 import {
   getFileTypeLimit,
   getFileTypeList,
@@ -453,12 +454,16 @@ export default {
   },
 
   mounted() {
+    this.fetchProject()
     this.fetchData()
     this.setFilterValue()
-    this.projectName = this.selectedProject.display
   },
 
   methods: {
+    async fetchProject() {
+      const project = await getProject(this.projectId)
+      this.projectName = project.data.display || this.selectedProject.display
+    },
     async fetchData() {
       this.isLoading = true
       if (this.projectId) {
