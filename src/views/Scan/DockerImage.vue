@@ -189,8 +189,8 @@ export default {
     async handleToTestReport(row) {
       this.$router.push({
         name: 'DockerReport',
-        params: { 
-          commitId: row.commit, 
+        params: {
+          commitId: row.commit,
           commitBranch: row.branch
         }
       })

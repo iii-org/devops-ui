@@ -513,8 +513,11 @@
       },
       {
         "path": "clair",
-        "name": "DockerImage",
-        "component": "views/Scan/DockerImage",
+        "name": "DockerImages",
+        "component": "layout/components/parentBlank",
+        "redirect": {
+          "name": "DockerImage"
+        },
         "meta": {
           "title": "DockerImage",
           "roles": [
@@ -523,7 +526,17 @@
         },
         "children": [
           {
-            "path": "report",
+            "path": "",
+            "name": "DockerImage",
+            "component": "views/Scan/DockerImage",
+            "meta": {
+              "roles": [
+                "QA"
+              ]
+            }
+          },
+          {
+            "path": ":commitBranch/:commitId",
             "name": "DockerReport",
             "hidden": true,
             "component": "views/Scan/DockerReport",
