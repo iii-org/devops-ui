@@ -17,6 +17,20 @@
           :md="12"
           :span="24"
         >
+          <el-form-item
+            :label="$t('general.Name')"
+            prop="name"
+          >
+            <el-input
+              v-model="form.name"
+              :placeholder="$t('RuleMsg.PleaseInput') + $t('general.Name')"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col
+          :md="12"
+          :span="24"
+        >
           <el-form-item :label="$t('Issue.Issue')">
             <el-select
               v-model="form.issue_ids"
@@ -32,20 +46,6 @@
                 :value="item.id"
               />
             </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col
-          :md="12"
-          :span="24"
-        >
-          <el-form-item
-            :label="$t('general.Name')"
-            prop="name"
-          >
-            <el-input
-              v-model="form.name"
-              :placeholder="$t('RuleMsg.PleaseInput') + $t('general.Name')"
-            />
           </el-form-item>
         </el-col>
       </el-row>
@@ -91,6 +91,7 @@ export default {
       dialogVisible: false,
       isLoading: false,
       form: formTemplate(),
+      row: {},
       rules: {
         name: [
           {
@@ -117,7 +118,7 @@ export default {
             if (this.form.issue_ids.length > 0) {
               sendData.append('issue_ids', this.form.issue_ids)
             }
-            await createExcalidraw(sendData)
+            this.row = (await createExcalidraw(sendData)).data
             this.$message({
               title: this.$t('general.Success'),
               message: this.$t('Notify.Added'),
@@ -127,8 +128,9 @@ export default {
             console.error(error)
           } finally {
             this.isLoading = false
-            this.onDialogClosed()
             this.$emit('update')
+            this.$emit('handle', this.row)
+            this.onDialogClosed()
           }
         }
       })

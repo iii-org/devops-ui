@@ -111,8 +111,8 @@
       </template>
     </el-table>
     <pagination
-      :total="listQuery.total"
-      :page.sync="listQuery.current"
+      :total="filteredData.length"
+      :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
@@ -122,6 +122,7 @@
       ref="CreateBoardDialog"
       :issue-list="issueList"
       @update="loadData"
+      @handle="handleAfterCreate"
     />
     <EditBoardDialog
       ref="EditBoardDialog"
@@ -133,23 +134,23 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BasicData, Pagination, Table, SearchBar } from '@/newMixins'
+import { BasicData, Table, Pagination, SearchBar, ProjectSelector } from '@/newMixins'
 import { getExcalidraw, deleteExcalidraw } from '@/api_v2/excalidraw'
 import { getProjectIssueList } from '@/api_v2/projects'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import ProjectListSelector from '@/components/ProjectListSelector'
 import SearchFilter from './components/SearchFilter'
 import CreateBoardDialog from './components/CreateBoardDialog'
 import EditBoardDialog from './components/EditBoardDialog'
 
 export default {
   name: 'WhiteBoardList',
-  components: { ElTableColumnTime, ProjectListSelector, SearchFilter, CreateBoardDialog, EditBoardDialog },
-  mixins: [BasicData, Table, Pagination, SearchBar],
+  components: { ElTableColumnTime, SearchFilter, CreateBoardDialog, EditBoardDialog },
+  mixins: [BasicData, Table, Pagination, SearchBar, ProjectSelector],
   data() {
     return {
       CreateDialogVisible: false,
       EditDialogVisible: false,
+      searchKeys: ['name'],
       issueList: []
     }
   },
@@ -161,6 +162,9 @@ export default {
       await this.getIssueList()
       return (await getExcalidraw({ project_id: this.selectedProjectId })).data
     },
+    onPagination(listQuery) {
+      this.listQuery = listQuery
+    },
     async getIssueList() {
       const res = await getProjectIssueList(this.selectedProjectId)
       this.issueList = res.data
@@ -168,10 +172,21 @@ export default {
     handleCreate() {
       this.$refs.CreateBoardDialog.dialogVisible = true
     },
-    handleEdit(row, isCollapse) {
-      this.$refs.EditBoardDialog.dialogVisible = true
+    async handleAfterCreate(row) {
+      this.$refs.EditBoardDialog.isCollapse = ['1']
       this.$refs.EditBoardDialog.row = row
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.$refs.EditBoardDialog.dialogVisible = true
+        }, 500)
+      })
+    },
+    handleEdit(row, isCollapse) {
       this.$refs.EditBoardDialog.isCollapse = isCollapse ? ['1'] : []
+      this.$refs.EditBoardDialog.row = row
+      this.$nextTick(() => {
+        this.$refs.EditBoardDialog.dialogVisible = true
+      })
     },
     async handleDelete(row) {
       try {

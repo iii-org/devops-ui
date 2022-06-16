@@ -18,6 +18,20 @@
           :md="12"
           :span="24"
         >
+          <el-form-item
+            :label="$t('general.Name')"
+            prop="name"
+          >
+            <el-input
+              v-model="form.name"
+              :placeholder="$t('RuleMsg.PleaseInput') + $t('general.Name')"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col
+          :md="12"
+          :span="24"
+        >
           <el-form-item :label="$t('Issue.Issue')">
             <el-select
               v-model="form.issue_ids"
@@ -33,20 +47,6 @@
                 :value="item.id"
               />
             </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col
-          :md="12"
-          :span="24"
-        >
-          <el-form-item
-            :label="$t('general.Name')"
-            prop="name"
-          >
-            <el-input
-              v-model="form.name"
-              :placeholder="$t('RuleMsg.PleaseInput') + $t('general.Name')"
-            />
           </el-form-item>
         </el-col>
       </el-row>
