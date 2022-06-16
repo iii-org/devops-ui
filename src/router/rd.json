@@ -706,7 +706,6 @@
           "name": "DockerImage"
         },
         "meta": {
-          "title": "DockerImage",
           "roles": [
             "Engineer"
           ]
@@ -717,6 +716,7 @@
             "name": "DockerImage",
             "component": "views/Scan/DockerImage",
             "meta": {
+              "title": "DockerImage",
               "roles": [
                 "Engineer"
               ]

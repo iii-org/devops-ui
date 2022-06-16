@@ -793,7 +793,6 @@
           "name": "DockerImage"
         },
         "meta": {
-          "title": "DockerImage",
           "roles": [
             "Administrator"
           ]
@@ -804,6 +803,7 @@
             "name": "DockerImage",
             "component": "views/Scan/DockerImage",
             "meta": {
+              "title": "DockerImage",
               "roles": [
                 "Administrator"
               ]

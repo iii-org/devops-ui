@@ -519,7 +519,6 @@
           "name": "DockerImage"
         },
         "meta": {
-          "title": "DockerImage",
           "roles": [
             "QA"
           ]
@@ -530,6 +529,7 @@
             "name": "DockerImage",
             "component": "views/Scan/DockerImage",
             "meta": {
+              "title": "DockerImage",
               "roles": [
                 "QA"
               ]

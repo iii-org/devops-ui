@@ -808,7 +808,6 @@
           "name": "DockerImage"
         },
         "meta": {
-          "title": "DockerImage",
           "roles": [
             "Project Manager"
           ]
@@ -819,6 +818,7 @@
             "name": "DockerImage",
             "component": "views/Scan/DockerImage",
             "meta": {
+              "title": "DockerImage",
               "roles": [
                 "Project Manager"
               ]
