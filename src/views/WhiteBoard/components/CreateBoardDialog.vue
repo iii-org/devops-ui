@@ -31,20 +31,32 @@
           :md="12"
           :span="24"
         >
-          <el-form-item :label="$t('Issue.Issue')">
+          <el-form-item :label="$t('Issue.RelatedIssue')">
             <el-select
               v-model="form.issue_ids"
               style="width: 100%"
-              :placeholder="$t('RuleMsg.PleaseSelect') + $t('Issue.Issue')"
+              :placeholder="$t('Issue.SearchNameOrAssignee')"
+              clearable
               filterable
+              remote
               multiple
+              :remote-method="getSearchIssue"
+              :loading="issueLoading"
+              @focus="getSearchIssue()"
             >
-              <el-option
-                v-for="item in issueList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
+              <el-option-group
+                v-for="group in issueList"
+                :key="group.name"
+                :label="group.name"
+              >
+                <template v-for="item in group.options">
+                  <el-option
+                    :key="item.id"
+                    :label="'#' + item.id +' - '+item.name"
+                    :value="item.id"
+                  />
+                </template>
+              </el-option-group>
             </el-select>
           </el-form-item>
         </el-col>
@@ -84,6 +96,10 @@ export default {
     issueList: {
       type: Array,
       default: () => []
+    },
+    issueLoading: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -107,6 +123,9 @@ export default {
     ...mapGetters(['selectedProjectId'])
   },
   methods: {
+    getSearchIssue(query) {
+      this.$emit('getIssue', query)
+    },
     handleCreate() {
       this.$refs['form'].validate(async(valid) => {
         if (valid) {
