@@ -150,6 +150,41 @@
             </el-row>
           </div>
         </el-tab-pane>
+        <el-tab-pane :label="$t('Profile.Notice')">
+          <div class="tab-inner">
+            <h3>{{ $t('Profile.MessageReceptionSetting') }}</h3>
+            <el-form
+              ref="userMessageForm"
+              :model="userMessageForm"
+              class="demo-ruleForm"
+            >
+              <el-row>
+                <el-col :span="8">
+                  <el-form-item :label="$t('Profile.PlatformNotice')">
+                    <el-switch v-model="userMessageForm.notification" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="8">
+                  <el-form-item :label="$t('Profile.MailNotice')">
+                    <el-switch v-model="userMessageForm.mail" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row class="mt-4">
+                <el-col :span="8">
+                  <el-button
+                    class="buttonPrimary"
+                    @click="submitMessageSettings"
+                  >{{
+                    $t('Profile.Save')
+                  }}</el-button>
+                </el-col>
+              </el-row>
+            </el-form>
+          </div>
+        </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
@@ -158,6 +193,7 @@
 <script>
 import store from '@/store'
 import { updateUser, getUserInfo, getK8SConfig } from '@/api/user'
+import { getUserMessageInfo, updateUserMessageInfo } from '@/api_v2/user'
 
 export default {
   name: 'Profile',
@@ -228,6 +264,10 @@ export default {
         old_password: [
           { required: true, message: this.$t('RuleMsg.PleaseInput') + this.$t('RuleMsg.Password'), trigger: 'blur' }
         ]
+      },
+      userMessageForm: {
+        notification: false,
+        mail: false
       }
     }
   },
@@ -242,12 +282,15 @@ export default {
   async created() {
     this.userId = store.getters.userId
     const userProfile = await getUserInfo(this.userId)
+    const userMessageInfo = await getUserMessageInfo(this.userId)
     this.from_ad = userProfile.from_ad
     this.userProfileForm.userName = userProfile.name
-    this.userProfileForm.userEmail = userProfile.email
+    this.userProfileForm.userEmail = userProfile.mail
     this.userProfileForm.userPhone = userProfile.phone
     this.userProfileForm.department = userProfile.department
     this.userProfileForm.title = userProfile.title
+    this.userMessageForm.notification = userMessageInfo.data.notification
+    this.userMessageForm.mail = userMessageInfo.data.mail
   },
   methods: {
     checkRepeatPwd(rule, value, callback) {
@@ -304,6 +347,19 @@ export default {
           }
         })
       }
+    },
+    async submitMessageSettings() {
+      await updateUserMessageInfo(this.userId, this.userMessageForm)
+        .then((res) => {
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
+          })
+        })
+        .catch((error) => {
+          console.error(error)
+        })
     }
   }
 }

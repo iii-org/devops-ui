@@ -770,6 +770,8 @@ export default {
   Profile: {
     Basic: '基本設定',
     ProfileBasicSetting: '個人基本設定',
+    Notice: '通知設定',
+    MessageReceptionSetting: '訊息接收設定',
     Department: '@:general.Department',
     Title: '@:general.UserTitle',
     Phone: '電話',
@@ -780,7 +782,9 @@ export default {
     PasswordRule: '密碼需要8-20個字同時需要至少1個大寫1個小寫和1個數字',
     Save: '儲存',
     Password: '舊密碼',
-    K8SConfigDownload: '下載K8S設定檔'
+    K8SConfigDownload: '下載K8S設定檔',
+    PlatformNotice: '訊息推播',
+    MailNotice: '電子郵件'
   },
   Project: {
     Project: '專案',

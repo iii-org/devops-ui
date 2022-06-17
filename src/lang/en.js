@@ -775,6 +775,8 @@ export default {
   Profile: {
     Basic: 'Basic',
     ProfileBasicSetting: 'Profile Basic Setting',
+    Notice: 'Notification Setting',
+    MessageReceptionSetting: 'Message Reception Setting',
     Department: '@:general.Department',
     Title: '@:general.UserTitle',
     Phone: 'Phone',
@@ -785,7 +787,9 @@ export default {
     PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number.',
     Save: 'Save',
     Password: 'Password',
-    K8SConfigDownload: 'Download K8S Config'
+    K8SConfigDownload: 'Download K8S Config',
+    PlatformNotice: 'Platform Notice',
+    MailNotice: 'Email Notice'
   },
   Project: {
     Project: ' Project',
