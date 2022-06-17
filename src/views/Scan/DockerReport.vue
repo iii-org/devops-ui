@@ -47,7 +47,7 @@
         </div>
         <div style="padding: 40px;">
           <ul class="text-base mb-10 font-semibold">
-            <li>{{ $t('general.project_name') }}: {{ selectedProject.display }}</li>
+            <li>{{ $t('general.project_name') }}: {{ projectName }}</li>
             <li>{{ $t('TestReport.TestTime') }}: {{ timeNow }}</li>
             <li>
               {{ $t('general.Branch') }} / {{ $t('TestReport.Commit') }}:
@@ -56,8 +56,8 @@
             </li>
           </ul>
           <!-- white box test -->
-          <div 
-            class="text-center font-bold" 
+          <div
+            class="text-center font-bold"
             style="
               padding: 10px;
               background: #606260;
@@ -88,8 +88,8 @@
             />
             <el-table-column align="center" :label="$t('Docker.Count')" prop="value" />
           </el-table>
-          <div 
-            class="text-center font-bold" 
+          <div
+            class="text-center font-bold"
             style="
               padding: 10px;
               background: #606260;
@@ -133,8 +133,8 @@
             <el-table-column align="center" :label="$t('Docker.CurrentVersion')" prop="version" />
             <el-table-column align="center" :label="$t('Docker.FixedVersion')" prop="fix_version" />
           </el-table>
-          <div 
-            class="text-center font-bold" 
+          <div
+            class="text-center font-bold"
             style="
               padding: 10px;
               background: #606260;
@@ -182,6 +182,7 @@
 import { mapGetters } from 'vuex'
 import { UTCtoLocalTime } from '@/filters/index'
 import { getHarborScanReport } from '@/api_v2/harbor'
+import { getProjectInfos } from '@/api/projects'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 
 const downloadFileName = 'Docker_Image_Vulnerability_Scan_Report'
@@ -197,20 +198,22 @@ export default {
       scanner: [],
       summaryData: [],
       severityLevel: [
-        'Critical', 
-        'High', 
-        'Medium', 
-        'Low', 
-        'Negligible', 
+        'Critical',
+        'High',
+        'Medium',
+        'Low',
+        'Negligible',
         'Unknown'
       ],
-      timeNow: null
+      timeNow: null,
+      project: {},
+      projectName: ''
     }
   },
   computed: {
     ...mapGetters(['selectedProject']),
-    selectedProjectId() {
-      return this.selectedProject.id
+    projectId () {
+      return this.$route.params.projectId
     },
     branch() {
       return this.$route.params.commitBranch
@@ -219,14 +222,33 @@ export default {
       return this.$route.params.commitId
     }
   },
+  watch: {
+    project: {
+      handler(val) {
+        if (Object.keys(val).length > 0 && val.hasOwnProperty('name')) {
+          this.fetchTestReport()
+        }
+      },
+      immediate: true
+    }
+  },
   mounted() {
-    this.loadTestReport()
+    this.fetchProjectInfo()
   },
   methods: {
-    async loadTestReport() {
+    async fetchProjectInfo() {
+      try {
+        const res = await getProjectInfos(this.projectId)
+        this.project = res.data
+        this.projectName = res.data.display
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async fetchTestReport() {
       this.listLoading = true
       try {
-        const res = await getHarborScanReport(this.selectedProject.name, { branch: this.branch, commit_id: this.commitId })
+        const res = await getHarborScanReport(this.project.name, { branch: this.branch, commit_id: this.commitId })
         this.summaryData = this.setSummaryData(res.data.overview)
         this.listData = this.sortVulnerabilityData(res.data.vulnerabilities)
         this.timeNow = UTCtoLocalTime(res.data.generated_at)

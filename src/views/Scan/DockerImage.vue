@@ -191,7 +191,8 @@ export default {
         name: 'DockerReport',
         params: {
           commitId: row.commit,
-          commitBranch: row.branch
+          commitBranch: row.branch,
+          projectId: this.selectedProjectId
         }
       })
     }
