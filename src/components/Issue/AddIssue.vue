@@ -312,8 +312,7 @@
 
 <script>
 import dayjs from 'dayjs'
-import { getProjectAssignable, getProjectVersion, addProjectTags } from '@/api/projects'
-import { getProject } from '@/api_v2/projects'
+import { getProjectAssignable, getProjectVersion, addProjectTags, getProjectInfos } from '@/api/projects'
 import {
   getFileTypeLimit,
   getFileTypeList,
@@ -461,7 +460,7 @@ export default {
 
   methods: {
     async fetchProject() {
-      const project = await getProject(this.projectId)
+      const project = await getProjectInfos(this.projectId)
       this.projectName = project.data.display || this.selectedProject.display
     },
     async fetchData() {
