@@ -236,7 +236,7 @@
           divider
         />
         <contextmenu-item @click="onRelationIssueDialog(contextMenu.row)">
-          {{ $t('route.Issue Detail') }}
+          {{ $t('route.IssueDetail') }}
         </contextmenu-item>
         <contextmenu-item @click="toggleIssueMatrixDialog(contextMenu.row)">
           {{ $t('Issue.TraceabilityMatrix') }}
