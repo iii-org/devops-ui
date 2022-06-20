@@ -3,9 +3,9 @@
     <el-col>
       <ProjectListSelector />
       <el-divider />
-      <el-row :gutter="12">
+      <el-row :gutter="12" class="flex flex-wrap">
         <el-empty
-          v-if="usageList.length ===0"
+          v-if="usageList.length === 0"
           :description="$t('general.NoData')"
         />
         <template v-else>
@@ -55,56 +55,10 @@
 import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getPluginResource } from '@/api/harbor'
-import ResourcePie from './components/resourcePie'
-
-const handleLeftQuota = (item) => {
-  const quotaValue = item.quota.value === '' ? 0 : Number(item.quota.value)
-  const usedValue = item.used.value === '' ? 0 : Number(item.used.value)
-  return quotaValue - usedValue
-}
-const formatValue = (title, value) => {
-  if (title === 'Harbor') return (value / 1024 / 1024 / 1024).toFixed(2)
-  if (title === 'GitLab') return (value / 1024 / 1024 / 1024).toFixed(2)
-}
-const getValueUnit = (title) => {
-  if (title === 'Harbor') return 'GB'
-  if (title === 'GitLab') return 'GB'
-}
-
-const formatChartData = (item) => {
-  const result = []
-  if (item.quota.value === '') {
-    result.push({
-      value: formatValue(item.title, item.used.value),
-      name: `Usage (${getValueUnit(item.title)})`,
-      itemStyle: { color: '#E85656', emphasis: { color: '#E85656' }}
-    })
-  } else {
-    result.push({
-      value: formatValue(item.title, handleLeftQuota(item)),
-      name: `Left Quota (${getValueUnit(item.title)})`,
-      itemStyle: { color: '#3ECBBC', emphasis: { color: '#3ECBBC' }}
-    })
-    result.push({
-      value: formatValue(item.title, item.used.value),
-      name: `Usage (${getValueUnit(item.title)})`,
-      itemStyle: { color: '#E85656', emphasis: { color: '#E85656' }}
-    })
-  }
-  return result
-}
-
-const getQuotaString = (item) =>
-  item.quota.value !== '' ? `（${formatValue(item.title, item.quota.value)}${getValueUnit(item.title)}）` : ''
-
-const handleChartData = (data) =>
-  data.map((item) => {
-    return {
-      title: item.title,
-      data: formatChartData(item),
-      quota: getQuotaString(item)
-    }
-  })
+import { getProjectUsage } from '@/api/kubernetes'
+import ResourcePie from './components/ResourcePie'
+import { handlePluginData } from '@/utils/pluginResourceFormatter'
+import { handleK8sData } from '@/utils/k8sResourceFormatter'
 
 export default {
   name: 'PluginResource',
@@ -114,12 +68,12 @@ export default {
   },
   data() {
     return {
-      listLoading: true,
+      listLoading: false,
       usageList: []
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId'])
+    ...mapGetters(['selectedProject', 'selectedProjectId'])
   },
   watch: {
     selectedProjectId() {
@@ -132,21 +86,27 @@ export default {
   methods: {
     async fetchData() {
       this.listLoading = true
-      if (this.selectedProjectId !== -1) {
-        const res = await getPluginResource(this.selectedProjectId)
-        this.usageList = handleChartData(res.data)
-      }
+      await Promise.allSettled([
+        getPluginResource(this.selectedProjectId),
+        getProjectUsage(this.selectedProjectId)
+      ]).then((res) => {
+        const [plugins, k8s] = res
+        const pluginsData = handlePluginData(plugins.value.data)
+        const k8sData = handleK8sData(k8s.value.data)
+        this.usageList = [...pluginsData, ...k8sData]
+      }).catch((error) => {
+        console.error(error)
+      })
       this.listLoading = false
     },
     hasDetail(target) {
-      const allowList = ['Harbor']
+      const allowList = ['Deployment', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Ingresses', 'Harbor']
       return allowList.findIndex((i) => i === target) > -1
     },
     showDetail(target) {
-      if (!this.hasDetail(target)) {
-        return
-      }
-      this.$router.push({ name: `${target}`, params: { projectName: this.$store.getters.selectedProject.name }})
+      if (!this.hasDetail(target)) return
+      if (target === 'Harbor') this.$router.push({ name: `${target}`, params: { projectName: this.selectedProject.name }})
+      else this.$router.push({ name: `${target}List`, params: { projectName: this.selectedProject.name }})
     }
   }
 }

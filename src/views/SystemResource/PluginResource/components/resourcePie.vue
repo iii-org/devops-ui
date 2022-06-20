@@ -1,5 +1,5 @@
 <template>
-  <v-chart
+  <VChart
     ref="chart"
     :style="{ height, width }"
     :option="option"
@@ -23,7 +23,7 @@ use([CanvasRenderer, ScatterChart, PieChart])
 export default {
   name: 'ResourcePie',
   components: {
-    'v-chart': VChart
+    VChart
   },
   props: {
     width: {

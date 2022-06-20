@@ -314,133 +314,6 @@
             "Engineer"
           ]
         }
-      },
-      {
-        "path": "kubernetesResources",
-        "component": "layout/components/parentBlank",
-        "name": "KubernetesResources",
-        "redirect": {
-          "name": "KubernetesResource"
-        },
-        "meta": {
-          "title": "KubernetesResources",
-          "roles": [
-            "Engineer"
-          ]
-        },
-        "children": [
-          {
-            "path": "",
-            "name": "KubernetesResource",
-            "component": "views/Progress/KubernetesResources",
-            "hidden": true,
-            "meta": {
-              "roles": [
-                "Engineer"
-              ]
-            }
-          },
-          {
-            "path": "podsLists",
-            "hidden": true,
-            "component": "layout/components/parentBlank",
-            "name": "PodsLists",
-            "redirect": {
-              "name": "PodsList"
-            },
-            "meta": {
-              "title": "PodsLists",
-              "roles": [
-                "Engineer"
-              ]
-            },
-            "children": [
-              {
-                "path": "",
-                "name": "PodsList",
-                "hidden": true,
-                "component": "views/Progress/KubernetesResources/components/PodsList",
-                "meta": {
-                  "roles": [
-                    "Engineer"
-                  ]
-                }
-              },
-              {
-                "path": "podExecuteShell",
-                "name": "PodExecuteShell",
-                "hidden": true,
-                "component": "views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell",
-                "meta": {
-                  "title": "PodExecuteShell",
-                  "roles": [
-                    "Engineer"
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "path": "serviceList",
-            "name": "ServiceList",
-            "hidden": true,
-            "component": "views/Progress/KubernetesResources/components/ServiceList",
-            "meta": {
-              "title": "ServiceList",
-              "roles": [
-                "Engineer"
-              ]
-            }
-          },
-          {
-            "path": "secretList",
-            "name": "SecretList",
-            "hidden": true,
-            "component": "views/Progress/KubernetesResources/components/SecretList",
-            "meta": {
-              "title": "SecretList",
-              "roles": [
-                "Engineer"
-              ]
-            }
-          },
-          {
-            "path": "configmapsList",
-            "name": "ConfigMapsList",
-            "hidden": true,
-            "component": "views/Progress/KubernetesResources/components/ConfigMapsList",
-            "meta": {
-              "title": "ConfigMapsList",
-              "roles": [
-                "Engineer"
-              ]
-            }
-          },
-          {
-            "path": "deploymentList",
-            "name": "DeploymentList",
-            "hidden": true,
-            "component": "views/Progress/KubernetesResources/components/DeploymentList",
-            "meta": {
-              "title": "DeploymentList",
-              "roles": [
-                "Engineer"
-              ]
-            }
-          },
-          {
-            "path": "ingressesList",
-            "name": "IngressesList",
-            "hidden": true,
-            "component": "views/Progress/KubernetesResources/components/IngressesList",
-            "meta": {
-              "title": "IngressesList",
-              "roles": [
-                "Engineer"
-              ]
-            }
-          }
-        ]
       }
     ]
   },
@@ -688,6 +561,201 @@
         "component": "views/Scan/DockerImage",
         "meta": {
           "title": "DockerImage",
+          "roles": [
+            "Engineer"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "path": "/systemResource",
+    "component": "layout",
+    "name": "System Resource",
+    "redirect": {
+      "name": "PluginResource"
+    },
+    "meta": {
+      "title": "SystemResource",
+      "icon": "el-icon-pie-chart",
+      "roles": [
+        "Engineer"
+      ]
+    },
+    "children": [
+      {
+        "path": ":projectName?/pluginResource",
+        "component": "layout/components/parentBlank",
+        "name": "PluginResources",
+        "redirect": {
+          "name": "PluginResource"
+        },
+        "meta": {
+          "title": "PluginResource",
+          "roles": [
+            "Engineer"
+          ]
+        },
+        "children": [
+          {
+            "path": "",
+            "name": "PluginResource",
+            "hidden": true,
+            "component": "views/SystemResource/PluginResource",
+            "meta": {
+              "roles": [
+                "Engineer"
+              ]
+            }
+          },
+          {
+            "path": "harbor",
+            "hidden": true,
+            "component": "layout/components/parentBlank",
+            "name": "Harbors",
+            "redirect": {
+              "name": "Harbor"
+            },
+            "meta": {
+              "title": "Harbor",
+              "roles": [
+                "Engineer"
+              ]
+            },
+            "children": [
+              {
+                "path": "",
+                "name": "Harbor",
+                "hidden": true,
+                "component": "views/SystemResource/Harbor/ResourceHarbor",
+                "meta": {
+                  "roles": [
+                    "Engineer"
+                  ]
+                }
+              },
+              {
+                "path": ":rName/artifacts",
+                "name": "Artifacts",
+                "hidden": true,
+                "component": "views/SystemResource/Harbor/components/ProjectArtifacts",
+                "meta": {
+                  "title": "Artifacts",
+                  "roles": [
+                    "Engineer"
+                  ]
+                }
+              },
+              {
+                "path": "podsLists",
+                "hidden": true,
+                "component": "layout/components/parentBlank",
+                "name": "PodsLists",
+                "redirect": {
+                  "name": "PodsList"
+                },
+                "meta": {
+                  "title": "PodsLists",
+                  "roles": [
+                    "Engineer"
+                  ]
+                },
+                "children": [
+                  {
+                    "path": "",
+                    "name": "PodsList",
+                    "hidden": true,
+                    "component": "views/SystemResource/PluginResource/components/PodsList",
+                    "meta": {
+                      "roles": [
+                        "Engineer"
+                      ]
+                    }
+                  },
+                  {
+                    "path": "podExecuteShell",
+                    "name": "PodExecuteShell",
+                    "hidden": true,
+                    "component": "views/SystemResource/PluginResource/components/PodsList/components/PodExecuteShell",
+                    "meta": {
+                      "title": "PodExecuteShell",
+                      "roles": [
+                        "Engineer"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "path": "serviceList",
+                "name": "ServiceList",
+                "hidden": true,
+                "component": "views/SystemResource/PluginResource/components/ServiceList",
+                "meta": {
+                  "title": "ServiceList",
+                  "roles": [
+                    "Engineer"
+                  ]
+                }
+              },
+              {
+                "path": "secretList",
+                "name": "SecretList",
+                "hidden": true,
+                "component": "views/SystemResource/PluginResource/components/SecretList",
+                "meta": {
+                  "title": "SecretList",
+                  "roles": [
+                    "Engineer"
+                  ]
+                }
+              },
+              {
+                "path": "configmapsList",
+                "name": "ConfigMapsList",
+                "hidden": true,
+                "component": "views/SystemResource/PluginResource/components/ConfigMapsList",
+                "meta": {
+                  "title": "ConfigMapsList",
+                  "roles": [
+                    "Engineer"
+                  ]
+                }
+              },
+              {
+                "path": "deploymentList",
+                "name": "DeploymentList",
+                "hidden": true,
+                "component": "views/SystemResource/PluginResource/components/DeploymentList",
+                "meta": {
+                  "title": "DeploymentList",
+                  "roles": [
+                    "Engineer"
+                  ]
+                }
+              },
+              {
+                "path": "ingressesList",
+                "name": "IngressesList",
+                "hidden": true,
+                "component": "views/SystemResource/PluginResource/components/IngressesList",
+                "meta": {
+                  "title": "IngressesList",
+                  "roles": [
+                    "Engineer"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": "serviceMonitoring",
+        "name": "ServiceMonitoring",
+        "component": "views/SystemResource/ServiceMonitoring",
+        "meta": {
+          "title": "ServiceMonitoring",
           "roles": [
             "Engineer"
           ]
