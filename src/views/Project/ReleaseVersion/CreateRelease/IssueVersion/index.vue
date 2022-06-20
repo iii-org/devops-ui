@@ -68,7 +68,7 @@ export default {
   props: {
     releaseData: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     }
   },
   data() {

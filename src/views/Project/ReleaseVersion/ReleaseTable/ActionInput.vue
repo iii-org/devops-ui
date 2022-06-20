@@ -63,7 +63,7 @@ export default {
   props: {
     scope: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     }
   },
   data() {

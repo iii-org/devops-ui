@@ -49,7 +49,7 @@ export default {
   props: {
     form: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     }
   },
   data() {

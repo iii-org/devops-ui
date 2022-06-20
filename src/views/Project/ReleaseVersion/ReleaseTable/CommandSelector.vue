@@ -46,11 +46,11 @@ export default {
   props: {
     scope: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     image: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     idx: {
       type: Number,

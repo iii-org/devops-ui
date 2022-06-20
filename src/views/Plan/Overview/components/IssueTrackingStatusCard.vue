@@ -19,7 +19,7 @@ export default {
   props: {
     progressObj: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     }
   },
   data() {

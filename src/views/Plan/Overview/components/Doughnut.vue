@@ -27,7 +27,7 @@ export default {
   props: {
     chartData: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     }
   },
   computed: {
