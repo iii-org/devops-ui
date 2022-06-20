@@ -315,11 +315,9 @@ export default {
       if (fixed_version) {
         params = { status: 'open,locked,closed' }
       }
-      // if ((this.row.project && this.row.project.id !== '') || !this.row.project) {
       Object.keys(getAPI).forEach((key) => {
         this.loadSelection(key, params, [key])
       })
-      // }
     },
     async loadSelection(column, params, lazyLoad) {
       if (lazyLoad) {
@@ -445,8 +443,7 @@ export default {
     },
     getErrorAlert(title, content) {
       const h = this.$createElement
-      const message = h('li', [h('b', title), h('p', content)])
-      return message
+      return h('li', [h('b', title), h('p', content)])
     },
     showErrorAlert(errorMsg) {
       const h = this.$createElement
@@ -475,12 +472,6 @@ export default {
           status_id: 2
         }
       }
-      // if (id === 'null') { // change status back to active if user delete assignee
-      //   data = {
-      //     [column]: id,
-      //     status_id: 1
-      //   }
-      // }
       return data
     },
     toggleRelationDialog(target) {
@@ -530,7 +521,6 @@ export default {
     setFormData(data, copy) {
       const {
         project,
-        parent,
         assigned_to,
         fixed_version,
         name,
@@ -544,7 +534,6 @@ export default {
         description
       } = data
       this.form = {}
-      // this.form.parent_id = parent ? parent.id : ''
       this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
       this.form.name = (copy && this.parentId === 0) ? name + '(' + this.$t('Issue.Copy') + ')' : name

@@ -19,13 +19,12 @@
           :key="group.name"
           :label="group.name"
         >
-          <template v-for="item in group.options">
-            <el-option
-              :key="item.id"
-              :value="item.id"
-              :label="item.name"
-            />
-          </template>
+          <el-option
+            v-for="item in group.options"
+            :key="item.id"
+            :value="item.id"
+            :label="item.name"
+          />
         </el-option-group>
       </template>
       <template v-else>

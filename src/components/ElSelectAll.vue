@@ -40,9 +40,7 @@ export default {
   },
   computed: {
     $attrsAll() {
-      // const val = this.$vnode.data.model && this.$vnode.data.model.value;
       return {
-        // value: val,
         ...this.$attrs
       }
     },

@@ -240,7 +240,7 @@
     </el-popover>
     <el-divider direction="vertical" />
   </span>
-</template>>
+</template>
 
 <script>
 import { mapGetters } from 'vuex'
@@ -344,7 +344,7 @@ export default {
         .then((res) => {
           this.filters = res.data.map((item) =>
             Object.assign({}, item, {
-              custom_filter: this.formateCustomFilter(item.custom_filter),
+              custom_filter: this.formatCustomFilter(item.custom_filter),
               isShowForm: false,
               isApplying: false
             })
@@ -353,8 +353,7 @@ export default {
         .catch((err) => console.error(err))
         .then(() => (this.isLoading = false))
     },
-    // TODO refactor
-    formateCustomFilter(options) {
+    formatCustomFilter(options) {
       const result = Object.assign({}, options)
       Object.keys(options).forEach((key) => {
         if (key === 'tags') {
