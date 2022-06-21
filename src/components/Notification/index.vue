@@ -1,17 +1,17 @@
 <template>
   <div class="flex right-menu items-center">
-    <AbnormalChecker 
-      v-if="alert.length > 0" 
-      :msgs="alert" class="mx-3" 
+    <AbnormalChecker
+      v-if="alert.length > 0"
+      :msgs="alert" class="mx-3"
       @read="readMessage"
     />
-    <NormalChecker 
-      v-if="info.length > 0" 
+    <NormalChecker
+      v-if="info.length > 0"
       :msgs="info" class="mx-3"
       @read="readMessage"
     />
-    <VersionChecker 
-      v-if="update.length > 0" 
+    <VersionChecker
+      v-if="update.length > 0"
       class="mx-3"
     />
     <MessageDialog ref="messageDialog" :message="message" />
@@ -64,20 +64,19 @@ export default {
       this.socket.on('create_message', async (data) => {
         this.setNotificationList(data)
       })
-      this.socket.on('read_message', async (msg_id) => {
-        const findChangeIndex = this.msgList.findIndex(msg => parseInt(msg_id) === parseInt(msg.id))
-        this.$delete(this.msgList, findChangeIndex)
-        this.filterMsg()
-      })
-      this.socket.on('delete_message', async (msg_id) => {
-        const findChangeIndex = this.msgList.findIndex(msg => parseInt(msg_id) === parseInt(msg.id))
-        this.$delete(this.msgList, findChangeIndex)
-        this.filterMsg()
-      })
+      this.onSocket('read_message')
+      this.onSocket('delete_message')
       this.socket.on('disconnect', (reason) => {
         if (reason !== 'io client disconnect') {
           this.connectSocket()
         }
+      })
+    },
+    onSocket(event) {
+      this.socket.on(event, async (msg_id) => {
+        const findChangeIndex = this.msgList.findIndex(msg => parseInt(msg_id) === parseInt(msg.id))
+        this.$delete(this.msgList, findChangeIndex)
+        this.filterMsg()
       })
     },
     setNotificationList(data) {
@@ -94,12 +93,12 @@ export default {
       this.filterMsg()
     },
     filterMsg() {
-      this.alert = this.msgList.filter((item) => 
+      this.alert = this.msgList.filter((item) =>
         item.alert_level.id === 2 || item.alert_level.id === 3 ||
         item.alert_level.id === 102 || item.alert_level.id === 103 ||
         (item.alert_level.id >= 300 && item.alert_level.id < 400)
       )
-      this.info = this.msgList.filter((item) => 
+      this.info = this.msgList.filter((item) =>
         item.alert_level.id === 1 ||
         (item.alert_level.id >= 200 && item.alert_level.id < 300)
       )

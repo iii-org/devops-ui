@@ -30,9 +30,9 @@ export function UTCtoLocalTime(utcTime) {
 }
 
 export function hmA(dateTime) {
-  const hmA = dayjs(dateTime).format('hh:mm A')
+  const time = dayjs(dateTime).format('hh:mm A')
   if (dateTime === 'Invalid date') {
     return '-'
   }
-  return hmA
+  return time
 }
