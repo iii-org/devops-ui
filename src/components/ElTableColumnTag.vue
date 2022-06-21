@@ -18,7 +18,7 @@
 
 <script>
 import i18n from '@/lang'
-import * as elementTagType from '@/utils/element-tag-type'
+import * as elementTagType from '@/utils/elementTagType'
 
 export default {
   name: 'ElTableColumnTag',
