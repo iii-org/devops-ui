@@ -319,7 +319,7 @@ export default {
       let relations = []
       if (issue['children']) {
         children = issue['children'].map((item) => item.id)
-        for (let index = 0; index < children.length; index++) {
+        for (const index in children) {
           link.push('-->')
         }
       }
@@ -327,7 +327,7 @@ export default {
         relations = issue['relations']
           .map((item) => (this.checkUniqueRelationLine(item.id, issue.id) ? item.id : null))
           .filter((item) => item !== null)
-        for (let index = 0; index < relations.length; index++) {
+        for (const index in relations) {
           link.push('-.' + this.$t('Issue.RelatedIssue') + '.-')
         }
         this.relationLine[issue.id] = relations
@@ -335,13 +335,12 @@ export default {
       children = children.concat(relations)
       if (issue['test_files']) {
         const test_files = issue['test_files'].map((item) => `file_${item.id}`)
-        for (let index = 0; index < test_files.length; index++) {
+        for (const index in test_files) {
           link.push('-->')
         }
         children = children.concat(test_files)
       }
-      const point = this.getChartLayout(issue, link, children)
-      return point
+      return this.getChartLayout(issue, link, children)
     },
     getChartLayout(issue, link, children) {
       const checkIssueName = issue.name.replace(/"/g, '&quot;')
@@ -410,7 +409,6 @@ export default {
       }
       result.push(file)
       let last_result = null
-      // const commit_icon = '<svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' aria-hidden=\'true\' role=\'img\' class=\'iconify iconify--ion\' width=\'32\' height=\'32\' preserveAspectRatio=\'xMidYMid meet\' viewBox=\'0 0 512 512\'><circle cx=\'256\' cy=\'256\' r=\'96\' fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\'></circle><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M160 256H48\'></path><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M464 256H352\'></path></svg>'
       if (test_file.software_name === 'Postman') {
         const success = test_file.the_last_test_result && test_file.the_last_test_result.success >= 0
           ? test_file.the_last_test_result.success : '-'
@@ -557,7 +555,6 @@ export default {
           .then(() => {
             done()
           })
-          .catch(() => {})
       } else {
         done()
       }
@@ -565,9 +562,9 @@ export default {
     downloadSVG() {
       try {
         const svg = document.getElementById('mermaid').getElementsByTagName('svg')[0]
-        const style = svg.getElementsByClassName('nodeLabel')
-        for (let idx = 0; idx < style.length; idx++) {
-          style[idx].style = 'font-size:0.8em'
+        const htmls = svg.getElementsByClassName('nodeLabel')
+        for (const html of htmls) {
+          html.style = 'font-size:0.8em'
         }
         const serializer = new XMLSerializer()
         let source = serializer.serializeToString(svg)

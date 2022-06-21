@@ -775,7 +775,7 @@ export default {
               : null
           )
           .filter((item) => item !== null)
-        for (const index in children) {
+        for (const index in relations) {
           link.push('-.' + this.$t('Issue.RelatedIssue') + '.-')
         }
         this.relationLine[issue.id] = relations
@@ -783,7 +783,7 @@ export default {
       children = children.concat(relations)
       if (issue['test_files']) {
         const test_files = issue['test_files'].map((item) => item.file_name)
-        for (const index in children) {
+        for (const index in test_files) {
           link.push('-->')
         }
         children = children.concat(test_files)

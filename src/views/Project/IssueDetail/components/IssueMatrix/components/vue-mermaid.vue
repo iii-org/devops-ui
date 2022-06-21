@@ -164,7 +164,7 @@ export default {
               const getOriginal = this.nodeObject[item.id]
               return item.next
                 .map((n) => {
-                  const getOriginalNextIndex = getOriginal.next.findIndex((item) => (item === n))
+                  const getOriginalNextIndex = getOriginal.next.findIndex((originalItem) => (originalItem === n))
                   const next = this.nodeObject[n] || this.nodeObject[n.id]
                   if (next != null && typeof next !== 'undefined') {
                     return `${this.buildNode(item)}${this.buildLink(
@@ -256,5 +256,3 @@ export default {
   }
 }
 </script>
-
-<style></style>

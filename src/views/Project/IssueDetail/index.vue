@@ -330,7 +330,6 @@ import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import getPageTitle from '@/utils/getPageTitle'
 import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
-// import { getIssueFamily } from '@/api/issue'
 import variables from '@/styles/theme/variables.scss'
 
 const commitLimit = 10
@@ -589,12 +588,12 @@ export default {
             res_api.push(await getIssue(getIssueId))
           }
           const relation_issue = await Promise.all(res_api)
-          relation_issue.forEach((issue, idx) => {
+          relation_issue.forEach((item, idx) => {
             this.$set(data.relations, idx, {
               relation_id: data.relations[idx].id,
               ...data.relations[idx],
-              ...issue.data,
-              name: issue.data.name
+              ...item.data,
+              name: item.data.name
             })
           })
         }
@@ -1003,8 +1002,7 @@ export default {
     },
     getErrorAlert(title, content) {
       const h = this.$createElement
-      const message = h('li', [h('b', title), h('p', content)])
-      return message
+      return h('li', [h('b', title), h('p', content)])
     },
     showErrorAlert(errorMsg) {
       const h = this.$createElement
@@ -1080,8 +1078,6 @@ export default {
         })
           .then(() => {
             done()
-          })
-          .catch(() => {
           })
       } else {
         done()

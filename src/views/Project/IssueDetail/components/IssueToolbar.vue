@@ -279,7 +279,7 @@ export default {
       this.loadingUpdate(false, true)
     },
     async saveIssue(data) {
-      return await addIssue(data)
+      await addIssue(data)
         .then((res) => {
           // this.$message({
           //   title: this.$t('general.Success'),

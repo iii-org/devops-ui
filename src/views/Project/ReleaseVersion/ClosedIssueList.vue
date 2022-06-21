@@ -440,7 +440,7 @@ export default {
       this.addTopicDialogVisible = visible
     },
     async saveIssue(data) {
-      return await addIssue(data)
+      await addIssue(data)
         .then(res => {
           // noinspection JSCheckFunctionSignatures
           this.$message({
