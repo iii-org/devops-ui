@@ -676,98 +676,6 @@ export const allRoutes = [
         name: 'DevEnvironment',
         component: () => import('@/views/Progress/DevEnvironment'),
         meta: { title: 'DevEnvironment', roles: ['Administrator', 'Project Manager', 'Engineer'] }
-      },
-      {
-        path: 'kubernetesResources',
-        component: ParentBlank,
-        name: 'KubernetesResources',
-        redirect: { name: 'KubernetesResource' },
-        meta: {
-          title: 'KubernetesResources',
-          roles: ['Administrator', 'Project Manager', 'Engineer']
-        },
-        children: [
-          {
-            path: '',
-            name: 'KubernetesResource',
-            component: () => import('@/views/Progress/KubernetesResources'),
-            hidden: true
-          },
-          {
-            path: 'podsLists',
-            hidden: true,
-            component: ParentBlank,
-            name: 'PodsLists',
-            redirect: { name: 'PodsList' },
-            meta: { title: 'PodsLists', roles: ['Administrator', 'Project Manager', 'Engineer'] },
-            children: [
-              {
-                path: '',
-                name: 'PodsList',
-                hidden: true,
-                component: () => import('@/views/Progress/KubernetesResources/components/PodsList')
-              },
-              {
-                path: 'podExecuteShell',
-                name: 'PodExecuteShell',
-                hidden: true,
-                component: () =>
-                  import('@/views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell'),
-                meta: { title: 'Pod Execute Shell', roles: ['Administrator', 'Project Manager', 'Engineer'] }
-              }
-            ]
-          },
-          {
-            path: 'serviceList',
-            name: 'ServiceList',
-            hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/ServiceList'),
-            meta: {
-              title: 'ServiceList',
-              roles: ['Administrator', 'Project Manager', 'Engineer']
-            }
-          },
-          {
-            path: 'secretList',
-            name: 'SecretList',
-            hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/SecretList'),
-            meta: {
-              title: 'SecretList',
-              roles: ['Administrator', 'Project Manager', 'Engineer']
-            }
-          },
-          {
-            path: 'configmapsList',
-            name: 'ConfigMapsList',
-            hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/ConfigMapsList'),
-            meta: {
-              title: 'ConfigMapsList',
-              roles: ['Administrator', 'Project Manager', 'Engineer']
-            }
-          },
-          {
-            path: 'deploymentList',
-            name: 'DeploymentList',
-            hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/DeploymentList'),
-            meta: {
-              title: 'DeploymentList',
-              roles: ['Administrator', 'Project Manager', 'Engineer']
-            }
-          },
-          {
-            path: 'ingressesList',
-            name: 'IngressesList',
-            hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/IngressesList'),
-            meta: {
-              title: 'IngressesList',
-              roles: ['Administrator', 'Project Manager', 'Engineer']
-            }
-          }
-        ]
       }
     ]
   },
@@ -1008,6 +916,80 @@ export const allRoutes = [
                 }
               }
             ]
+          },
+          {
+            path: 'podsLists',
+            hidden: true,
+            component: ParentBlank,
+            name: 'PodsLists',
+            redirect: { name: 'PodsList' },
+            meta: { title: 'PodsLists', roles: ['Administrator', 'Project Manager', 'Engineer'] },
+            children: [
+              {
+                path: '',
+                name: 'PodsList',
+                hidden: true,
+                component: () => import('@/views/SystemResource/PluginResource/components/PodsList')
+              },
+              {
+                path: 'podExecuteShell',
+                name: 'PodExecuteShell',
+                hidden: true,
+                component: () =>
+                  import('@/views/SystemResource/PluginResource/components/PodsList/components/PodExecuteShell'),
+                meta: { title: 'PodExecuteShell', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+              }
+            ]
+          },
+          {
+            path: 'serviceList',
+            name: 'ServiceList',
+            hidden: true,
+            component: () => import('@/views/SystemResource/PluginResource/components/ServiceList'),
+            meta: {
+              title: 'ServiceList',
+              roles: ['Administrator', 'Project Manager', 'Engineer']
+            }
+          },
+          {
+            path: 'secretList',
+            name: 'SecretList',
+            hidden: true,
+            component: () => import('@/views/SystemResource/PluginResource/components/SecretList'),
+            meta: {
+              title: 'SecretList',
+              roles: ['Administrator', 'Project Manager', 'Engineer']
+            }
+          },
+          {
+            path: 'configmapsList',
+            name: 'ConfigMapsList',
+            hidden: true,
+            component: () => import('@/views/SystemResource/PluginResource/components/ConfigMapsList'),
+            meta: {
+              title: 'ConfigMapsList',
+              roles: ['Administrator', 'Project Manager', 'Engineer']
+            }
+          },
+          {
+            path: 'deploymentList',
+            name: 'DeploymentList',
+            hidden: true,
+            component: () => import('@/views/SystemResource/PluginResource/components/DeploymentList'),
+            meta: {
+              title: 'DeploymentList',
+              roles: ['Administrator', 'Project Manager', 'Engineer']
+            }
+          },
+          {
+            path: 'ingressesList',
+            name: 'IngressesList',
+            hidden: true,
+            component: () => import('@/views/SystemResource/PluginResource/components/IngressesList'),
+            meta: {
+              title: 'IngressesList',
+              roles: ['Administrator', 'Project Manager', 'Engineer']
+            }
           }
         ]
       },

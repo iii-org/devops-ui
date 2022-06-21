@@ -156,7 +156,7 @@ import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getZapScans } from '@/api/zap'
 import { getZapPod } from '@/api_v2/zap'
-import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanZap',

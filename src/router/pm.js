@@ -266,94 +266,6 @@ const pmRoute = [
         name: 'DevEnvironment',
         component: 'views/Progress/DevEnvironment',
         meta: { title: 'devEnvironment', roles: ['Project Manager'] }
-      },
-      {
-        path: 'kubernetesResources',
-        component: 'layout/components/parentBlank',
-        meta: {
-          title: 'kubernetesResources',
-          roles: ['Project Manager']
-        },
-        children: [
-          {
-            path: '',
-            name: 'KubernetesResources',
-            component: 'views/Progress/KubernetesResources',
-            hidden: true
-          },
-          {
-            path: 'podsList',
-            hidden: true,
-            component: 'layout/components/parentBlank',
-            meta: { title: 'Pods List', roles: ['Project Manager'] },
-            children: [
-              {
-                path: '',
-                name: 'PodsList',
-                hidden: true,
-                component: 'views/Progress/KubernetesResources/components/PodsList'
-              },
-              {
-                path: 'podExecuteShell',
-                name: 'PodExecuteShell',
-                hidden: true,
-                component: () =>
-                  import('@/views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell'),
-                meta: { title: 'Pod Execute Shell', roles: ['Project Manager'] }
-              }
-            ]
-          },
-          {
-            path: 'serviceList',
-            name: 'ServiceList',
-            hidden: true,
-            component: 'views/Progress/KubernetesResources/components/ServiceList',
-            meta: {
-              title: 'Service List',
-              roles: ['Project Manager']
-            }
-          },
-          {
-            path: 'secretList',
-            name: 'SecretList',
-            hidden: true,
-            component: 'views/Progress/KubernetesResources/components/SecretList',
-            meta: {
-              title: 'Secret List',
-              roles: ['Project Manager']
-            }
-          },
-          {
-            path: 'configmapsList',
-            name: 'ConfigMapsList',
-            hidden: true,
-            component: 'views/Progress/KubernetesResources/components/ConfigMapsList',
-            meta: {
-              title: 'ConfigMaps List',
-              roles: ['Project Manager']
-            }
-          },
-          {
-            path: 'deploymentList',
-            name: 'DeploymentList',
-            hidden: true,
-            component: 'views/Progress/KubernetesResources/components/DeploymentList',
-            meta: {
-              title: 'Deployment List',
-              roles: ['Project Manager']
-            }
-          },
-          {
-            path: 'ingressesList',
-            name: 'IngressesList',
-            hidden: true,
-            component: 'views/Progress/KubernetesResources/components/IngressesList',
-            meta: {
-              title: 'Ingresses List',
-              roles: ['Project Manager']
-            }
-          }
-        ]
       }
     ]
   },
@@ -578,6 +490,79 @@ const pmRoute = [
                 }
               }
             ]
+          },
+          {
+            path: 'podsLists',
+            hidden: true,
+            component: 'layout/components/parentBlank',
+            name: 'PodsLists',
+            redirect: { name: 'PodsList' },
+            meta: { title: 'PodsLists', roles: ['Project Manager'] },
+            children: [
+              {
+                path: '',
+                name: 'PodsList',
+                hidden: true,
+                component: 'views/SystemResource/PluginResource/components/PodsList'
+              },
+              {
+                path: 'podExecuteShell',
+                name: 'PodExecuteShell',
+                hidden: true,
+                component: 'views/SystemResource/PluginResource/components/PodsList/components/PodExecuteShell',
+                meta: { title: 'Pod Execute Shell', roles: ['Project Manager'] }
+              }
+            ]
+          },
+          {
+            path: 'serviceList',
+            name: 'ServiceList',
+            hidden: true,
+            component: 'views/SystemResource/PluginResource/components/ServiceList',
+            meta: {
+              title: 'ServiceList',
+              roles: ['Project Manager']
+            }
+          },
+          {
+            path: 'secretList',
+            name: 'SecretList',
+            hidden: true,
+            component: 'views/SystemResource/PluginResource/components/SecretList',
+            meta: {
+              title: 'SecretList',
+              roles: ['Project Manager']
+            }
+          },
+          {
+            path: 'configmapsList',
+            name: 'ConfigMapsList',
+            hidden: true,
+            component: 'views/SystemResource/PluginResource/components/ConfigMapsList',
+            meta: {
+              title: 'ConfigMapsList',
+              roles: ['Project Manager']
+            }
+          },
+          {
+            path: 'deploymentList',
+            name: 'DeploymentList',
+            hidden: true,
+            component: 'views/SystemResource/PluginResource/components/DeploymentList',
+            meta: {
+              title: 'DeploymentList',
+              roles: ['Project Manager']
+            }
+          },
+          {
+            path: 'ingressesList',
+            name: 'IngressesList',
+            hidden: true,
+            component: 'views/SystemResource/PluginResource/components/IngressesList',
+            meta: {
+              title: 'IngressesList',
+              roles: ['Project Manager']
+            }
           }
         ]
       },

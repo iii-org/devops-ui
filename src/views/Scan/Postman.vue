@@ -117,7 +117,7 @@ import { getPostmanResult } from '@/api/postman'
 import { getPostmanPod } from '@/api_v2/postman'
 import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {
   name: 'Postman',

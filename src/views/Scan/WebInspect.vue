@@ -172,7 +172,7 @@ import { getWebInspectScans, getWebInspectStats, getWebInspectStatus } from '@/a
 import { getWebInspectPod } from '@/api_v2/webInspect'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanWebInspect',
