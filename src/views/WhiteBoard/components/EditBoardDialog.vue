@@ -6,63 +6,11 @@
     :fullscreen="true"
     @closed="onDialogClosed"
   >
-    <el-form
-      ref="form"
-      v-loading="isLoading"
-      :model="form"
-      :rules="rules"
-      class="custom-list"
-    >
-      <el-row>
-        <el-col
-          :md="12"
-          :span="24"
-        >
-          <el-form-item
-            :label="$t('general.Name')"
-            prop="name"
-          >
-            <el-input
-              v-model="form.name"
-              :placeholder="$t('RuleMsg.PleaseInput') + $t('general.Name')"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col
-          :md="12"
-          :span="24"
-        >
-          <el-form-item :label="$t('Issue.RelatedIssue')">
-            <el-select
-              v-model="form.issue_ids"
-              style="width: 100%"
-              :placeholder="$t('Issue.SearchNameOrAssignee')"
-              clearable
-              filterable
-              remote
-              multiple
-              :remote-method="getSearchIssue"
-              :loading="issueLoading"
-              @focus="getSearchIssue()"
-            >
-              <el-option-group
-                v-for="group in issueList"
-                :key="group.name"
-                :label="group.name"
-              >
-                <template v-for="item in group.options">
-                  <el-option
-                    :key="item.id"
-                    :label="'#' + item.id +' - '+item.name"
-                    :value="item.id"
-                  />
-                </template>
-              </el-option-group>
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
+    <ExcalidrawForm
+      ref="ExcalidrawForm"
+      :form="form"
+      :is-loading="isLoading"
+    />
     <el-collapse v-model="isCollapse">
       <el-collapse-item title="Excalidraw" name="1">
         <iframe
@@ -95,6 +43,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { updateExcalidraw } from '@/api_v2/excalidraw'
+import ExcalidrawForm from '@/views/WhiteBoard/components/ExcalidrawForm'
 
 const formTemplate = () => ({
   issue_ids: [],
@@ -103,16 +52,7 @@ const formTemplate = () => ({
 
 export default {
   name: 'EditBoardDialog',
-  props: {
-    issueList: {
-      type: Array,
-      default: () => []
-    },
-    issueLoading: {
-      type: Boolean,
-      default: false
-    }
-  },
+  components: { ExcalidrawForm },
   data() {
     return {
       dialogVisible: false,
@@ -132,7 +72,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userName']),
+    ...mapGetters(['selectedProjectId', 'userName']),
     computedItemHeight() {
       return window.innerHeight - Array.from(document.querySelectorAll('.el-collapse-item'))
         .reduce((s, el) => {
@@ -143,18 +83,14 @@ export default {
   watch: {
     row(value) {
       if (value) {
-        this.getSearchIssue()
         this.form.issue_ids = value.issue_ids
         this.form.name = value.name
       }
     }
   },
   methods: {
-    getSearchIssue(query) {
-      this.$emit('getIssue', query)
-    },
     handleEdit() {
-      this.$refs['form'].validate(async(valid) => {
+      this.$refs['ExcalidrawForm'].$refs['form'].validate(async(valid) => {
         if (valid) {
           this.isLoading = true
           try {
@@ -181,7 +117,7 @@ export default {
     },
     onDialogClosed() {
       this.row = {}
-      this.$refs['form'].resetFields()
+      this.$refs['ExcalidrawForm'].$refs['form'].resetFields()
       this.dialogVisible = false
     }
   }

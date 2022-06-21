@@ -1330,8 +1330,10 @@ export default {
     SearchLabel: 'Search Title or Sender'
   },
   Excalidraw: {
-    CreateBoard: 'Create WhiteBoard',
-    EditBoard: 'Edit WhiteBoard'
+    Whiteboard: 'Whiteboard',
+    Name: 'Whiteboard Name',
+    CreateBoard: 'Create Whiteboard',
+    EditBoard: 'Edit Whiteboard'
   },
   IssueMatrix: {
     Relations: 'Relationship',

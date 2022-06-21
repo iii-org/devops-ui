@@ -120,18 +120,12 @@
     />
     <CreateBoardDialog
       ref="CreateBoardDialog"
-      :issue-list="issueList"
-      :issue-loading="issueLoading"
       @update="loadData"
-      @getIssue="getIssue"
       @handle="handleAfterCreate"
     />
     <EditBoardDialog
       ref="EditBoardDialog"
-      :issue-list="issueList"
-      :issue-loading="issueLoading"
       @update="loadData"
-      @getIssue="getIssue"
     />
   </div>
 </template>
@@ -140,12 +134,10 @@
 import { mapGetters } from 'vuex'
 import { BasicData, Table, Pagination, SearchBar, ProjectSelector } from '@/newMixins'
 import { getExcalidraw, deleteExcalidraw } from '@/api_v2/excalidraw'
-import { getProjectIssueList } from '@/api_v2/projects'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import SearchFilter from './components/SearchFilter'
 import CreateBoardDialog from './components/CreateBoardDialog'
 import EditBoardDialog from './components/EditBoardDialog'
-import axios from 'axios'
 
 export default {
   name: 'WhiteBoardList',
@@ -154,9 +146,7 @@ export default {
   data() {
     return {
       searchKeys: ['name'],
-      issueLoading: false,
-      issueQuery: null,
-      issueList: []
+      issueQuery: null
     }
   },
   computed: {
@@ -168,49 +158,6 @@ export default {
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
-    },
-    async getIssue(query) {
-      const params = this.getSearchParams(query)
-      const cancelToken = this.checkToken()
-      await getProjectIssueList(this.selectedProjectId, params, { cancelToken })
-        .then((res) => { this.issueList = this.getListLabels(res) })
-      this.issueLoading = false
-      this.cancelToken = null
-    },
-    getSearchParams(query) {
-      const params = {
-        selection: true,
-        status_id: 'open'
-      }
-      if (query !== '' && query) {
-        params['search'] = query
-        this.issueQuery = query
-        this.issueLoading = true
-      } else {
-        params['offset'] = 0
-        params['limit'] = 5
-        this.issueQuery = null
-      }
-      return params
-    },
-    getListLabels(res) {
-      let queryList = res.data
-      let key = 'Issue.Result'
-      if (!this.issueQuery) {
-        if (queryList && queryList.hasOwnProperty('issue_list')) {
-          queryList = res.data.issue_list
-        } else {
-          queryList = []
-        }
-        key = 'Issue.LastResult'
-      }
-      return [{ name: this.$t(key), options: queryList }]
-    },
-    checkToken() {
-      if (this.cancelToken) this.cancelToken.cancel()
-      const CancelToken = axios.CancelToken.source()
-      this.cancelToken = CancelToken
-      return CancelToken.token
     },
     handleCreate() {
       this.$refs.CreateBoardDialog.dialogVisible = true

@@ -1321,6 +1321,8 @@ export default {
     SearchLabel: '搜尋訊息標題或寄送者'
   },
   Excalidraw: {
+    Whiteboard: '協作白板',
+    Name: '白板名稱',
     CreateBoard: '新增白板',
     EditBoard: '編輯白板'
   },

@@ -191,6 +191,14 @@
                     :height="dialogHeight"
                   />
                 </el-tab-pane>
+                <el-tab-pane :label="$t('Excalidraw.Whiteboard')">
+                  <WhiteBoardTable
+                    ref="WhiteBoardTable"
+                    :excalidraw-data="issue.excalidraw"
+                    :height="dialogHeight"
+                    @update="fetchIssueLink"
+                  />
+                </el-tab-pane>
               </el-tabs>
             </el-col>
           </el-row>
@@ -306,7 +314,8 @@ import {
   IssueTitle,
   IssueToolbar,
   IssueCollection,
-  AdminCommitLog
+  AdminCommitLog,
+  WhiteBoardTable
 } from './components'
 import { UTCtoLocalTime } from '@/filters'
 import {
@@ -343,7 +352,8 @@ export default {
     IssueMatrix,
     RelatedCollectionDialog,
     ExpandSection,
-    AdminCommitLog
+    AdminCommitLog,
+    WhiteBoardTable
   },
   mixins: [ContextMenu],
   props: {
