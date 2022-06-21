@@ -566,7 +566,6 @@ export default {
           .then(() => {
             done()
           })
-          .catch(() => {})
       } else {
         done()
       }

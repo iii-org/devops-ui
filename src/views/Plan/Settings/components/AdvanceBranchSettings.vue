@@ -88,23 +88,24 @@ export default {
     //  { Web: 1, Sonarqube: 1, Checkmarx: 1, ...}
     // ]
     countFrequency() {
-      const countFreq = this.listData.map(item => item.testing_tools.reduce((preVal, curVal) => {
+      return this.listData.map(item => item.testing_tools.reduce((preVal, curVal) => {
         if (curVal.name in preVal) preVal[curVal.name]++
         else preVal[curVal.name] = 1
         return preVal
       }, {}))
-      return countFreq
     },
     // find the repeat plugin name by row
     repeatPlugins() {
       const repeatPlugins = []
-      this.countFrequency.forEach((plugin, index) => Object.keys(plugin).forEach(item => {
-        const plungins = []
-        if (this.countFrequency[index][item] > 1) {
-          plungins.push(item)
-          repeatPlugins.push(item)
-        }
-      }))
+      this.countFrequency.forEach((plugin, index) => {
+        Object.keys(plugin).forEach(item => {
+          const plugins = []
+          if (this.countFrequency[index][item] > 1) {
+            plugins.push(item)
+            repeatPlugins.push(item)
+          }
+        })
+      })
       return repeatPlugins
     },
     // if the enable values of repeat plugins are not the same, showWarning will be true
@@ -125,8 +126,7 @@ export default {
       return rowShowWarning
     },
     isShowWarning() {
-      const isShowWarning = this.showWarning.find(item => item)
-      return isShowWarning
+      return this.showWarning.find(item => item)
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -228,8 +228,7 @@ export default {
       const toolList = this.testingToolNames.map(tool => tool.name)
       this.services.forEach(name => {
         if (toolList.includes(name)) {
-          this.handleSelectAll({ selectedAll, name })
-          this.checkAllSelect({ name })
+          this.onSelected(selectedAll, name)
         }
       })
     },
@@ -238,10 +237,13 @@ export default {
       const toolList = this.testingToolNames.map(tool => tool.name)
       this.dependenceKeys.forEach(name => {
         if (toolList.includes(name)) {
-          this.handleSelectAll({ selectedAll, name })
-          this.checkAllSelect({ name })
+          this.onSelected(selectedAll, name)
         }
       })
+    },
+    onSelected(selectedAll, name) {
+      this.handleSelectAll({ selectedAll, name })
+      this.checkAllSelect({ name })
     },
     checkAllSelect(tool, branch) {
       const { name, enable } = tool

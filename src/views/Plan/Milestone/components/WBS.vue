@@ -568,7 +568,7 @@ export default {
           treeDataArray = treeData[row.id].children
           updateNodeMap = lazyTreeNodeMap[row.id]
           row_index = treeDataArray.findIndex((issue) => issue.id === row.id)
-        } else if (row && row.parent_object) {
+        } else if (row.parent_object) {
           if (row.parent_object.id && treeData[row.parent_object.id]) {
             treeDataArray = treeData[row.parent_object.id].children
             updateNodeMap = lazyTreeNodeMap[row.parent_object.id]

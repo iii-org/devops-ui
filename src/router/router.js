@@ -9,7 +9,6 @@ import pmRoute from './pm.json'
 import adRoute from './ad.json'
 import rdRoute from './rd.json'
 import qaRoute from './qa.json'
-// import allRoutes from './all'
 
 /**
  * @summary route naming rules
@@ -31,8 +30,6 @@ export const constantRoutes = [
     hidden: true
   }
 ]
-
-// export const asyncRoutes = allRoutes
 
 export const asyncRoutes = (role) => {
   if (role === 'QA') return qaRoute

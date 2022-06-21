@@ -41,7 +41,7 @@ export default {
   methods: {
     handleProgress(progress) {
       const hasProgress = Object.keys(progress).length > 0
-      hasProgress ? this.fillData(progress) : (this.dataCollection = {})
+      hasProgress ? this.fillData(progress) : this.dataCollection = {}
     },
     fillData(chartData) {
       const issueStatusList = [

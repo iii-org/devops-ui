@@ -524,7 +524,7 @@ export default {
       const { id, familyData } = issue
       const isLoaded = Object.keys(familyData).length > 0
       if (isLoaded) return
-      const idx = this.listData.findIndex((issue) => issue.id === id)
+      const idx = this.listData.findIndex((item) => item.id === id)
       this.listData[idx].isLoadingFamily = true
       getIssueFamily(id)
         .then((res) => {
