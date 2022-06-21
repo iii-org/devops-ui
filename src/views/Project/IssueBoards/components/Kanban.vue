@@ -500,8 +500,7 @@ export default {
       const toClassObj = this.status.find((item) => item.name === toName)
       const fromClassObj = this.status.find((item) => item.name === fromName)
       const element = evt.draggedContext.element
-      const canIssueMoved = this.isIssueNormal(toClassObj, fromClassObj, element, evt)
-      return canIssueMoved
+      return this.isIssueNormal(toClassObj, fromClassObj, element, evt)
     },
     isIssueNormal(toClassObj, fromClassObj, element, evt) {
       switch (this.dimension) {
@@ -636,8 +635,7 @@ export default {
     },
     getErrorAlert(title, content) {
       const h = this.$createElement
-      const message = h('li', [h('b', title), h('p', content)])
-      return message
+      return h('li', [h('b', title), h('p', content)])
     },
     checkPriority(element) {
       return !element.has_children

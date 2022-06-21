@@ -668,6 +668,7 @@ export default {
     async handleRemoveIssue(row, msg, force, detail) {
       const h = this.$createElement
       const issueName = { issueName: row.name }
+      console.log(msg)
       const messageList = [h('span', null, this.$t(`Issue.${msg}Issue`, issueName))]
       if (detail) {
         messageList.push(h('ul', null,

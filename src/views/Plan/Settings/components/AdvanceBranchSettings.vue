@@ -99,9 +99,7 @@ export default {
       const repeatPlugins = []
       this.countFrequency.forEach((plugin, index) => {
         Object.keys(plugin).forEach(item => {
-          const plugins = []
           if (this.countFrequency[index][item] > 1) {
-            plugins.push(item)
             repeatPlugins.push(item)
           }
         })
@@ -117,7 +115,8 @@ export default {
         item.testing_tools.reduce((preVal, curVal) => {
           const enable = 'enable'
           const hasProperty = preVal.hasOwnProperty(curVal.name)
-          if (hasProperty) preVal[curVal.name] === curVal[enable] ? showWarning = false : showWarning = true
+          if (hasProperty && preVal[curVal.name] === curVal[enable]) showWarning = false
+          else showWarning = true
           preVal[curVal.name] = curVal[enable]
           return preVal
         }, {})
@@ -225,25 +224,22 @@ export default {
     },
     selectAllService(selectedAll) {
       if (!selectedAll) return
-      const toolList = this.testingToolNames.map(tool => tool.name)
       this.services.forEach(name => {
-        if (toolList.includes(name)) {
-          this.onSelected(selectedAll, name)
-        }
+        this.onSelected(selectedAll, name)
       })
     },
     selectAllDependence(selectedAll) {
       if (selectedAll) return
-      const toolList = this.testingToolNames.map(tool => tool.name)
       this.dependenceKeys.forEach(name => {
-        if (toolList.includes(name)) {
-          this.onSelected(selectedAll, name)
-        }
+        this.onSelected(selectedAll, name)
       })
     },
     onSelected(selectedAll, name) {
-      this.handleSelectAll({ selectedAll, name })
-      this.checkAllSelect({ name })
+      const toolList = this.testingToolNames.map(tool => tool.name)
+      if (toolList.includes(name)) {
+        this.handleSelectAll({ selectedAll, name })
+        this.checkAllSelect({ name })
+      }
     },
     checkAllSelect(tool, branch) {
       const { name, enable } = tool

@@ -157,20 +157,21 @@ export default {
       const { key, has_default_branch } = stage
       if (this.services.includes(key)) {
         if (has_default_branch) return
-        this.dependenceKeys.forEach(key => {
-          const idx = this.stagesData.findIndex(stage => key === stage.key)
-          if (idx < 0) return
-          this.stagesData[idx].has_default_branch = has_default_branch
+        this.dependenceKeys.forEach(dependenceKey => {
+          this.getHasDefaultBranch(dependenceKey, has_default_branch)
         })
       }
       if (this.dependenceKeys.includes(key)) {
         if (!has_default_branch) return
-        this.services.forEach(key => {
-          const idx = this.stagesData.findIndex(stage => key === stage.key)
-          if (idx < 0) return
-          this.stagesData[idx].has_default_branch = has_default_branch
+        this.services.forEach(serviceKey => {
+          this.getHasDefaultBranch(serviceKey, has_default_branch)
         })
       }
+    },
+    getHasDefaultBranch(key, has_default_branch) {
+      const idx = this.stagesData.findIndex(stageData => key === stageData.key)
+      if (idx < 0) return
+      this.stagesData[idx].has_default_branch = has_default_branch
     },
     async updatePipeDefBranch() {
       if (this.showWarning) {

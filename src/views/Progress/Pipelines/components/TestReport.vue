@@ -275,7 +275,13 @@ export default {
     setTestReportData(resData, name) {
       const data = resData[name]
       if (name === 'sonarqube') this.setSonarQubeData(resData)
-      else data ? this[name].push(data) : this[name] = undefined
+      else {
+        if (data) {
+          this[name].push(data)
+        } else {
+          this[name] = undefined
+        }
+      }
     },
     setSonarQubeData(data) {
       if (data.sonarqube) {

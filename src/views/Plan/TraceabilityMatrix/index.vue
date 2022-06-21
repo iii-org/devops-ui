@@ -677,13 +677,9 @@ export default {
   },
   mounted() {
     this.loadVersionList(true)
-    this.$nextTick(() => {
-      this.tableHeight = this.$refs['wrapper'].clientHeight
-    })
+    this.setTableHeight()
     window.onresize = () => {
-      this.$nextTick(() => {
-        this.tableHeight = this.$refs['wrapper'].clientHeight
-      })
+      this.setTableHeight()
     }
   },
   methods: {
@@ -766,7 +762,7 @@ export default {
       let relations = []
       if (issue['children']) {
         children = issue['children'].map((item) => item.id)
-        for (let index = 0; index < children.length; index++) {
+        for (const index in children) {
           link.push('-->')
         }
       }
@@ -779,7 +775,7 @@ export default {
               : null
           )
           .filter((item) => item !== null)
-        for (let index = 0; index < relations.length; index++) {
+        for (const index in children) {
           link.push('-.' + this.$t('Issue.RelatedIssue') + '.-')
         }
         this.relationLine[issue.id] = relations
@@ -787,13 +783,12 @@ export default {
       children = children.concat(relations)
       if (issue['test_files']) {
         const test_files = issue['test_files'].map((item) => item.file_name)
-        for (let index = 0; index < test_files.length; index++) {
+        for (const index in children) {
           link.push('-->')
         }
         children = children.concat(test_files)
       }
-      const point = this.getChartLayout(issue, link, children)
-      return point
+      return this.getChartLayout(issue, link, children)
     },
     getChartLayout(issue, link, children) {
       const checkIssueName = issue.name.replace(/"/g, '&quot;')
@@ -1080,9 +1075,9 @@ export default {
     downloadSVG() {
       try {
         const svg = document.getElementById('mermaid').getElementsByTagName('svg')[0]
-        const style = svg.getElementsByClassName('nodeLabel')
-        for (let idx = 0; idx < style.length; idx++) {
-          style[idx].style = 'font-size:0.8em'
+        const htmls = svg.getElementsByClassName('nodeLabel')
+        for (const html of htmls) {
+          html.style = 'font-size:0.8em'
         }
         const serializer = new XMLSerializer()
         let source = serializer.serializeToString(svg)
@@ -1117,7 +1112,6 @@ export default {
           .then(() => {
             done()
           })
-          .catch(() => {})
       } else {
         done()
       }
@@ -1127,6 +1121,11 @@ export default {
         title: this.$t('general.Warning'),
         type: 'warning',
         message
+      })
+    },
+    setTableHeight() {
+      this.$nextTick(() => {
+        this.tableHeight = this.$refs['wrapper'].clientHeight
       })
     }
   }

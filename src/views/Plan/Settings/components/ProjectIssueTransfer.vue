@@ -406,15 +406,7 @@ export default {
     onBatchCloseClick() {
       this.listLoading = true
       this.checkedIssues.forEach((issueId) => {
-        const sendData = new FormData()
-        sendData.append('status_id', 6)
-        updateIssue(issueId, sendData)
-          .then(() => {
-            this.loadData()
-          })
-          .catch((err) => {
-            console.error(err)
-          })
+        this.onCloseClick(issueId)
       })
     }
   }

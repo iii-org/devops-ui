@@ -131,8 +131,8 @@ export default {
       suggested to return reject() or resolve() because it will sometimes invalid when returned true or false
     */
     showLeaveMessage() {
-      return new Promise(async (resolve, reject) => {
-        return await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+      return new Promise((resolve, reject) => {
+        return this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
           confirmButtonText: this.$t('general.Confirm'),
           cancelButtonText: this.$t('general.Cancel'),
           type: 'warning'

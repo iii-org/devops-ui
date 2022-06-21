@@ -231,7 +231,7 @@ export default {
         secrets: this.form.secrets.reduce((result, cur) => Object.assign(result, { [cur.key]: cur.value }), {})
       }
       this.isUpdating = true
-      const res = await updateSecretList(this.selectedProjectId, this.form.name, sendData)
+      await updateSecretList(this.selectedProjectId, this.form.name, sendData)
       this.isUpdating = false
       this.closeEditDialog()
       this.loadData()

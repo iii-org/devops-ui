@@ -135,10 +135,7 @@ export default {
           this.removeFile(row.id)
         })
         .catch((err) => {
-          this.$message({
-            message: err,
-            type: 'error'
-          })
+          this.showErrorMessage(err)
         })
         .then(() => {
           this.isLoading = false
@@ -159,10 +156,7 @@ export default {
           this.dialogVisible = true
         })
         .catch((err) => {
-          this.$message({
-            message: err,
-            type: 'error'
-          })
+          this.showErrorMessage(err)
         })
     },
     downloadImage() {
@@ -177,6 +171,12 @@ export default {
     isAllowPreview(content_type) {
       if (content_type === null) return false
       else return content_type.includes('image')
+    },
+    showErrorMessage(err) {
+      this.$message({
+        message: err,
+        type: 'error'
+      })
     }
   }
 }

@@ -100,17 +100,18 @@ export default {
   },
   watch: {
     chartData() {
-      this.$nextTick(() => {
-        this.initChart()
-      })
+      this.onInitChart()
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.initChart()
-    })
+    this.onInitChart()
   },
   methods: {
+    onInitChart() {
+      this.$nextTick(() => {
+        this.initChart()
+      })
+    },
     initChart() {
       const chartData = this.chartData
       const hasChartData = chartData.length > 0

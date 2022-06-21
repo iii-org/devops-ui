@@ -126,12 +126,11 @@ export default {
     // count the frequency of each plugin appeared
     // for example: { Web: 2, Sonarqube: 1, Checkmarx: 1, ...}
     countFrequency() {
-      const countFreq = this.selectedToolData.reduce((preVal, curVal) => {
+      return this.selectedToolData.reduce((preVal, curVal) => {
         if (curVal.name in preVal) preVal[curVal.name]++
         else preVal[curVal.name] = 1
         return preVal
       }, {})
-      return countFreq
     },
     // find the repeat plugin
     repeatPlugins() {
@@ -256,8 +255,7 @@ export default {
           [cur.branch]: cur.testing_tools.map((tool) => ({ enable: tool.enable, key: tool.key }))
         })
       const detail = this.selectedBranchData.reduce(getData, {})
-      const sendData = runPipeline ? { run: true, detail } : { detail }
-      return sendData
+      return runPipeline ? { run: true, detail } : { detail }
     },
     showErrorMessage(err) {
       this.$message({

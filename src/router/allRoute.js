@@ -1,5 +1,5 @@
 
-const allRoutes = [
+const allRoute = [
   {
     path: '/',
     redirect: { name: 'MyWork' },
@@ -1033,4 +1033,4 @@ const allRoutes = [
   { path: '*', redirect: '/404', hidden: true }
 ]
 
-export default allRoutes
+export default allRoute

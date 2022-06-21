@@ -173,7 +173,6 @@ export default {
           deletePod(pId, podName)
           this.loadData()
         })
-        .catch(() => {})
       this.listLoading = false
     },
     handleCommandClick(podName, containerName) {

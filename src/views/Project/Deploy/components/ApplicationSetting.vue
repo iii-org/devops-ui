@@ -13,8 +13,12 @@
             <el-col :md="12">
               <el-form-item :label="$t('Deploy.Cluster')" prop="cluster_id">
                 <el-select v-model="deployForm.cluster_id" :disabled="cluster.length<=0">
-                  <el-option v-for="item in cluster" :key="item.id" :label="item.name" :value="item.id"
-                             :disabled="item.disabled"
+                  <el-option
+                    v-for="item in cluster"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                    :disabled="item.disabled"
                   />
                 </el-select>
               </el-form-item>
@@ -22,9 +26,12 @@
             <el-col :md="12">
               <el-form-item :label="$t('Deploy.Registry')" prop="registry_id">
                 <el-select v-model="deployForm.registry_id" :disabled="registry.length<=0">
-                  <el-option v-for="item in registry" :key="item.registries_id" :label="item.name"
-                             :value="item.registries_id"
-                             :disabled="item.disabled"
+                  <el-option
+                    v-for="item in registry"
+                    :key="item.registries_id"
+                    :label="item.name"
+                    :value="item.registries_id"
+                    :disabled="item.disabled"
                   />
                 </el-select>
               </el-form-item>
@@ -34,11 +41,6 @@
                 <el-input v-model.number="deployForm.network.port" clearable />
               </el-form-item>
             </el-col>
-            <!--        <el-col :md="12">-->
-            <!--          <el-form-item label="Volume" prop="volume">-->
-            <!--            <el-select v-model="deployForm.volume" />-->
-            <!--          </el-form-item>-->
-            <!--        </el-col>-->
           </el-row>
           <template v-if="checkAvailable">
             <el-row>
@@ -124,8 +126,12 @@
             <el-row>
               <el-col>
                 <el-divider content-position="left">{{ $t('Deploy.EnvironmentVariable') }}
-                  <el-button round size="small" icon="el-icon-plus" class="buttonPrimary"
-                             @click="addEnvironment"
+                  <el-button
+                    round
+                    size="small"
+                    icon="el-icon-plus"
+                    class="buttonPrimary"
+                    @click="addEnvironment"
                   >
                     {{ $t('Deploy.AddVariable') }}
                   </el-button>
@@ -158,12 +164,13 @@
                     </el-table-column>
                     <el-table-column :label="$t('general.Actions')" width="150px">
                       <template slot-scope="{row}">
-                        <el-popconfirm :confirm-button-text="$t('general.Delete')"
-                                       :cancel-button-text="$t('general.Cancel')"
-                                       icon="el-icon-info"
-                                       icon-color="red"
-                                       :title="$t('Notify.confirmDelete')"
-                                       @confirm="deployForm.environments.splice(deployForm.environments.indexOf(row),1)"
+                        <el-popconfirm
+                          :confirm-button-text="$t('general.Delete')"
+                          :cancel-button-text="$t('general.Cancel')"
+                          icon="el-icon-info"
+                          icon-color="red"
+                          :title="$t('Notify.confirmDelete')"
+                          @confirm="deployForm.environments.splice(deployForm.environments.indexOf(row),1)"
                         >
                           <el-button slot="reference" icon="el-icon-delete" size="mini" type="danger">
                             {{ $t('general.Delete') }}
@@ -175,8 +182,12 @@
                       <el-empty>
                         <template slot="description">
                           <p>{{ $t('general.NoData') }}</p>
-                          <el-button round size="small" icon="el-icon-plus" class="buttonPrimaryReverse"
-                                     @click="addEnvironment"
+                          <el-button
+                            round
+                            size="small"
+                            icon="el-icon-plus"
+                            class="buttonPrimaryReverse"
+                            @click="addEnvironment"
                           >
                             {{ $t('Deploy.AddVariable') }}
                           </el-button>
@@ -185,8 +196,12 @@
                     </template>
                     <div v-if="deployForm.environments.length>0" slot="append">
                       <p>
-                        <el-button round size="small" icon="el-icon-plus" class="buttonPrimaryReverse"
-                                   @click="addEnvironment"
+                        <el-button
+                          round
+                          size="small"
+                          icon="el-icon-plus"
+                          class="buttonPrimaryReverse"
+                          @click="addEnvironment"
                         >
                           {{ $t('Deploy.AddVariable') }}
                         </el-button>
