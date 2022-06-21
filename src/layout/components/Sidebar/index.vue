@@ -66,7 +66,7 @@ export default {
           return item.split('/')[1] === to.path.split('/')[1]
         })
         this.$refs.menu.activeIndex = to.path
-        this.$refs.menu.openedMenus = include
+        if (!this.isCollapse) this.$refs.menu.openedMenus = include
       }, 100)
     }
   }
