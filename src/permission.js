@@ -30,42 +30,49 @@ router.beforeEach(async (to, from, next) => {
   NProgress.start()
   document.title = getPageTitle(to.meta)
   const hasToken = getToken()
-  const isTokenExist = getTokenExpiration()
-  const hasRoles = store.getters.userRole
-
   if (hasToken) {
-    if (!isTokenExist) {
-      showLogoutNotifyDialog(to, next)
-    } else if (to.path === '/login') {
-      next({ path: '/' })
-      NProgress.done()
-    } else {
-      if (hasRoles) {
-        next()
-      } else {
-        try {
-          await store.dispatch('user/getInfo')
-          const userRole = store.getters.userRole
-          const accessRoutes = await store.dispatch('permission/generateRoutes', userRole)
-          router.addRoutes(accessRoutes)
-          next({ ...to, replace: true })
-        } catch (error) {
-          await store.dispatch('user/resetToken')
-          Message.error(error || 'Has Error')
-          next(`/login?redirect=${to.path}`)
-          NProgress.done()
-        }
-      }
-    }
+    onHasToken(to, next)
   } else {
-    if (whiteList.indexOf(to.path) !== -1) {
-      next()
-    } else {
-      next(`/login?redirect=${to.path}`)
-      NProgress.done()
-    }
+    onNoToken(to, next)
   }
 })
+
+const onHasToken = async (to, next) => {
+  const isTokenExist = getTokenExpiration()
+  const hasRoles = store.getters.userRole
+  if (!isTokenExist) {
+    showLogoutNotifyDialog(to, next)
+  } else if (to.path === '/login') {
+    next({ path: '/' })
+    NProgress.done()
+  } else {
+    if (hasRoles) {
+      next()
+    } else {
+      try {
+        await store.dispatch('user/getInfo')
+        const userRole = store.getters.userRole
+        const accessRoutes = await store.dispatch('permission/generateRoutes', userRole)
+        router.addRoutes(accessRoutes)
+        next({ ...to, replace: true })
+      } catch (error) {
+        await store.dispatch('user/resetToken')
+        Message.error(error || 'Has Error')
+        next(`/login?redirect=${to.path}`)
+        NProgress.done()
+      }
+    }
+  }
+}
+
+const onNoToken = async (to, next) => {
+  if (whiteList.indexOf(to.path) !== -1) {
+    next()
+  } else {
+    next(`/login?redirect=${to.path}`)
+    NProgress.done()
+  }
+}
 
 router.afterEach(() => {
   NProgress.done()

@@ -413,11 +413,11 @@ export default {
         calculated.project_list[i].id = parseInt(calculated.project_list[i].id)
       }
       const merged = []
-      for (let i = 0; i < this.listData.length; i++) {
+      for (const item of this.listData) {
         merged.push({
-          ...this.listData[i],
+          ...item,
           ...calculated.project_list.find(
-            (itmInner) => itmInner.id === this.listData[i].id
+            (itmInner) => itmInner.id === item.id
           )
         })
       }
@@ -431,16 +431,7 @@ export default {
       if (this.keyword !== '') {
         this.params.search = this.keyword
       } else delete this.params.search
-      // if (this.$refs.filter.isDisabled.length === 1) {
-      //   this.params.disabled = this.$refs.filter.isDisabled[0]
-      // } else {
-      //   delete this.params.disabled
-      // }
       await this.fetchData()
-    //   this.initParams()
-    // },
-    // initParams() {
-    //   this.params = params()
     },
     cleanFilter() {
       this.keyword = ''

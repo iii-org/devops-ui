@@ -349,9 +349,6 @@ export default {
       const result = []
       if (!this.hasRelationIssue(row)) {
         result.push('hide-expand-icon')
-        // if (this.refTable) {
-        //   this.checkRowExpended(this.refTable, row)
-        // }
       }
       this.contextMenu ? result.push('context-menu') : result.push('cursor-pointer')
       return result.join(' ')

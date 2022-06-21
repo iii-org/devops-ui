@@ -38,10 +38,9 @@ function sheet2blob(sheet, filename_extension, sheetName) {
     type: 'binary'
   }
   var wbout = XLSX.write(workbook, wopts)
-  var blob = new Blob([s2ab(wbout)], {
+  return new Blob([s2ab(wbout)], {
     type: 'application/octet-stream'
   }) // 字串轉ArrayBuffer
-  return blob
 }
 
 /**
@@ -69,13 +68,13 @@ function openDownloadDialog(sheet, filename, filename_extension) {
   aLink.dispatchEvent(event)
 }
 
-CSV.install = function(Vue, options) {
+CSV.install = function(options) {
   Vue.prototype.$csv = function(sheet, filename) {
     openDownloadDialog(sheet, filename, 'csv')
   }
 }
 
-EXCEL.install = function(Vue, options) {
+EXCEL.install = function(options) {
   Vue.prototype.$excel = function(sheet, filename) {
     openDownloadDialog(sheet, filename, 'xlsx')
   }

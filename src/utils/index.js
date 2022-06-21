@@ -83,7 +83,6 @@ export function formatTime(time, option) {
   if (option) {
     return parseTime(time, option)
   } else {
-    // return d.toLocaleString()
     return dayjs(d).format('YYYY-MM-DD HH:mm:ss')
   }
 }

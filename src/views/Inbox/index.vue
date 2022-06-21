@@ -201,10 +201,10 @@ export default {
     },
     tagColor(level) {
       const alert = this.options.find(x => x.id === level.id)
-      return alert
-        ? alert.color : level.id >= 200 && level.id < 300
-          ? '#67c23a' : level.id >= 300 && level.id < 400
-            ? '#f56c6c' : ''
+      if (alert) return alert.color
+      else if (level.id >= 200 && level.id < 300) return '#67c23a'
+      else if (level.id >= 300 && level.id < 400) return '#f56c6c'
+      else return ''
     },
     tableRowStyle({ row }) {
       if (row.read === false) {

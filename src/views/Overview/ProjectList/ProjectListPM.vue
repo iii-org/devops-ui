@@ -424,11 +424,11 @@ export default {
         calculated.project_list[i].id = parseInt(calculated.project_list[i].id)
       }
       const merged = []
-      for (let i = 0; i < this.listData.length; i++) {
+      for (const item of this.listData) {
         merged.push({
-          ...this.listData[i],
+          ...item,
           ...calculated.project_list.find(
-            (itmInner) => itmInner.id === this.listData[i].id
+            (itmInner) => itmInner.id === item.id
           )
         })
       }

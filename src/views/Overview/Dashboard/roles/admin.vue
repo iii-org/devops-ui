@@ -304,7 +304,7 @@ export default {
     },
     async getProjectMembersData() {
       const res = await getProjectMembers()
-      return await Promise.resolve(res.data)
+      return Promise.resolve(res.data)
     },
     async getGitCommitLogData() {
       const params = { show_commit_rows: commitLimit }
