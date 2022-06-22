@@ -216,7 +216,7 @@ export default {
       this.loading = false
     },
     onChangeCommitId(repo) {
-      const branch = this.branchesData.find(branch => branch.name === repo)
+      const branch = this.branchesData.find(branchData => branchData.name === repo)
       this.commitId = branch.short_id
     },
     checkSelectedRepoName(harborData, repo) {

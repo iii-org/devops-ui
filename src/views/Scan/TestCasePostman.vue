@@ -290,14 +290,13 @@ export default {
         })
     },
     formatData(rowData) {
-      const result = Object.keys(rowData).map((key, idx) => ({
+      return Object.keys(rowData).map((key, idx) => ({
         name: key || 'Default',
         assertions: rowData[key].assertions,
         all: rowData[key].executions,
         pass: this.getPassExecutions(rowData[key].executions),
         fail: this.getFailExecutions(rowData[key].executions)
       }))
-      return result
     },
     getPassExecutions(executions) {
       const filteredExecutions = executions.filter((execution) => execution.assertions.length > 0)

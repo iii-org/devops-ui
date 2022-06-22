@@ -125,7 +125,6 @@
 </template>
 
 <script>
-// import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getHarborScan } from '@/api_v2/harbor'

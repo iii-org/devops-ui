@@ -215,7 +215,6 @@ export default {
         const { task_id, status } = item
         if (status === 'RUNNING') {
           this.fetchScanStatus(task_id)
-          return
         }
       })
     },

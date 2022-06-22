@@ -110,9 +110,7 @@ export default {
       formData.append('tags', this.inputValue)
       await addReleaseTag(this.projectId, this.releaseId, formData)
         .then(() => {
-          this.showSuccessMessage(this.$t('Notify.Added'))
-          this.$emit('onUpdated')
-          this.init()
+          this.handleUpdate()
         })
         .catch((error) => {
           this.showErrorMessage(error)
@@ -137,13 +135,16 @@ export default {
       formData.append('image_path', this.inputValue)
       await addReleaseRepo(this.projectId, this.releaseId, formData)
         .then(() => {
-          this.showSuccessMessage(this.$t('Notify.Added'))
-          this.$emit('onUpdated')
-          this.init()
+          this.handleUpdate()
         })
         .catch((error) => {
           this.showErrorMessage(error)
         })
+    },
+    handleUpdate() {
+      this.showSuccessMessage(this.$t('Notify.Added'))
+      this.$emit('onUpdated')
+      this.init()
     },
     init() {
       this.inputValue = ''

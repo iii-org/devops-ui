@@ -243,7 +243,7 @@ export default {
         draggedContext.forEach((item) => {
           const draggedId = item.element.id
           const qaProjects = evt.relatedContext.list.map((project) => project.id)
-          if (qaProjects.includes(draggedId)) result = result && false
+          if (qaProjects.includes(draggedId)) result = false
         })
         return result
       } else {

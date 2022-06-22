@@ -120,7 +120,9 @@ export default {
       return res
     },
     getTagType(status) {
-      return status === 'loading' ? 'warning' : status ? 'success' : 'danger'
+      if (status === 'loading') return 'warning'
+      else if (status) return 'success'
+      else return 'danger'
     },
     async handleCheck(name) {
       const apis = {
