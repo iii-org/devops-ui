@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { updateUserMessageInfo } from '@/api_v2/user'
 
 export default {
@@ -44,6 +45,9 @@ export default {
       type: Object,
       default: () => {}
     }
+  },
+  computed: {
+    ...mapGetters(['userId'])
   },
   methods: {
     async submitMessageSettings() {
