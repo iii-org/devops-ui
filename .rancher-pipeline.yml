@@ -32,7 +32,6 @@ stages:
       include:
       - master
       - develop
-      - traceability
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -78,11 +77,7 @@ stages:
       include:
       - master
       - develop
-      - clairreport
-      - traceability
-      - testreport
-      - excalidraw
-      - addmember
+      - errorcode
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -103,11 +98,7 @@ stages:
       include:
       - master
       - develop
-      - clairreport
-      - traceability
-      - testreport
-      - excalidraw
-      - addmember
+      - errorcode
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -124,10 +115,7 @@ stages:
       include:
       - develop
       - master
-      - traceability
-      - testreport
-      - excalidraw
-      - addmember
+      - errorcode
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -159,11 +147,7 @@ stages:
       include:
       - master
       - develop
-      - clairreport
-      - traceability
-      - testreport
-      - excalidraw
-      - addmember
+      - errorcode
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -189,11 +173,7 @@ stages:
       include:
       - master
       - develop
-      - clairreport
-      - traceability
-      - testreport
-      - excalidraw
-      - addmember
+      - errorcode
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -217,11 +197,7 @@ stages:
       include:
       - master
       - develop
-      - clairreport
-      - traceability
-      - testreport
-      - excalidraw
-      - addmember
+      - errorcode
 - name: Test--ZAP
   iiidevops: zap
   steps:
