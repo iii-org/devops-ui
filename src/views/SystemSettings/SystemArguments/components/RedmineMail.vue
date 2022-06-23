@@ -1,7 +1,18 @@
 <template>
   <div class="app-container">
     <el-card v-loading="isLoading">
-      <h3>{{ $t('System.RedmineMail') }}</h3>
+      <div class="flex justify-between">
+        <h3 cl>{{ $t('System.RedmineMail') }}</h3>
+        <div>
+          <el-switch
+            v-model="redmineMailForm.smtp_settings.active"
+            class="mr-3"
+            :active-text="$t('general.Enable')"
+            :inactive-text="$t('general.Disable')"
+          />
+          <el-button type="primary" @click="temporarySave">暫存</el-button>
+        </div>
+      </div>
       <el-form
         ref="redmineMailForm"
         :model="redmineMailForm"
@@ -88,11 +99,6 @@
           </el-col>
         </el-row>
       </el-form>
-      <div class="text-right">
-        <el-button class="buttonPrimary" @click="submitUpdateRedmineMail">
-          {{ $t('general.Save') }}
-        </el-button>
-      </div>
     </el-card>
   </div>
 </template>
@@ -113,7 +119,8 @@ const defaultFormData = () => ({
     openssl_verify_mode: '',
     ssl: ''
   },
-  emission_email_address: ''
+  emission_email_address: '',
+  active: false
 })
 
 export default {
@@ -141,11 +148,23 @@ export default {
       return this.redmineMailForm.smtp_settings.authentication === 'nil'
     }
   },
+  watch: {
+    'redmineMailForm.smtp_settings.active'(bool) {
+      console.log(bool)
+      if (bool !== undefined) {
+        sessionStorage.clear()
+        this.updateRedmineMail()
+      }
+    }
+  },
   methods: {
     async fetchData() {
       this.isLoading = true
       const res = await getUserRedmineMailProfile()
-      this.redmineMailForm = res.data
+      this.redmineMailForm =
+        JSON.parse(sessionStorage.getItem('redmineMailForm')) &&
+        Object.keys(JSON.parse(sessionStorage.getItem('redmineMailForm'))[0]).length > 0
+          ? JSON.parse(sessionStorage.getItem('redmineMailForm'))[0] : res.data
       this.isLoading = false
     },
     filterEmpty(data) {
@@ -164,31 +183,32 @@ export default {
       this.filterEmpty(res)
       return res
     },
-    submitUpdateRedmineMail() {
+    updateRedmineMail() {
       this.isLoading = true
       this.$refs.redmineMailForm.validate(async valid => {
         if (!valid) return
         const data = {
           redmine_mail: { smtp_settings: this.checkData().smtp_settings },
-          emission_email_address: this.checkData().emission_email_address
+          emission_email_address: this.checkData().emission_email_address,
+          active: this.redmineMailForm.smtp_settings.active
         }
+        console.log(data)
         editUserRedmineMailProfile(data)
-          .then(() => {
+          .then(async () => {
+            await this.fetchData()
             this.$message({
               message: this.$t('Notify.Updated'),
               type: 'success'
             })
           })
-          .catch(err => {
-            this.$message({
-              message: err,
-              type: 'error'
-            })
-          })
-          .then(() => {
-            this.isLoading = false
+          .catch(() => {
+            this.redmineMailForm.smtp_settings.active = false
           })
       })
+      this.isLoading = false
+    },
+    temporarySave() {
+      sessionStorage.setItem('redmineMailForm', JSON.stringify([this.redmineMailForm]))
     }
   }
 }

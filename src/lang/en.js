@@ -128,6 +128,8 @@ export default {
     7005: 'Maximum number of {object} in a project is {num}.',
     7006: 'Argument {arg} can not be alerted when children issue exist.',
     7007: `$arg should begin with 'ghp_'.`,
+    7009: 'According to google policy, account needs to apply apppassord to operate SMTP server.',
+    7010: 'SMTP System responses error, please make sure your system, port, account and password are correct.',
     8001: '{service_name} error: {response}',
     8101: 'Parent issue setting error! Please confirm that the setting issue is not a sub-issue or related issue of this issue.',
     8901: 'Plugin Software is disabled',
