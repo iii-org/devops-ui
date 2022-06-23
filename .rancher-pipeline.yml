@@ -78,6 +78,7 @@ stages:
       - master
       - develop
       - messagesettings
+      - errorcode
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -99,6 +100,7 @@ stages:
       - master
       - develop
       - messagesettings
+      - errorcode
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -116,6 +118,7 @@ stages:
       - develop
       - master
       - messagesettings
+      - errorcode
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -148,6 +151,7 @@ stages:
       - master
       - develop
       - messagesettings
+      - errorcode
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -174,6 +178,7 @@ stages:
       - master
       - develop
       - messagesettings
+      - errorcode
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -198,6 +203,7 @@ stages:
       - master
       - develop
       - messagesettings
+      - errorcode
 - name: Test--ZAP
   iiidevops: zap
   steps:
