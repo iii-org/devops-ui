@@ -98,7 +98,7 @@ export default {
     },
     components: {
       type: Object,
-      default: () => ({})
+      default: () => {}
     },
     required: {
       type: Boolean,
