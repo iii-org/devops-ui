@@ -264,6 +264,7 @@ export default {
     Copied: '已複製',
     Canceled: '已取消',
     Submit: '已送出',
+    TemporarySaved: '已暫存',
     Saved: '已儲存',
     NoEmpty: '內容不得為空',
     Same: '內容相同，未變更。',
@@ -289,7 +290,8 @@ export default {
     ConnectSocket: '看板正在連接 Socket...',
     UpdateKanban: '{issueName} 已更新',
     NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。',
-    ChangeProject: '切換專案將清空版本、標籤及受分配者的資訊，確認移轉嗎？'
+    ChangeProject: '切換專案將清空版本、標籤及受分配者的資訊，確認移轉嗎？',
+    RedmineMailWarning: '[注意] Redmine 將重新啟動，服務即將暫停，請3-5分鐘後再重新登入使用'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -1375,6 +1377,9 @@ export default {
     Scanning: '掃描中',
     Queued: '排程中',
     'Not Scanned': '準備中'
+  },
+  RedmineMail: {
+    Warning: '[注意] Email 服務啟用或停用，將觸發 Redmine 重啟。其重啟時間將影響 3-5分鐘平台無法使用，請謹慎設定利用。'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

@@ -264,6 +264,7 @@ export default {
     Copied: 'Copied',
     Canceled: 'Cancel successful',
     Submit: 'Submit',
+    TemporarySaved: 'Temporary Saved successful',
     Saved: 'Saved successful',
     NoEmpty: 'Content must not be empty',
     Same: 'The new value is same with old value.',
@@ -291,7 +292,8 @@ export default {
     ConnectSocket: 'Kanban is connecting Socket...',
     UpdateKanban: '{issueName} is updated',
     NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.',
-    ChangeProject: `Switching a project will empty the version, label, and distributor's information, confirm the transfer?`
+    ChangeProject: `Switching a project will empty the version, label, and distributor's information, confirm the transfer?`,
+    RedminemailWarning: '[Warning] Redmine will restart, the service is about to be suspended, please log in after 3-5 minutes.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -1384,6 +1386,9 @@ export default {
     Scanning: 'Scanning',
     Queued: 'Queued',
     'Not Scanned': 'NotRunning'
+  },
+  RedmineMail: {
+    Warning: '[Note] Email service is enabled or decentralized, which restarts the trigger RedMine.The restart time will affect the 3-5 minutes of the platform cannot be used, please set it with caution.'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }
