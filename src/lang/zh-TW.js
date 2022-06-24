@@ -58,7 +58,7 @@ export default {
     ServiceList: 'Service 列表',
     SecretList: 'Secret 列表',
     ConfigMapsList: 'ConfigMaps 列表',
-    PluginResource: 'Plugin 資源',
+    PluginResource: '專案資源',
     ServiceMonitoring: '服務監控',
     Harbor: 'Harbor 資源',
     ProjectActivities: '操作紀錄',

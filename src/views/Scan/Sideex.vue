@@ -149,7 +149,7 @@ import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getSideexScans, getSideexReport } from '@/api/sideex'
 import { getSideexPod } from '@/api_v2/sideex'
-import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanSideex',

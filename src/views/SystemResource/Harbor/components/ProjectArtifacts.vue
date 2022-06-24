@@ -1,7 +1,16 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <div class="text-right">
+      <div class="flex justify-between items-center mb-3">
+        <el-button
+          type="text"
+          size="medium"
+          icon="el-icon-arrow-left"
+          class="text-title linkTextColor"
+          @click="onBackClick"
+        >
+          {{ $t('general.Back') }}
+        </el-button>
         <el-input
           v-model="keyword"
           :placeholder="$t('general.SearchName')"
@@ -93,6 +102,9 @@ export default {
         })
         await this.loadData()
       })
+    },
+    onBackClick() {
+      this.$router.push({ name: 'Harbors' })
     }
   }
 }

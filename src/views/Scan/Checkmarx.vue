@@ -178,8 +178,8 @@ import {
 import { getCheckMarxPod } from '@/api_v2/checkMarx'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { ElTableColumnTime } from '@/components'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 import * as elementTagType from '@/utils/elementTagType'
-import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanCheckmarx',

@@ -163,7 +163,7 @@ import {
 } from '@/api/cmas'
 import { getCmasPod } from '@/api_v2/cmas'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 import * as elementTagType from '@/utils/elementTagType'
 
 export default {
