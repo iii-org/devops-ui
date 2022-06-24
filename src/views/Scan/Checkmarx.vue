@@ -71,7 +71,7 @@
           <el-tooltip
             v-if="scope.row.error"
             effect="dark"
-            :content="scope.row.error.messageDetails"
+            :content="scope.row.error.message"
             placement="bottom"
           >
             <div class="flex flex-col">
@@ -79,7 +79,7 @@
                 type="primary"
                 class="text-xs"
                 :underline="false"
-              >{{ scope.row.error.messageCode }}</el-link>
+              >{{ scope.row.error.code }}</el-link>
               <div class="mt-1">
                 <el-tag
                   class="el-tag--circle"
@@ -269,7 +269,7 @@ export default {
         .catch(async (error) => {
           const idx = this.listData.findIndex((item) => item.scan_id === scanId)
           if (error.response.status >= 300) {
-            this.$set(this.listData[idx], 'error', error.response.data.error.details.response)
+            this.$set(this.listData[idx], 'error', error.response.data.error)
           }
         })
       this.listLoading = false
