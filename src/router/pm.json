@@ -673,7 +673,7 @@
   {
     "path": "/systemResource",
     "component": "layout",
-    "name": "System Resource",
+    "name": "SystemResource",
     "redirect": {
       "name": "PluginResource"
     },
