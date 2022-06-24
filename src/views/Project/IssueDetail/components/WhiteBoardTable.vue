@@ -25,6 +25,13 @@
           >
             {{ scope.row.name }}
           </el-link>
+          <el-link
+            size="small"
+            :underline="false"
+            @click="handleEdit(scope.row,true)"
+          >
+            <em class="ri-external-link-line" />
+          </el-link>
         </template>
       </el-table-column>
       <el-table-column

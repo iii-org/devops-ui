@@ -11,7 +11,7 @@
       :form="form"
       :is-loading="isLoading"
     />
-    <el-collapse v-model="isCollapse">
+    <el-collapse v-if="dialogVisible" v-model="isCollapse">
       <el-collapse-item title="Excalidraw" name="1">
         <iframe
           title="excalidraw"
@@ -82,11 +82,24 @@ export default {
   },
   watch: {
     row(value) {
-      if (value) {
+      if (Object.keys(value).length > 0) {
         this.form.issue_ids = value.issue_ids
         this.form.name = value.name
       }
+    },
+    dialogVisible(value) {
+      if (value) {
+        window.history.pushState(null, '')
+      } else {
+        window.history.back()
+      }
     }
+  },
+  mounted() {
+    window.addEventListener('popstate', this.goBackConfirm, false)
+  },
+  destroyed() {
+    window.removeEventListener('popstate', this.goBackConfirm, false)
   },
   methods: {
     handleEdit() {
@@ -119,6 +132,19 @@ export default {
       this.row = {}
       this.$refs['ExcalidrawForm'].$refs['form'].resetFields()
       this.dialogVisible = false
+    },
+    goBackConfirm() {
+      if (this.dialogVisible) {
+        this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        }).then(() => {
+          window.history.back()
+        }).catch(() => {
+          window.history.pushState(null, '')
+        })
+      }
     }
   }
 }
