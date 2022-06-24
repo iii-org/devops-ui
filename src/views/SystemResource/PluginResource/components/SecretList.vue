@@ -204,15 +204,19 @@ export default {
   methods: {
     async fetchData() {
       const res = await getSecretList(this.selectedProjectId)
-      return res.data.map((secret) => ({
-        name: secret.name,
-        keys: Object.keys(secret.data),
-        secrets: Object.entries(secret.data).map((item) => ({
+      return res.data.map((secret) => {
+        const keys = secret.data ? Object.keys(secret.data) : ['-']
+        const secrets = secret.data ? Object.entries(secret.data).map((item) => ({
           key: item[0],
           value: item[1],
           isDisabled: secret.is_iii
-        }))
-      }))
+        })) : []
+        return {
+          name: secret.name,
+          keys,
+          secrets
+        }
+      })
     },
     showEditDialog(secretName, secrets) {
       this.editDialogVisible = true
