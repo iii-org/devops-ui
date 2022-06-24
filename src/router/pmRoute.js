@@ -533,7 +533,7 @@ const pmRoute = [
     name: 'SystemResource',
     redirect: { name: 'PluginResource' },
     meta: {
-      title: 'System Resource',
+      title: 'SystemResource',
       icon: 'el-icon-pie-chart',
       roles: ['Project Manager']
     },
