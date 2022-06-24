@@ -252,7 +252,8 @@ export default {
     NoTestResult: 'No Test Result',
     Parent: 'P',
     Child: 'C',
-    CopyUrl: 'Copy URL'
+    CopyUrl: 'Copy URL',
+    TemporarySave: 'Temporary Save'
   },
   Notify: {
     Updated: 'update successful',

@@ -252,7 +252,8 @@ export default {
     NoTestResult: '尚無測試結果',
     Parent: '父',
     Child: '子',
-    CopyUrl: '複製網址'
+    CopyUrl: '複製網址',
+    TemporarySave: '暫存'
   },
   Notify: {
     Updated: '已更新',

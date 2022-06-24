@@ -10,7 +10,7 @@
             :active-text="$t('general.Enable')"
             :inactive-text="$t('general.Disable')"
           />
-          <el-button type="primary" @click="temporarySave">暫存</el-button>
+          <el-button type="primary" @click="temporarySave">{{ $t('general.TemporarySave') }}</el-button>
         </div>
       </div>
       <el-form
