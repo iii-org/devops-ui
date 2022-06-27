@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-table
-      v-if="excalidrawData.length !== 0"
       :data="excalidrawData"
       fit
     >
@@ -45,7 +44,6 @@
         prop="operator.name"
       />
     </el-table>
-    <NoData v-else />
     <EditBoardDialog
       ref="EditBoardDialog"
       @update="fetchData"
@@ -55,11 +53,10 @@
 
 <script>
 import EditBoardDialog from '@/views/WhiteBoard/components/EditBoardDialog'
-import NoData from './widget/NoData'
 
 export default {
   name: 'WhiteBoardTable',
-  components: { EditBoardDialog, NoData },
+  components: { EditBoardDialog },
   props: {
     excalidrawData: {
       type: Array,

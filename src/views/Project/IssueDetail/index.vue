@@ -191,7 +191,10 @@
                     :height="dialogHeight"
                   />
                 </el-tab-pane>
-                <el-tab-pane :label="$t('Excalidraw.Whiteboard')">
+                <el-tab-pane
+                  v-if="issue.excalidraw && issue.excalidraw.length !== 0"
+                  :label="$t('Excalidraw.Whiteboard')"
+                >
                   <WhiteBoardTable
                     ref="WhiteBoardTable"
                     :excalidraw-data="issue.excalidraw"
