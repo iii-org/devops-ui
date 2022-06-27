@@ -128,6 +128,8 @@ export default {
     7005: '{object} 的最大數量為 {num}',
     7006: '當議題有子議題時，參數 {arg} 不能被調整。',
     7007: `參數 $arg 需要以 'ghp_'做開為開頭。`,
+    7009: '根據google的政策, 需要申請app password來使用SMTP的服務。',
+    7010: 'SMTP server回報錯誤, 請確認你的服務, 阜號, 帳號或是密碼是正確的。',
     8001: '{service_name} 回報錯誤：{response}',
     8101: '父議題設定異常，請確認設定之議題非為本議題之子議題或關係議題。',
     8901: '插件軟體的設定是關閉的狀態。',
@@ -250,7 +252,8 @@ export default {
     NoTestResult: '尚無測試結果',
     Parent: '父',
     Child: '子',
-    CopyUrl: '複製網址'
+    CopyUrl: '複製網址',
+    TemporarySave: '暫存'
   },
   Notify: {
     Updated: '已更新',
@@ -261,6 +264,7 @@ export default {
     Copied: '已複製',
     Canceled: '已取消',
     Submit: '已送出',
+    TemporarySaved: '已暫存',
     Saved: '已儲存',
     NoEmpty: '內容不得為空',
     Same: '內容相同，未變更。',
@@ -286,7 +290,8 @@ export default {
     ConnectSocket: '看板正在連接 Socket...',
     UpdateKanban: '{issueName} 已更新',
     NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。',
-    ChangeProject: '切換專案將清空版本、標籤及受分配者的資訊，確認移轉嗎？'
+    ChangeProject: '切換專案將清空版本、標籤及受分配者的資訊，確認移轉嗎？',
+    RedmineMailWarning: '[注意] Redmine 將重新啟動，服務即將暫停，請3-5分鐘後再重新登入使用'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -770,6 +775,8 @@ export default {
   Profile: {
     Basic: '基本設定',
     ProfileBasicSetting: '個人基本設定',
+    Notice: '通知設定',
+    MessageReceptionSetting: '訊息接收設定',
     Department: '@:general.Department',
     Title: '@:general.UserTitle',
     Phone: '電話',
@@ -780,7 +787,9 @@ export default {
     PasswordRule: '密碼需要8-20個字同時需要至少1個大寫1個小寫和1個數字',
     Save: '儲存',
     Password: '舊密碼',
-    K8SConfigDownload: '下載K8S設定檔'
+    K8SConfigDownload: '下載K8S設定檔',
+    PlatformNotice: '訊息推播',
+    MailNotice: '電子郵件'
   },
   Project: {
     Project: '專案',
@@ -1370,6 +1379,9 @@ export default {
     Scanning: '掃描中',
     Queued: '排程中',
     'Not Scanned': '準備中'
+  },
+  RedmineMail: {
+    Warning: '[注意] Email 服務啟用或停用，將觸發 Redmine 重啟。其重啟時間將影響 3-5分鐘平台無法使用，請謹慎設定利用。'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

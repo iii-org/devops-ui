@@ -128,6 +128,8 @@ export default {
     7005: 'Maximum number of {object} in a project is {num}.',
     7006: 'Argument {arg} can not be alerted when children issue exist.',
     7007: `$arg should begin with 'ghp_'.`,
+    7009: 'According to google policy, account needs to apply apppassord to operate SMTP server.',
+    7010: 'SMTP System responses error, please make sure your system, port, account and password are correct.',
     8001: '{service_name} error: {response}',
     8101: 'Parent issue setting error! Please confirm that the setting issue is not a sub-issue or related issue of this issue.',
     8901: 'Plugin Software is disabled',
@@ -250,7 +252,8 @@ export default {
     NoTestResult: 'No Test Result',
     Parent: 'P',
     Child: 'C',
-    CopyUrl: 'Copy URL'
+    CopyUrl: 'Copy URL',
+    TemporarySave: 'Temporary Save'
   },
   Notify: {
     Updated: 'update successful',
@@ -261,6 +264,7 @@ export default {
     Copied: 'Copied',
     Canceled: 'Cancel successful',
     Submit: 'Submit',
+    TemporarySaved: 'Temporary Saved successful',
     Saved: 'Saved successful',
     NoEmpty: 'Content must not be empty',
     Same: 'The new value is same with old value.',
@@ -288,7 +292,8 @@ export default {
     ConnectSocket: 'Kanban is connecting Socket...',
     UpdateKanban: '{issueName} is updated',
     NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.',
-    ChangeProject: `Switching a project will empty the version, label, and distributor's information, confirm the transfer?`
+    ChangeProject: `Switching a project will empty the version, label, and distributor's information, confirm the transfer?`,
+    RedminemailWarning: '[Warning] Redmine will restart, the service is about to be suspended, please log in after 3-5 minutes.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -775,6 +780,8 @@ export default {
   Profile: {
     Basic: 'Basic',
     ProfileBasicSetting: 'Profile Basic Setting',
+    Notice: 'Notification Setting',
+    MessageReceptionSetting: 'Message Reception Setting',
     Department: '@:general.Department',
     Title: '@:general.UserTitle',
     Phone: 'Phone',
@@ -785,7 +792,9 @@ export default {
     PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number.',
     Save: 'Save',
     Password: 'Password',
-    K8SConfigDownload: 'Download K8S Config'
+    K8SConfigDownload: 'Download K8S Config',
+    PlatformNotice: 'Platform Notice',
+    MailNotice: 'Email Notice'
   },
   Project: {
     Project: ' Project',
@@ -1379,6 +1388,9 @@ export default {
     Scanning: 'Scanning',
     Queued: 'Queued',
     'Not Scanned': 'NotRunning'
+  },
+  RedmineMail: {
+    Warning: '[Note] Email service is enabled or decentralized, which restarts the trigger RedMine.The restart time will affect the 3-5 minutes of the platform cannot be used, please set it with caution.'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }
