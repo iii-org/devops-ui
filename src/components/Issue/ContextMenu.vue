@@ -324,26 +324,28 @@ export default {
         const projectId =
           Object.prototype.hasOwnProperty.call(this.row, 'project')
             ? this.row.project.id : this.selectedProjectId
-        const res = await getAPI[column][0](projectId, params)
-        switch (column) {
-          case 'fixed_version':
-            this[column] = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[getAPI[column][1]]]
-            break
-          case 'assigned_to':
-            this[column] = [
-              { name: this.$t('Issue.Unassigned'), id: 'null', login: 'null' },
-              ...res.data[getAPI[column][1]]
-            ]
-            break
-          case 'strictTracker':
-            this[column] = (await getAPI[column][0]({ new: true, project_id: projectId })).data
-            break
-          case 'forceTracker':
-            this[column] = [...res.data[getAPI[column][1]]]
-            this.enableForceTracker = res.data.enable
-            break
-          default:
-            this[column] = res.data[getAPI[column][1]]
+        if (projectId >= 0) {
+          const res = await getAPI[column][0](projectId, params)
+          switch (column) {
+            case 'fixed_version':
+              this[column] = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[getAPI[column][1]]]
+              break
+            case 'assigned_to':
+              this[column] = [
+                { name: this.$t('Issue.Unassigned'), id: 'null', login: 'null' },
+                ...res.data[getAPI[column][1]]
+              ]
+              break
+            case 'strictTracker':
+              this[column] = (await getAPI[column][0]({ new: true, project_id: projectId })).data
+              break
+            case 'forceTracker':
+              this[column] = [...res.data[getAPI[column][1]]]
+              this.enableForceTracker = res.data.enable
+              break
+            default:
+              this[column] = res.data[getAPI[column][1]]
+          }
         }
       }
     },

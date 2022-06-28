@@ -162,6 +162,9 @@ export default {
   beforeDestroy() {
     window.clearTimeout(this.timeoutId)
   },
+  mounted() {
+    this.fetchData()
+  },
   methods: {
     async fetchData() {
       const res = await getMessageList(this.params)
