@@ -95,7 +95,7 @@ import { mapGetters } from 'vuex'
 import SearchFilter from './components/SearchFilter.vue'
 import { getMessageList, setReadMessage } from '@/api_v2/monitoring'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { BasicData, Pagination } from '@/newMixins'
+import { Pagination } from '@/newMixins'
 import MessageDialog from '@/components/Notification/components/MessageDialog.vue'
 
 const params = () => ({
@@ -106,7 +106,7 @@ const params = () => ({
 export default {
   name: 'Inbox',
   components: { SearchFilter, ElTableColumnTime, MessageDialog },
-  mixins: [BasicData, Pagination],
+  mixins: [Pagination],
   data() {
     return {
       keyword: '',
@@ -163,10 +163,11 @@ export default {
     window.clearTimeout(this.timeoutId)
   },
   mounted() {
-    this.fetchData()
+    this.loadData()
   },
   methods: {
-    async fetchData() {
+    async loadData() {
+      this.listLoading = true
       const res = await getMessageList(this.params)
       this.messageList = res.data.notification_message_list
       const start_id = res.data.page.limit * (res.data.page.current - 1) + 1
@@ -174,6 +175,7 @@ export default {
         item.row_id = start_id + i
       })
       this.listQuery = Object.assign({}, res.data.page)
+      this.listLoading = false
     },
     async onSearch(keyword) {
       this.params.search = keyword
@@ -230,8 +232,6 @@ export default {
         } catch (err) {
           console.error(err)
         }
-        // const findChangeIndex = this.messageList.findIndex(msg => parseInt(msg_id) === parseInt(msg.id))
-        // this.setReadMessage(findChangeIndex)
       }
     },
     setReadMessage(idx) {
