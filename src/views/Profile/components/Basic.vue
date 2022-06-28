@@ -75,7 +75,7 @@
     <el-row class="mt-4">
       <el-col :span="8">
         <el-button
-          :disabled="disableEdit"
+          v-if="!disableEdit"
           class="buttonPrimary"
           @click="submitUpdateUserProfile('userProfileForm')"
         >{{
@@ -107,7 +107,7 @@ export default {
     },
     userProfileForm: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     }
   },
   data() {
@@ -146,6 +146,8 @@ export default {
           if (valid) {
             const data = {
               name: this.userProfileForm.userName,
+              department: this.userProfileForm.department,
+              title: this.userProfileForm.title,
               email: this.userProfileForm.userEmail,
               phone: this.userProfileForm.userPhone
             }

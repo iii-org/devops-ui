@@ -291,7 +291,8 @@ export default {
     UpdateKanban: '{issueName} 已更新',
     NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。',
     ChangeProject: '切換專案將清空版本、標籤及受分配者的資訊，確認移轉嗎？',
-    RedmineMailWarning: '[注意] Redmine 將重新啟動，服務即將暫停，請3-5分鐘後再重新登入使用'
+    RedmineMailWarning: '[注意] Redmine 將重新啟動，服務即將暫停，請3-5分鐘後再重新登入使用',
+    RedmineMailActiveWarning: '平台Email設定尚未啟用，請洽系統管理者'
   },
   RuleMsg: {
     PleaseInput: '請輸入',

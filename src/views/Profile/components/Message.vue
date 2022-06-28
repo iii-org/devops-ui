@@ -23,6 +23,7 @@
       <el-row class="mt-4">
         <el-col :span="8">
           <el-button
+            v-if="canSave"
             class="buttonPrimary"
             @click="submitMessageSettings"
           >{{
@@ -37,17 +38,37 @@
 <script>
 import { mapGetters } from 'vuex'
 import { updateUserMessageInfo } from '@/api_v2/user'
+import { getRedmineMailActive } from '@/api/redmineMail'
 
 export default {
   name: 'Message',
   props: {
+    originalMessageForm: {
+      type: Object,
+      default: () => ({})
+    },
     userMessageForm: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     }
   },
   computed: {
-    ...mapGetters(['userId'])
+    ...mapGetters(['userId']),
+    canSave() {
+      return !this.compareObj(this.userMessageForm, this.originalMessageForm)
+    }
+  },
+  watch: {
+    async 'userMessageForm.mail'(bool) {
+      if (bool !== undefined && bool && !this.originalMessageForm.mail) {
+        const active = (await getRedmineMailActive()).data
+        if (!active) this.userMessageForm.mail = false
+        this.$message({
+          message: this.$t('Notify.RedmineMailActiveWarning'),
+          type: 'warning'
+        })
+      }
+    }
   },
   methods: {
     async submitMessageSettings() {
@@ -62,6 +83,22 @@ export default {
         .catch((error) => {
           console.error(error)
         })
+        .finally(() => {
+          this.$emit('update')
+        })
+    },
+    compareObj(obj1, obj2) {
+      const Obj1_keys = Object.keys(obj1)
+      const Obj2_keys = Object.keys(obj2)
+      if (Obj1_keys.length !== Obj2_keys.length) {
+        return false
+      }
+      for (const k of Obj1_keys) {
+        if (obj1[k] !== obj2[k]) {
+          return false
+        }
+      }
+      return true
     }
   }
 }

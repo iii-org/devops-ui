@@ -68,7 +68,7 @@ export default {
   props: {
     userPwdForm: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     labelPosition: {
       type: String,

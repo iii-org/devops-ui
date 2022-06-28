@@ -293,7 +293,8 @@ export default {
     UpdateKanban: '{issueName} is updated',
     NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.',
     ChangeProject: `Switching a project will empty the version, label, and distributor's information, confirm the transfer?`,
-    RedminemailWarning: '[Warning] Redmine will restart, the service is about to be suspended, please log in after 3-5 minutes.'
+    RedminemailWarning: '[Warning] Redmine will restart, the service is about to be suspended, please log in after 3-5 minutes.',
+    RedmineMailActiveWarning: 'Mail notificaiton setting can not be opened, when mail server is disable.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',

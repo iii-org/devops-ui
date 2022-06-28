@@ -19,8 +19,10 @@
         </el-tab-pane>
         <el-tab-pane :label="$t('Profile.Notice')">
           <Message
+            :original-message-form="originalMessageForm"
             :user-message-form="userMessageForm"
             :label-position="labelPosition"
+            @update="fetchUserMessageInfo"
           />
         </el-tab-pane>
       </el-tabs>
@@ -57,6 +59,10 @@ export default {
         userRepeatNewPwd: '',
         old_password: ''
       },
+      originalMessageForm: {
+        notification: false,
+        mail: false
+      },
       userMessageForm: {
         notification: false,
         mail: false
@@ -77,9 +83,9 @@ export default {
     async fetchUserInfo() {
       await getUserInfo(this.userId)
         .then((userProfile) => {
-          this.fromAd = userProfile.fromAd
+          this.fromAd = userProfile.from_ad
           this.userProfileForm.userName = userProfile.name
-          this.userProfileForm.userEmail = userProfile.mail
+          this.userProfileForm.userEmail = userProfile.email
           this.userProfileForm.userPhone = userProfile.phone
           this.userProfileForm.department = userProfile.department
           this.userProfileForm.title = userProfile.title
@@ -89,6 +95,8 @@ export default {
     async fetchUserMessageInfo() {
       await getUserMessageInfo(this.userId)
         .then((userMessageInfo) => {
+          this.originalMessageForm.notification = userMessageInfo.data.notification
+          this.originalMessageForm.mail = userMessageInfo.data.mail
           this.userMessageForm.notification = userMessageInfo.data.notification
           this.userMessageForm.mail = userMessageInfo.data.mail
         })
