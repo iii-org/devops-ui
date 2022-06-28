@@ -954,7 +954,7 @@ export default {
   System: {
     Secrets: 'Secrets',
     Registry: 'Registry',
-    RedmineMail: 'Redmine Mail',
+    RedmineMail: 'Mail Setting',
     SystemTemplates: 'Templates',
     SystemConfigs: 'System Configs',
     AddPlugin: 'Add Plugin',

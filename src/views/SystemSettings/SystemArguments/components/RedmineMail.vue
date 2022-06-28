@@ -222,15 +222,15 @@ export default {
           this.handleMessage(data)
         })
         .catch((error) => {
-          if (error.response.data.error.code === 7010) {
+          if (
+            error.response.data.error.code === 7009 ||
+            error.response.data.error.code === 7010
+          ) {
             this.stopUpdate = true
             this.$set(this.redmineMailForm, 'active', false)
           }
         })
         .finally(async () => {
-          if (!this.redmineMailForm.active) {
-            await this.fetchData()
-          }
           this.isLoading = false
         })
     },
