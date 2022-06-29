@@ -90,7 +90,7 @@
                 :issue-id="issueId"
                 :issue-name="issueName"
                 :issue-tracker="formTrackerName"
-                :row="form"
+                :row="issue"
                 :project-id="form.project_id"
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
