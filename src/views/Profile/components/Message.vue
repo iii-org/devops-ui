@@ -9,7 +9,10 @@
       <el-row>
         <el-col :span="8">
           <el-form-item :label="$t('Profile.PlatformNotice')">
-            <el-switch v-model="userMessageForm.notification" />
+            <el-switch
+              v-model="userMessageForm.notification"
+              :disabled="userRole==='Administrator'"
+            />
           </el-form-item>
         </el-col>
       </el-row>
@@ -53,7 +56,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId']),
+    ...mapGetters(['userId', 'userRole']),
     canSave() {
       return !this.compareObj(this.userMessageForm, this.originalMessageForm)
     }

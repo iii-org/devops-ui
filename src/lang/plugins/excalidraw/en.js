@@ -2,6 +2,7 @@ export default {
   'description': 'Excalidraw collaboration whiteboard',
   'arguments': {
     'excalidraw-url': { title: 'Server URL', hint: 'please enter Server URL', placeholder: 'Server URL of the Excalidraw server.' },
+    'excalidraw-socket-url': { title: 'Socket URL', hint: 'please enter Socket URL', placeholder: 'Socket URL of the Excalidraw server.' },
     'excalidraw-db-host': { title: 'DB Host', hint: 'please enter the db url', placeholder: 'DB URL' },
     'excalidraw-db-database': { title: 'DB Name', hint: 'please enter the db name', placeholder: 'Database Name' },
     'excalidraw-db-port': { title: 'DB Port', hint: 'please enter the db port', placeholder: 'DB Port' },
