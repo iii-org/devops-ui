@@ -62,11 +62,15 @@ export default {
   watch: {
     '$route' (to, from) {
       setTimeout(() => {
+        let page = ''
         const include = Object.keys(this.$refs.menu.submenus).filter((item) => {
-          return item.split('/')[1] === to.path.split('/')[1]
+          if (item.split('/')[1] === to.path.split('/')[1]) {
+            page = item.split('/')[1]
+            return true
+          }
         })
         this.$refs.menu.activeIndex = to.path
-        if (!this.isCollapse) this.$refs.menu.openedMenus = include
+        if (!this.isCollapse && page === 'plan') this.$refs.menu.openedMenus = include
       }, 100)
     }
   }
