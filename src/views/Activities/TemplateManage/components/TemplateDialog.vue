@@ -173,7 +173,7 @@ export default {
       })[0].repository_ids[0]
       const data = (await getTemplateParams(repositoryId)).data
       this.form.name = data.name
-      this.form.description = data.description
+      this.form.description = data.description.replace(/\>[\t ]+\</g, '><')
       this.isLoading = false
     },
     handleCreate() {
