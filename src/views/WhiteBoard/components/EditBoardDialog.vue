@@ -118,12 +118,13 @@ export default {
               message: this.$t('Notify.Updated'),
               type: 'success'
             })
+            this.isLoading = false
+            this.$emit('update')
           } catch (error) {
             console.error(error)
+            this.$emit('handleError')
           } finally {
-            this.isLoading = false
             this.onDialogClosed()
-            this.$emit('update')
           }
         }
       })
