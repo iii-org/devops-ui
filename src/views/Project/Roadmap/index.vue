@@ -1,6 +1,6 @@
 <template>
   <el-row v-loading="listLoading" :element-loading-text="$t('Loading')" class="app-container">
-    <project-list-selector />
+    <ProjectListSelector />
     <el-divider />
     <el-row :gutter="10">
       <el-col :span="24">

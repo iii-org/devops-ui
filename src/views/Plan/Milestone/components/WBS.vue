@@ -236,7 +236,7 @@
           divider
         />
         <contextmenu-item @click="onRelationIssueDialog(contextMenu.row)">
-          {{ $t('route.Issue Detail') }}
+          {{ $t('route.IssueDetail') }}
         </contextmenu-item>
         <contextmenu-item @click="toggleIssueMatrixDialog(contextMenu.row)">
           {{ $t('Issue.TraceabilityMatrix') }}
@@ -568,7 +568,7 @@ export default {
           treeDataArray = treeData[row.id].children
           updateNodeMap = lazyTreeNodeMap[row.id]
           row_index = treeDataArray.findIndex((issue) => issue.id === row.id)
-        } else if (row && row.parent_object) {
+        } else if (row.parent_object) {
           if (row.parent_object.id && treeData[row.parent_object.id]) {
             treeDataArray = treeData[row.parent_object.id].children
             updateNodeMap = lazyTreeNodeMap[row.parent_object.id]
@@ -668,6 +668,7 @@ export default {
     async handleRemoveIssue(row, msg, force, detail) {
       const h = this.$createElement
       const issueName = { issueName: row.name }
+      console.log(msg)
       const messageList = [h('span', null, this.$t(`Issue.${msg}Issue`, issueName))]
       if (detail) {
         messageList.push(h('ul', null,

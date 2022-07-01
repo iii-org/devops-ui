@@ -51,7 +51,7 @@ export default {
   props: {
     detail: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     user: {
       type: Array,

@@ -9,8 +9,10 @@ import IssueToolbar from './IssueToolbar'
 import IssueMatrix from './IssueMatrix'
 import IssueCollection from './IssueCollection'
 import AdminCommitLog from './AdminCommitLog'
+import WhiteBoardTable from './WhiteBoardTable'
 
 export {
   IssueFiles, IssueForm, IssueNotesDialog, IssueNotesEditor, IssueFileUploader,
-  IssueDescription, IssueTitle, IssueToolbar, IssueMatrix, IssueCollection, AdminCommitLog
+  IssueDescription, IssueTitle, IssueToolbar, IssueMatrix, IssueCollection,
+  AdminCommitLog, WhiteBoardTable
 }

@@ -349,9 +349,6 @@ export default {
       const result = []
       if (!this.hasRelationIssue(row)) {
         result.push('hide-expand-icon')
-        // if (this.refTable) {
-        //   this.checkRowExpended(this.refTable, row)
-        // }
       }
       this.contextMenu ? result.push('context-menu') : result.push('cursor-pointer')
       return result.join(' ')
@@ -364,7 +361,7 @@ export default {
         return this.refTable.toggleRowExpansion(row)
       }
       // this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
-      this.$router.push({ name: 'issue-detail', params: { issueId: row.id, project: row.project }})
+      this.$router.push({ name: 'IssueDetail', params: { issueId: row.id, project: row.project }})
     },
     async getIssueFamilyData(row, expandedRows) {
       this.expandedRow = expandedRows

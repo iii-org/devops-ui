@@ -11,7 +11,7 @@
         <em
           v-show="scope.row.commit"
           class="el-icon-tickets cursor-pointer mr-2"
-          @click="handleToTestReport(scope.row.commit)"
+          @click="handleToTestReport(scope)"
         />
       </el-tooltip>
       <el-tooltip :content="$t('Release.CustomPath')" placement="top">
@@ -63,7 +63,7 @@ export default {
   props: {
     scope: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     }
   },
   data() {
@@ -110,9 +110,7 @@ export default {
       formData.append('tags', this.inputValue)
       await addReleaseTag(this.projectId, this.releaseId, formData)
         .then(() => {
-          this.showSuccessMessage(this.$t('Notify.Added'))
-          this.$emit('onUpdated')
-          this.init()
+          this.handleUpdate()
         })
         .catch((error) => {
           this.showErrorMessage(error)
@@ -137,23 +135,30 @@ export default {
       formData.append('image_path', this.inputValue)
       await addReleaseRepo(this.projectId, this.releaseId, formData)
         .then(() => {
-          this.showSuccessMessage(this.$t('Notify.Added'))
-          this.$emit('onUpdated')
-          this.init()
+          this.handleUpdate()
         })
         .catch((error) => {
           this.showErrorMessage(error)
         })
+    },
+    handleUpdate() {
+      this.showSuccessMessage(this.$t('Notify.Added'))
+      this.$emit('onUpdated')
+      this.init()
     },
     init() {
       this.inputValue = ''
       this.isShowInput = false
       this.inputState = null
     },
-    handleToTestReport(commitId) {
+    handleToTestReport(scope) {
       this.$router.push({
-        name: 'TestReport',
-        params: { commitId, projectName: this.selectedProject.name }
+        name: 'TestReports',
+        params: {
+          commitId: scope.row.commit,
+          commitBranch: scope.row.branch,
+          projectId: this.selectedProject.id
+        }
       })
     },
     showErrorMessage(message) {

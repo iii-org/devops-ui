@@ -74,8 +74,8 @@
         align="center"
       >
         <template slot-scope="scope">
-          <el-tooltip 
-            :disabled="scope.row.logs === null" 
+          <el-tooltip
+            :disabled="scope.row.logs === null"
             placement="bottom"
           >
             <template slot="content">
@@ -163,8 +163,8 @@ import {
 } from '@/api/cmas'
 import { getCmasPod } from '@/api_v2/cmas'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
-import * as elementTagType from '@/utils/element-tag-type'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
+import * as elementTagType from '@/utils/elementTagType'
 
 export default {
   name: 'Cmas',
@@ -215,7 +215,6 @@ export default {
         const { task_id, status } = item
         if (status === 'RUNNING') {
           this.fetchScanStatus(task_id)
-          return
         }
       })
     },
@@ -268,8 +267,8 @@ export default {
 
 <style scoped>
 .tooltip {
-  max-width: 500px; 
-  margin: 0; 
+  max-width: 500px;
+  margin: 0;
   text-align: center;
 }
 </style>

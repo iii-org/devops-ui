@@ -6,6 +6,7 @@
     />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
+        ref="menu"
         :default-active="activeMenu"
         :collapse="isCollapse"
         :background-color="variables.menuBg"
@@ -56,6 +57,21 @@ export default {
     },
     isCollapse() {
       return !this.sidebar.opened
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      setTimeout(() => {
+        let page = ''
+        const include = Object.keys(this.$refs.menu.submenus).filter((item) => {
+          if (item.split('/')[1] === to.path.split('/')[1]) {
+            page = item.split('/')[1]
+            return true
+          }
+        })
+        this.$refs.menu.activeIndex = to.path
+        if (!this.isCollapse && page === 'plan') this.$refs.menu.openedMenus = include
+      }, 100)
     }
   }
 }

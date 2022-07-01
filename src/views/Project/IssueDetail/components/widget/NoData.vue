@@ -11,7 +11,3 @@ export default {
   name: 'NoData'
 }
 </script>
-
-<style scoped>
-
-</style>

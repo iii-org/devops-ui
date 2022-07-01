@@ -328,7 +328,7 @@ export default {
       this.$router.push({ name: 'Project Settings', params: { projectName: this.selectedProject.name }})
     },
     onTransferClick(issueId) {
-      this.$router.push({ name: 'issue-detail', params: { issueId }})
+      this.$router.push({ name: 'IssueDetail', params: { issueId }})
     },
     onCloseClick(issueId) {
       const sendData = new FormData()
@@ -406,18 +406,9 @@ export default {
     onBatchCloseClick() {
       this.listLoading = true
       this.checkedIssues.forEach((issueId) => {
-        const sendData = new FormData()
-        sendData.append('status_id', 6)
-        updateIssue(issueId, sendData)
-          .then(() => {
-            this.loadData()
-          })
-          .catch((err) => {
-            console.error(err)
-          })
+        this.onCloseClick(issueId)
       })
     }
   }
 }
 </script>
-

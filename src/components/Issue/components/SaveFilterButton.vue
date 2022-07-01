@@ -82,10 +82,10 @@ export default {
   computed: {
     ...mapGetters(['selectedProjectId']),
     isIssueList() {
-      return this.$route.name === 'issue-list'
+      return this.$route.name === 'issueList'
     },
     focusProjectId() {
-      if (this.$route.name === 'my-works') {
+      if (this.$route.name === 'MyWork') {
         return this.projectId ? this.projectId : -1 // -1 means all projects (dump project)
       } else {
         return this.selectedProjectId
@@ -137,7 +137,7 @@ export default {
         sendData['focus_tab'] = this.activeTab
         sendData['group_by'] = this.groupBy
       }
-      const isIssueBoard = this.$route.name === 'issue-boards'
+      const isIssueBoard = this.$route.name === 'issueBoards'
       return isIssueBoard ? this.formateSendData(sendData) : sendData
     },
     formateSendData(sendData) {

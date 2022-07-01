@@ -233,7 +233,7 @@
           label="Board"
           lazy
         >
-          <Board 
+          <Board
             ref="Board"
             :filter-value="filterValue"
             :keyword="keyword"

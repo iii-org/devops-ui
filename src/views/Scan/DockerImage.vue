@@ -125,7 +125,6 @@
 </template>
 
 <script>
-// import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getHarborScan } from '@/api_v2/harbor'
@@ -189,9 +188,10 @@ export default {
     async handleToTestReport(row) {
       this.$router.push({
         name: 'DockerReport',
-        params: { 
-          commitId: row.commit, 
-          commitBranch: row.branch
+        params: {
+          commitId: row.commit,
+          commitBranch: row.branch,
+          projectId: this.selectedProjectId
         }
       })
     }

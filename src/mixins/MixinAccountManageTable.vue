@@ -1,6 +1,5 @@
 <script>
 import Pagination from '@/components/Pagination'
-// import { mapGetters } from 'vuex'
 
 export default {
   components: { Pagination },

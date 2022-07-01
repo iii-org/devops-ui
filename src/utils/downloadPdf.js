@@ -10,18 +10,9 @@ import JsPDF from 'jspdf'
 
 const PDF = {}
 
-PDF.install = async function(Vue, options) {
-  Vue.prototype.$pdf = await function(dom, fileName) {
+PDF.install = function(options) {
+  Vue.prototype.$pdf = function(dom, fileName) {
     html2canvas(dom).then(canvas => {
-      // const [A4Width, A4Height] = [595, 841] // a4
-      // const { width: CanvasWidth, height: CanvasHeight } = canvas
-      // const PdfWidth = A4Width
-      // const PdfHeight = (A4Width / CanvasWidth) * CanvasHeight
-      // const jpeg = canvas.toDataURL('image/jpeg', 1.0)
-      // const doc = new JsPDF('', 'pt', 'a4')
-      // doc.addImage(jpeg, 'JPEG', 0, 0, PdfWidth, PdfHeight)
-      // doc.save(fullFileName)
-
       const time = new Date()
       const timeNow = time.toLocaleString()
       const fullFileName = `${fileName}_${timeNow}`

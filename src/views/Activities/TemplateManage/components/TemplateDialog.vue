@@ -97,10 +97,6 @@ export default {
   name: 'TemplateDialog',
   components: { VueEditor },
   props: {
-    dialogVisible: {
-      type: Boolean,
-      default: false
-    },
     existedTemplateIds: {
       type: Array,
       default: () => []
@@ -112,6 +108,7 @@ export default {
   },
   data() {
     return {
+      dialogVisible: false,
       isLoading: false,
       form: formTemplate(),
       row: {},
@@ -176,7 +173,7 @@ export default {
       })[0].repository_ids[0]
       const data = (await getTemplateParams(repositoryId)).data
       this.form.name = data.name
-      this.form.description = data.description
+      this.form.description = data.description.replace(/\>[\t ]+\</g, '><')
       this.isLoading = false
     },
     handleCreate() {
@@ -236,11 +233,8 @@ export default {
     onDialogClosed() {
       this.row = {}
       this.$refs['form'].resetFields()
-      this.$emit('update:dialogVisible', false)
+      this.dialogVisible = false
     }
   }
 }
 </script>
-
-<style>
-</style>

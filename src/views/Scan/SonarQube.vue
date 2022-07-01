@@ -133,7 +133,7 @@ import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { getSonarQubeData } from '@/api/sonarQube'
 import { getSonarQubePod } from '@/api_v2/sonarQube'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanSonarQube',

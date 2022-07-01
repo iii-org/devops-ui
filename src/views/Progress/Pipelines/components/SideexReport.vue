@@ -2,7 +2,14 @@
   <div>
     <ToolBar>
       <span slot="toolName">Sideex</span>
-      <el-button slot="link" type="text" icon="el-icon-position" :class="!disabled ? 'linkTextColor' : ''" :disabled="!showSideexReport" @click="openSideex">
+      <el-button
+        slot="link"
+        type="text"
+        icon="el-icon-position"
+        :class="showSideexReport ? 'linkTextColor' : ''"
+        :disabled="!showSideexReport"
+        @click="openSideex"
+      >
         {{ $t('TestReport.DetailReport') }}
       </el-button>
     </ToolBar>

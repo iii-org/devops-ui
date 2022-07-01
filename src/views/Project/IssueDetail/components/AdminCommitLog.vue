@@ -390,8 +390,7 @@ export default {
         }
         key = 'Issue.LastResult'
       }
-      const issueList = [this.parent, { name: this.$t(key), options: queryList }]
-      return issueList
+      return [this.parent, { name: this.$t(key), options: queryList }]
     },
     async originalParentIssue(issueIds) {
       const parent = []
@@ -426,8 +425,7 @@ export default {
         }
         key = 'Issue.LastResult'
       }
-      const issueList = [parent, { name: this.$t(key), options: queryList }]
-      return issueList
+      return [parent, { name: this.$t(key), options: queryList }]
     },
     checkToken() {
       if (this.cancelToken) this.cancelToken.cancel()

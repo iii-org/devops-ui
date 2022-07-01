@@ -55,8 +55,8 @@ export function filterAsyncRoutes(routes, roles) {
 
 export function filterAsyncPluginRoutes(accessedRoutes, disabledPluginRoutes) {
   const result = accessedRoutes.map(item => item)
-  const idx = result.findIndex(item => item.name === 'scan')
-  result[idx].children = result[idx].children.filter(item => !disabledPluginRoutes.includes(item.name))
+  const idx = result.findIndex(item => item.name === 'Scan' || item.name === 'Works')
+  result[idx].children = result[idx].children.filter(item => !disabledPluginRoutes.includes(item.name.toLowerCase()))
   if (result[idx].children.length === 0) result.splice(idx, 1)
   return result
 }
@@ -94,10 +94,8 @@ const actions = {
       if (route.disabled) return route.name
     })
     // views Plugin
-    // const result = asyncRoutes(roles)
-    const routes = asyncRoutes
-    // const routes = getAsyncRoutes(result)
-    // console.log(routes)
+    const result = asyncRoutes(roles)
+    const routes = getAsyncRoutes(result)
     let accessedRoutes
     // Plugin
     // const req = require.context('@/views/Plugin', true, /(router.js)$/, 'lazy')

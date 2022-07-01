@@ -172,7 +172,7 @@ import { getWebInspectScans, getWebInspectStats, getWebInspectStatus } from '@/a
 import { getWebInspectPod } from '@/api_v2/webInspect'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanWebInspect',
@@ -250,7 +250,7 @@ export default {
     },
     handleTestReportDetail(row) {
       const { scan_id, run_at } = row
-      this.$router.push({ name: 'webinspect-report', params: { scan_id, run_at }})
+      this.$router.push({ name: 'WebinspectReport', params: { scanId: scan_id, run_at }})
     },
     onPagination(listQuery) {
       this.listQuery = listQuery

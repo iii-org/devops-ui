@@ -60,7 +60,7 @@
 import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
 
 export default {
-  name: 'WebInspect',
+  name: 'Webinspect',
   components: { ToolBar },
   props: {
     webinspect: {
@@ -86,7 +86,7 @@ export default {
     openWebInspect() {
       const { scan_id, run_at } = this.webinspect[0]
       const routeUrl = this.$router.resolve({
-        name: 'webinspect-report', params: { scan_id, run_at }
+        name: 'WebinspectReport', params: { scanId: scan_id, run_at }
       })
       window.open(routeUrl.href, '_blank')
     }

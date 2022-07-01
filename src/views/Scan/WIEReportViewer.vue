@@ -116,7 +116,7 @@ export default {
     fetchData() {
       this.isLoading = true
       this.runAt = this.UTCtoLocalTime(this.$route.params.run_at)
-      getWebInspectReport(this.$route.params.scan_id).then(res => {
+      getWebInspectReport(this.$route.params.scanId).then(res => {
         this.xmlData = res
         this.$nextTick(() => this.parseXml())
       })
@@ -143,8 +143,7 @@ export default {
       const type = typeof rowIssues
       if (type === 'string') return []
       else {
-        const result = Array.isArray(rowIssues.Issue) ? rowIssues.Issue : [rowIssues.Issue]
-        return result
+        return Array.isArray(rowIssues.Issue) ? rowIssues.Issue : [rowIssues.Issue]
       }
     },
     handleDownload() {
@@ -168,11 +167,10 @@ export default {
     },
     UTCtoLocalTime(dateTime) {
       if (!dateTime) return '-'
-      const localTime = this.$dayjs
+      return this.$dayjs
         .utc(dateTime)
         .local()
         .format('YYYY-MM-DD HH:mm:ss')
-      return localTime
     }
   }
 }

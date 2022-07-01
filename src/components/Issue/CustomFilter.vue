@@ -240,7 +240,7 @@
     </el-popover>
     <el-divider direction="vertical" />
   </span>
-</template>>
+</template>
 
 <script>
 import { mapGetters } from 'vuex'
@@ -322,7 +322,7 @@ export default {
       return this.filters.filter((item) => item.type === this.type)
     },
     focusProjectId() {
-      if (this.$route.name === 'my-works') {
+      if (this.$route.name === 'MyWork') {
         return this.projectId ? this.projectId : -1 // -1 means all projects (dump project)
       } else {
         return this.selectedProjectId
@@ -344,7 +344,7 @@ export default {
         .then((res) => {
           this.filters = res.data.map((item) =>
             Object.assign({}, item, {
-              custom_filter: this.formateCustomFilter(item.custom_filter),
+              custom_filter: this.formatCustomFilter(item.custom_filter),
               isShowForm: false,
               isApplying: false
             })
@@ -353,8 +353,7 @@ export default {
         .catch((err) => console.error(err))
         .then(() => (this.isLoading = false))
     },
-    // TODO refactor
-    formateCustomFilter(options) {
+    formatCustomFilter(options) {
       const result = Object.assign({}, options)
       Object.keys(options).forEach((key) => {
         if (key === 'tags') {
@@ -452,7 +451,7 @@ export default {
       this.formData[itemName] = null
     },
     checkEditable(formItemName) {
-      const isMyWork = this.$route.name === 'my-works'
+      const isMyWork = this.$route.name === 'MyWork'
       if (isMyWork) {
         return this.checkIsMyWorkFilterDisplayRule(formItemName)
       } else {

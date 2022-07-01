@@ -77,9 +77,6 @@ stages:
       include:
       - master
       - develop
-      - errorcode
-      - pluginchart
-      - redminemail
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -100,9 +97,6 @@ stages:
       include:
       - master
       - develop
-      - errorcode
-      - pluginchart
-      - redminemail
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -119,9 +113,6 @@ stages:
       include:
       - develop
       - master
-      - errorcode
-      - pluginchart
-      - redminemail
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -153,9 +144,6 @@ stages:
       include:
       - master
       - develop
-      - errorcode
-      - pluginchart
-      - redminemail
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -181,9 +169,6 @@ stages:
       include:
       - master
       - develop
-      - errorcode
-      - pluginchart
-      - redminemail
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -207,9 +192,6 @@ stages:
       include:
       - master
       - develop
-      - errorcode
-      - pluginchart
-      - redminemail
 - name: Test--ZAP
   iiidevops: zap
   steps:
@@ -293,3 +275,4 @@ stages:
     branch:
       include:
       - develop
+      - master

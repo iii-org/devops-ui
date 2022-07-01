@@ -8,7 +8,7 @@
           <span class="text-title">{{ branch }}</span>
         </div>
         <el-button class="linkTextColor" type="text" size="medium" @click="handleClick">
-          {{ $t('route.advanceBranchSettings') }}
+          {{ $t('route.AdvanceBranchSettings') }}
         </el-button>
       </div>
       <template v-if="showWarning">
@@ -151,26 +151,27 @@ export default {
       this.branch = ''
     },
     handleClick() {
-      this.$router.push({ name: 'advance-branch-settings', params: { projectName: this.selectedProject.name }})
+      this.$router.push({ name: 'AdvanceBranchSettings', params: { projectName: this.selectedProject.name }})
     },
     handleStageChange(stage) {
       const { key, has_default_branch } = stage
       if (this.services.includes(key)) {
         if (has_default_branch) return
-        this.dependenceKeys.forEach(key => {
-          const idx = this.stagesData.findIndex(stage => key === stage.key)
-          if (idx < 0) return
-          this.stagesData[idx].has_default_branch = has_default_branch
+        this.dependenceKeys.forEach(dependenceKey => {
+          this.getHasDefaultBranch(dependenceKey, has_default_branch)
         })
       }
       if (this.dependenceKeys.includes(key)) {
         if (!has_default_branch) return
-        this.services.forEach(key => {
-          const idx = this.stagesData.findIndex(stage => key === stage.key)
-          if (idx < 0) return
-          this.stagesData[idx].has_default_branch = has_default_branch
+        this.services.forEach(serviceKey => {
+          this.getHasDefaultBranch(serviceKey, has_default_branch)
         })
       }
+    },
+    getHasDefaultBranch(key, has_default_branch) {
+      const idx = this.stagesData.findIndex(stageData => key === stageData.key)
+      if (idx < 0) return
+      this.stagesData[idx].has_default_branch = has_default_branch
     },
     async updatePipeDefBranch() {
       if (this.showWarning) {

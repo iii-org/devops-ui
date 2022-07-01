@@ -290,7 +290,7 @@ export default {
       this.resizeTable()
     },
     getListData(partialIssues) {
-      const listData = partialIssues.filter(issue => {
+      return partialIssues.filter(issue => {
         if (issue.isClosed) {
           this.closedIssueCount++
           return this.showClosed
@@ -299,7 +299,6 @@ export default {
           return this.showOpen
         }
       })
-      return listData
     },
     resizeTable() {
       // If data reduces, we need to set current page to smaller one making data visible

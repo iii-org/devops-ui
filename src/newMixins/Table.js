@@ -11,19 +11,11 @@ export default {
     }
   },
   async mounted() {
-    this.$nextTick(() => {
-      if (this.$refs['wrapper']) {
-        this.tableHeight = this.$refs['wrapper'].clientHeight
-      }
-    })
+    this.adjustTableHeight()
     await this.initTableData()
 
     window.onresize = () => {
-      this.$nextTick(() => {
-        if (this.$refs['wrapper']) {
-          this.tableHeight = this.$refs['wrapper'].clientHeight
-        }
-      })
+      this.adjustTableHeight()
       this.resizeTime = new Date()
       if (!this.timeout) {
         this.timeout = true
@@ -34,12 +26,12 @@ export default {
   methods: {
     async initTableData() {
       if (this.remote) {
-        await this.adjustTableRemote()
+        this.adjustTableRemote()
         if (this.afterInit) {
           await this.loadData()
         }
       } else {
-        await this.adjustTable()
+        this.adjustTable()
       }
     },
     async afterResize() {
@@ -104,6 +96,13 @@ export default {
           this.listQuery.limit = forceRowNum
         } else {
           this.listQuery.limit = Math.floor(tableHeight / this.rowHeight)
+        }
+      })
+    },
+    adjustTableHeight() {
+      this.$nextTick(() => {
+        if (this.$refs['wrapper']) {
+          this.tableHeight = this.$refs['wrapper'].clientHeight
         }
       })
     }

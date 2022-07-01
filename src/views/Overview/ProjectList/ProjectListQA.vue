@@ -413,11 +413,11 @@ export default {
         calculated.project_list[i].id = parseInt(calculated.project_list[i].id)
       }
       const merged = []
-      for (let i = 0; i < this.listData.length; i++) {
+      for (const item of this.listData) {
         merged.push({
-          ...this.listData[i],
+          ...item,
           ...calculated.project_list.find(
-            (itmInner) => itmInner.id === this.listData[i].id
+            (itmInner) => itmInner.id === item.id
           )
         })
       }
@@ -431,16 +431,7 @@ export default {
       if (this.keyword !== '') {
         this.params.search = this.keyword
       } else delete this.params.search
-      // if (this.$refs.filter.isDisabled.length === 1) {
-      //   this.params.disabled = this.$refs.filter.isDisabled[0]
-      // } else {
-      //   delete this.params.disabled
-      // }
       await this.fetchData()
-    //   this.initParams()
-    // },
-    // initParams() {
-    //   this.params = params()
     },
     cleanFilter() {
       this.keyword = ''
@@ -469,7 +460,7 @@ export default {
       })[0]
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
-      this.$router.push({ name: 'issue-list', params: { projectName: selectedProject.name }})
+      this.$router.push({ name: 'IssueList', params: { projectName: selectedProject.name }})
     },
     handleClickQA(projectObj) {
       const { id } = projectObj
@@ -478,7 +469,7 @@ export default {
       })[0]
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
-      this.$router.push({ name: 'milestone', params: { projectName: selectedProject.name }})
+      this.$router.push({ name: 'Milstone', params: { projectName: selectedProject.name }})
     },
     copyUrl(id) {
       const target = document.getElementById(id)
@@ -564,7 +555,7 @@ export default {
       })[0]
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
-      this.$router.push({ name: 'Project Settings', params: { projectName: selectedProject.name }})
+      this.$router.push({ name: 'ProjectSettings', params: { projectName: selectedProject.name }})
     },
     async setStar(id, star) {
       if (star) {

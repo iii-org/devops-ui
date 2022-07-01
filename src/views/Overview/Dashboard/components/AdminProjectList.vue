@@ -64,7 +64,7 @@
       />
     </component>
     <el-dialog v-if="!inDialog" :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectList.NAME')" top="3vh">
-      <admin-project-list :data="getProjectListDetailData" :in-dialog="true" />
+      <AdminProjectList :data="getProjectListDetailData" :in-dialog="true" />
     </el-dialog>
   </el-row>
 </template>
@@ -143,17 +143,13 @@ export default {
     onSortChange(sort) {
       const { prop, order } = sort
       let orderSign = 1
-      switch (order) {
-        case 'descending':
-          orderSign = -1
-          break
-        default:
-          orderSign = 1
-          break
-      }
-      this.listData = this.listData.sort((a, b) =>
-        a[prop] > b[prop] ? orderSign : b[prop] > a[prop] ? -1 * orderSign : 0
-      )
+      if (order === 'descending') orderSign = -1
+      else orderSign = 1
+      this.listData = this.listData.sort((a, b) => {
+        if (a[prop] > b[prop]) return orderSign
+        else if (b[prop] > a[prop]) return -1 * orderSign
+        else return 0
+      })
     },
     tableRowClassName({ row }) {
       if (row.project_status === 'overdue') {

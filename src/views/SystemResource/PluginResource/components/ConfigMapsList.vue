@@ -137,7 +137,7 @@ export default {
       this.listLoading = true
       try {
         await deleteConfigmap(pId, configMapName)
-        await this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }

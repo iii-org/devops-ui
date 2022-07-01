@@ -1,10 +1,10 @@
 <template>
-  <v-chart
+  <VChart
     ref="chart"
     :style="{ height, width }"
     :option="option"
-    theme="macarons"
     autoresize
+    theme="macarons"
     @mouseover="onMouseOver"
     @mouseout="onMouseOut"
   />
@@ -21,8 +21,9 @@ require('echarts/theme/macarons') // echarts theme
 use([CanvasRenderer, ScatterChart, PieChart])
 
 export default {
+  name: 'ResourcePie',
   components: {
-    'v-chart': VChart
+    VChart
   },
   props: {
     width: {
@@ -99,17 +100,18 @@ export default {
   },
   watch: {
     chartData() {
-      this.$nextTick(() => {
-        this.initChart()
-      })
+      this.onInitChart()
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.initChart()
-    })
+    this.onInitChart()
   },
   methods: {
+    onInitChart() {
+      this.$nextTick(() => {
+        this.initChart()
+      })
+    },
     initChart() {
       const chartData = this.chartData
       const hasChartData = chartData.length > 0

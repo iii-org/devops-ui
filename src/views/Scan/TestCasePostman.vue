@@ -286,18 +286,17 @@ export default {
           return this.formatData(report.json_file)
         })
         .catch(() => {
-          this.$router.push({ name: 'postman' })
+          this.$router.push({ name: 'Postman' })
         })
     },
     formatData(rowData) {
-      const result = Object.keys(rowData).map((key, idx) => ({
+      return Object.keys(rowData).map((key, idx) => ({
         name: key || 'Default',
         assertions: rowData[key].assertions,
         all: rowData[key].executions,
         pass: this.getPassExecutions(rowData[key].executions),
         fail: this.getFailExecutions(rowData[key].executions)
       }))
-      return result
     },
     getPassExecutions(executions) {
       const filteredExecutions = executions.filter((execution) => execution.assertions.length > 0)
@@ -330,7 +329,7 @@ export default {
       return mapping[status]
     },
     handleBack() {
-      this.$router.push({ name: 'postman-test', params: { projectName: this.selectedProject.name }})
+      this.$router.push({ name: 'PostmanTest', params: { projectName: this.selectedProject.name }})
     },
     countRequest(assertions, result) {
       if (result === 'pass') return assertions.total - assertions.failed

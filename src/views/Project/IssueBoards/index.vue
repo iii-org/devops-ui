@@ -154,7 +154,7 @@
           <el-button slot="button" :disabled="isLoading" :type="(socket.connected)? 'success': 'danger'" @click="onSocketConnect">
             <div class="dot inline-block" :class="(socket.connected)? 'bg-success': 'bg-danger'" />
             {{ (socket.connected) ? $t('general.Connected') : $t('general.Disconnected') }}
-          </el-button> 
+          </el-button>
         </div>
       </el-tooltip>
       <el-tooltip
@@ -662,7 +662,7 @@ export default {
       } else {
         this.$delete(this.originFilterValue, 'fixed_version')
         this.$delete(this.filterValue, 'fixed_version')
-      } 
+      }
       this.onChangeFilter()
     },
     setFilterValue(version) {
@@ -672,7 +672,6 @@ export default {
       // }
       this.$set(this.filterValue, 'fixed_version', version[0].id)
       this.$set(this.originFilterValue, 'fixed_version', version[0].id)
-
     },
     async fetchVersionList(params) {
       const res = await getProjectVersion(this.projectId, params)
@@ -772,10 +771,10 @@ export default {
     createRelativeList(list) {
       const result = []
       function flatList(parent) {
-        for (let i = 0; i < parent.length; i++) {
-          result.push(parent[i])
-          const children = parent[i].children
-          if (parent[i].children.length) flatList(children)
+        for (const item of parent) {
+          result.push(item)
+          const children = item.children
+          if (item.children.length) flatList(children)
         }
       }
       flatList(list)

@@ -307,11 +307,11 @@ export default {
         calculated.project_list[i].id = parseInt(calculated.project_list[i].id)
       }
       const merged = []
-      for (let i = 0; i < this.listData.length; i++) {
+      for (const item of this.listData) {
         merged.push({
-          ...this.listData[i],
+          ...item,
           ...calculated.project_list.find(
-            (itmInner) => itmInner.id === this.listData[i].id
+            (itmInner) => itmInner.id === item.id
           )
         })
       }
@@ -380,7 +380,7 @@ export default {
       })[0]
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
-      this.$router.push({ name: 'issue-boards', params: { projectName: selectedProject.name }})
+      this.$router.push({ name: 'IssueBoards', params: { projectName: selectedProject.name }})
     }
   }
 }

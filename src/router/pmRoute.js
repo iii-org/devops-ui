@@ -3,7 +3,7 @@ const pmRoute = [
   // 首頁
   {
     path: '/',
-    redirect: { name: 'my-works' },
+    redirect: { name: 'MyWork' },
     meta: {
       roles: ['Project Manager']
     },
@@ -11,19 +11,21 @@ const pmRoute = [
   },
   // 我的工作
   {
-    path: '/my-work/:projectName?',
+    path: '/myWork/:projectName?',
     component: 'layout',
+    name: 'MyWork',
+    redirect: { name: 'MyWork' },
     meta: {
+      icon: 'el-icon-s-home',
       roles: ['Project Manager']
     },
     children: [
       {
         path: '',
-        name: 'my-works',
+        name: 'MyWork',
         component: 'views/MyWork',
         meta: {
-          title: 'myWork',
-          icon: 'el-icon-s-home',
+          title: 'MyWork',
           roles: ['Project Manager']
         }
       }
@@ -31,13 +33,13 @@ const pmRoute = [
   },
   // 專案列表
   {
-    path: '/project-list',
+    path: '/projectList',
     component: 'layout',
     meta: { roles: ['Project Manager'] },
     children: [
       {
         path: '',
-        name: 'project-list',
+        name: 'ProjectList',
         component: 'views/Overview/ProjectList/ProjectListPM',
         meta: { title: 'projectList', icon: 'list', roles: ['Project Manager'] }
       }
@@ -62,18 +64,18 @@ const pmRoute = [
       },
       {
         path: 'milestone',
-        name: 'milestone',
+        name: 'Milstone',
         component: 'views/Plan/Milestone',
         meta: { title: 'milestone', roles: ['Project Manager'] }
       },
       {
-        path: 'traceability-matrix',
-        name: 'TraceMatrix',
+        path: 'traceabilityMatrix',
+        name: 'TraceabilityMatrix',
         component: 'views/Plan/TraceabilityMatrix',
         meta: { title: 'traceabilityMatrix', roles: ['Project Manager'] }
       },
       {
-        path: 'settings',
+        path: 'projectSettings',
         component: 'layout/components/parentBlank',
         meta: { title: 'Project Settings', roles: ['Project Manager'] },
         children: [
@@ -84,12 +86,12 @@ const pmRoute = [
             children: [
               {
                 path: '',
-                name: 'Project Settings',
+                name: 'ProjectSettings',
                 component: 'views/Plan/Settings/index',
                 meta: { roles: ['Project Manager'] }
               },
               {
-                path: 'participate-project/:user_id',
+                path: 'participateProject/:user_id',
                 name: 'ParticipateProject',
                 hidden: true,
                 component: 'views/SystemSettings/AccountManage/components/ParticipateProject',
@@ -98,15 +100,15 @@ const pmRoute = [
             ]
           },
           {
-            path: 'advance-branch-settings',
-            name: 'advance-branch-settings',
+            path: 'advanceBranchSettings',
+            name: 'AdvanceBranchSettings',
             hidden: true,
             component: 'views/Plan/Settings/components/AdvanceBranchSettings',
             meta: { title: 'advanceBranchSettings', roles: ['Project Manager'] }
           },
           {
-            path: 'issue-transfer/:userId',
-            name: 'Issue Transfer',
+            path: 'issueTransfer/:userId',
+            name: 'IssueTransfer',
             hidden: true,
             component: 'views/Plan/Settings/ProjectIssueTransfer',
             meta: { title: 'Issue Transfer', roles: ['Project Manager'] }
@@ -127,8 +129,8 @@ const pmRoute = [
     },
     children: [
       {
-        path: 'issue-boards',
-        name: 'issue-boards',
+        path: 'issueBoards',
+        name: 'IssueBoards',
         component: 'views/Project/IssueBoards',
         meta: { title: 'kanban', roles: ['Project Manager'] }
       },
@@ -139,7 +141,7 @@ const pmRoute = [
         children: [
           {
             path: '',
-            name: 'issue-list',
+            name: 'IssueList',
             hidden: true,
             component: 'views/Project/IssueList',
             meta: {
@@ -148,7 +150,7 @@ const pmRoute = [
           },
           {
             path: ':issueId',
-            name: 'issue-detail',
+            name: 'IssueDetail',
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
@@ -162,31 +164,31 @@ const pmRoute = [
       },
       {
         path: 'notes',
-        name: 'wiki-list',
+        name: 'WikiList',
         component: 'views/Project/Wiki',
         meta: { title: 'wikiList', roles: ['Project Manager'] }
       },
       {
         path: 'files',
-        name: 'file-list',
+        name: 'FileList',
         component: 'views/Project/Files',
         meta: { title: 'fileList', roles: ['Project Manager'] }
       },
       {
         path: 'roadmap',
-        name: 'Project Roadmap',
+        name: 'ProjectRoadmap',
         component: 'views/Project/Roadmap',
         meta: { title: 'Project Roadmap', roles: ['Project Manager'] }
       },
       {
-        path: 'release-version',
-        redirect: { name: 'release-version' },
+        path: 'releaseVersion',
+        redirect: { name: 'ReleaseVersion' },
         component: 'layout/components/parentBlank',
         meta: { title: 'releaseVersion', roles: ['Project Manager'] },
         children: [
           {
             path: '',
-            name: 'release-version',
+            name: 'ReleaseVersion',
             component: 'views/Project/ReleaseVersion',
             hidden: true,
             meta: {
@@ -195,7 +197,7 @@ const pmRoute = [
           },
           {
             path: ':issueTag',
-            name: 'closed-issue-list',
+            name: 'ClosedIssueList',
             hidden: true,
             component: 'views/Project/ReleaseVersion/ClosedIssueList',
             meta: {
@@ -208,20 +210,9 @@ const pmRoute = [
       },
       {
         path: 'deploy',
-        redirect: { name: 'deploy' },
-        component: 'layout/components/parentBlank',
-        meta: { title: 'deploy', roles: ['Project Manager'] },
-        children: [
-          {
-            path: '',
-            name: 'deploy',
-            component: 'views/Project/Deploy',
-            meta: {
-              title: 'deploy',
-              roles: ['Project Manager']
-            }
-          }
-        ]
+        name: 'Deploy',
+        component: 'views/Project/Deploy',
+        meta: { title: 'Deploy', roles: ['Project Manager'] }
       }
     ]
   },
@@ -229,8 +220,8 @@ const pmRoute = [
   {
     path: '/progress/:projectName?/',
     component: 'layout',
-    name: 'progress',
-    redirect: { name: 'dev-environment' },
+    name: 'Progress',
+    redirect: { name: 'DevEnvironment' },
     meta: {
       title: 'devProgress',
       icon: 'el-icon-odometer',
@@ -238,14 +229,14 @@ const pmRoute = [
     },
     children: [
       {
-        path: 'dev-branch',
-        name: 'dev-branch',
+        path: 'devBranch',
+        name: 'DevBranch',
         component: 'views/Progress/DevBranch',
         meta: { title: 'devBranch', roles: ['Project Manager'] }
       },
       // {
-      //   path: 'git-graph',
-      //   name: 'git-graph',
+      //   path: 'GitGraph',
+      //   name: 'GitGraph',
       //   component: 'views/Progress/GitGraph',
       //   meta: { title: 'gitGraph', roles: ['Project Manager'] }
       // },
@@ -262,7 +253,7 @@ const pmRoute = [
             meta: { roles: ['Project Manager'] }
           },
           {
-            path: 'test-report/:commitId',
+            path: 'testReport/:commitId',
             name: 'TestReport',
             hidden: true,
             component: 'views/Progress/Pipelines/components/TestReport',
@@ -271,107 +262,19 @@ const pmRoute = [
         ]
       },
       {
-        path: 'dev-environment',
-        name: 'dev-environment',
+        path: 'devEnvironment',
+        name: 'DevEnvironment',
         component: 'views/Progress/DevEnvironment',
         meta: { title: 'devEnvironment', roles: ['Project Manager'] }
-      },
-      {
-        path: 'kubernetes-resources',
-        component: 'layout/components/parentBlank',
-        meta: {
-          title: 'kubernetesResources',
-          roles: ['Project Manager']
-        },
-        children: [
-          {
-            path: '',
-            name: 'Kubernetes-resources',
-            component: 'views/Progress/KubernetesResources',
-            hidden: true
-          },
-          {
-            path: 'pods-list',
-            hidden: true,
-            component: 'layout/components/parentBlank',
-            meta: { title: 'Pods List', roles: ['Project Manager'] },
-            children: [
-              {
-                path: '',
-                name: 'Pods List',
-                hidden: true,
-                component: 'views/Progress/KubernetesResources/components/PodsList'
-              },
-              {
-                path: 'pod-execute-shell',
-                name: 'Pod Execute Shell',
-                hidden: true,
-                component: () =>
-                  import('@/views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell'),
-                meta: { title: 'Pod Execute Shell', roles: ['Project Manager'] }
-              }
-            ]
-          },
-          {
-            path: 'service-list',
-            name: 'Service List',
-            hidden: true,
-            component: 'views/Progress/KubernetesResources/components/ServiceList',
-            meta: {
-              title: 'Service List',
-              roles: ['Project Manager']
-            }
-          },
-          {
-            path: 'secret-list',
-            name: 'Secret List',
-            hidden: true,
-            component: 'views/Progress/KubernetesResources/components/SecretList',
-            meta: {
-              title: 'Secret List',
-              roles: ['Project Manager']
-            }
-          },
-          {
-            path: 'configmaps-list',
-            name: 'ConfigMaps List',
-            hidden: true,
-            component: 'views/Progress/KubernetesResources/components/ConfigMapsList',
-            meta: {
-              title: 'ConfigMaps List',
-              roles: ['Project Manager']
-            }
-          },
-          {
-            path: 'deployment-list',
-            name: 'Deployment List',
-            hidden: true,
-            component: 'views/Progress/KubernetesResources/components/DeploymentList',
-            meta: {
-              title: 'Deployment List',
-              roles: ['Project Manager']
-            }
-          },
-          {
-            path: 'ingresses-list',
-            name: 'Ingresses List',
-            hidden: true,
-            component: 'views/Progress/KubernetesResources/components/IngressesList',
-            meta: {
-              title: 'Ingresses List',
-              roles: ['Project Manager']
-            }
-          }
-        ]
       }
     ]
   },
   // 測試管理
   {
     path: '/test/:projectName?/',
-    name: 'test',
+    // name: 'Test',
     component: 'layout',
-    redirect: { name: 'test-plan' },
+    redirect: { name: 'TestPlan' },
     meta: {
       title: 'testManagement',
       icon: 'el-icon-finished',
@@ -379,8 +282,8 @@ const pmRoute = [
     },
     children: [
       {
-        path: 'test-file',
-        name: 'test-file',
+        path: 'testFile',
+        name: 'TestFile',
         component: 'views/Test/TestFile',
         meta: {
           title: 'testFile',
@@ -388,8 +291,8 @@ const pmRoute = [
         }
       },
       {
-        path: 'test-plan',
-        redirect: '/test/test-plan',
+        path: 'testPlan',
+        redirect: '/test/testPlan',
         component: 'layout/components/parentBlank',
         meta: {
           roles: ['Project Manager']
@@ -397,7 +300,7 @@ const pmRoute = [
         children: [
           {
             path: '',
-            name: 'test-plan',
+            name: 'TestPlan',
             component: 'views/Test/TestPlan',
             meta: {
               title: 'testPlan',
@@ -406,7 +309,7 @@ const pmRoute = [
           },
           {
             path: 'create',
-            name: 'create-test-plan',
+            name: 'CreateTestPlan',
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
@@ -417,7 +320,7 @@ const pmRoute = [
           },
           {
             path: ':issueId',
-            name: 'test-plan-detail',
+            name: 'TestPlanDetail',
             hidden: true,
             component: 'views/Project/IssueDetail',
             meta: {
@@ -434,55 +337,55 @@ const pmRoute = [
   {
     path: '/scan/:projectName?/',
     component: 'layout',
-    name: 'scan',
+    name: 'Scan',
     alwaysShow: true,
     meta: {
       title: 'autoTesting',
       icon: 'el-icon-circle-check',
       roles: ['Project Manager']
     },
-    redirect: { name: 'postman' },
+    redirect: { name: 'Postman' },
     children: [
       {
         path: 'sonarqube',
-        name: 'sonarqube',
+        name: 'Sonarqube',
         component: 'views/Scan/SonarQube',
         meta: { title: 'sonarQube', roles: ['Project Manager'] }
       },
       {
-        name: 'checkmarx',
+        name: 'Checkmarx',
         path: 'checkmarx',
         component: 'views/Scan/Checkmarx',
         meta: { title: 'checkMarx', roles: ['Project Manager'] }
       },
       {
         path: 'zap',
-        name: 'zap',
+        name: 'Zap',
         component: 'views/Scan/Zap',
         meta: { title: 'zap', roles: ['Project Manager'] }
       },
       {
         path: 'cmas',
-        name: 'cmas',
+        name: 'Cmas',
         component: 'views/Scan/Cmas',
         meta: { title: 'cmas', roles: ['Project Manager'] }
       },
       {
         path: 'webinspect',
-        name: 'webinspect',
+        name: 'Webinspect',
         component: 'layout/components/parentBlank',
-        redirect: { name: 'webinspect' },
+        redirect: { name: 'Webinspect' },
         meta: { title: 'webInspect', roles: ['Project Manager'] },
         children: [
           {
             path: '',
-            name: 'webinspect-scans',
+            name: 'WebinspectScans',
             hidden: true,
             component: 'views/Scan/WebInspect'
           },
           {
             path: 'report/:scan_id',
-            name: 'webinspect-report',
+            name: 'WebinspectReport',
             component: 'views/Scan/WIEReportViewer',
             hidden: true,
             meta: { title: 'webInspectReport', roles: ['Project Manager'] }
@@ -491,9 +394,9 @@ const pmRoute = [
       },
       {
         path: 'postman',
-        name: 'postman',
+        name: 'Postman',
         component: 'layout/components/parentBlank',
-        redirect: { name: 'postman-test' },
+        redirect: { name: 'PostmanTest' },
         meta: {
           title: 'postman',
           roles: ['Project Manager']
@@ -501,13 +404,13 @@ const pmRoute = [
         children: [
           {
             path: '',
-            name: 'postman-test',
+            name: 'PostmanTest',
             hidden: true,
             component: 'views/Scan/Postman'
           },
           {
             path: 'devops/:id',
-            name: 'devops-test-case',
+            name: '',
             hidden: true,
             component: 'views/Scan/TestCaseDevOps',
             meta: {
@@ -517,7 +420,7 @@ const pmRoute = [
           },
           {
             path: 'postman/:id',
-            name: 'postman-test-case',
+            name: 'PostmanTestCase',
             hidden: true,
             component: 'views/Scan/TestCasePostman',
             meta: {
@@ -529,7 +432,7 @@ const pmRoute = [
       },
       {
         path: 'sideex',
-        name: 'sideex',
+        name: 'Sideex',
         component: 'views/Scan/Sideex',
         meta: { title: 'sideex', roles: ['Project Manager'] }
       }
@@ -537,18 +440,18 @@ const pmRoute = [
   },
   // 系統資源
   {
-    path: '/system-resource',
+    path: '/systemResource',
     component: 'layout',
-    name: 'System Resource',
-    redirect: { name: 'Plugin Resource' },
+    name: 'SystemResource',
+    redirect: { name: 'PluginResource' },
     meta: {
-      title: 'System Resource',
+      title: 'SystemResource',
       icon: 'el-icon-pie-chart',
       roles: ['Project Manager']
     },
     children: [
       {
-        path: ':projectName?/plugin-resource',
+        path: ':projectName?/pluginResource',
         component: 'layout/components/parentBlank',
         meta: {
           title: 'Plugin Resource',
@@ -557,7 +460,7 @@ const pmRoute = [
         children: [
           {
             path: '',
-            name: 'Plugin Resource',
+            name: 'PluginResource',
             hidden: true,
             component: 'views/SystemResource/PluginResource'
           },
@@ -587,12 +490,85 @@ const pmRoute = [
                 }
               }
             ]
+          },
+          {
+            path: 'podsLists',
+            hidden: true,
+            component: 'layout/components/parentBlank',
+            name: 'PodsLists',
+            redirect: { name: 'PodsList' },
+            meta: { title: 'PodsLists', roles: ['Project Manager'] },
+            children: [
+              {
+                path: '',
+                name: 'PodsList',
+                hidden: true,
+                component: 'views/SystemResource/PluginResource/components/PodsList'
+              },
+              {
+                path: 'podExecuteShell',
+                name: 'PodExecuteShell',
+                hidden: true,
+                component: 'views/SystemResource/PluginResource/components/PodsList/components/PodExecuteShell',
+                meta: { title: 'Pod Execute Shell', roles: ['Project Manager'] }
+              }
+            ]
+          },
+          {
+            path: 'serviceList',
+            name: 'ServiceList',
+            hidden: true,
+            component: 'views/SystemResource/PluginResource/components/ServiceList',
+            meta: {
+              title: 'ServiceList',
+              roles: ['Project Manager']
+            }
+          },
+          {
+            path: 'secretList',
+            name: 'SecretList',
+            hidden: true,
+            component: 'views/SystemResource/PluginResource/components/SecretList',
+            meta: {
+              title: 'SecretList',
+              roles: ['Project Manager']
+            }
+          },
+          {
+            path: 'configmapsList',
+            name: 'ConfigMapsList',
+            hidden: true,
+            component: 'views/SystemResource/PluginResource/components/ConfigMapsList',
+            meta: {
+              title: 'ConfigMapsList',
+              roles: ['Project Manager']
+            }
+          },
+          {
+            path: 'deploymentList',
+            name: 'DeploymentList',
+            hidden: true,
+            component: 'views/SystemResource/PluginResource/components/DeploymentList',
+            meta: {
+              title: 'DeploymentList',
+              roles: ['Project Manager']
+            }
+          },
+          {
+            path: 'ingressesList',
+            name: 'IngressesList',
+            hidden: true,
+            component: 'views/SystemResource/PluginResource/components/IngressesList',
+            meta: {
+              title: 'IngressesList',
+              roles: ['Project Manager']
+            }
           }
         ]
       },
       {
-        path: 'service-monitoring',
-        name: 'Service Monitoring',
+        path: 'serviceMonitoring',
+        name: 'ServiceMonitoring',
         component: 'views/SystemResource/ServiceMonitoring',
         meta: {
           title: 'Service Monitoring',
@@ -603,7 +579,7 @@ const pmRoute = [
   },
   // 操作記錄
   {
-    path: '/project-activities/:projectName?',
+    path: '/projectActivities/:projectName?',
     component: 'layout',
     redirect: { name: 'ProjectActivities' },
     meta: {

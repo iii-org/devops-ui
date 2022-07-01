@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
-    <div 
+    <div
       :class="userId === 1 ? 'flex justify-between' : ''"
       :style="userId === 1 ? '' : 'text-align: right'"
     >
-      <el-button 
+      <el-button
         v-if="userId === 1"
         class="buttonPrimary"
         @click="messageConsole"
@@ -79,7 +79,7 @@
       :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
-    <el-row 
+    <el-row
       type="flex"
       class="ps"
       justify="end"
@@ -95,7 +95,7 @@ import { mapGetters } from 'vuex'
 import SearchFilter from './components/SearchFilter.vue'
 import { getMessageList, setReadMessage } from '@/api_v2/monitoring'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { BasicData, Pagination } from '@/newMixins'
+import { Pagination } from '@/newMixins'
 import MessageDialog from '@/components/Notification/components/MessageDialog.vue'
 
 const params = () => ({
@@ -106,7 +106,7 @@ const params = () => ({
 export default {
   name: 'Inbox',
   components: { SearchFilter, ElTableColumnTime, MessageDialog },
-  mixins: [BasicData, Pagination],
+  mixins: [Pagination],
   data() {
     return {
       keyword: '',
@@ -149,7 +149,7 @@ export default {
         label: this.$t('Inbox.SystemWarning'),
         color: '#e6d53c'
       }]
-    } 
+    }
   },
   watch: {
     keyword: {
@@ -162,8 +162,12 @@ export default {
   beforeDestroy() {
     window.clearTimeout(this.timeoutId)
   },
+  mounted() {
+    this.loadData()
+  },
   methods: {
-    async fetchData() {
+    async loadData() {
+      this.listLoading = true
       const res = await getMessageList(this.params)
       this.messageList = res.data.notification_message_list
       const start_id = res.data.page.limit * (res.data.page.current - 1) + 1
@@ -171,6 +175,7 @@ export default {
         item.row_id = start_id + i
       })
       this.listQuery = Object.assign({}, res.data.page)
+      this.listLoading = false
     },
     async onSearch(keyword) {
       this.params.search = keyword
@@ -196,10 +201,15 @@ export default {
       this.params = params()
     },
     messageType(level) {
-      return this.options.find(x => x.id === level.id).label
+      const alert = this.options.find(x => x.id === level.id)
+      return alert ? alert.label : this.$t('Inbox.' + level.name)
     },
     tagColor(level) {
-      return this.options.find(x => x.id === level.id).color
+      const alert = this.options.find(x => x.id === level.id)
+      if (alert) return alert.color
+      else if (level.id >= 200 && level.id < 300) return '#67c23a'
+      else if (level.id >= 300 && level.id < 400) return '#f56c6c'
+      else return ''
     },
     tableRowStyle({ row }) {
       if (row.read === false) {
@@ -222,8 +232,6 @@ export default {
         } catch (err) {
           console.error(err)
         }
-        // const findChangeIndex = this.messageList.findIndex(msg => parseInt(msg_id) === parseInt(msg.id))
-        // this.setReadMessage(findChangeIndex)
       }
     },
     setReadMessage(idx) {
@@ -231,7 +239,7 @@ export default {
       this.$set(this.messageList, idx, this.message)
     },
     messageConsole() {
-      this.$router.push({ name: 'message-console' })
+      this.$router.push({ name: 'MessageConsole' })
     }
   }
 }
@@ -240,7 +248,7 @@ export default {
 <style lang="scss">
 .ps {
   /* color: #e66262;  */
-  margin-top: 12px 
+  margin-top: 12px
 }
 .readRow {
   font-weight: bold !important;

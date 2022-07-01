@@ -68,25 +68,50 @@
       </el-table-column>
       <el-table-column :label="$t('general.Status')">
         <template slot-scope="scope">
-          <el-tag
-            v-if="scope.row.status"
-            class="el-tag--circle"
-            :type="handleType(scope.row.status)"
-            :effect="getTagEffect(scope.row.status)"
-          >
-            <span>{{ $t(`CheckMarx.${scope.row.status}`) }}</span>
-          </el-tag>
           <el-tooltip
-            v-if="isInQueued(scope.row) && scope.row.queue"
-            class="item"
+            v-if="scope.row.error"
             effect="dark"
-            :content="$t('CheckMarx.QueueTooltip')"
+            :content="scope.row.error.message"
             placement="bottom"
           >
-            <el-link class="text-xs">
-              {{ $t('CheckMarx.QueueSequence') }}: {{ scope.row.queue }}
-            </el-link>
+            <div class="flex flex-col">
+              <el-link
+                type="primary"
+                class="text-xs"
+                :underline="false"
+              >{{ scope.row.error.code }}</el-link>
+              <div class="mt-1">
+                <el-tag
+                  class="el-tag--circle"
+                  type="danger"
+                  effect="dark"
+                >
+                  <span>{{ $t('general.Error') }}</span>
+                </el-tag>
+              </div>
+            </div>
           </el-tooltip>
+          <template v-else>
+            <el-tag
+              v-if="scope.row.status"
+              class="el-tag--circle"
+              :type="handleType(scope.row.status)"
+              :effect="getTagEffect(scope.row.status)"
+            >
+              <span>{{ $t(`CheckMarx.${scope.row.status}`) }}</span>
+            </el-tag>
+            <el-tooltip
+              v-if="isInQueued(scope.row) && scope.row.queue"
+              class="item"
+              effect="dark"
+              :content="$t('CheckMarx.QueueTooltip')"
+              placement="bottom"
+            >
+              <el-link class="text-xs">
+                {{ $t('CheckMarx.QueueSequence') }}: {{ scope.row.queue }}
+              </el-link>
+            </el-tooltip>
+          </template>
         </template>
       </el-table-column>
       <el-table-column
@@ -146,7 +171,8 @@
         </template>
       </el-table-column>
       <template slot="empty">
-        <el-empty :description="$t('general.NoData')" />
+        <Error v-if="Object.keys(error).length > 0" :error="error" />
+        <el-empty v-else :description="$t('general.NoData')" />
       </template>
     </el-table>
     <pagination
@@ -178,17 +204,22 @@ import {
 import { getCheckMarxPod } from '@/api_v2/checkMarx'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { ElTableColumnTime } from '@/components'
-import * as elementTagType from '@/utils/element-tag-type'
-import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
+import * as elementTagType from '@/utils/elementTagType'
 
 export default {
   name: 'ScanCheckmarx',
-  components: { ElTableColumnTime, PodLog },
+  components: {
+    ElTableColumnTime,
+    PodLog,
+    Error: () => import('@/views/Error')
+  },
   mixins: [MixinElTableWithAProject],
   data() {
     return {
       searchKeys: ['scan_id'],
-      pod: {}
+      pod: {},
+      error: {}
     }
   },
   watch: {
@@ -196,11 +227,18 @@ export default {
       this.updateCheckMarxScansStatus(this.listData)
     }
   },
+  async mounted() {
+    this.pod = (await getCheckMarxPod(this.selectedProjectId)).data
+  },
   methods: {
     async fetchData() {
       if (this.selectedProjectId === -1) return []
-      const res = await getCheckMarxScans(this.selectedProjectId)
-      this.pod = (await getCheckMarxPod(this.selectedProjectId)).data
+      let res = []
+      try {
+        res = await getCheckMarxScans(this.selectedProjectId)
+      } catch (error) {
+        this.error = error
+      }
       return res.data
     },
     async updateCheckMarxScansStatus(listData) {
@@ -228,9 +266,13 @@ export default {
             this.registerReport(scanId)
           }
         })
-        .then(() => {
-          this.listLoading = false
+        .catch(async (error) => {
+          const idx = this.listData.findIndex((item) => item.scan_id === scanId)
+          if (error.response.status >= 300) {
+            this.$set(this.listData[idx], 'error', error.response.data.error)
+          }
         })
+      this.listLoading = false
     },
     fetchScanStats(scanId) {
       getCheckMarxScanStats(scanId).then((res) => {

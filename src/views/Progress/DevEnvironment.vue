@@ -254,10 +254,9 @@
 </template>
 
 <script>
-import { deleteEnvironmentByBranchName, getEnvironmentList, redeployEnvironmentByBranchName } from '@/api/kubernetes'
+import { deleteEnvironmentByBranchName, getEnvironmentList, redeployEnvironmentByBranchName, deletePod } from '@/api/kubernetes'
 import { BasicData, SearchBar, ProjectSelector } from '@/newMixins'
-import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
-import { deletePod } from '@/api/kubernetes'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {
   name: 'ProgressDevEnvironment',
@@ -282,8 +281,8 @@ export default {
       const result = this.formatEnvironments(res.data)
       this.lastUpdateTime = this.$dayjs().utc(res.datetime).format('YYYY-MM-DD HH:mm:ss')
       result.forEach((item, idx) => {
-        const result = { ...item }
-        this.$set(this.listData, idx, result)
+        const items = { ...item }
+        this.$set(this.listData, idx, items)
       })
       return result
     },
@@ -351,8 +350,8 @@ export default {
           pods: this.formatPods(pods)
         }
       })
-      result.forEach((item) => {
-        item.pods = item.pods.reduce((groups, item) => {
+      result.forEach((items) => {
+        items.pods = items.pods.reduce((groups, item) => {
           const val = item['type']
           groups[val] = groups[val] || []
           groups[val].push(item)
@@ -378,8 +377,8 @@ export default {
           state: status.state,
           name: name,
           start_time: status.time,
-          services: service_port_mapping.map((service) => ({
-            services: service.services.map((service) => ({
+          services: service_port_mapping.map((servicePort) => ({
+            services: servicePort.services.map((service) => ({
               type: service.service_type,
               label: `${service.service_type} (post:${service.target_port})`,
               url: service.url[0]
@@ -396,7 +395,7 @@ export default {
       })
     },
     handleCommandClick(podName, containerName) {
-      this.$router.push({ name: 'Pod Execute Shell', query: { podName, containerName }})
+      this.$router.push({ name: 'PodExecuteShell', query: { podName, containerName }})
     },
     handleLogClick(podName, containerName) {
       this.focusPodName = podName
@@ -415,7 +414,6 @@ export default {
           deletePod(pId, podName)
           this.loadData()
         })
-        .catch(() => {})
       this.listLoading = false
     }
   }

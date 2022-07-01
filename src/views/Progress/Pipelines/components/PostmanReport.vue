@@ -57,7 +57,7 @@ export default {
     openPostman() {
       const { id } = this.postman[0]
       const routeUrl = this.$router.resolve({
-        name: 'postman-test-case', params: { id }
+        name: 'PostmanTestCase', params: { id }
       })
       window.open(routeUrl.href, '_blank')
     }

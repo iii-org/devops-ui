@@ -8,103 +8,82 @@ const asyncLangs = langFiles.keys().reduce((plugins, langPath) => {
 
 export default {
   route: {
-    myWork: 'My Work',
-    inbox: 'Inbox',
-    dashboard: 'Dashboard',
-    projectOverview: 'Project Overview',
-    projectList: 'Project List',
-
-    milestone: 'Milestone',
-    issueTracking: 'Issue Tracking',
-
-    testManagement: 'Test Management',
-    testFile: 'Test File',
-    testPlan: 'Test Plan',
-
-    'project-management': 'Project Management',
-    singleProject: 'Single Project',
-    works: 'Works',
-    kanban: 'Issue Board',
-    issueList: 'Issue List',
-    overview: 'Overview',
-    wikiList: 'Wiki',
-    fileList: 'File List',
-
-    'Activity Log': 'Activity Log',
-    'Project Roadmap': 'Project Roadmap',
-    advanceBranchSettings: 'Advance Branch Settings',
-    'Project Settings': 'Project Settings',
-    'Issue Transfer': 'Issue Transfer',
-
-    devProgress: 'Develop Progress',
-    devBranch: 'Git Branches',
-    gitGraph: 'Git Graph',
-    pipelines: 'Pipelines',
-    devEnvironment: 'Deployed Environments',
-    kubernetesResources: 'Kubernetes Resources',
-    releaseVersion: 'Release Version',
-
-    autoTesting: 'Auto Testing',
-    postman: 'Postman',
-    fromDevops: 'From DevOps',
-    fromCollection: 'From Postman Collection',
-    checkMarx: 'CheckMarx',
-    sonarQube: 'SonarQube',
-    webInspect: 'WebInspect',
-    webInspectReport: '@:general.Report',
-    zap: 'OWASP ZAP',
-    sideex: 'Sideex',
-    cmas: 'CMAS',
-    dockerImage: 'Image Scan​',
-
-    'System Resource': 'System Resource',
-    Kubernetes: 'Kubernetes',
-    'Deployment List': 'Deployment List',
-    'Pods List': 'Pods List',
-    'Service List': 'Service List',
-    'Secret List': 'Secret List',
-    'ConfigMaps List': 'ConfigMaps List',
-
-    'Plugin Resource': 'Plugin Resource',
-    'Service Monitoring': 'Service Monitoring',
+    MyWork: 'My Work',
+    Inbox: 'Inbox',
+    MessageConsole: 'Message Console',
+    Whiteboard: 'Whiteboard',
+    Dashboard: 'Dashboard',
+    ProjectOverview: 'Project Overview',
+    ProjectList: 'Project List',
+    Milestone: 'Milestone',
+    TestManagement: 'Test Management',
+    TestFile: 'Test File',
+    TestPlan: 'Test Plan',
+    ProjectManagement: 'Project Management',
+    SingleProject: 'Single Project',
+    Works: 'Works',
+    Kanban: 'Issue Board',
+    IssueList: 'Issue List',
+    Overview: 'Overview',
+    WikiList: 'Wiki',
+    FileList: 'File List',
+    ProjectRoadmap: 'Project Roadmap',
+    AdvanceBranchSettings: 'Advance Branch Settings',
+    ProjectSettings: 'Project Settings',
+    ProjectSetting: 'Project Setting',
+    IssueTransfer: 'Issue Transfer',
+    DevProgress: 'Develop Progress',
+    DevBranch: 'Git Branches',
+    GitGraph: 'Git Graph',
+    Pipelines: 'Pipelines',
+    DevEnvironment: 'Deployed Environments',
+    KubernetesResources: 'Kubernetes Resources',
+    ReleaseVersions: 'Release Version',
+    ReleaseVersion: 'Release Version',
+    AutoTesting: 'Auto Testing',
+    Postman: 'Postman',
+    FromDevops: 'From DevOps',
+    FromCollection: 'From Postman Collection',
+    CheckMarx: 'CheckMarx',
+    SonarQube: 'SonarQube',
+    WebInspect: 'WebInspect',
+    WebInspectReport: '@:general.Report',
+    Zap: 'OWASP ZAP',
+    Sideex: 'Sideex',
+    Cmas: 'CMAS',
+    DockerImage: 'Image Scan​',
+    SystemResource: 'System Resource',
+    DeploymentList: 'Deployment List',
+    PodsLists: 'Pods List',
+    ServiceList: 'Service List',
+    SecretList: 'Secret List',
+    ConfigMapsList: 'ConfigMaps List',
+    PluginResource: 'Plugin Resource',
+    ServiceMonitoring: 'Service Monitoring',
     Harbor: 'Harbor',
-
-    Activities: 'Activities',
-    'Project Activities': 'Project Activities',
-    'Template Manage': 'Template Manage',
-
-    Settings: 'Settings',
-    'Participate Project': 'Participate In The Project',
-    Members: 'Members',
-    Versions: 'Versions',
-
-    Issues: 'Issues',
-    'Issue Detail': 'Issue Detail',
-
+    ProjectActivities: 'Project Activities',
+    ProjectActivity: 'Project Activities',
+    ParticipateProject: 'Participate In The Project',
+    IssueDetail: 'Issue Detail',
     Admin: 'System Settings',
-    'Account Manage': 'Account Manage',
-    'System Activities': 'System Activities',
-    'System Plugin Manage': 'System Plugin Manage',
-    'System Deploy Settings': 'System Deploy Settings',
-    'Project Settings (QA)': 'Project Settings (QA)',
-    'Dev Branch Test Result': 'Dev Branch Test Result',
-
-    Artifacts: 'Project Artifacts',
-
-    'System Arguments': 'System Arguments',
-    'System Version': 'System @:navbar.versions',
-
-    track: 'Traceability Manage',
-    traceabilityMatrix: 'Traceability Matrix',
-    changeManagement: 'Change Management',
-    'Fail Management': 'Fail Management',
-    'test-report': 'Test Report',
-    'test-case': 'Test Case',
-    'test-result': 'Test Result',
-    testReport: 'III DevOps Test Report',
-    monitoring: 'III DevOps Service Monitoring',
-    deploy: 'Deploy',
-    dockerReport: 'Docker Test Report'
+    AccountManage: 'Account Manage',
+    SystemActivities: 'System Activities',
+    SystemPluginManage: 'System Plugin Manage',
+    SystemDeploySettings: 'System Deploy Settings',
+    ProjectSettingsQA: 'Project Settings (QA)',
+    SystemArguments: 'System Arguments',
+    SystemVersion: 'System @:navbar.versions',
+    TraceabilityMatrix: 'Traceability Matrix',
+    ChangeManagement: 'Change Management',
+    FailManagement: 'Fail Management',
+    TestCase: 'Test Case',
+    TestResult: 'Test Result',
+    TestReport: 'III DevOps Test Report',
+    Monitoring: 'III DevOps Service Monitoring',
+    Deploy: 'Deploy',
+    DockerReport: 'Docker Test Report',
+    Activities: 'Activities',
+    TemplateManage: 'Template Manage'
   },
   navbar: {
     logOut: 'Log Out',
@@ -149,8 +128,12 @@ export default {
     7005: 'Maximum number of {object} in a project is {num}.',
     7006: 'Argument {arg} can not be alerted when children issue exist.',
     7007: `$arg should begin with 'ghp_'.`,
+    7009: 'According to google policy, account needs to apply apppassord to operate SMTP server.',
+    7010: 'SMTP System responses error, please make sure your system, port, account and password are correct.',
     8001: '{service_name} error: {response}',
     8101: 'Parent issue setting error! Please confirm that the setting issue is not a sub-issue or related issue of this issue.',
+    8901: 'Plugin Software is disabled',
+    8902: 'Plugin Server is not alive',
     9001: 'Internal exception: {type}: {exception}',
     9002: 'An invalid code path happens: {message}',
     9003: 'An unexpected database error has occurred: {message}',
@@ -269,7 +252,8 @@ export default {
     NoTestResult: 'No Test Result',
     Parent: 'P',
     Child: 'C',
-    CopyUrl: 'Copy URL'
+    CopyUrl: 'Copy URL',
+    TemporarySave: 'Temporary Save'
   },
   Notify: {
     Updated: 'update successful',
@@ -280,6 +264,7 @@ export default {
     Copied: 'Copied',
     Canceled: 'Cancel successful',
     Submit: 'Submit',
+    TemporarySaved: 'Temporary Saved successful',
     Saved: 'Saved successful',
     NoEmpty: 'Content must not be empty',
     Same: 'The new value is same with old value.',
@@ -307,7 +292,9 @@ export default {
     ConnectSocket: 'Kanban is connecting Socket...',
     UpdateKanban: '{issueName} is updated',
     NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.',
-    ChangeProject: `Switching a project will empty the version, label, and distributor's information, confirm the transfer?`
+    ChangeProject: `Switching a project will empty the version, label, and distributor's information, confirm the transfer?`,
+    RedminemailWarning: '[Warning] Redmine will restart, the service is about to be suspended, please log in after 3-5 minutes.',
+    RedmineMailActiveWarning: 'Mail notificaiton setting can not be opened, when mail server is disable.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -351,7 +338,7 @@ export default {
     notCompletedScan: 'The scan is not completed yet. It may take several hours to complete.',
     generatingReportScan: 'Scan done, the system is generating a report. It may take several minutes to complete.',
     canceledScan: 'The scan is canceled.',
-    failedScan: 'The scan failed.',
+    failedScan: 'The scan is canceled or failed.',
     removedScan: 'The scan removed.',
     registryReport: 'The report no longer exists, regenerate report?',
     registryReportTip: 'It might takes 3-5 minutes to regenerate report, please refresh page later.',
@@ -639,7 +626,7 @@ export default {
       TestSoftware: 'Test Software',
       TestName: 'Test Name',
       PostmanUpload: 'Postman Filename Rule: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex Filename Rule: {file_name}.sideex.json'
+      SideeXUpload: 'Sideex Filename Rule: {file_name}.json'
     }
   },
   Wiki: {
@@ -794,6 +781,8 @@ export default {
   Profile: {
     Basic: 'Basic',
     ProfileBasicSetting: 'Profile Basic Setting',
+    Notice: 'Notification Setting',
+    MessageReceptionSetting: 'Message Reception Setting',
     Department: '@:general.Department',
     Title: '@:general.UserTitle',
     Phone: 'Phone',
@@ -804,7 +793,9 @@ export default {
     PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number.',
     Save: 'Save',
     Password: 'Password',
-    K8SConfigDownload: 'Download K8S Config'
+    K8SConfigDownload: 'Download K8S Config',
+    PlatformNotice: 'Platform Notice',
+    MailNotice: 'Email Notice'
   },
   Project: {
     Project: ' Project',
@@ -964,7 +955,7 @@ export default {
   System: {
     Secrets: 'Secrets',
     Registry: 'Registry',
-    RedmineMail: 'Redmine Mail',
+    RedmineMail: 'Mail Setting',
     SystemTemplates: 'Templates',
     SystemConfigs: 'System Configs',
     AddPlugin: 'Add Plugin',
@@ -1317,6 +1308,8 @@ export default {
     NewVersion: 'New Version',
     SystemAlert: 'System Alert',
     SystemWarning: 'System Warning',
+    'Merge Request': 'Merge Request',
+    'GitHub Token Invalid': 'GitHub Token Invalid',
     GroupReceiver: {
       Project: 'Project',
       User: 'User',
@@ -1346,6 +1339,12 @@ export default {
     NotifyClosed: 'Message closed successfully',
     SearchLabel: 'Search Title or Sender'
   },
+  Excalidraw: {
+    Whiteboard: 'Whiteboard',
+    Name: 'Whiteboard Name',
+    CreateBoard: 'Create Whiteboard',
+    EditBoard: 'Edit Whiteboard'
+  },
   IssueMatrix: {
     Relations: 'Relationship',
     SearchAllRelations: 'Show All',
@@ -1363,7 +1362,7 @@ export default {
     Tracker: '@:Issue.FilterDimensions.tracker',
     Assignee: '@:Issue.Assignee',
     Version: 'Version',
-    DisplayItemWarning: `Display items shouldn't be empty`,
+    DisplayItemWarning: `Display items should include at least the Name or ID`,
     CancelTrackerWarning: 'When turning on the Group and selecting the Status, the Display Items must have the Type',
     CancelStatusWarning: 'When turning on the Group and selecting the Type, the Display Items must have the Status'
   },
@@ -1390,6 +1389,9 @@ export default {
     Scanning: 'Scanning',
     Queued: 'Queued',
     'Not Scanned': 'NotRunning'
+  },
+  RedmineMail: {
+    Warning: '[Note] Email service is enabled or decentralized, which restarts the trigger RedMine.The restart time will affect the 3-5 minutes of the platform cannot be used, please set it with caution.'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

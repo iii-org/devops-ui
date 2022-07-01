@@ -390,10 +390,10 @@ export default {
       this.handleSinglePageChecked()
     },
     onBackClick() {
-      this.$router.push({ name: 'Project Settings', params: { projectName: this.selectedProject.name }})
+      this.$router.push({ name: 'ProjectSettings', params: { projectName: this.selectedProject.name }})
     },
     onTransferClick(issueId) {
-      this.$router.push({ name: 'issue-detail', params: { issueId }})
+      this.$router.push({ name: 'IssueDetail', params: { issueId }})
     },
     onCloseClick(issueId) {
       const sendData = new FormData()
@@ -524,7 +524,7 @@ export default {
       const { id, familyData } = issue
       const isLoaded = Object.keys(familyData).length > 0
       if (isLoaded) return
-      const idx = this.listData.findIndex((issue) => issue.id === id)
+      const idx = this.listData.findIndex((item) => item.id === id)
       this.listData[idx].isLoadingFamily = true
       getIssueFamily(id)
         .then((res) => {

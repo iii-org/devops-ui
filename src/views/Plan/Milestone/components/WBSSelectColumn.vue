@@ -128,8 +128,8 @@ export default {
   },
   computed: {
     editDynamicOptions() {
-      return (this.propKey === 'status') ? this.dynamicStatusList 
-        : (this.propKey === 'tracker' && this.isParentExist === false) ? this.strictOptions 
+      return (this.propKey === 'status') ? this.dynamicStatusList
+        : (this.propKey === 'tracker' && this.isParentExist === false) ? this.strictOptions
           : this.options
     },
     createDynamicOptions() {

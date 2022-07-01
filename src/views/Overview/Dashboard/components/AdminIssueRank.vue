@@ -29,14 +29,11 @@
         @update-detail="updateUnclosedIssuesDetail"
       />
     </el-dialog>
-    <!--    <el-dialog :visible.sync="involvedProjectsDialog" :title="issueRankDetail['user_name'] +' - 參與專案'" @close="closeHandler">-->
-    <!--      <admin-issue-rank-involved-projects :detail="issueRankDetail" />-->
-    <!--    </el-dialog>-->
   </el-col>
 </template>
 
 <script>
-import { getInvolvedProjects, getUnclosedIssues } from '@/api/dashboard'
+import { getUnclosedIssues } from '@/api/dashboard'
 import { BasicData } from '@/newMixins'
 import AdminIssueRankUnclosedIssues from './widget/AdminIssueRankUnclosedIssues'
 
@@ -85,7 +82,7 @@ export default {
     },
     async getUnclosedIssuesData(id) {
       const res = await getUnclosedIssues(id)
-      return await Promise.resolve(res.data)
+      return Promise.resolve(res.data)
     }
 
     // onClickChart(row) {

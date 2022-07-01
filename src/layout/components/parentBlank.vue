@@ -7,7 +7,3 @@ export default {
   name: 'ParentBlank'
 }
 </script>
-
-<style scoped>
-
-</style>

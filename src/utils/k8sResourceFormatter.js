@@ -23,9 +23,9 @@
 //   }
 // }
 
-export const roundValue = value => Math.round(value * 100) / 100
+const roundValue = value => Math.round(value * 100) / 100
 
-export const getQuotaUnit = (title, quotaItem) => {
+const getQuotaUnit = (title, quotaItem) => {
   if (title === 'CPU') return getCpuQuotaUnit(quotaItem)
   if (title === 'Memory') return getMemoryQuotaUnit(quotaItem)
   else return ''
@@ -45,7 +45,7 @@ const getCpuUsedUnit = usedItem => {
 } // 'cpu','m'
 const getMemoryUsedUnit = usedItem => usedItem.slice(usedItem.length - 2, usedItem.length - 1) // 'Ki','Mi','Gi','Ti'
 
-export const formateUsedQuota = (title, quotaItem, usedItem) => {
+const formateUsedQuota = (title, quotaItem, usedItem) => {
   const quota = { value: parseInt(quotaItem), unit: getQuotaUnit(title, quotaItem) }
   const used = { value: parseInt(usedItem), unit: getUsedUnit(title, usedItem) }
   if (title === 'CPU') return formatCpuUsedQuota(quota, used)
@@ -64,7 +64,7 @@ const formatMemoryUsedQuota = (quota, used) => {
   else return used.value
 }
 
-export const formatChartDataResult = result =>
+const formatChartDataResult = result =>
   result.map(item => ({
     title: item.title,
     data: formatData(item),
@@ -77,15 +77,42 @@ const formatData = item => {
     result.push({
       value: item.leftQuota.value,
       name: item.leftQuota.unit ? `Left Quota (${item.leftQuota.unit})` : 'Left Quota',
-      itemStyle: { color: '#3ECBBC', emphasis: { color: '#3ECBBC' } }
+      itemStyle: { color: '#3ECBBC', emphasis: { color: '#3ECBBC' }}
     })
   }
   if (item.used.value !== null) {
     result.push({
       value: item.used.value,
       name: item.used.unit ? `Usage (${item.used.unit})` : 'Usage',
-      itemStyle: { color: '#E85656', emphasis: { color: '#E85656' } }
+      itemStyle: { color: '#E85656', emphasis: { color: '#E85656' }}
     })
   }
   return result
+}
+
+export const handleK8sData = (data) => {
+  const titleList = ['CPU', 'Memory', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Deployment', 'Ingresses']
+  const keys = ['cpu', 'memory', 'pods', 'services.nodeports', 'secrets', 'configmaps', 'deployments', 'ingresses']
+  const result = titleList.map((title, idx) => {
+    const quotaItem = data.quota[keys[idx]]
+    const usedItem = data.used[keys[idx]]
+    return {
+      title: title,
+      quota: {
+        value: quotaItem ? parseInt(quotaItem) : null, // deployment, ingresses null, '0'
+        unit: quotaItem ? getQuotaUnit(title, quotaItem) : ''
+      },
+      used: {
+        value: formateUsedQuota(title, quotaItem, usedItem),
+        unit: quotaItem ? getQuotaUnit(title, quotaItem) : ''
+      }
+    }
+  })
+  result.forEach((i) => {
+    i.leftQuota = {
+      value: i.quota.value === null ? null : roundValue(i.quota.value - i.used.value),
+      unit: i.quota.unit
+    }
+  })
+  return formatChartDataResult(result)
 }

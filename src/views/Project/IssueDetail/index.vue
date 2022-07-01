@@ -90,7 +90,8 @@
                 :issue-id="issueId"
                 :issue-name="issueName"
                 :issue-tracker="formTrackerName"
-                :row="form"
+                :row="issue"
+                :project-id="form.project_id"
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
                 @updateFamilyData="getIssueFamilyData(issue)"
@@ -188,6 +189,17 @@
                     :issue-name="form.name"
                     :get-data="getGitCommitLogData"
                     :height="dialogHeight"
+                  />
+                </el-tab-pane>
+                <el-tab-pane
+                  v-if="issue.excalidraw && issue.excalidraw.length !== 0"
+                  :label="$t('Excalidraw.Whiteboard')"
+                >
+                  <WhiteBoardTable
+                    ref="WhiteBoardTable"
+                    :excalidraw-data="issue.excalidraw"
+                    :height="dialogHeight"
+                    @update="fetchIssueLink"
                   />
                 </el-tab-pane>
               </el-tabs>
@@ -305,7 +317,8 @@ import {
   IssueTitle,
   IssueToolbar,
   IssueCollection,
-  AdminCommitLog
+  AdminCommitLog,
+  WhiteBoardTable
 } from './components'
 import { UTCtoLocalTime } from '@/filters'
 import {
@@ -317,10 +330,9 @@ import dayjs from 'dayjs'
 import { Status, Tracker, ExpandSection } from '@/components/Issue'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
 import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
-import getPageTitle from '@/utils/get-page-title'
+import getPageTitle from '@/utils/getPageTitle'
 import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
-// import { getIssueFamily } from '@/api/issue'
 import variables from '@/styles/theme/variables.scss'
 
 const commitLimit = 10
@@ -342,7 +354,8 @@ export default {
     IssueMatrix,
     RelatedCollectionDialog,
     ExpandSection,
-    AdminCommitLog
+    AdminCommitLog,
+    WhiteBoardTable
   },
   mixins: [ContextMenu],
   props: {
@@ -578,12 +591,12 @@ export default {
             res_api.push(await getIssue(getIssueId))
           }
           const relation_issue = await Promise.all(res_api)
-          relation_issue.forEach((issue, idx) => {
+          relation_issue.forEach((item, idx) => {
             this.$set(data.relations, idx, {
               relation_id: data.relations[idx].id,
               ...data.relations[idx],
-              ...issue.data,
-              name: issue.data.name
+              ...item.data,
+              name: item.data.name
             })
           })
         }
@@ -804,7 +817,7 @@ export default {
       this.test_files = []
       this.relations = []
       if (!this.issueId) {
-        this.$router.push({ name: 'issue-detail', params: { issueId: issue_id }})
+        this.$router.push({ name: 'IssueDetail', params: { issueId: issue_id }})
       } else {
         await this.$refs.IssueForm.getClosable()
       }
@@ -820,7 +833,7 @@ export default {
         this.$router.push(this.$route.query.prev_page)
       } else {
         this.$router.push({
-          name: 'issue-list',
+          name: 'IssueList',
           params: {
             projectName: this.selectedProject.name
           }
@@ -992,8 +1005,7 @@ export default {
     },
     getErrorAlert(title, content) {
       const h = this.$createElement
-      const message = h('li', [h('b', title), h('p', content)])
-      return message
+      return h('li', [h('b', title), h('p', content)])
     },
     showErrorAlert(errorMsg) {
       const h = this.$createElement
@@ -1069,8 +1081,6 @@ export default {
         })
           .then(() => {
             done()
-          })
-          .catch(() => {
           })
       } else {
         done()

@@ -15,11 +15,11 @@ export default {
       if (!listData) return
       return listData.filter(data => {
         let result = false
-        for (let i = 0; i < searchKeys.length; i++) {
+        for (const value of searchKeys) {
           // distinguish string and number, string to lowercase while number to string, and only Checkmarx uses number
-          if (data[searchKeys[i]] === null) data[searchKeys[i]] = ''
+          if (data[value] === null) data[value] = ''
           const columnValue =
-            typeof data[searchKeys[i]] === 'string' ? data[searchKeys[i]].toLowerCase() : data[searchKeys[i]].toString()
+            typeof data[value] === 'string' ? data[value].toLowerCase() : data[value].toString()
           result = result || columnValue.includes(keyword)
           if (result) break
         }

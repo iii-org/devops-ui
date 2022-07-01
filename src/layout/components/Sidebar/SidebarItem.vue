@@ -1,10 +1,11 @@
 <template>
   <div v-if="!item.hidden">
     <template v-if="
-      hasOneShowingChild(item.children, item) &&
+      hasOneShowingChild(item, item.children) &&
         (!onlyOneChild.children || onlyOneChild.noShowingChildren) &&
         !item.alwaysShow
-    ">
+    "
+    >
       <app-link
         v-if="onlyOneChild.meta"
         :to="resolvePath(onlyOneChild.path)"
@@ -81,7 +82,7 @@ export default {
   },
   methods: {
     generateTitle,
-    hasOneShowingChild(children = [], parent) {
+    hasOneShowingChild(parent, children = []) {
       const showingChildren = children.filter((item) => {
         if (item.hidden) {
           return false

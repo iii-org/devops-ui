@@ -290,8 +290,7 @@ export default {
         { cancelToken: this.cancelToken }
       )
       this.lastUpdateTime = this.$dayjs().utc(res.datetime).format('YYYY-MM-DD HH:mm:ss')
-      const listData = res.data.applications
-      return listData
+      return res.data.applications
     },
     async fetchData() {
       if (this.selectedProjectId === -1) {

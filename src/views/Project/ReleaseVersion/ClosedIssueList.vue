@@ -292,7 +292,7 @@ export default {
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
     handleBackPage() {
-      this.$router.push({ name: 'release-version', params: { projectName: this.selectedProject.name }})
+      this.$router.push({ name: 'ReleaseVersion', params: { projectName: this.selectedProject.name }})
     },
     getFixedVersionClosed() {
       const fixed_version = this.fixed_version.filter(item => item.name === this.$route.params.issueTag)[0].id
@@ -430,17 +430,17 @@ export default {
       } else if (column.type === 'expand' && this.hasRelationIssue(row)) {
         this.$refs['issueList'].toggleRowExpansion(row)
       } else {
-        this.$router.push({ name: 'issue-detail', params: { issueId: row.id, disableButton: true }})
+        this.$router.push({ name: 'IssueDetail', params: { issueId: row.id, disableButton: true }})
       }
     },
     handleEdit(id) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      this.$router.push({ name: 'IssueDetail', params: { issueId: id }})
     },
     emitAddTopicDialogVisible(visible) {
       this.addTopicDialogVisible = visible
     },
     async saveIssue(data) {
-      return await addIssue(data)
+      await addIssue(data)
         .then(res => {
           // noinspection JSCheckFunctionSignatures
           this.$message({
