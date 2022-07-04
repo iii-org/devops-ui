@@ -12,7 +12,7 @@
       >
         <a
           class="el-upload-list__item-name"
-          @click="handleDownload(file)"
+          @click="handlePreview(file)"
         >
           <em class="el-icon-document" />{{ file.filename }} ({{
             $dayjs(file.created_on).format('YYYY-MM-DD hh:mm:ss')
@@ -24,16 +24,16 @@
         :lg="8"
         class="text-right"
       >
-        <span v-if="isAllowPreview(file.content_type)">
+        <span>
           <el-button
             class="buttonPrimary"
             size="mini"
-            icon="el-icon-search"
+            icon="el-icon-download"
             :loading="isLoading"
             :disabled="isButtonDisabled"
-            @click="handlePreview(file)"
+            @click="handleDownload(file)"
           >
-            {{ $t('general.Preview') }}
+            {{ $t('File.Download') }}
           </el-button>
         </span>
         <el-popconfirm
@@ -64,11 +64,25 @@
       top="3vh"
       append-to-body
     >
-      <img
-        :src="image.src"
-        style="width: 100%"
-        alt="image.filename"
+      <el-carousel
+        ref="carousel"
+        trigger="click"
+        indicator-position="none"
+        :autoplay="false"
+        :initial-index="imageIndex"
+        :height="imageHeight+'px'"
+        @change="changeCarousel"
       >
+        <el-carousel-item v-for="item in imageArray" :key="item.id">
+          <img
+            ref="image"
+            :src="item.src"
+            :alt="item.filename"
+            style="width:100%; padding:0 5rem;"
+            @load="resizeImageHeight"
+          >
+        </el-carousel-item>
+      </el-carousel>
       <span slot="footer">
         <el-button @click="dialogVisible = false">{{ $t('general.Close') }}</el-button>
         <el-button
@@ -106,11 +120,25 @@ export default {
         filename: '',
         content_type: '',
         src: ''
-      }
+      },
+      imageArray: [],
+      imageIndex: 0,
+      imageHeight: '300'
     }
   },
   computed: {
     ...mapGetters(['selectedProject'])
+  },
+  watch: {
+    issueFile() {
+      this.handleImageArray()
+    }
+  },
+  mounted() {
+    this.handleImageArray()
+    window.addEventListener('resize', () => {
+      this.resizeImageHeight()
+    }, false)
   },
   methods: {
     async handleDownload(row) {
@@ -145,19 +173,46 @@ export default {
       const idx = this.issueFile.findIndex((item) => item.id === id)
       this.issueFile.splice(idx, 1)
     },
+    async handleImageArray() {
+      if (this.issueFile.length === 0) return
+      if (this.imageArray.length !== 0) this.imageArray = []
+      for (const item of this.issueFile) {
+        const { id, content_type, filename } = item
+        if (this.isAllowPreview(content_type)) {
+          await downloadProjectFile({ id, filename, project_id: this.selectedProject.id })
+            .then((res) => {
+              const base64String = btoa(new Uint8Array(res).reduce((data, byte) => data + String.fromCharCode(byte), ''))
+              this.imageArray.push({
+                id: id,
+                content_type: content_type,
+                filename: filename,
+                src: `data:${content_type};base64, ${base64String}`
+              })
+            })
+            .catch((err) => {
+              this.showErrorMessage(err)
+            })
+        }
+      }
+    },
     handlePreview(row) {
-      const { id, content_type, filename } = row
-      downloadProjectFile({ id, filename, project_id: this.selectedProject.id })
-        .then((res) => {
-          const base64String = btoa(new Uint8Array(res).reduce((data, byte) => data + String.fromCharCode(byte), ''))
-          this.image.content_type = content_type
-          this.image.filename = filename
-          this.image.src = `data:${content_type};base64, ${base64String}`
-          this.dialogVisible = true
-        })
-        .catch((err) => {
-          this.showErrorMessage(err)
-        })
+      if (!this.isAllowPreview(row.content_type)) return
+      this.imageIndex = this.imageArray.findIndex((item) => item.id === row.id)
+      this.image = this.imageArray[this.imageIndex]
+      this.dialogVisible = true
+      if (this.$refs.carousel !== undefined) {
+        this.$refs.carousel.setActiveItem(this.imageIndex)
+      }
+    },
+    changeCarousel(index) {
+      this.imageIndex = index
+      this.image = this.imageArray[index]
+      this.resizeImageHeight()
+    },
+    resizeImageHeight() {
+      this.$nextTick(() => {
+        this.imageHeight = this.$refs.image[this.imageIndex].height
+      })
     },
     downloadImage() {
       const { src, filename } = this.image
