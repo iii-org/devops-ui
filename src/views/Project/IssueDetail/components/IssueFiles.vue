@@ -236,3 +236,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .el-carousel__item {
+    background-color:white;
+  }
+</style>
