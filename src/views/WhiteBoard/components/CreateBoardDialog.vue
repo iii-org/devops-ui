@@ -80,12 +80,13 @@ export default {
               message: this.$t('Notify.Added'),
               type: 'success'
             })
-          } catch (error) {
-            console.error(error)
-          } finally {
             this.isLoading = false
             this.$emit('update')
             this.$emit('handle', this.row)
+          } catch (error) {
+            console.error(error)
+            this.$emit('handleError')
+          } finally {
             this.onDialogClosed()
           }
         }

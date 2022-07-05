@@ -5,6 +5,7 @@
         slot="button"
         class="buttonPrimary"
         icon="el-icon-plus"
+        :disabled="isClose"
         @click="handleCreate"
       >
         {{ $t('general.Add') }}
@@ -35,6 +36,7 @@
             slot="reference"
             type="primary"
             style="font-size: 16px"
+            :disabled="isClose"
             @click="handleEdit(scope.row,true)"
           >
             {{ scope.row.name }}
@@ -42,6 +44,7 @@
           <el-link
             size="small"
             :underline="false"
+            :disabled="isClose"
             @click="handleEdit(scope.row,true)"
           >
             <em class="ri-external-link-line" />
@@ -83,22 +86,24 @@
             size="mini"
             class="buttonPrimaryReverse"
             icon="el-icon-edit"
+            :disabled="isClose"
             @click="handleEdit(scope.row,false)"
           >
             {{ $t('general.Edit') }}
           </el-button>
           <el-popconfirm
+            :title="$t('Notify.confirmDelete')"
             :confirm-button-text="$t('general.Delete')"
             :cancel-button-text="$t('general.Cancel')"
             icon="el-icon-info"
             icon-color="red"
-            :title="$t('Notify.confirmDelete')"
             @confirm="handleDelete(scope.row)"
           >
             <el-button
               slot="reference"
               size="mini"
               type="danger"
+              :disabled="isClose"
             >
               <em class="el-icon-delete" />
               {{ $t('general.Delete') }}
@@ -122,10 +127,12 @@
       ref="CreateBoardDialog"
       @update="loadData"
       @handle="handleAfterCreate"
+      @handleError="handleError"
     />
     <EditBoardDialog
       ref="EditBoardDialog"
       @update="loadData"
+      @handleError="handleError"
     />
   </div>
 </template>
@@ -146,7 +153,8 @@ export default {
   data() {
     return {
       searchKeys: ['name'],
-      issueQuery: null
+      issueQuery: null,
+      isClose: false
     }
   },
   computed: {
@@ -154,10 +162,20 @@ export default {
   },
   methods: {
     async fetchData() {
-      return (await getExcalidraw({ project_id: this.selectedProjectId })).data
+      try {
+        return (await getExcalidraw({ project_id: this.selectedProjectId })).data
+      } catch (error) {
+        console.error(error)
+        this.isClose = true
+        return []
+      }
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
+    },
+    handleError() {
+      this.isClose = true
+      this.listData = []
     },
     handleCreate() {
       this.$refs.CreateBoardDialog.dialogVisible = true
@@ -183,10 +201,10 @@ export default {
         await deleteExcalidraw(row.id)
         const message = this.$t('Notify.Deleted')
         this.showSuccessMessage(message)
+        this.loadData()
       } catch (error) {
         console.error(error)
-      } finally {
-        this.loadData()
+        this.handleError()
       }
     },
     showSuccessMessage(message) {
