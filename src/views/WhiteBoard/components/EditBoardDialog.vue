@@ -1,11 +1,36 @@
 <template>
   <el-dialog
-    :title="$t('Excalidraw.EditBoard')"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     :fullscreen="true"
+    :show-close="false"
     @closed="onDialogClosed"
   >
+    <span slot="title">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-title">
+            {{ $t('Excalidraw.EditBoard') }}
+          </div>
+        </div>
+        <div>
+          <el-button
+            class="buttonSecondaryReverse"
+            :loading="isLoading"
+            @click="onDialogClosed"
+          >
+            {{ $t('general.Close') }}
+          </el-button>
+          <el-button
+            type="primary"
+            :loading="isLoading"
+            @click="handleEdit"
+          >
+            {{ $t('general.Confirm') }}
+          </el-button>
+        </div>
+      </div>
+    </span>
     <ExcalidrawForm
       ref="ExcalidrawForm"
       :form="form"
@@ -21,22 +46,6 @@
         />
       </el-collapse-item>
     </el-collapse>
-    <span slot="footer" class="dialog-footer">
-      <el-button
-        class="buttonSecondaryReverse"
-        :loading="isLoading"
-        @click="onDialogClosed"
-      >
-        {{ $t('general.Close') }}
-      </el-button>
-      <el-button
-        type="primary"
-        :loading="isLoading"
-        @click="handleEdit"
-      >
-        {{ $t('general.Confirm') }}
-      </el-button>
-    </span>
   </el-dialog>
 </template>
 
@@ -111,6 +120,8 @@ export default {
             sendData.append('name', this.form.name)
             if (this.form.issue_ids.length > 0) {
               sendData.append('issue_ids', this.form.issue_ids)
+            } else {
+              sendData.append('issue_ids', '')
             }
             await updateExcalidraw(this.row.id, sendData)
             this.$message({
