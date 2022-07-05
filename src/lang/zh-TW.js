@@ -202,7 +202,6 @@ export default {
     UserTitle: '職稱',
     Back: '返回',
     All: '全部',
-    Preview: '預覽',
     SelectAll: '全選',
     Search: '搜尋',
     Filter: '篩選',

@@ -202,7 +202,6 @@ export default {
     UserTitle: 'Title',
     Back: 'Back',
     All: 'All',
-    Preview: 'Preview',
     SelectAll: 'Select All',
     Search: 'Search',
     Filter: 'Filter',
