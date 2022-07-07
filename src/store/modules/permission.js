@@ -1,5 +1,5 @@
 import { asyncRoutes, constantRoutes } from '@/router/router'
-import { getRoutes } from '@/api/user'
+import { getRoutes, getRouter } from '@/api/user'
 import Layout from '@/layout'
 import ParentBlank from '@/layout/components/parentBlank'
 
@@ -94,7 +94,8 @@ const actions = {
       if (route.disabled) return route.name
     })
     // views Plugin
-    const result = asyncRoutes(roles)
+    // const result = asyncRoutes(roles)
+    const result = (await getRouter()).data
     const routes = getAsyncRoutes(result)
     let accessedRoutes
     // Plugin
