@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { updateUser } from '@/api/user'
 
 export default {
@@ -117,6 +118,9 @@ export default {
         ]
       }
     }
+  },
+  computed: {
+    ...mapGetters(['userId'])
   },
   methods: {
     async handleUpdateUserPwd(formName) {
