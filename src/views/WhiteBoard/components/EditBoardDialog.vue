@@ -118,11 +118,7 @@ export default {
           try {
             const sendData = new FormData()
             sendData.append('name', this.form.name)
-            if (this.form.issue_ids.length > 0) {
-              sendData.append('issue_ids', this.form.issue_ids)
-            } else {
-              sendData.append('issue_ids', '')
-            }
+            sendData.append('issue_ids', this.form.issue_ids || '')
             await updateExcalidraw(this.row.id, sendData)
             this.$message({
               title: this.$t('general.Success'),
