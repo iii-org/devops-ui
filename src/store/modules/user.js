@@ -42,11 +42,11 @@ const actions = {
           const { data } = response
           const { token } = data
           const jwtContent = VueJwtDecode.decode(token)
-          if (!('identity' in jwtContent)) {
+          if (!('sub' in jwtContent)) {
             Promise.reject('userId not exist')
           }
 
-          commit('SET_USER_ID', jwtContent['identity'].user_id)
+          commit('SET_USER_ID', jwtContent['sub'].user_id)
           commit('SET_TOKEN', token)
           setToken(token)
 
@@ -62,10 +62,10 @@ const actions = {
   async getInfo({ commit, state, dispatch, rootState }) {
     const token = getToken()
     const jwtContent = VueJwtDecode.decode(token)
-    if (!('identity' in jwtContent)) {
+    if (!('sub' in jwtContent)) {
       Promise.reject('userId not exist')
     }
-    commit('SET_USER_ID', jwtContent['identity'].user_id)
+    commit('SET_USER_ID', jwtContent['sub'].user_id)
     commit('SET_TOKEN', token)
 
     const user = await getUserInfo(state.userId)
