@@ -393,7 +393,7 @@ export default {
           background: 'rgba(0, 0, 0, 0.7)',
           customClass: 'project-dialog-loading'
         })
-        this.loadingText.map((text, index) => {
+        this.loadingText.forEach((text, index) => {
           this.timer = setTimeout(() => this.openFullLoading(text), 3000 * index)
         })
       } else {
@@ -438,6 +438,11 @@ export default {
         this.form.template_id = this.getCachedTemplateId()
         this.handleTemplateSelect()
       }
+    },
+    templateList(val) {
+      const publicTemplates = val.find((item) => item.source === 'Public Templates')
+      const defaultTemplate = publicTemplates.options.find((template) => template.path === 'default-dev')
+      this.form.template_id = defaultTemplate.id
     }
   },
   mounted() {
@@ -492,7 +497,7 @@ export default {
               type: 'error'
             })
           })
-          .then(() => {
+          .finally(() => {
             this.isLoading = false
           })
       })
