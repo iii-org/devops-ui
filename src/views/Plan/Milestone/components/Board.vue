@@ -704,8 +704,16 @@ export default {
         }
       }
     },
+    getFormData(data) {
+      const formData = new FormData()
+      Object.keys(data).forEach((item) => {
+        formData.append(item, data[item])
+      })
+      return formData
+    },
     async updatedIssue(id, updatedData) {
-      const res = await updateIssue(id, updatedData)
+      const formData = this.getFormData(updatedData)
+      const res = await updateIssue(id, formData)
       return res.data
     },
     onRelationIssueDialog(id, rowId, element) {

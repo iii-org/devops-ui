@@ -96,14 +96,22 @@ export default {
     }
   },
   methods: {
+    getFormData(data) {
+      const formData = new FormData()
+      Object.keys(data).forEach((item) => {
+        formData.append(item, data[item])
+      })
+      return formData
+    },
     async removeIssueRelation(issue) {
       const { issueData, isParent } = issue
       this.listLoading = true
       try {
+        const formData = this.getFormData({ parent_id: '' })
         if (isParent) {
-          await updateIssue(this.issue.id || this.issue.issueId, { parent_id: '' })
+          await updateIssue(this.issue.id || this.issue.issueId, formData)
         } else {
-          await updateIssue(issueData.id, { parent_id: '' })
+          await updateIssue(issueData.id, formData)
         }
         this.$message({
           title: this.$t('general.Success'),

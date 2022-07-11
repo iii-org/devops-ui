@@ -395,11 +395,19 @@ export default {
       this.multipleSelection = []
       this.listLoading = false
     },
+    getFormData(data) {
+      const formData = new FormData()
+      Object.keys(data).forEach((item) => {
+        formData.append(item, data[item])
+      })
+      return formData
+    },
     async batchMove() {
       this.loading = true
       const indexes = this.selectedIndexes
       for (const index of indexes) {
-        await updateIssue(this.listData[index].id, { fixed_version_id: this.batchMoveToVersion })
+        const formData = this.getFormData({ fixed_version_id: this.batchMoveToVersion })
+        await updateIssue(this.listData[index].id, formData)
       }
       this.multipleSelection = []
       this.$emit('onInit')
