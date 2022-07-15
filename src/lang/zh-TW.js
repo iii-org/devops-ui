@@ -252,7 +252,8 @@ export default {
     Parent: '父',
     Child: '子',
     CopyUrl: '複製網址',
-    TemporarySave: '暫存'
+    TemporarySave: '暫存',
+    Modify: '修改'
   },
   Notify: {
     Updated: '已更新',
@@ -291,7 +292,8 @@ export default {
     NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。',
     ChangeProject: '切換專案將清空版本、標籤及受分配者的資訊，確認移轉嗎？',
     RedmineMailWarning: '[注意] Redmine 將重新啟動，服務即將暫停，請3-5分鐘後再重新登入使用',
-    RedmineMailActiveWarning: '平台Email設定尚未啟用，請洽系統管理者'
+    RedmineMailActiveWarning: '平台Email設定尚未啟用，請洽系統管理者',
+    RedmineMailConfirmWarning: '信箱（SMTP）設定修改，即將重啟Redmine，屆時將導致DevOps平台停止服務5-8分鐘，請問確定要執行修改並重啟Redmine嗎？'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
