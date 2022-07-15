@@ -117,7 +117,6 @@
       :total="listQuery.total"
       :page.sync="listQuery.current"
       :limit="listQuery.per_page"
-      :page-sizes="[listQuery.per_page]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
@@ -128,11 +127,17 @@
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getHarborScan } from '@/api_v2/harbor'
-import { BasicData, Pagination, Table, ProjectSelector } from '@/newMixins'
+import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 
 const params = () => ({
   per_page: 10,
   page: 1
+})
+
+const listQuery = () => ({
+  total: 0,
+  current: 0,
+  per_page: 0
 })
 
 export default {
@@ -141,49 +146,50 @@ export default {
     ElTableColumnTime,
     ElTableColumnTag
   },
-  mixins: [BasicData, Pagination, Table, ProjectSelector],
+  mixins: [MixinElTableWithAProject],
   data() {
     return {
-      confirmLoading: false,
       keyword: '',
       params: params(),
-      testList: []
+      listQuery: listQuery(),
+      testList: [],
+      timeoutId: -1
     }
   },
   watch: {
-    keyword: {
-      handler(val) {
-        this.onSearch(val)
-      }
+    keyword(val) {
+      clearTimeout(this.timeoutId)
+      this.timeoutId = window.setTimeout(() => this.onSearch(val), 1000)
     }
+  },
+  beforeDestroy() {
+    window.clearTimeout(this.timeoutId)
   },
   methods: {
     async fetchData() {
+      this.listLoading = true
       const res = await getHarborScan(this.selectedProjectId, this.params)
       this.setListData(res)
+      this.listLoading = false
     },
     setListData(res) {
       this.testList = res.data.scan_list
-      this.listQuery = Object.assign({}, res.data.page)
+      this.listQuery = res.data.page
     },
     durationText(duration) {
       return duration ? this.$dayjs.duration(duration, 'seconds').humanize() : '-'
     },
     async onSearch(keyword) {
       this.params.search = keyword
+      this.params.page = 1
       if (keyword === '') delete this.params.search
-      await this.loadData()
-      this.initParams()
+      await this.fetchData()
     },
-    async onPagination(listQuery) {
-      const { current } = listQuery
-      this.params.page = current
+    async onPagination(query) {
+      const { page } = query
+      this.params.page = page
       if (this.keyword !== '') this.params.search = this.keyword
-      await this.loadData()
-      this.initParams()
-    },
-    initParams() {
-      this.params = params()
+      await this.fetchData()
     },
     async handleToTestReport(row) {
       this.$router.push({

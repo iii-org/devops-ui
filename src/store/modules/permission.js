@@ -55,9 +55,16 @@ export function filterAsyncRoutes(routes, roles) {
 
 export function filterAsyncPluginRoutes(accessedRoutes, disabledPluginRoutes) {
   const result = accessedRoutes.map(item => item)
-  const idx = result.findIndex(item => item.name === 'Scan' || item.name === 'Works')
-  result[idx].children = result[idx].children.filter(item => !disabledPluginRoutes.includes(item.name.toLowerCase()))
-  if (result[idx].children.length === 0) result.splice(idx, 1)
+  const idx = result.map((item, index) => {
+    if (item.name === 'Scan' || item.name === 'Works') return index
+  }).filter(item => item)
+
+  for (let id of idx) {
+    result[id].children = result[id].children.filter(item => {
+      return !disabledPluginRoutes.includes(item.name.toLowerCase())
+    })
+    if (result[id].children.length === 0) result.splice(id, 1)
+  }
   return result
 }
 

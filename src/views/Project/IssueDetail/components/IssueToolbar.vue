@@ -326,15 +326,24 @@ export default {
         }
       })
     },
+    getFormData(data) {
+      const formData = new FormData()
+      Object.keys(data).forEach((item) => {
+        formData.append(item, data[item])
+      })
+      return formData
+    },
     async onSaveRelationIssue() {
       try {
         const getSettingRelationIssue = this.$refs['settingRelationIssue']
         const updateApi = []
+        const appendFormData = this.getFormData({ parent_id: getSettingRelationIssue.row.id })
+        const removeFormData = this.getFormData({ parent_id: '' })
         getSettingRelationIssue.children['append'].forEach((item) => {
-          updateApi.push(updateIssue(item, { parent_id: getSettingRelationIssue.row.id }))
+          updateApi.push(updateIssue(item, appendFormData))
         })
         getSettingRelationIssue.children['remove'].forEach((item) => {
-          updateApi.push(updateIssue(item, { parent_id: '' }))
+          updateApi.push(updateIssue(item, removeFormData))
         })
         await Promise.all(updateApi)
         this.toggleRelationDialog()

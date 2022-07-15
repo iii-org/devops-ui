@@ -104,9 +104,17 @@ export default {
     }
   },
   methods: {
+    getFormData(data) {
+      const formData = new FormData()
+      Object.keys(data).forEach((item) => {
+        formData.append(item, data[item])
+      })
+      return formData
+    },
     removeIssueRelation(issueId) {
       this.listLoading = true
-      updateIssue(issueId, { parent_id: '' })
+      const formData = this.getFormData({ parent_id: '' })
+      updateIssue(issueId, formData)
         .then(() => {
           this.$message({
             title: this.$t('general.Success'),

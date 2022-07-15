@@ -130,15 +130,19 @@ export default {
     ...mapGetters(['selectedProject'])
   },
   watch: {
-    issueFile() {
+    issueFile(value) {
+      if (value.length === 0) return
       this.handleImageArray()
     }
   },
   mounted() {
     this.handleImageArray()
-    window.addEventListener('resize', () => {
-      this.resizeImageHeight()
-    }, false)
+    window.addEventListener('resize', this.resizeImageHeight)
+    window.addEventListener('keydown', this.handleCarousel)
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.resizeImageHeight)
+    window.removeEventListener('keydown', this.handleCarousel)
   },
   methods: {
     async handleDownload(row) {
@@ -174,7 +178,6 @@ export default {
       this.issueFile.splice(idx, 1)
     },
     async handleImageArray() {
-      if (this.issueFile.length === 0) return
       if (this.imageArray.length !== 0) this.imageArray = []
       for (const item of this.issueFile) {
         const { id, content_type, filename } = item
@@ -204,15 +207,27 @@ export default {
         this.$refs.carousel.setActiveItem(this.imageIndex)
       }
     },
+    resizeImageHeight() {
+      if (this.$refs.image === undefined) return
+      this.$nextTick(() => {
+        this.imageHeight = this.$refs.image[this.imageIndex].height
+      })
+    },
     changeCarousel(index) {
       this.imageIndex = index
       this.image = this.imageArray[index]
       this.resizeImageHeight()
     },
-    resizeImageHeight() {
-      this.$nextTick(() => {
-        this.imageHeight = this.$refs.image[this.imageIndex].height
-      })
+    handleCarousel(e) {
+      if (this.$refs.carousel === undefined) return
+      switch (e.key) {
+        case 'ArrowLeft':
+          this.$refs.carousel.prev()
+          break
+        case 'ArrowRight':
+          this.$refs.carousel.next()
+          break
+      }
     },
     downloadImage() {
       const { src, filename } = this.image
