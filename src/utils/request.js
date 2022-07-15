@@ -55,6 +55,9 @@ const handleRegularError = (error) => {
 
 service.interceptors.request.use(
   config => {
+    if (config.url.split('/')[3] === 'version' && config.url.split('/')[4] === 'list' && localStorage.getItem('isToken')) {
+      config.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`
+    } else
     if (store.getters.token) {
       config.headers['Authorization'] = `Bearer ${getToken()}`
     }
