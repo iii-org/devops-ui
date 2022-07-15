@@ -11,7 +11,7 @@
           <el-form-item :label="$t('Profile.PlatformNotice')">
             <el-switch
               v-model="userMessageForm.notification"
-              :disabled="userRole==='Administrator'"
+              :disabled="userRole === 'Administrator'"
             />
           </el-form-item>
         </el-col>
@@ -21,17 +21,6 @@
           <el-form-item :label="$t('Profile.MailNotice')">
             <el-switch v-model="userMessageForm.mail" />
           </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row class="mt-4">
-        <el-col :span="8">
-          <el-button
-            v-if="canSave"
-            class="buttonPrimary"
-            @click="submitMessageSettings"
-          >{{
-            $t('Profile.Save')
-          }}</el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -46,37 +35,52 @@ import { getRedmineMailActive } from '@/api/redmineMail'
 export default {
   name: 'Message',
   props: {
-    originalMessageForm: {
-      type: Object,
-      default: () => ({})
-    },
     userMessageForm: {
       type: Object,
       default: () => ({})
     }
   },
-  computed: {
-    ...mapGetters(['userId', 'userRole']),
-    canSave() {
-      return !this.compareObj(this.userMessageForm, this.originalMessageForm)
+  data () {
+    return {
+      isStopUpdateMessage: false
     }
   },
+  computed: {
+    ...mapGetters(['userId', 'userRole'])
+  },
   watch: {
-    async 'userMessageForm.mail'(bool) {
-      if (bool !== undefined && bool && !this.originalMessageForm.mail) {
-        const active = (await getRedmineMailActive()).data
-        if (!active) this.userMessageForm.mail = false
+    userMessageForm: {
+      async handler(form) {
+        if (form.mail) {
+          await this.handleMailChange()
+          return
+        }
+        this.updateUserMessageInfo()
+      },
+      deep: true
+    }
+  },
+  methods: {
+    async handleMailChange() {
+      const active = (await getRedmineMailActive()).data
+      if (!active) {
+        this.userMessageForm.mail = false
         this.$message({
           message: this.$t('Notify.RedmineMailActiveWarning'),
           type: 'warning'
         })
+        this.isStopUpdateMessage = true
+      } else {
+        this.updateUserMessageInfo()
       }
-    }
-  },
-  methods: {
-    async submitMessageSettings() {
+    },
+    async updateUserMessageInfo() {
       await updateUserMessageInfo(this.userId, this.userMessageForm)
-        .then((res) => {
+        .then(() => {
+          if (this.isStopUpdateMessage) {
+            this.isStopUpdateMessage = false
+            return
+          }
           this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Updated'),
@@ -89,19 +93,6 @@ export default {
         .finally(() => {
           this.$emit('update')
         })
-    },
-    compareObj(obj1, obj2) {
-      const Obj1_keys = Object.keys(obj1)
-      const Obj2_keys = Object.keys(obj2)
-      if (Obj1_keys.length !== Obj2_keys.length) {
-        return false
-      }
-      for (const k of Obj1_keys) {
-        if (obj1[k] !== obj2[k]) {
-          return false
-        }
-      }
-      return true
     }
   }
 }
