@@ -293,6 +293,7 @@ export default {
     ChangeProject: '切換專案將清空版本、標籤及受分配者的資訊，確認移轉嗎？',
     RedmineMailWarning: '[注意] Redmine 將重新啟動，服務即將暫停，請3-5分鐘後再重新登入使用',
     RedmineMailActiveWarning: '平台Email設定尚未啟用，請洽系統管理者',
+    RedmineMailAutoDisableWarning: '您的Email通知已被關閉，因後台Email設定尚未啟用或已關閉，請洽系統管理者',
     RedmineMailConfirmWarning: '信箱（SMTP）設定修改，即將重啟Redmine，屆時將導致DevOps平台停止服務5-8分鐘，請問確定要執行修改並重啟Redmine嗎？'
   },
   RuleMsg: {

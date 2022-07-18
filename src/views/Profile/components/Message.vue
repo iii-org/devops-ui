@@ -60,13 +60,21 @@ export default {
       deep: true
     }
   },
+  mounted() {
+    if (this.userMessageForm.mail) {
+      this.isStopUpdateMessage = true
+      this.handleMailChange(true)
+    }
+  },
   methods: {
-    async handleMailChange() {
+    async handleMailChange(isFirst) {
       const active = (await getRedmineMailActive()).data
       if (!active) {
         this.userMessageForm.mail = false
         this.$message({
-          message: this.$t('Notify.RedmineMailActiveWarning'),
+          message: isFirst
+            ? this.$t('Notify.RedmineMailAutoDisableWarning')
+            : this.$t('Notify.RedmineMailActiveWarning'),
           type: 'warning'
         })
         this.isStopUpdateMessage = true
