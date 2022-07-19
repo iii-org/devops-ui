@@ -488,8 +488,7 @@ export default {
               message: this.$t('Notify.Created'),
               type: 'success'
             })
-            this.showDialog = false
-            this.$emit('update')
+            this.isLoading = false
           })
           .catch((err) => {
             this.$message({
@@ -498,7 +497,8 @@ export default {
             })
           })
           .finally(() => {
-            this.isLoading = false
+            this.showDialog = false
+            this.$emit('update')
           })
       })
     },
