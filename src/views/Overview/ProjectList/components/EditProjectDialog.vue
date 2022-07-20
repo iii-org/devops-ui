@@ -1,12 +1,30 @@
 <template>
   <el-dialog
-    :title="$t('Project.EditProject')"
     :visible.sync="showDialog"
     width="70vw"
     top="3vh"
     :close-on-click-modal="false"
     @closed="onDialogClosed"
   >
+    <div slot="title">
+      <span style="font-size:18px;">
+        {{ $t('Project.EditProject') }}
+      </span>
+      <div class="float-right mr-8">
+        <span class="mr-3">
+          {{ $t('general.Active') }}
+        </span>
+        <el-switch
+          v-model="form.disabled"
+          :disabled="disabledEditOwner"
+          :active-value="false"
+          :inactive-value="true"
+          inactive-color="#ff4949"
+          :active-text="$t('general.Enable')"
+          :inactive-text="$t('general.Disable')"
+        />
+      </div>
+    </div>
     <el-form ref="editProjectForm" :model="form" :rules="rules" label-position="top" size="medium">
       <el-row :gutter="10">
         <el-col :span="24">
@@ -89,7 +107,7 @@
             </el-form-item>
           </el-col>
           <el-col
-            v-if="form.base_example && baseExampleInfo"
+            v-if="form.base_example && baseExampleInfo && !editProjectObj.is_empty_project"
             :span="24"
           >
             <el-form-item :label="$t('Project.OriginalTemplate')">
@@ -97,22 +115,13 @@
             </el-form-item>
           </el-col>
         </el-col>
-
-        <el-col :span="24">
-          <el-divider content-position="left">{{ $t('general.Active') }}</el-divider>
-          <el-form-item prop="disabled">
-            <el-switch
-              v-model="form.disabled"
-              :disabled="disabledEditOwner"
-              :active-value="false"
-              :inactive-value="true"
-              inactive-color="#ff4949"
-              :active-text="$t('general.Enable')"
-              :inactive-text="$t('general.Disable')"
-            />
-          </el-form-item>
-        </el-col>
       </el-row>
+      <TemplateList
+        v-if="editProjectObj.is_empty_project"
+        ref="templateList"
+        :form="form"
+        @clearTemplate="clearTemplate"
+      />
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button class="buttonSecondaryReverse" :loading="isLoading" @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
@@ -126,6 +135,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { getProjectAssignable } from '@/api/projects'
 import { getTemplateList } from '@/api/template'
 import ProjectList from './ProjectList'
+import TemplateList from './TemplateList'
 import i18n from '@/lang'
 
 const formTemplate = () => ({
@@ -139,12 +149,18 @@ const formTemplate = () => ({
   base_example: '',
   disabled: false,
   parent_id: '',
-  is_inheritance_member: false
+  is_inheritance_member: false,
+  template_id: '',
+  tag_name: '',
+  argumentsForm: []
 })
 
 export default {
   name: 'EditProjectDialog',
-  components: { ProjectList },
+  components: {
+    ProjectList,
+    TemplateList
+  },
   props: {
     editProjectObj: {
       type: Object,
@@ -210,8 +226,9 @@ export default {
   watch: {
     editProjectObj() {
       const formItems = Object.keys(this.form)
-      formItems.forEach(item => {
-        this.form[item] = this.editProjectObj[item] === 'None' ? '' : this.editProjectObj[item]
+      formItems.forEach((item) => {
+        this.form[item] = this.editProjectObj[item] === 'None' ? ''
+          : this.editProjectObj[item] || this.form[item]
       })
       this.fetchProjectAssignableList(this.editProjectObj.id)
       this.getExampleInfo()
@@ -248,7 +265,17 @@ export default {
       this.$nextTick(() => {
         this.$refs.editProjectForm.resetFields()
         this.form = formTemplate()
+        if (this.editProjectObj.is_empty_project) {
+          this.clearTemplate()
+          this.$refs.templateList.clearFocusTemplate()
+          this.$refs.templateList.cachedTemplates = {}
+        }
       })
+    },
+    clearTemplate() {
+      this.form.template_id = ''
+      this.form.tag_name = ''
+      this.form.argumentsForm = []
     },
     async handleConfirm() {
       this.$refs.editProjectForm.validate(async valid => {
@@ -279,6 +306,28 @@ export default {
         sendData.data.parent_id = this.form.parent_id
         sendData.data.is_inheritance_member = this.form.is_inheritance_member
       }
+      if (this.editProjectObj.is_empty_project && this.form.template_id) {
+        sendData.data.template_id = this.form.template_id
+        sendData.data.tag_name = this.form.tag_name
+        if (this.form.argumentsForm.length > 0) {
+          sendData.data.arguments = this.form.argumentsForm.reduce((arr, cur) =>
+            Object.assign(arr, { [cur.key]: cur.value })
+          , {})
+        }
+        this.$confirm(this.$t('Notify.confirmEditProject'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        }).then(() => {
+          this.handleEdit(sendData)
+        }).catch(() => {
+          this.isLoading = false
+        })
+      } else {
+        this.handleEdit(sendData)
+      }
+    },
+    async handleEdit(sendData) {
       this.editProject(sendData).then(res => {
         this.isLoading = false
         if (res.message === 'success') {
