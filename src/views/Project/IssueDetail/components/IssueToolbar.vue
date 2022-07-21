@@ -122,7 +122,7 @@
         :parent-id="issueId"
         :parent-name="issueName"
         :prefill="form"
-        @loading="loadingUpdate($event, true)"
+        @loading="loadingUpdate($event, false)"
         @add-topic-visible="emitAddTopicDialogVisible"
       />
       <span
@@ -133,7 +133,9 @@
           id="dialog-btn-cancel"
           class="buttonSecondaryReverse"
           @click="handleAdvancedClose"
-        >{{ $t('general.Cancel') }}</el-button>
+        >
+          {{ $t('general.Cancel') }}
+        </el-button>
         <el-button
           id="dialog-btn-confirm"
           :loading="isLoading"
@@ -286,7 +288,7 @@ export default {
           //   message: this.$t('Notify.Added'),
           //   type: 'success'
           // })
-          this.addTopicDialogVisible = false
+          // this.addTopicDialogVisible = false
           return res
         })
         .catch((error) => {
