@@ -32,6 +32,7 @@ stages:
       include:
       - master
       - develop
+      - projectlist
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -82,6 +83,7 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
+      - projectlist
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -107,6 +109,7 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
+      - projectlist
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -128,6 +131,7 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
+      - projectlist
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -147,13 +151,12 @@ stages:
         && apt-get install -y jq && export PW=$(rancher kubectl get secret nexus-bot
         -n ${CICD_GIT_REPO_NAME} -o=go-template='{{index .data "password"}}' | base64
         -d) && export UN=$(rancher kubectl get secret nexus-bot -n ${CICD_GIT_REPO_NAME}
-        -o=go-template='{{index .data "username"}}' | base64 -d) 
-        && export DATARAW=$(printf '{"username":"%s","password":"%s"}' "$UN" "$PW") 
-        && curl --location --request POST ${api_origin}/user/login --header 
-        "Content-Type:application/json" --data-raw "$DATARAW" | jq -r '.data.token' > token.txt 
-        && export APITOKEN=$(cat token.txt) && pwd
-        && curl --location --request POST ${api_origin}/harbor/handle_image --header
-        "Authorization:Bearer $APITOKEN" --form project_name=${CICD_GIT_REPO_NAME}
+        -o=go-template='{{index .data "username"}}' | base64 -d) && export DATARAW=$(printf
+        '{"username":"%s","password":"%s"}' "$UN" "$PW") && curl --location --request
+        POST ${api_origin}/user/login --header "Content-Type:application/json" --data-raw
+        "$DATARAW" | jq -r '.data.token' > token.txt && export APITOKEN=$(cat token.txt)
+        && pwd && curl --location --request POST ${api_origin}/harbor/handle_image
+        --header "Authorization:Bearer $APITOKEN" --form project_name=${CICD_GIT_REPO_NAME}
         --form from_repo_name=${CICD_GIT_BRANCH} --form from_tag=${CICD_GIT_COMMIT}
         --form dest_repo_name=${CICD_GIT_REPO_NAME} --form dest_tag=${CICD_GIT_BRANCH}
   when:
@@ -166,6 +169,7 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
+      - projectlist
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -196,6 +200,7 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
+      - projectlist
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -224,6 +229,7 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
+      - projectlist
 - name: Test--ZAP
   iiidevops: zap
   steps:
