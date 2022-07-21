@@ -41,7 +41,7 @@
         <iframe
           title="excalidraw"
           :src="row.url + '#' + userName"
-          :height="computedItemHeight"
+          :height="excalidrawHeight"
           width="100%"
         />
       </el-collapse-item>
@@ -65,6 +65,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      excalidrawHeight: 0,
       isLoading: false,
       isCollapse: [],
       row: {},
@@ -81,13 +82,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userName']),
-    computedItemHeight() {
-      return window.innerHeight - Array.from(document.querySelectorAll('.el-collapse-item'))
-        .reduce((s, el) => {
-          return s + el.children[0].offsetHeight
-        }, 0)
-    }
+    ...mapGetters(['selectedProjectId', 'userName'])
   },
   watch: {
     row(value) {
@@ -105,9 +100,12 @@ export default {
     }
   },
   mounted() {
+    this.handleHeight()
+    window.addEventListener('resize', this.handleHeight)
     window.addEventListener('popstate', this.goBackConfirm, false)
   },
   destroyed() {
+    window.removeEventListener('resize', this.handleHeight)
     window.removeEventListener('popstate', this.goBackConfirm, false)
   },
   methods: {
@@ -140,6 +138,10 @@ export default {
       this.row = {}
       this.$refs['ExcalidrawForm'].$refs['form'].resetFields()
       this.dialogVisible = false
+    },
+    handleHeight() {
+      this.excalidrawHeight = window.innerHeight - Array.from(document.querySelectorAll('.el-collapse-item'))
+        .reduce((s, el) => { return s + el.children[0].offsetHeight }, 0) - 250
     },
     goBackConfirm() {
       if (this.dialogVisible) {

@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <el-card>
-      <el-tabs :tab-position="tabPosition">
-        <el-tab-pane :label="$t('Profile.Basic')">
+      <el-tabs v-model="tabActive" :tab-position="tabPosition">
+        <el-tab-pane :label="$t('Profile.Basic')" name="basic">
           <Basic
             :from-ad="fromAd"
             :label-position="labelPosition"
@@ -10,17 +10,17 @@
             :user-profile-form="userProfileForm"
           />
         </el-tab-pane>
-        <el-tab-pane :label="$t('Profile.Security')">
+        <el-tab-pane :label="$t('Profile.Security')" name="security">
           <Security
             :user-pwd-form="userPwdForm"
             :label-position="labelPosition"
             :disable-edit="disableEdit"
           />
         </el-tab-pane>
-        <el-tab-pane :label="$t('Profile.Notice')">
+        <el-tab-pane :label="$t('Profile.Notice')" name="message">
           <Message
-            :original-message-form="originalMessageForm"
-            :user-message-form="userMessageForm"
+            v-if="tabActive === 'message'"
+            :user-message-form.sync="userMessageForm"
             :label-position="labelPosition"
             @update="fetchUserMessageInfo"
           />
@@ -46,6 +46,7 @@ export default {
     return {
       labelPosition: 'top',
       tabPosition: 'left',
+      tabActive: 'basic',
       fromAd: false,
       userProfileForm: {
         userName: '',
@@ -58,10 +59,6 @@ export default {
         userNewPwd: '',
         userRepeatNewPwd: '',
         old_password: ''
-      },
-      originalMessageForm: {
-        notification: false,
-        mail: false
       },
       userMessageForm: {
         notification: false,
@@ -95,8 +92,6 @@ export default {
     async fetchUserMessageInfo() {
       await getUserMessageInfo(this.userId)
         .then((userMessageInfo) => {
-          this.originalMessageForm.notification = userMessageInfo.data.notification
-          this.originalMessageForm.mail = userMessageInfo.data.mail
           this.userMessageForm.notification = userMessageInfo.data.notification
           this.userMessageForm.mail = userMessageInfo.data.mail
         })

@@ -177,6 +177,7 @@ export default {
         })
     },
     filterEmpty(data) {
+      if (!data) return
       const arr = ['openssl_verify_mode', 'user_name', 'password', 'ssl']
       Object.keys(data).forEach((item) => {
         if (typeof data[item] === 'object') this.filterEmpty(data[item])
@@ -206,7 +207,7 @@ export default {
         }
       )
         .then(async () => {
-          await this.onUpdate()
+          await this.onUpdate(false)
           this.stopUpdateActive = false
         })
         .catch((action) => {

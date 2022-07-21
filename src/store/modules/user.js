@@ -48,6 +48,12 @@ const actions = {
 
           commit('SET_USER_ID', jwtContent['sub'].user_id)
           commit('SET_TOKEN', token)
+
+          // for debug
+          localStorage.setItem('token', token)
+          localStorage.setItem('isToken', false)
+          //
+
           setToken(token)
 
           resolve()
@@ -80,6 +86,10 @@ const actions = {
     dispatch('app/setRoleList', null, { root: true })
     commit('SET_USER_ROLE', user.default_role_name)
     const myProjects = rootState.projects.options
+
+    if (myProjects.length === 0) {
+      commit('projects/SET_SELECTED_PROJECT', { id: -1 }, { root: true })
+    }
     if (myProjects.length > 0) {
       const projectStorage = myProjects.find((elm) => String(elm.id) === localStorage.getItem('projectId'))
       if (projectStorage) {
