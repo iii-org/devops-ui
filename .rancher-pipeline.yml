@@ -32,6 +32,7 @@ stages:
       include:
       - master
       - develop
+      - projectlist
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -77,6 +78,7 @@ stages:
       include:
       - master
       - develop
+      - projectlist
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -97,6 +99,7 @@ stages:
       include:
       - master
       - develop
+      - projectlist
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -113,6 +116,7 @@ stages:
       include:
       - develop
       - master
+      - projectlist
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -144,6 +148,7 @@ stages:
       include:
       - master
       - develop
+      - projectlist
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -169,6 +174,7 @@ stages:
       include:
       - master
       - develop
+      - projectlist
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -192,6 +198,7 @@ stages:
       include:
       - master
       - develop
+      - projectlist
 - name: Test--ZAP
   iiidevops: zap
   steps:
