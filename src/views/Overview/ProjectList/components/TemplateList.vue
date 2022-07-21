@@ -132,6 +132,10 @@ import {
 export default {
   name: 'TemplateList',
   props: {
+    isCreate: {
+      type: Boolean,
+      default: false
+    },
     form: {
       type: Object,
       default: () => ({})
@@ -191,10 +195,21 @@ export default {
         this.form.template_id = this.getCachedTemplateId(this.cachedTemplates.localPath)
         this.handleTemplateSelect()
       }
+    },
+    templateList(val) {
+      if (!this.isCreate) return
+      const publicTemplates = val.find((item) => item.source === 'Public Templates')
+      const defaultTemplate = publicTemplates.options.find((template) => template.path === 'default-dev')
+      this.form.template_id = defaultTemplate.id
+      this.handleTemplateSelect()
     }
   },
   mounted() {
     this.init()
+  },
+  beforeDestroy() {
+    this.cachedTemplates = {}
+    this.clearFocusTemplate()
   },
   methods: {
     async init(isForceUpdate) {
@@ -204,6 +219,10 @@ export default {
     },
     getCachedTemplateId(path) {
       return this.activeTemplateList.find((item) => item.path === path).id
+    },
+    openTemplateFullLoading(loadingText) {
+      if (loadingText) this.templateLoadingInstance.setText(loadingText)
+      else this.templateLoadingInstance.close()
     },
     async getTemplateList(force_update) {
       if (force_update) this.isClickUpdateTemplate = true
@@ -284,10 +303,6 @@ export default {
         result.value = item.default_value
         return result
       })
-    },
-    openTemplateFullLoading(loadingText) {
-      if (loadingText) this.templateLoadingInstance.setText(loadingText)
-      else this.templateLoadingInstance.close()
     },
     clearFocusTemplate() {
       this.focusTemplate = {}

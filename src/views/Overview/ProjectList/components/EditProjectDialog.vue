@@ -117,15 +117,26 @@
         </el-col>
       </el-row>
       <TemplateList
-        v-if="editProjectObj.is_empty_project"
-        ref="templateList"
+        v-if="editProjectObj.is_empty_project && showDialog"
         :form="form"
         @clearTemplate="clearTemplate"
       />
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button class="buttonSecondaryReverse" :loading="isLoading" @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
-      <el-button class="buttonPrimary" :loading="isLoading" @click="handleConfirm">{{ $t('general.Confirm') }}</el-button>
+      <el-button
+        class="buttonSecondaryReverse"
+        :loading="isLoading"
+        @click="onDialogClosed"
+      >
+        {{ $t('general.Cancel') }}
+      </el-button>
+      <el-button
+        class="buttonPrimary"
+        :loading="isLoading"
+        @click="handleConfirm"
+      >
+        {{ $t('general.Confirm') }}
+      </el-button>
     </span>
   </el-dialog>
 </template>
@@ -265,11 +276,8 @@ export default {
       this.$nextTick(() => {
         this.$refs.editProjectForm.resetFields()
         this.form = formTemplate()
-        if (this.editProjectObj.is_empty_project) {
-          this.clearTemplate()
-          this.$refs.templateList.clearFocusTemplate()
-          this.$refs.templateList.cachedTemplates = {}
-        }
+        this.baseExampleInfo = ''
+        this.clearTemplate()
       })
     },
     clearTemplate() {
@@ -284,7 +292,6 @@ export default {
       })
     },
     async handleConfirmEdit() {
-      this.isLoading = true
       const sendData = {
         pId: this.form.id,
         data: {
@@ -320,15 +327,14 @@ export default {
           type: 'warning'
         }).then(() => {
           this.handleEdit(sendData)
-        }).catch(() => {
-          this.isLoading = false
-        })
+        }).catch(() => {})
       } else {
         this.handleEdit(sendData)
       }
     },
     async handleEdit(sendData) {
-      this.editProject(sendData).then(res => {
+      this.isLoading = true
+      await this.editProject(sendData).then(res => {
         this.isLoading = false
         if (res.message === 'success') {
           this.$message({
@@ -346,6 +352,7 @@ export default {
           })
         }
       })
+      this.isLoading = false
     },
     checkDueDate(startDate) {
       if (new Date(startDate).getTime() >= new Date(this.form.due_date)) this.form.due_date = ''
