@@ -112,6 +112,7 @@
     <div
       v-show="data.length > 0"
       ref="matrix"
+      v-loading="isLoading"
       v-dragscroll
       class="mermaid-wrapper"
       :style="{ height:`${tableHeight}px` }"
@@ -216,8 +217,8 @@ export default {
         id: null
       },
       trackerColor: Object.freeze(theme.backgroundColor),
-      form: new Form()
-
+      form: new Form(),
+      isLoading: false
     }
   },
   computed: {
@@ -249,6 +250,10 @@ export default {
   },
   watch: {
     selectedProjectId() {
+      this.initChart()
+    },
+    row() {
+      this.isLoading = false
       this.initChart()
     },
     'form.isTracker'(val) {
@@ -534,8 +539,8 @@ export default {
     },
     handleRelationUpdate() {
       this.onCloseRelationIssueDialog()
-      this.initChart()
       this.$emit('update-issue')
+      this.isLoading = true
     },
     onRelationIssueDialog(id) {
       this.$set(this.relationIssue, 'visible', true)
