@@ -34,7 +34,6 @@
       <el-input
         v-model="inputValue"
         :placeholder="placeholder"
-        style="font-size: 6px;"
       >
         <em
           slot="suffix"

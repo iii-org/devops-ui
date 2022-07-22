@@ -1021,7 +1021,7 @@ export default {
     openIssueAlert: 'There are unclosed issues in selected versions, please close it first.',
     issueCount: 'In this version: ',
     issueCountLink: '{0} issues',
-    releaseNote: '[Release Note]',
+    releaseNote: 'Release Note',
     releaseVersionName: 'Version name',
     selectMainVersion: 'Please main version',
     copyIssues: 'Copy issue names to clipboard',

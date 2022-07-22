@@ -10,7 +10,21 @@
         highlight-current-row
         row-key="id"
         :tree-props="{ children: 'child' }"
+        :row-class-name="getRowClass"
       >
+        <el-table-column
+          type="expand"
+          class-name="informationExpand"
+        >
+          <template slot-scope="{row}">
+            <div class="ml-3" style="color: #409EFF;">
+              {{ $t('Release.releaseNote') }}
+            </div>
+            <VueMarkdown class="ml-5 primary">
+              {{ '\n' + row.note }}
+            </VueMarkdown>
+          </template>
+        </el-table-column>
         <el-table-column
           :label="$t('TestCase.Index')"
           type="index"
@@ -117,7 +131,7 @@
                       {{ getImageTagsTooltip(scope.row.image_tags[0]) }}
                     </div>
                     <div class="cursor-pointer">
-                      <el-tag>
+                      <el-tag style="font-size:14px;">
                         {{ getImageTags(scope.row.image_tags[0]) }}
                       </el-tag>
                       <span
@@ -147,7 +161,7 @@
                       {{ getImageTagsTooltip(tag) }}
                     </div>
                     <div class="cursor-pointer">
-                      <el-tag>
+                      <el-tag style="font-size:14px;">
                         {{ getImageTags(tag) }}
                         <em
                           v-if="isEditTag"
@@ -198,12 +212,14 @@ import { getReleaseVersion, deleteReleaseTag } from '@/api_v2/release'
 import { BasicData, Pagination, SearchBar } from '@/newMixins'
 import { UTCtoLocalTime } from '@/filters'
 import variables from '@/styles/theme/variables.scss'
+import VueMarkdown from 'vue-markdown'
 
 export default {
   name: 'ReleaseTable',
   components: {
     CommandSelector: () => import('./CommandSelector'),
-    ActionInput: () => import('./ActionInput')
+    ActionInput: () => import('./ActionInput'),
+    VueMarkdown: VueMarkdown
   },
   mixins: [BasicData, Pagination, SearchBar],
   model: {
@@ -277,12 +293,18 @@ export default {
           })
           this.loadData()
         })
+    },
+    getRowClass({ row }) {
+      return row.note ? '' : 'row-expand-cover'
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+>>> .row-expand-cover .el-table__expand-icon {
+  display: none
+}
 .el-link {
   font-size: 16px;
 }

@@ -1014,7 +1014,7 @@ export default {
     openIssueAlert: '目前版本尚有未解之議單，請協助處理後再進行包版作業！',
     issueCount: '本版本共完成 ',
     issueCountLink: '{0} 議題',
-    releaseNote: '版本說明',
+    releaseNote: '釋版說明',
     releaseVersionName: '包版版號',
     selectMainVersion: '請選擇主版本',
     copyIssues: '複製選中議題名稱到剪貼簿',
