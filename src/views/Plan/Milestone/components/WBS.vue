@@ -891,7 +891,8 @@ export default {
         this.updateLoading = true
         this.$emit('update-loading', true)
         try {
-          const res = await addIssue({ ...data, project_id: this.selectedProjectId })
+          const formData = this.getFormData({ ...data, project_id: this.selectedProjectId })
+          const res = await addIssue(formData)
           this.$set(row, 'create', false)
           this.$set(row, 'editColumn', false)
           res.data = this.issueFormatter(res.data)
