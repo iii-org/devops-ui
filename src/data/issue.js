@@ -35,8 +35,16 @@ function Issue(issue) {
   this.assigneeName = issue.assigned_to.name
   this.assigneeLogin = issue.assigned_to.login
 
+  this.getFormData = (data) => {
+    const formData = new FormData()
+    Object.keys(data).forEach((item) => {
+      formData.append(item, data[item])
+    })
+    return formData
+  }
   this.close = async function() {
-    await updateIssue(this.id, { status_id: CLOSED_STATUS_ID })
+    const formData = this.getFormData({ status_id: CLOSED_STATUS_ID })
+    await updateIssue(this.id, formData)
     this.setStatus(CLOSED_STATUS_ID, CLOSED_STATUS_NAME, true)
   }
   this.setStatus = function(id, name, isClosed) {
