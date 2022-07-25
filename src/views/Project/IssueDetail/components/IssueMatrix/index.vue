@@ -252,9 +252,12 @@ export default {
     selectedProjectId() {
       this.initChart()
     },
-    row() {
-      this.isLoading = false
-      this.initChart()
+    row: {
+      handler() {
+        this.isLoading = false
+        this.initChart()
+      },
+      deep: true
     },
     'form.isTracker'(val) {
       if (val && !this.form.displayConditions.includes('status')) this.form.displayConditions.push('status')
@@ -287,7 +290,6 @@ export default {
     //   }
     //   this.initChart()
     // }
-
   },
   mounted() {
     this.initChart()
