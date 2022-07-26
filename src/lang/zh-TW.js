@@ -285,7 +285,6 @@ export default {
     confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？',
     logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。',
     pluginWarnNotifications: '請確保同名 Plugin 開關的狀態一致再進行儲存和執行。',
-    pluginRepeatMessage: '紅底為同分支有重複項目設定，請確認其設置為一致(如同為開或關)，以確保 Pipeline 運作正常。',
     ChangeProjectManager: '確認是否要變更專案經理人。',
     ConnectSocket: '看板正在連接 Socket...',
     UpdateKanban: '{issueName} 已更新',
