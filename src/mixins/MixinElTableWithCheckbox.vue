@@ -50,6 +50,17 @@ export default {
       return this.selectedIndexes.length === 0
     }
   },
+  watch: {
+    pagedData() {
+      this.listQuery.totalPage = Math.floor(this.filteredData.length / this.listQuery.limit) + 1
+      if (this.multipleSelection.length !== this.listQuery.totalPage) {
+        this.multipleSelection = []
+        for (let i = 0; i < this.listQuery.totalPage; i++) {
+          this.$set(this.multipleSelection, i, [])
+        }
+      }
+    }
+  },
   methods: {
     handleSelectionChange(val) {
       const indexes = []
@@ -57,7 +68,9 @@ export default {
         const index = this.pagedData.indexOf(row)
         indexes.push(index)
       }
-      this.multipleSelection.splice(this.listQuery.page - 1, 1, indexes)
+      if (!this.paged) {
+        this.$set(this.multipleSelection, this.listQuery.page - 1, indexes)
+      }
     },
     async handlePagination(listQuery) {
       this.paged = true
@@ -65,13 +78,10 @@ export default {
       this.reselect()
     },
     reselect() {
-      const sel = this.multipleSelection[this.listQuery.page - 1]
-      if (!sel) {
-        return
-      }
-      sel.forEach(index => {
+      this.multipleSelection[this.listQuery.page - 1].forEach(index => {
         this.$refs.theTable.toggleRowSelection(this.pagedData[index])
       })
+      this.paged = false
     }
   }
 }
