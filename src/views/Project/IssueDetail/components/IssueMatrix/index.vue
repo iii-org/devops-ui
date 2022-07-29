@@ -245,6 +245,7 @@ export default {
     hasRelations() {
       const rowIssue = this.chartIssueList.find((item) => item.id === this.row.id)
       if (!rowIssue || !rowIssue.id) return false
+      if (rowIssue.relations && rowIssue.relations.length === 0) return false
       return !!(rowIssue.relations && rowIssue.relations[0].id)
     }
   },
@@ -254,6 +255,7 @@ export default {
     },
     row: {
       handler() {
+        if (!this.isLoading) return
         this.isLoading = false
         this.initChart()
       },
