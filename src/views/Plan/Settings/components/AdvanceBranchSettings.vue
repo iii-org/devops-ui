@@ -1,30 +1,14 @@
 <template>
-  <el-row
-    v-loading="isLoading"
-    :element-loading-text="$t('Loading')"
-    class="app-container"
-  >
+  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
     <el-col>
-      <el-row
-        :gutter="10"
-        type="flex"
-        align="middle"
-      >
+      <el-row :gutter="10" type="flex" align="middle">
         <el-col :span="2">
-          <el-button
-            type="text"
-            size="medium"
-            icon="el-icon-arrow-left"
-            class="text-title linkTextColor"
-            @click="handleBack"
-          >
+          <el-button type="text" size="medium" icon="el-icon-arrow-left" class="text-title linkTextColor" @click="handleBack">
             {{ $t('general.Back') }}
           </el-button>
         </el-col>
         <el-col :span="16">
-          <span class="text-title">
-            {{ selectedProject.display }}
-          </span>
+          <span class="text-title">{{ selectedProject.display }}</span>
         </el-col>
         <el-col :span="6" class="text-right">
           <el-input
@@ -38,29 +22,16 @@
       </el-row>
 
       <el-divider />
-      <div class="float-right mb-3">
-        <el-button
-          class="buttonSecondaryReverse"
-          size="small"
-          @click="handleReset"
-        >
-          {{ $t('general.Cancel') }}
-        </el-button>
-        <el-button
-          class="buttonPrimary"
-          size="small"
-          @click="updatePipelineBranch"
-        >
-          {{ $t('general.Save') }}
-        </el-button>
+      <div class="flex justify-between mb-3">
+        <div v-if="isShowWarning" style="color: red; font-size: 12px;" class="mt-3">{{ $t('Notify.pluginRepeatMessage') }}</div>
+        <div v-else />
+        <div>
+          <el-button class="buttonSecondaryReverse" size="small" @click="handleReset">{{ $t('general.Cancel') }}</el-button>
+          <el-button class="buttonPrimary" size="small" @click="updatePipelineBranch">{{ $t('general.Save') }}</el-button>
+        </div>
       </div>
-      <el-table :data="filteredData" fit>
-        <el-table-column
-          :label="$t('Git.Branch')"
-          align="center"
-          prop="branch"
-          width="100"
-        />
+      <el-table :data="filteredData" fit :cell-style="cellStyle">
+        <el-table-column :label="$t('Git.Branch')" align="center" prop="branch" width="100" />
         <el-table-column
           :label="$t('general.Description')"
           align="center"
@@ -68,21 +39,10 @@
           show-overflow-tooltip
           min-width="120"
         />
-        <el-table-column-time
-          :label="$t('general.LastUpdateTime')"
-          prop="commit_time"
-          width="160"
-        />
-        <el-table-column
-          v-for="(tool, idx) in testingToolNames"
-          :key="`${tool.name}-${idx}`"
-          align="center"
-          width="120"
-        >
+        <el-table-column-time :label="$t('general.LastUpdateTime')" prop="commit_time" width="160" />
+        <el-table-column v-for="(tool, idx) in testingToolNames" :key="`${tool.name}-${idx}`" align="center" width="120">
           <template slot="header">
-            <div class="mb-2">
-              {{ tool.name }}
-            </div>
+            <div class="mb-2">{{ tool.name }}</div>
             <el-checkbox
               v-if="listData.length > 1"
               v-model="tool.selectedAll"
@@ -121,54 +81,53 @@ export default {
       isChanged: false
     }
   },
-  // back-end will determine statements after discussion 2022/07/26
-  // computed: {
-  //   // count the frequency of each plugin appeared by row
-  //   // for example: [
-  //   //  { Web: 2, Sonarqube: 1, Checkmarx: 1, ...},
-  //   //  { Web: 1, Sonarqube: 1, Checkmarx: 1, ...}
-  //   // ]
-  //   countFrequency() {
-  //     return this.listData.map(item => item.testing_tools.reduce((preVal, curVal) => {
-  //       if (curVal.name in preVal) preVal[curVal.name]++
-  //       else preVal[curVal.name] = 1
-  //       return preVal
-  //     }, {}))
-  //   },
-  //   // find the repeat plugin name by row
-  //   repeatPlugins() {
-  //     const repeatPlugins = []
-  //     this.countFrequency.forEach((plugin, index) => {
-  //       Object.keys(plugin).forEach(item => {
-  //         if (this.countFrequency[index][item] > 1) {
-  //           repeatPlugins.push(item)
-  //         }
-  //       })
-  //     })
-  //     return repeatPlugins
-  //   },
-  //   // if the enable values of repeat plugins are not the same, showWarning will be true
-  //   // rowShowWarning gets the showWarning by row
-  //   showWarning() {
-  //     let showWarning = false
-  //     const rowShowWarning = []
-  //     this.listData.forEach(item => {
-  //       item.testing_tools.reduce((preVal, curVal) => {
-  //         const enable = 'enable'
-  //         const hasProperty = preVal.hasOwnProperty(curVal.name)
-  //         if (hasProperty && preVal[curVal.name] === curVal[enable]) showWarning = false
-  //         else showWarning = true
-  //         preVal[curVal.name] = curVal[enable]
-  //         return preVal
-  //       }, {})
-  //       rowShowWarning.push(showWarning)
-  //     })
-  //     return rowShowWarning
-  //   },
-  //   isShowWarning() {
-  //     return this.showWarning.find(item => item)
-  //   }
-  // },
+  computed: {
+    // count the frequency of each plugin appeared by row
+    // for example: [
+    //  { Web: 2, Sonarqube: 1, Checkmarx: 1, ...},
+    //  { Web: 1, Sonarqube: 1, Checkmarx: 1, ...}
+    // ]
+    countFrequency() {
+      return this.listData.map(item => item.testing_tools.reduce((preVal, curVal) => {
+        if (curVal.name in preVal) preVal[curVal.name]++
+        else preVal[curVal.name] = 1
+        return preVal
+      }, {}))
+    },
+    // find the repeat plugin name by row
+    repeatPlugins() {
+      const repeatPlugins = []
+      this.countFrequency.forEach((plugin, index) => {
+        Object.keys(plugin).forEach(item => {
+          if (this.countFrequency[index][item] > 1) {
+            repeatPlugins.push(item)
+          }
+        })
+      })
+      return repeatPlugins
+    },
+    // if the enable values of repeat plugins are not the same, showWarning will be true
+    // rowShowWarning gets the showWarning by row
+    showWarning() {
+      let showWarning = false
+      const rowShowWarning = []
+      this.listData.forEach(item => {
+        item.testing_tools.reduce((preVal, curVal) => {
+          const enable = 'enable'
+          const hasProperty = preVal.hasOwnProperty(curVal.name)
+          if (hasProperty && preVal[curVal.name] === curVal[enable]) showWarning = false
+          else showWarning = true
+          preVal[curVal.name] = curVal[enable]
+          return preVal
+        }, {})
+        rowShowWarning.push(showWarning)
+      })
+      return rowShowWarning
+    },
+    isShowWarning() {
+      return this.showWarning.find(item => item)
+    }
+  },
   beforeRouteLeave(to, from, next) {
     if (this.isChanged) {
       this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
@@ -224,10 +183,10 @@ export default {
       return status.every(i => i === true)
     },
     async updatePipelineBranch() {
-      // if (this.isShowWarning) {
-      //   this.showWarningMessage()
-      //   return
-      // }
+      if (this.isShowWarning) {
+        this.showWarningMessage()
+        return
+      }
       const sendData = {
         detail: this.listData.reduce(
           (result, cur) =>
@@ -341,14 +300,23 @@ export default {
     },
     handleBack() {
       this.$router.push({ name: 'ProjectSettings', params: { projectName: this.selectedProject.name }})
+    },
+    showWarningMessage() {
+      this.$message({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.pluginWarnNotifications'),
+        type: 'warning'
+      })
+    },
+    cellStyle(cell) {
+      const style = {}
+      // there are 3 columns in the front of data columns now
+      const columnIndex = cell.columnIndex - 3
+      const rowIndex = cell.rowIndex
+      const name = columnIndex >= 0 ? cell.row.testing_tools[columnIndex].name : ''
+      if (name === this.repeatPlugins[rowIndex] && this.showWarning[rowIndex]) style['background-color'] = '#F9CECE'
+      return style
     }
-    // showWarningMessage() {
-    //   this.$message({
-    //     title: this.$t('general.Warning'),
-    //     message: this.$t('Notify.pluginWarnNotifications'),
-    //     type: 'warning'
-    //   })
-    // }
   }
 }
 </script>
