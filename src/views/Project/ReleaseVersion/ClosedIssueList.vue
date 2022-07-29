@@ -523,9 +523,17 @@ export default {
       this.listQuery.page = 1
       this.listQuery.offset = 0
     },
+    getFormData(data) {
+      const formData = new FormData()
+      Object.keys(data).forEach((item) => {
+        formData.append(item, data[item])
+      })
+      return formData
+    },
     removeIssueRelation(child_issue_id) {
       this.listLoading = true
-      updateIssue(child_issue_id, { parent_id: '' })
+      const formData = this.getFormData({ parent_id: '' })
+      updateIssue(child_issue_id, formData)
         .then(() => {
           this.$message({
             title: this.$t('general.Success'),

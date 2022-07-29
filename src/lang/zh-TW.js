@@ -252,7 +252,8 @@ export default {
     Parent: '父',
     Child: '子',
     CopyUrl: '複製網址',
-    TemporarySave: '暫存'
+    TemporarySave: '暫存',
+    Modify: '修改'
   },
   Notify: {
     Updated: '已更新',
@@ -282,6 +283,7 @@ export default {
     confirmDelete: '確定@:(general.Delete)嗎？',
     confirmClose: '確定@:(general.Close)嗎？',
     confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？',
+    confirmEditProject: '範本更換，將直接取代成您選擇的範本程式，請問確認要覆蓋嗎？',
     logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。',
     pluginWarnNotifications: '請確保同名 Plugin 開關的狀態一致再進行儲存和執行。',
     pluginRepeatMessage: '紅底為同分支有重複項目設定，請確認其設置為一致(如同為開或關)，以確保 Pipeline 運作正常。',
@@ -291,7 +293,9 @@ export default {
     NoParentIssueWarning: '種類為{tracker_name}的議題需有父議題。',
     ChangeProject: '切換專案將清空版本、標籤及受分配者的資訊，確認移轉嗎？',
     RedmineMailWarning: '[注意] Redmine 將重新啟動，服務即將暫停，請3-5分鐘後再重新登入使用',
-    RedmineMailActiveWarning: '平台Email設定尚未啟用，請洽系統管理者'
+    RedmineMailActiveWarning: '平台Email設定尚未啟用，請洽系統管理者',
+    RedmineMailAutoDisableWarning: '您的Email通知已被關閉，因後台Email設定尚未啟用或已關閉，請洽系統管理者',
+    RedmineMailConfirmWarning: '信箱（SMTP）設定修改，即將重啟Redmine，屆時將導致DevOps平台停止服務5-8分鐘，請問確定要執行修改並重啟Redmine嗎？'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -1011,7 +1015,7 @@ export default {
     openIssueAlert: '目前版本尚有未解之議單，請協助處理後再進行包版作業！',
     issueCount: '本版本共完成 ',
     issueCountLink: '{0} 議題',
-    releaseNote: '版本說明',
+    releaseNote: '釋版說明',
     releaseVersionName: '包版版號',
     selectMainVersion: '請選擇主版本',
     copyIssues: '複製選中議題名稱到剪貼簿',

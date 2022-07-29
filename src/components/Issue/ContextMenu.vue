@@ -325,7 +325,10 @@ export default {
           Object.prototype.hasOwnProperty.call(this.row, 'project')
             ? this.row.project.id : this.selectedProjectId
         if (projectId >= 0) {
-          const res = await getAPI[column][0](projectId, params)
+          const res = await getAPI[column][0](projectId, params).catch(async() => {
+            localStorage.setItem('isToken', true)
+            await getAPI[column][0](projectId, params)
+          })
           switch (column) {
             case 'fixed_version':
               this[column] = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[getAPI[column][1]]]
@@ -384,20 +387,30 @@ export default {
         }
       })
     },
+    getFormData(data) {
+      const formData = new FormData()
+      Object.keys(data).forEach((item) => {
+        formData.append(item, data[item])
+      })
+      return formData
+    },
     async onSaveRelationIssue() {
       try {
         const getSettingRelationIssue = this.$refs['settingRelationIssue']
         const updateApi = []
         if (getSettingRelationIssue.target === 'Parent') {
+          const formData = this.getFormData({ parent_id: getSettingRelationIssue.form.parent_id })
           updateApi.push(
-            updateIssue(getSettingRelationIssue.row.id, { parent_id: getSettingRelationIssue.form.parent_id })
+            updateIssue(getSettingRelationIssue.row.id, formData)
           )
         } else if (getSettingRelationIssue.target === 'Children') {
+          const appendFormData = this.getFormData({ parent_id: getSettingRelationIssue.row.id })
+          const removeFormData = this.getFormData({ parent_id: '' })
           getSettingRelationIssue.children['append'].forEach((item) => {
-            updateApi.push(updateIssue(item, { parent_id: getSettingRelationIssue.row.id }))
+            updateApi.push(updateIssue(item, appendFormData))
           })
           getSettingRelationIssue.children['remove'].forEach((item) => {
-            updateApi.push(updateIssue(item, { parent_id: '' }))
+            updateApi.push(updateIssue(item, removeFormData))
           })
         }
         await Promise.all(updateApi)
@@ -428,7 +441,8 @@ export default {
         if (column === 'assigned_to_id') {
           data = this.setStatusId(column, item.id, data)
         }
-        const res = await updateIssue(this.row.id, data)
+        const formData = this.getFormData(data)
+        const res = await updateIssue(this.row.id, formData)
         this.row[column.replace('_id', '')] = res.data[column.replace('_id', '')]
         this.$emit('update')
         this.$emit('update-card', this.row.id)
@@ -504,6 +518,7 @@ export default {
     },
     handleUpdateIssue() {
       this.$emit('update')
+      this.$emit('update-row', this.row.id)
       this.$emit('update-card', this.row.id)
     },
     handleAdvancedImport() {

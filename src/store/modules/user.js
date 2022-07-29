@@ -42,12 +42,18 @@ const actions = {
           const { data } = response
           const { token } = data
           const jwtContent = VueJwtDecode.decode(token)
-          if (!('identity' in jwtContent)) {
+          if (!('sub' in jwtContent)) {
             Promise.reject('userId not exist')
           }
 
-          commit('SET_USER_ID', jwtContent['identity'].user_id)
+          commit('SET_USER_ID', jwtContent['sub'].user_id)
           commit('SET_TOKEN', token)
+
+          // for debug
+          localStorage.setItem('token', token)
+          localStorage.setItem('isToken', false)
+          //
+
           setToken(token)
 
           resolve()
@@ -62,10 +68,10 @@ const actions = {
   async getInfo({ commit, state, dispatch, rootState }) {
     const token = getToken()
     const jwtContent = VueJwtDecode.decode(token)
-    if (!('identity' in jwtContent)) {
+    if (!('sub' in jwtContent)) {
       Promise.reject('userId not exist')
     }
-    commit('SET_USER_ID', jwtContent['identity'].user_id)
+    commit('SET_USER_ID', jwtContent['sub'].user_id)
     commit('SET_TOKEN', token)
 
     const user = await getUserInfo(state.userId)
@@ -80,6 +86,10 @@ const actions = {
     dispatch('app/setRoleList', null, { root: true })
     commit('SET_USER_ROLE', user.default_role_name)
     const myProjects = rootState.projects.options
+
+    if (myProjects.length === 0) {
+      commit('projects/SET_SELECTED_PROJECT', { id: -1 }, { root: true })
+    }
     if (myProjects.length > 0) {
       const projectStorage = myProjects.find((elm) => String(elm.id) === localStorage.getItem('projectId'))
       if (projectStorage) {

@@ -1,4 +1,5 @@
 import ContextMenu from '@/components/Issue/ContextMenu'
+import { getIssue } from '@/api/issue'
 
 export default {
   components: { ContextMenu },
@@ -80,6 +81,12 @@ export default {
     hideContextMenu() {
       this.contextMenu.visible = false
       document.removeEventListener('click', this.hideContextMenu)
+    },
+    async getContextRow(issueId) {
+      const issue = await getIssue(issueId)
+      this.$nextTick(() => {
+        this.contextMenu.row = issue.data
+      })
     }
   }
 }

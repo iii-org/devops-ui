@@ -195,14 +195,14 @@ const clairFormatter = (testResult) => {
   const status = testResult.status
   if (Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
-      Software: 'clair',
+      Software: 'dockerImage',
       informationText: [{ status: getCheckmarxStatusText(status), count: '' }],
       status
     })
   } else {
     const { Critical, High, Low, Medium, Negligible, Unknown } = testResult.result
     Object.assign(ret, {
-      Software: 'clair',
+      Software: 'dockerImage',
       runAt: testResult.run_at,
       informationText: [
         { status: i18n.t('Docker.Critical'), count: Critical },

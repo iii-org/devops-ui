@@ -122,7 +122,7 @@
         :parent-id="issueId"
         :parent-name="issueName"
         :prefill="form"
-        @loading="loadingUpdate($event, true)"
+        @loading="loadingUpdate($event, false)"
         @add-topic-visible="emitAddTopicDialogVisible"
       />
       <span
@@ -133,7 +133,9 @@
           id="dialog-btn-cancel"
           class="buttonSecondaryReverse"
           @click="handleAdvancedClose"
-        >{{ $t('general.Cancel') }}</el-button>
+        >
+          {{ $t('general.Cancel') }}
+        </el-button>
         <el-button
           id="dialog-btn-confirm"
           :loading="isLoading"
@@ -286,7 +288,7 @@ export default {
           //   message: this.$t('Notify.Added'),
           //   type: 'success'
           // })
-          this.addTopicDialogVisible = false
+          // this.addTopicDialogVisible = false
           return res
         })
         .catch((error) => {
@@ -326,15 +328,24 @@ export default {
         }
       })
     },
+    getFormData(data) {
+      const formData = new FormData()
+      Object.keys(data).forEach((item) => {
+        formData.append(item, data[item])
+      })
+      return formData
+    },
     async onSaveRelationIssue() {
       try {
         const getSettingRelationIssue = this.$refs['settingRelationIssue']
         const updateApi = []
+        const appendFormData = this.getFormData({ parent_id: getSettingRelationIssue.row.id })
+        const removeFormData = this.getFormData({ parent_id: '' })
         getSettingRelationIssue.children['append'].forEach((item) => {
-          updateApi.push(updateIssue(item, { parent_id: getSettingRelationIssue.row.id }))
+          updateApi.push(updateIssue(item, appendFormData))
         })
         getSettingRelationIssue.children['remove'].forEach((item) => {
-          updateApi.push(updateIssue(item, { parent_id: '' }))
+          updateApi.push(updateIssue(item, removeFormData))
         })
         await Promise.all(updateApi)
         this.toggleRelationDialog()

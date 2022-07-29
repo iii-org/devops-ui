@@ -112,6 +112,7 @@
     <div
       v-show="data.length > 0"
       ref="matrix"
+      v-loading="isLoading"
       v-dragscroll
       class="mermaid-wrapper"
       :style="{ height:`${tableHeight}px` }"
@@ -216,8 +217,8 @@ export default {
         id: null
       },
       trackerColor: Object.freeze(theme.backgroundColor),
-      form: new Form()
-
+      form: new Form(),
+      isLoading: false
     }
   },
   computed: {
@@ -244,12 +245,21 @@ export default {
     hasRelations() {
       const rowIssue = this.chartIssueList.find((item) => item.id === this.row.id)
       if (!rowIssue || !rowIssue.id) return false
+      if (rowIssue.relations && rowIssue.relations.length === 0) return false
       return !!(rowIssue.relations && rowIssue.relations[0].id)
     }
   },
   watch: {
     selectedProjectId() {
       this.initChart()
+    },
+    row: {
+      handler() {
+        if (!this.isLoading) return
+        this.isLoading = false
+        this.initChart()
+      },
+      deep: true
     },
     'form.isTracker'(val) {
       if (val && !this.form.displayConditions.includes('status')) this.form.displayConditions.push('status')
@@ -282,7 +292,6 @@ export default {
     //   }
     //   this.initChart()
     // }
-
   },
   mounted() {
     this.initChart()
@@ -534,8 +543,8 @@ export default {
     },
     handleRelationUpdate() {
       this.onCloseRelationIssueDialog()
-      this.initChart()
       this.$emit('update-issue')
+      this.isLoading = true
     },
     onRelationIssueDialog(id) {
       this.$set(this.relationIssue, 'visible', true)

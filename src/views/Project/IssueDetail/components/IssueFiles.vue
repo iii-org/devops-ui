@@ -68,6 +68,7 @@
         ref="carousel"
         trigger="click"
         indicator-position="none"
+        :arrow="imageArray.length===1?'never':'hover'"
         :autoplay="false"
         :initial-index="imageIndex"
         :height="imageHeight+'px'"

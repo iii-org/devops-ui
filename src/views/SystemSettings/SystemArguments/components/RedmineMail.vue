@@ -9,6 +9,7 @@
             class="mr-3"
             :active-text="$t('general.Enable')"
             :inactive-text="$t('general.Disable')"
+            @change="confirm(false)"
           />
           <el-button
             v-if="!redmineMailForm.active"
@@ -20,9 +21,9 @@
           <el-button
             v-else
             type="success"
-            @click="onUpdate(false)"
+            @click="confirm(true)"
           >
-            {{ $t('general.Save') }}
+            {{ $t('general.Modify') }}
           </el-button>
         </div>
       </div>
@@ -156,21 +157,13 @@ export default {
         'smtp_settings.port': [{ required: true, message: 'Please input port.', trigger: 'change' }]
       },
       isLoading: false,
-      stopUpdate: false,
+      stopUpdateActive: false,
       timer: null
     }
   },
   computed: {
     isAuthenticationNil() {
       return this.redmineMailForm.smtp_settings.authentication === 'nil'
-    }
-  },
-  watch: {
-    async 'redmineMailForm.active'(bool) {
-      if (bool !== undefined && !this.stopUpdate) {
-        await this.onUpdate()
-      }
-      if (this.stopUpdate) this.stopUpdate = false
     }
   },
   beforeDestroy() {
@@ -184,6 +177,7 @@ export default {
         })
     },
     filterEmpty(data) {
+      if (!data) return
       const arr = ['openssl_verify_mode', 'user_name', 'password', 'ssl']
       Object.keys(data).forEach((item) => {
         if (typeof data[item] === 'object') this.filterEmpty(data[item])
@@ -199,6 +193,34 @@ export default {
       this.filterEmpty(res)
       return res
     },
+    /**
+     * @param isModify - means if you click the "Modify" button
+     */
+    confirm(isModify) {
+      this.$confirm(
+        this.$t('Notify.RedmineMailConfirmWarning'),
+        this.$t('general.Warning'),
+        {
+          closeOnClickModal: false,
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel')
+        }
+      )
+        .then(async () => {
+          await this.onUpdate(false)
+          this.stopUpdateActive = false
+        })
+        .catch((action) => {
+          if (isModify) return
+          if (action === 'cancel') {
+            this.redmineMailForm.active = !this.redmineMailForm.active
+            this.stopUpdateActive = true
+          }
+        })
+    },
+    /**
+     * @param isTemporary - means if you click the "Temporary Save" button
+     */
     async onUpdate(isTemporary) {
       this.$refs.redmineMailForm.validate(async valid => {
         if (!valid) return
@@ -209,10 +231,13 @@ export default {
     getUpdateData(isTemporary) {
       const data = {
         redmine_mail: { smtp_settings: this.checkData().smtp_settings },
-        emissoin_email_address: this.checkData().emission_email_address
+        emission_email_address: this.checkData().emission_email_address
       }
-      if (isTemporary) this.$set(data, 'temp_save', true)
-      else this.$set(data, 'active', this.redmineMailForm.active)
+      if (isTemporary) {
+        this.$set(data, 'temp_save', isTemporary)
+      } else {
+        this.$set(data, 'active', this.redmineMailForm.active)
+      }
       return data
     },
     async fetchUserRedmineMailProfile(data) {
@@ -222,13 +247,7 @@ export default {
           this.handleMessage(data)
         })
         .catch((error) => {
-          if (
-            error.response.data.error.code === 7009 ||
-            error.response.data.error.code === 7010
-          ) {
-            this.stopUpdate = true
-            this.$set(this.redmineMailForm, 'active', false)
-          }
+          console.error(error)
         })
         .finally(async () => {
           this.isLoading = false
@@ -236,17 +255,9 @@ export default {
     },
     handleMessage(data) {
       this.$message({
-        message: data.temp_save ? this.$t('Notify.TemporarySaved') : this.$t('Notify.Updated'),
+        message: this.$t('Notify.Updated'),
         type: 'success'
       })
-      if (!data.hasOwnProperty('temp_save')) {
-        this.timer = setTimeout(() => {
-          this.$message({
-            message: this.$t('Notify.RedmineMailWarning'),
-            type: 'warning'
-          })
-        }, 1000)
-      }
     },
     clearTimer() {
       clearTimeout(this.timer)

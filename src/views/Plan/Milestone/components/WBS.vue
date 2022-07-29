@@ -668,7 +668,6 @@ export default {
     async handleRemoveIssue(row, msg, force, detail) {
       const h = this.$createElement
       const issueName = { issueName: row.name }
-      console.log(msg)
       const messageList = [h('span', null, this.$t(`Issue.${msg}Issue`, issueName))]
       if (detail) {
         messageList.push(h('ul', null,
@@ -780,6 +779,13 @@ export default {
       }
       this.$set(row, 'create', false)
     },
+    getFormData(data) {
+      const formData = new FormData()
+      Object.keys(data).forEach((item) => {
+        formData.append(item, data[item])
+      })
+      return formData
+    },
     async handleUpdateIssue({ value, row }) {
       let checkUpdate = false
       const originDate = this.$dayjs(row.originColumn)
@@ -815,7 +821,8 @@ export default {
                 value[key] = ''
               }
             })
-            const res = await updateIssue(row.id, value)
+            const formData = this.getFormData(value)
+            const res = await updateIssue(row.id, formData)
             this.$set(row, 'editColumn', false)
             this.$set(row, 'originColumn', null)
             if (row.parent_object) {
@@ -884,7 +891,8 @@ export default {
         this.updateLoading = true
         this.$emit('update-loading', true)
         try {
-          const res = await addIssue({ ...data, project_id: this.selectedProjectId })
+          const formData = this.getFormData({ ...data, project_id: this.selectedProjectId })
+          const res = await addIssue(formData)
           this.$set(row, 'create', false)
           this.$set(row, 'editColumn', false)
           res.data = this.issueFormatter(res.data)
@@ -1025,15 +1033,18 @@ export default {
         const getSettingRelationIssue = this.$refs['settingRelationIssue']
         const updateApi = []
         if (getSettingRelationIssue.target === 'Parent') {
+          const formData = this.getFormData({ parent_id: getSettingRelationIssue.form.parent_id })
           updateApi.push(
-            updateIssue(getSettingRelationIssue.row.id, { parent_id: getSettingRelationIssue.form.parent_id })
+            updateIssue(getSettingRelationIssue.row.id, formData)
           )
         } else if (getSettingRelationIssue.target === 'Children') {
+          const appendFormData = this.getFormData({ parent_id: getSettingRelationIssue.row.id })
+          const removeFormData = this.getFormData({ parent_id: '' })
           getSettingRelationIssue.children['append'].forEach((item) => {
-            updateApi.push(updateIssue(item, { parent_id: getSettingRelationIssue.row.id }))
+            updateApi.push(updateIssue(item, appendFormData))
           })
           getSettingRelationIssue.children['remove'].forEach((item) => {
-            updateApi.push(updateIssue(item, { parent_id: '' }))
+            updateApi.push(updateIssue(item, removeFormData))
           })
         }
         await Promise.all(updateApi)

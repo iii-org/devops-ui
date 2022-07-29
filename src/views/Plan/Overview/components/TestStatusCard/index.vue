@@ -134,7 +134,7 @@ export default {
       return result
     },
     handleClick(target) {
-      this.$router.push({ name: target })
+      this.$router.push({ name: target.charAt(0).toUpperCase() + target.slice(1) })
     },
     updateProjectTestList() {
       this.$emit('update')

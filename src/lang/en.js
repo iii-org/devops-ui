@@ -252,7 +252,8 @@ export default {
     Parent: 'P',
     Child: 'C',
     CopyUrl: 'Copy URL',
-    TemporarySave: 'Temporary Save'
+    TemporarySave: 'Temporary Save',
+    Modify: 'Modify'
   },
   Notify: {
     Updated: 'update successful',
@@ -282,6 +283,7 @@ export default {
     confirmDelete: 'Are you sure to @:(general.Delete)?',
     confirmClose: 'Are you sure to @:(general.Close)?',
     confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？',
+    confirmEditProject: 'Applying a new template will replace this project repository, and this is unrecoverable. Please confirm the action.',
     logoutNotifications: 'The session has timed out. Please click re-login button to login back again.',
     pluginWarnNotifications:
       'Please ensure that the status of the Plugin switch with the same name is the same before saving and executing.',
@@ -293,7 +295,9 @@ export default {
     NoParentIssueWarning: 'Type of {tracker_name} requires a parent issue.',
     ChangeProject: `Switching a project will empty the version, label, and distributor's information, confirm the transfer?`,
     RedminemailWarning: '[Warning] Redmine will restart, the service is about to be suspended, please log in after 3-5 minutes.',
-    RedmineMailActiveWarning: 'Mail notificaiton setting can not be opened, when mail server is disable.'
+    RedmineMailActiveWarning: 'Mail notification setting can not be opened, when mail server is disable.',
+    RedmineMailAutoDisableWarning: 'Email notification is disabled, it might caused by disabled or invalid email setting at backend. Please contact with system administrator for further information.',
+    RedmineMailConfirmWarning: 'Mail(SMTP) setting modification will be restarted to Redmine, which will cause the DEVOPS platform to stop the service for 5-8 minutes. If it is necessary to perform modification and restart the redmine?'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -1018,7 +1022,7 @@ export default {
     openIssueAlert: 'There are unclosed issues in selected versions, please close it first.',
     issueCount: 'In this version: ',
     issueCountLink: '{0} issues',
-    releaseNote: '[Release Note]',
+    releaseNote: 'Release Note',
     releaseVersionName: 'Version name',
     selectMainVersion: 'Please main version',
     copyIssues: 'Copy issue names to clipboard',
