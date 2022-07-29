@@ -283,6 +283,7 @@ export default {
     confirmDelete: 'Are you sure to @:(general.Delete)?',
     confirmClose: 'Are you sure to @:(general.Close)?',
     confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？',
+    confirmEditProject: 'Applying a new template will replace this project repository, and this is unrecoverable. Please confirm the action.',
     logoutNotifications: 'The session has timed out. Please click re-login button to login back again.',
     pluginWarnNotifications:
       'Please ensure that the status of the Plugin switch with the same name is the same before saving and executing.',

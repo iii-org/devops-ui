@@ -22,6 +22,7 @@ function Project(project) {
   this.lock_reason = project.lock_reason
   this.base_example = project.base_example
   this.parent_id = project.parent_id
+  this.is_empty_project = project.is_empty_project
   this.is_inheritance_member = project.is_inheritance_member
 
   this.creator_id = project.creator_id
