@@ -250,7 +250,7 @@ stages:
   when:
     branch:
       include:
-      - skip
+      - develop
 - name: Test--WebInspect
   iiidevops: webinspect
   steps:
