@@ -86,7 +86,7 @@
       :span="24"
     >
       <el-form-item :label="$t('Project.TemplateDescription')">
-        <p v-html="focusTemplate.description" />
+        <span v-html="focusTemplate.description" />
       </el-form-item>
     </el-col>
     <div>
