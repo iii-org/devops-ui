@@ -472,6 +472,10 @@ export default {
   },
   mounted() {
     this.loadData()
+    window.addEventListener('resize', this.loadData)
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.loadData)
   },
   methods: {
     getParams() {
@@ -1092,6 +1096,7 @@ export default {
 <style lang="scss" scoped>
 .add-issue-inline {
   @apply pl-5;
+  @apply py-3;
 }
 
 .table-css {
