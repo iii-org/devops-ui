@@ -1,6 +1,7 @@
 <template>
   <div
     ref="wrapper"
+    v-loading="isLoading"
     class="wrapper"
   >
     <el-alert
@@ -112,7 +113,6 @@
     <div
       v-show="data.length > 0"
       ref="matrix"
-      v-loading="isLoading"
       v-dragscroll
       class="mermaid-wrapper"
       :style="{ height:`${tableHeight}px` }"

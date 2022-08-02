@@ -369,7 +369,7 @@ import WBSSelectColumn from '@/views/Plan/Milestone/components/WBSSelectColumn'
 import WBSDateColumn from '@/views/Plan/Milestone/components/WBSDateColumn'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
-import { addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
+import { getIssue, addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
 import { CancelRequest } from '@/newMixins'
 
@@ -521,6 +521,13 @@ export default {
       this.$set(this.$refs['WBS'].resizeState, 'height', 0)
       this.$set(this.$refs['WBS'], 'isGroup', true)
       this.$set(this.$refs['WBS'], 'isGroup', false)
+
+      if (this.issueMatrixDialog.row.id) {
+        const issue = await getIssue(this.issueMatrixDialog.row.id)
+        this.$nextTick(() => {
+          this.issueMatrixDialog.row = issue.data
+        })
+      }
     },
     async fetchData() {
       if (!this.selectedProjectId) return
