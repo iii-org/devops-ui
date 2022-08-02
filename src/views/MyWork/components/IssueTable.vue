@@ -172,6 +172,7 @@
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
       @update="updateAllIssueTables"
+      @update-row="getContextRow"
     />
   </div>
 </template>

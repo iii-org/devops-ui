@@ -107,11 +107,13 @@
             </el-form-item>
           </el-col>
           <el-col
-            v-if="form.base_example && baseExampleInfo && !editProjectObj.is_empty_project"
+            v-if="form.base_example && baseExampleDescription && !editProjectObj.is_empty_project"
             :span="24"
           >
             <el-form-item :label="$t('Project.OriginalTemplate')">
-              <p v-html="baseExampleInfo" />
+              <span class="font-bold">{{ baseExampleDisplay }}</span>
+              <br>
+              <span v-html="baseExampleDescription" />
             </el-form-item>
           </el-col>
         </el-col>
@@ -206,7 +208,8 @@ export default {
         ]
       },
       assignableList: [],
-      baseExampleInfo: '',
+      baseExampleDisplay: '',
+      baseExampleDescription: '',
       originProject: {
         parent_id: '',
         is_inheritance_member: false
@@ -259,7 +262,8 @@ export default {
           res.data.forEach((item) => {
             item.options.forEach((element) => {
               if (element.path === this.form.base_example) {
-                this.baseExampleInfo = element.description
+                this.baseExampleDisplay = element.display
+                this.baseExampleDescription = element.description
               }
             })
           })
@@ -276,7 +280,8 @@ export default {
       this.$nextTick(() => {
         this.$refs.editProjectForm.resetFields()
         this.form = formTemplate()
-        this.baseExampleInfo = ''
+        this.baseExampleDisplay = ''
+        this.baseExampleDescription = ''
         this.clearTemplate()
       })
     },
