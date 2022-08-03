@@ -518,6 +518,7 @@ export default {
     },
     handleUpdateIssue() {
       this.$emit('update')
+      this.$emit('update-row', this.row.id)
       this.$emit('update-card', this.row.id)
     },
     handleAdvancedImport() {

@@ -47,13 +47,14 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
+      @update-row="getContextRow"
     />
   </section>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { addIssue, updateIssue } from '@/api/issue'
+import { getIssue, addIssue, updateIssue } from '@/api/issue'
 import { Kanban } from '@/views/Project/IssueBoards/components'
 import { ContextMenu } from '@/components/Issue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
@@ -294,6 +295,12 @@ export default {
           left: `${this.contextMenu.left}px`
         }
         document.addEventListener('click', this.hideContextMenu)
+      })
+    },
+    async getContextRow(issueId) {
+      const issue = await getIssue(issueId)
+      this.$nextTick(() => {
+        this.contextMenu.row = issue.data
       })
     },
     hideContextMenu() {

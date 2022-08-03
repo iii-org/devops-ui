@@ -244,12 +244,12 @@ export default {
     showClosed() {
       this.setData(this.issues)
     },
-    showOpen() {
+    showOpen(val) {
       this.setData(this.issues)
     },
     listData(val) {
-      // FIXME: need to find out why filteredData in MixinProjectListSelector always makes listData become [] when first loading
-      if (val.length === 0 && this.selectedCategory === this.$t('Release.allCategories') && this.allIssues.length > 0) {
+      if (val.length === 0 && !this.showOpen) return
+      else if (val.length === 0 && this.selectedCategory === this.$t('Release.allCategories') && this.allIssues.length > 0) {
         this.setData(this.allIssues)
       }
     },

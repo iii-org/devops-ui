@@ -69,6 +69,9 @@ export default {
     releaseId() {
       return this.scope.row.id
     },
+    projectName() {
+      return this.image.project
+    },
     repoName() {
       return this.image.repo
     }
@@ -82,7 +85,7 @@ export default {
     },
     getDockerCommand() {
       const baseUrl = this.scope.row.harbor_external_base_url
-      return `docker pull ${baseUrl}/${this.repoName}:${this.selectedTag}`
+      return `docker pull ${baseUrl}/${this.projectName}/${this.repoName}:${this.selectedTag}`
     },
     copyUrl(id) {
       const target = document.getElementById(id)

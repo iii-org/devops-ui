@@ -344,6 +344,7 @@
       :selection-options="contextOptions"
       @backToFirstPage="backToFirstPage"
       @update="loadData"
+      @update-row="getContextRow"
     />
   </div>
 </template>
