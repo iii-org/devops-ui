@@ -25,15 +25,15 @@
       <el-table-column align="center" :label="$t('User.Account')" min-width="170" prop="login" />
       <el-table-column align="center" :label="$t('general.Name')" min-width="200" prop="name" />
       <el-table-column align="center" label="Email" prop="email" min-width="280" />
-      <el-table-column-time :label="$t('general.CreateTime')" prop="create_at" />
+      <ElTableColumnTime :label="$t('general.CreateTime')" prop="create_at" />
       <el-table-column align="center" :label="$t('User.Phone')" width="160" prop="phone" />
-      <el-table-column-tag
+      <ElTableColumnTag
         prop="status"
         min-width="120"
         size="small"
         location="accountManage"
       />
-      <el-table-column-time align="center" :label="$t('User.LastLogin')" prop="last_login" />
+      <ElTableColumnTime align="center" :label="$t('User.LastLogin')" prop="last_login" />
       <el-table-column align="center" :label="$t('general.Actions')" width="250">
         <template slot-scope="scope">
           <el-button size="mini" class="buttonPrimaryReverse" @click="handleParticipateDialog(scope.row.id)">
@@ -66,7 +66,7 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-    <user-dialog
+    <UserDialog
       :dialog-title="dialogTitle"
       :user-id="editUserId"
       :user-data="editUserData"
@@ -105,6 +105,17 @@ export default {
   },
   computed: {
     ...mapGetters(['userId'])
+  },
+  mounted() {
+    if (sessionStorage.getItem('AccountManageKeyWord')) {
+      this.keyword = sessionStorage.getItem('AccountManageKeyWord')
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (to.name !== 'ParticipateProject') {
+      sessionStorage.removeItem('AccountManageKeyWord')
+    }
+    next()
   },
   methods: {
     async fetchData(page, per_page, search) {
@@ -150,7 +161,6 @@ export default {
           message: this.$t('Notify.Deleted'),
           type: 'success'
         })
-        this.keyword = ''
         const currentPage = this.pagedData.length > 1 ? this.listQuery.current : this.listQuery.current - 1
         await this.loadData(currentPage, this.perPage, this.keyword)
       } catch (error) {
@@ -161,6 +171,7 @@ export default {
       if (column.label !== this.$t('general.Actions')) this.showUserDialog(row, 'Edit User')
     },
     handleParticipateDialog(user_id) {
+      sessionStorage.setItem('AccountManageKeyWord', this.keyword)
       this.$router.push({ name: 'ParticipateProject', params: { userId: user_id }})
     }
   }
