@@ -52,7 +52,6 @@ stages:
       include:
       - master
       - develop
-      - routerfromapi
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
   steps:
