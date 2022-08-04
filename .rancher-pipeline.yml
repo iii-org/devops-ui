@@ -32,7 +32,6 @@ stages:
       include:
       - master
       - develop
-      - routerfromapi
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -53,6 +52,7 @@ stages:
       include:
       - master
       - develop
+      - routerfromapi
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
   steps:
@@ -83,7 +83,6 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
-      - routerfromapi
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -109,7 +108,6 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
-      - routerfromapi
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -131,7 +129,6 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
-      - routerfromapi
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -169,7 +166,6 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
-      - routerfromapi
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -200,7 +196,6 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
-      - routerfromapi
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -229,7 +224,6 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
-      - routerfromapi
 - name: Test--ZAP
   iiidevops: zap
   steps:
