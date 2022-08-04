@@ -32,6 +32,7 @@ stages:
       include:
       - master
       - develop
+      - GitGraph
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
