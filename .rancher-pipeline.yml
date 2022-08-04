@@ -52,7 +52,6 @@ stages:
       include:
       - master
       - develop
-      - routerfromapi
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
   steps:
@@ -83,7 +82,6 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
-      - routerfromapi
       - router
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
@@ -110,7 +108,6 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
-      - routerfromapi
       - router
 - name: Build--Scan docker image
   iiidevops: deployed-environments
@@ -133,7 +130,6 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
-      - routerfromapi
       - router
 - name: Build--Copy Image
   iiidevops: deployed-environments
@@ -172,7 +168,6 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
-      - routerfromapi
       - router
 - name: Deploy--Web
   iiidevops: deployed-environments
@@ -204,7 +199,6 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
-      - routerfromapi
       - router
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
@@ -234,7 +228,6 @@ stages:
       - pluginchart
       - redminemail
       - filepreview
-      - routerfromapi
       - router
 - name: Test--ZAP
   iiidevops: zap
