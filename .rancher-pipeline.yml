@@ -83,6 +83,7 @@ stages:
       - redminemail
       - filepreview
       - router
+      - routerfromapi
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -109,6 +110,7 @@ stages:
       - redminemail
       - filepreview
       - router
+      - routerfromapi
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -131,6 +133,7 @@ stages:
       - redminemail
       - filepreview
       - router
+      - routerfromapi
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -169,6 +172,7 @@ stages:
       - redminemail
       - filepreview
       - router
+      - routerfromapi
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -200,6 +204,7 @@ stages:
       - redminemail
       - filepreview
       - router
+      - routerfromapi
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -229,6 +234,7 @@ stages:
       - redminemail
       - filepreview
       - router
+      - routerfromapi
 - name: Test--ZAP
   iiidevops: zap
   steps:
