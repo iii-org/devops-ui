@@ -83,7 +83,6 @@ stages:
       - redminemail
       - filepreview
       - router
-      - GitGraph
       - routerfromapi
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
@@ -111,7 +110,6 @@ stages:
       - redminemail
       - filepreview
       - router
-      - GitGraph
       - routerfromapi
 - name: Build--Scan docker image
   iiidevops: deployed-environments
@@ -135,7 +133,6 @@ stages:
       - redminemail
       - filepreview
       - router
-      - GitGraph
       - routerfromapi
 - name: Build--Copy Image
   iiidevops: deployed-environments
@@ -175,7 +172,6 @@ stages:
       - redminemail
       - filepreview
       - router
-      - GitGraph
       - routerfromapi
 - name: Deploy--Web
   iiidevops: deployed-environments
@@ -208,7 +204,6 @@ stages:
       - redminemail
       - filepreview
       - router
-      - GitGraph
       - routerfromapi
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
@@ -239,7 +234,6 @@ stages:
       - redminemail
       - filepreview
       - router
-      - GitGraph
       - routerfromapi
 - name: Test--ZAP
   iiidevops: zap
