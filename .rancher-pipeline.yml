@@ -32,6 +32,7 @@ stages:
       include:
       - master
       - develop
+      - routerfromapi
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
