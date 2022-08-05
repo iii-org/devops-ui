@@ -325,10 +325,7 @@ export default {
           Object.prototype.hasOwnProperty.call(this.row, 'project')
             ? this.row.project.id : this.selectedProjectId
         if (projectId >= 0) {
-          const res = await getAPI[column][0](projectId, params).catch(async() => {
-            localStorage.setItem('isToken', true)
-            await getAPI[column][0](projectId, params)
-          })
+          const res = await getAPI[column][0](projectId, params)
           switch (column) {
             case 'fixed_version':
               this[column] = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[getAPI[column][1]]]

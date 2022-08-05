@@ -48,12 +48,6 @@ const actions = {
 
           commit('SET_USER_ID', jwtContent['sub'].user_id)
           commit('SET_TOKEN', token)
-
-          // for debug
-          localStorage.setItem('token', token)
-          localStorage.setItem('isToken', false)
-          //
-
           setToken(token)
 
           resolve()
