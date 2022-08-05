@@ -1361,9 +1361,8 @@ export default {
   },
   Docker: {
     Title: 'Docker映像檔安全掃描​',
-    Overview: '總覽​',
+    Overview: '總　覽​',
     Severity: '風險等級​',
-    Count: '數量​',
     Critical: '嚴重​',
     High: '高',
     Medium: '中',
@@ -1381,7 +1380,8 @@ export default {
     Complete: '@:Status.Finished',
     Scanning: '掃描中',
     Queued: '排程中',
-    'Not Scanned': '準備中'
+    'Not Scanned': '準備中',
+    Size: '檔案大小'
   },
   RedmineMail: {
     Warning: '[注意] Email 服務啟用或停用，將觸發 Redmine 重啟。其重啟時間將影響 3-5分鐘平台無法使用，請謹慎設定利用。'

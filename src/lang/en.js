@@ -1372,7 +1372,6 @@ export default {
     Title: 'Docker Image Vulnerability Scan Report​',
     Overview: 'Overview',
     Severity: 'Severity',
-    Count: 'Count',
     Critical: 'Critical',
     High: 'High',
     Medium: 'Medium',
@@ -1390,7 +1389,8 @@ export default {
     Complete: '@:Status.Finished',
     Scanning: 'Scanning',
     Queued: 'Queued',
-    'Not Scanned': 'NotRunning'
+    'Not Scanned': 'NotRunning',
+    Size: 'Size'
   },
   RedmineMail: {
     Warning: '[Note] Email service is enabled or decentralized, which restarts the trigger RedMine.The restart time will affect the 3-5 minutes of the platform cannot be used, please set it with caution.'

@@ -566,7 +566,7 @@
     },
     "children": [
       {
-        "path": ":projectId/:commitBranch/:commitId",
+        "path": ":projectId/:commitBranch/:commitId/:size",
         "component": "views/Scan/DockerReport",
         "name": "DockerReport",
         "meta": {

@@ -46,7 +46,7 @@
           {{ scanner.name }} {{ scanner.version }}
         </div>
         <div style="padding: 40px;">
-          <ul class="text-base mb-10 font-semibold">
+          <ul class="text-base font-semibold">
             <li>{{ $t('general.project_name') }}: {{ projectName }}</li>
             <li>{{ $t('TestReport.TestTime') }}: {{ timeNow }}</li>
             <li>
@@ -54,40 +54,51 @@
               {{ branch }} /<svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
               {{ commitId }}
             </li>
+            <li>{{ $t('Docker.Size') }}: {{ size }}</li>
           </ul>
           <!-- white box test -->
           <div
             class="text-center font-bold"
             style="
-              padding: 10px;
-              background: #606260;
-              color: #fff;
-              max-width: 300px
+              width: 40%;
+              font-size: 20px;
+              margin: 0 auto;
+              padding-bottom: 10px;
+              border-bottom: 1px solid
             "
           >
             {{ $t('Docker.Overview') }}
           </div>
-          <el-table
-            ref="table_checkmarx"
-            v-loading="listLoading"
-            class="mb-10"
-            style="max-width: 300px"
-            :element-loading-text="$t('Loading')"
-            :data="summaryData"
-            size="small"
-            border
-            fit
+          <el-row
+            :gutter="12"
+            class="mt-3"
+            style="width: 80%; margin: 0 auto;"
           >
-            <el-table-column-tag
-              :label="$t('Docker.Severity')"
-              prop="severity"
-              size="small"
-              location="docker"
-              min-width="130"
-              i18n-key="Docker"
-            />
-            <el-table-column align="center" :label="$t('Docker.Count')" prop="value" />
-          </el-table>
+            <el-col
+              v-for="item in summaryData"
+              :key="item.severity"
+              :span="4"
+            >
+              <el-card
+                class="text-center font-bold mb-10 "
+                style="box-shadow: 12px 12px 12px 0 rgb(0 0 0 / 10%)"
+                :body-style="{
+                  padding: 0,
+                  color:severityColor(item.severity)
+                }"
+              >
+                <p>{{ $t(`Docker.${item.severity}`) }}</p>
+                <p
+                  style="
+                    fontSize: 40px;
+                    margin: 10px;
+                  "
+                >
+                  {{ item.value }}
+                </p>
+              </el-card>
+            </el-col>
+          </el-row>
           <div
             class="text-center font-bold"
             style="
@@ -121,7 +132,7 @@
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column-tag
+            <ElTableColumnTag
               :label="$t('Docker.Severity')"
               prop="severity"
               size="small"
@@ -220,6 +231,9 @@ export default {
     },
     commitId() {
       return this.$route.params.commitId
+    },
+    size() {
+      return this.$route.params.size
     }
   },
   watch: {
@@ -274,6 +288,22 @@ export default {
         summary.push(obj)
       }
       return summary
+    },
+    severityColor(item) {
+      switch (item) {
+        case 'Critical':
+          return '#f56c6c'
+        case 'High':
+          return '#e6a23c'
+        case 'Medium':
+          return '#409eff'
+        case 'Low':
+          return '#606260'
+        case 'Negligible':
+          return '#67c23a'
+        case 'Unknown':
+          return '#606260'
+      }
     },
     handleBackPage() {
       this.$router.go(-1)
