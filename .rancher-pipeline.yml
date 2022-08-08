@@ -54,6 +54,7 @@ stages:
       include:
       - master
       - develop
+      - twentyissues
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
   steps:
