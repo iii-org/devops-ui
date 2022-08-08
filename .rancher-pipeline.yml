@@ -33,6 +33,7 @@ stages:
       - master
       - develop
       - twentyissues
+      - GitGraph
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
