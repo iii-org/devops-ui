@@ -86,7 +86,6 @@ stages:
       - filepreview
       - router
       - routerfromapi
-      - GitGraph
       - twentyissues
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
@@ -115,7 +114,6 @@ stages:
       - filepreview
       - router
       - routerfromapi
-      - GitGraph
       - twentyissues
 - name: Build--Scan docker image
   iiidevops: deployed-environments
@@ -140,7 +138,6 @@ stages:
       - filepreview
       - router
       - routerfromapi
-      - GitGraph
       - twentyissues
 - name: Build--Copy Image
   iiidevops: deployed-environments
@@ -181,7 +178,6 @@ stages:
       - filepreview
       - router
       - routerfromapi
-      - GitGraph
       - twentyissues
 - name: Deploy--Web
   iiidevops: deployed-environments
@@ -215,7 +211,6 @@ stages:
       - filepreview
       - router
       - routerfromapi
-      - GitGraph
       - twentyissues
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
@@ -247,7 +242,6 @@ stages:
       - filepreview
       - router
       - routerfromapi
-      - GitGraph
       - twentyissues
 - name: Test--ZAP
   iiidevops: zap
