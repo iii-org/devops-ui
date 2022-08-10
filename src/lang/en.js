@@ -115,7 +115,7 @@ export default {
     2008: 'The user {user_id} in a project, cannot change his role.',
     2011: 'The clusters {server_name} cannot be attached.',
     3001: "The user doesn't have permission for this operation.",
-    3002: 'You are not participating in this project.',
+    3002: 'The user permission has changed, please reload the page for further operations.',
     3003: "You are not permitted to access another user's data.",
     3004: 'Only project owner can set it, please contact project owner for assistance.',
     4001: 'Issue not found.',
