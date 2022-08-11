@@ -52,10 +52,10 @@ export default {
   },
   watch: {
     pagedData() {
-      this.listQuery.totalPage = Math.floor(this.filteredData.length / this.listQuery.limit) + 1
-      if (this.multipleSelection.length !== this.listQuery.totalPage) {
+      this.listQuery.totalPage = Math.floor(this.filteredData.length / this.listQuery.limit)
+      if (this.multipleSelection.length !== this.listQuery.totalPage + 1) {
         this.multipleSelection = []
-        for (let i = 0; i < this.listQuery.totalPage; i++) {
+        for (let i = 0; i < this.listQuery.totalPage + 1; i++) {
           this.$set(this.multipleSelection, i, [])
         }
       }
