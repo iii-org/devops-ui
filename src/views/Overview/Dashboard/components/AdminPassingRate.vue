@@ -8,9 +8,9 @@
       theme="macarons"
       @click="onClickChart"
     />
-    <no-data v-else />
+    <NoData v-else />
     <el-dialog
-      :visible.sync="detailDialog"
+      :visible.sync="dialogVisible.passingRate"
       :title="$t('Dashboard.ADMIN.PassingRate.DETAIL')"
       top="3vh"
       @close="closeHandler"
@@ -87,8 +87,8 @@ export default {
       default: () => []
     },
     dialogVisible: {
-      type: Boolean,
-      default: false
+      type: Object,
+      default: () => {}
     }
   },
   data() {
@@ -96,7 +96,6 @@ export default {
       loading: false,
       chartData: [],
       detailData: [],
-      detailDialog: false,
       searchKeys: ['project_name'],
       keyword: '',
       maxCircleWidth: 120
@@ -163,14 +162,13 @@ export default {
     }
   },
   watch: {
-    detailDialog(value) {
-      if (value) {
-        this.loadData()
-      }
-    },
-    dialogVisible(value) {
-      this.detailDialog = value
-      this.$emit('dialog-visible', { key: 'passingRate', value: value })
+    dialogVisible: {
+      handler(value) {
+        if (value.passionRate) {
+          this.loadData()
+        }
+      },
+      deep: true
     }
   },
   mounted() {
@@ -183,11 +181,9 @@ export default {
       this.loading = false
     },
     async loadData() {
-      if (this.detailDialog) {
-        this.listLoading = true
-        this.listData = await this.fetchData()
-        this.listLoading = false
-      }
+      this.listLoading = true
+      this.listData = await this.fetchData()
+      this.listLoading = false
     },
     async fetchData() {
       return getPassingRateDetail().then(res => {
@@ -198,7 +194,7 @@ export default {
       this.$refs['tableData'].toggleRowExpansion(row)
     },
     onClickChart(row) {
-      this.detailDialog = true
+      this.dialogVisible.passingRate = true
       this.keyword = row.name
     },
     closeHandler() {

@@ -56,7 +56,7 @@
               <div
                 slot="header"
                 class="cursor-pointer"
-                @click="onChangeDialogVisible({key: 'projectMember', value: true})"
+                @click="dialogVisible.projectMember = true"
               >
                 <span class="font-bold">
                   {{ $t('Dashboard.ADMIN.ProjectMembers.NAME') }}
@@ -65,8 +65,7 @@
               </div>
               <AdminProjectMember
                 :data="getProjectMembersData"
-                :dialog-visible="dialogVisible.projectMember"
-                @dialog-visible="onChangeDialogVisible"
+                :dialog-visible.sync="dialogVisible"
               />
             </el-card>
           </el-col>
@@ -110,7 +109,7 @@
               <div
                 slot="header"
                 class="cursor-pointer"
-                @click="onChangeDialogVisible({key: 'passingRate', value: true})"
+                @click="dialogVisible.passingRate = true"
               >
                 <span class="font-bold">{{ $t('Dashboard.ADMIN.PassingRate.NAME') }}
                   <em class="ri-external-link-line" />
@@ -118,8 +117,7 @@
               </div>
               <AdminPassingRate
                 :data="getPassingRateData"
-                :dialog-visible="dialogVisible.passingRate"
-                @dialog-visible="onChangeDialogVisible"
+                :dialog-visible.sync="dialogVisible"
               />
             </el-card>
           </el-col>
@@ -138,7 +136,7 @@
               <div
                 slot="header"
                 class="cursor-pointer"
-                @click="onChangeDialogVisible({key: 'projectList', value: true})"
+                @click="dialogVisible.projectList = true"
               >
                 <div class="flex justify-between items-center">
                   <span class="font-bold">
@@ -150,9 +148,8 @@
               </div>
               <AdminProjectList
                 :data="getProjectListData"
-                :dialog-visible="dialogVisible.projectList"
+                :dialog-visible.sync="dialogVisible"
                 @update="getLastUpdate"
-                @dialog-visible="onChangeDialogVisible"
               />
             </el-card>
           </el-col>
@@ -343,9 +340,6 @@ export default {
     handleAdding() {
       this.$refs.createProjectDialog.showDialog = true
       this.$refs.createProjectDialog.refreshTemplate()
-    },
-    onChangeDialogVisible(value) {
-      this.$set(this.dialogVisible, value['key'], value['value'])
     },
     getTotalCount(value) {
       this.projectCount = value.count
