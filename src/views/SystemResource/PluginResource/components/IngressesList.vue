@@ -70,7 +70,7 @@
                 :underline="false"
                 style="font-size: 16px"
                 target="_blank"
-                :href="item.hostname_path"
+                :href="`http://${item.hostname_path}`"
               >
                 {{ item.service }}
               </el-link>
