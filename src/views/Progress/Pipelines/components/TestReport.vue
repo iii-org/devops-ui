@@ -227,7 +227,7 @@ export default {
       return function (time) {
         const currentDate = new Date()
         const offset = currentDate.getTimezoneOffset() / 60
-        const givenDate = new Date(time)
+        const givenDate = new Date(time.split('+')[0])
         const hours = givenDate.getUTCHours() + offset
         givenDate.setHours(hours)
         return givenDate
