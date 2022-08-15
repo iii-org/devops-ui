@@ -606,8 +606,9 @@ export default {
           if (this.uploadFileList.length > 0) {
             // form.append('upload_content_type', this.uploadFileList[0].raw.type)
             // form.append('upload_file', this.uploadFileList[0].raw, this.uploadFileList[0].raw.name)
-            const fileLists = this.uploadFileList.map(list => list.raw)
-            form.append('upload_files', fileLists)
+            this.uploadFileList.forEach(list => {
+              form.append('upload_files', list.raw)
+            })
           }
           await this.saveData(form)
           result = true
