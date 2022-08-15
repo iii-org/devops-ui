@@ -63,7 +63,7 @@
         <div style="padding: 40px;">
           <ul class="text-base mb-10 font-semibold">
             <li>{{ $t('general.project_name') }}: {{ projectName }}</li>
-            <li>{{ $t('TestReport.TestTime') }}: {{ timeNow }}</li>
+            <li>{{ $t('TestReport.TestTime') }}: {{ latestTime }}</li>
             <li>
               {{ $t('general.Branch') }} / {{ $t('TestReport.Commit') }}:
               {{ branch }} /<svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
@@ -137,7 +137,7 @@
 </template>
 
 <script>
-import { UTCtoLocalTime } from '@/filters/index'
+import { UTCtoLocalTime, formatTime } from '@/filters/index'
 import { getProjectCommitTestSummary, getProjectInfos } from '@/api/projects'
 import XLSX from 'xlsx'
 import SonarQubeReport from '@/views/Progress/Pipelines/components/SonarQubeReport'
@@ -171,9 +171,9 @@ export default {
     SideexReport
   },
   data() {
+    this.title = 'III DevOps'
     return {
       projectName: '',
-      title: 'III DevOps',
       listLoading: false,
       sonarqube: [],
       checkmarx: [],
@@ -187,8 +187,8 @@ export default {
     }
   },
   computed: {
-    timeNow() {
-      return UTCtoLocalTime(this.dataTimeArr[0])
+    latestTime() {
+      return this.dataTimeArr[0]
     },
     projectId () {
       return this.$route.params.projectId
@@ -199,39 +199,17 @@ export default {
     commitId() {
       return this.$route.params.commitId
     },
-    getDataTime() {
+    handleDataTime() {
       const dataTimeArr = []
       dataName.forEach(name => {
         if (!this[name]) return
         if (this[name][0] && this[name][0].run_at) {
           name === 'sonarqube'
-            ? dataTimeArr.push(this.getSonarQubeTime(this[name][0].run_at))
-            : dataTimeArr.push(this[name][0].run_at)
+            ? dataTimeArr.push(formatTime(this[name][0].run_at))
+            : dataTimeArr.push(UTCtoLocalTime(this[name][0].run_at))
         }
       })
       return dataTimeArr.sort((a, b) => Date.parse(b) - Date.parse(a))
-    },
-    handleSonarQubeData() {
-      return function (data) {
-        const ret = []
-        if (!data) return ret
-        Object.keys(data).forEach(key => {
-          const row = data[key]
-          row['run_at'] = key
-          ret.push(row)
-        })
-        return ret
-      }
-    },
-    getSonarQubeTime() {
-      return function (time) {
-        const currentDate = new Date()
-        const offset = currentDate.getTimezoneOffset() / 60
-        const givenDate = new Date(time.split('+')[0])
-        const hours = givenDate.getUTCHours() + offset
-        givenDate.setHours(hours)
-        return givenDate
-      }
     },
     getTableDom() {
       let dom = null
@@ -265,7 +243,7 @@ export default {
       try {
         const res = await getProjectCommitTestSummary(this.projectId, this.commitId)
         dataName.forEach(name => this.setTestReportData(res.data, name))
-        this.dataTimeArr = this.getDataTime
+        this.dataTimeArr = this.handleDataTime
       } catch (error) {
         console.error(error)
       } finally {
@@ -274,13 +252,12 @@ export default {
     },
     setTestReportData(resData, name) {
       const data = resData[name]
-      if (name === 'sonarqube') this.setSonarQubeData(resData)
-      else {
-        if (data) {
-          this[name].push(data)
-        } else {
-          this[name] = undefined
-        }
+      if (name === 'sonarqube') {
+        this.setSonarQubeData(resData)
+      } else if (data) {
+        this[name].push(data)
+      } else {
+        this[name] = undefined
       }
     },
     setSonarQubeData(data) {
@@ -288,6 +265,16 @@ export default {
         this.sonarqube = this.handleSonarQubeData(data.sonarqube.history)
         this.sonarQubeLink = data.sonarqube.link
       } else this.sonarqube = undefined
+    },
+    handleSonarQubeData(data) {
+      const ret = []
+      if (!data) return ret
+      Object.keys(data).forEach(key => {
+        const row = data[key]
+        row['run_at'] = key
+        ret.push(row)
+      })
+      return ret
     },
     handleBackPage() {
       this.$router.go(-1)
