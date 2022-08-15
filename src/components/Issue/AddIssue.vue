@@ -269,7 +269,6 @@
             drag
             action=""
             :auto-upload="false"
-            :limit="1"
             :on-exceed="handleExceed"
             :on-change="handleChange"
           >
@@ -605,8 +604,9 @@ export default {
             form.append(objKey, data[objKey])
           })
           if (this.uploadFileList.length > 0) {
-            form.append('upload_content_type', this.uploadFileList[0].raw.type)
-            form.append('upload_file', this.uploadFileList[0].raw, this.uploadFileList[0].raw.name)
+            // form.append('upload_content_type', this.uploadFileList[0].raw.type)
+            // form.append('upload_file', this.uploadFileList[0].raw, this.uploadFileList[0].raw.name)
+            form.append('upload_files', this.uploadFileList)
           }
           await this.saveData(form)
           result = true
