@@ -604,8 +604,6 @@ export default {
             form.append(objKey, data[objKey])
           })
           if (this.uploadFileList.length > 0) {
-            // form.append('upload_content_type', this.uploadFileList[0].raw.type)
-            // form.append('upload_file', this.uploadFileList[0].raw, this.uploadFileList[0].raw.name)
             this.uploadFileList.forEach(list => {
               form.append('upload_files', list.raw)
             })
