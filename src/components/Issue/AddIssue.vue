@@ -606,7 +606,9 @@ export default {
           if (this.uploadFileList.length > 0) {
             // form.append('upload_content_type', this.uploadFileList[0].raw.type)
             // form.append('upload_file', this.uploadFileList[0].raw, this.uploadFileList[0].raw.name)
-            form.append('upload_files', this.uploadFileList)
+            this.uploadFileList.forEach(list => {
+              form.append('upload_files', list.raw)
+            })
           }
           await this.saveData(form)
           result = true
