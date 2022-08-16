@@ -74,7 +74,7 @@
       v-model="activeCollection"
       type="border-card"
     >
-      <el-empty v-if="filteredData.length === 0" />
+      <el-empty v-if="!filteredData || filteredData.length === 0" />
       <el-tab-pane
         v-for="collection in filteredData"
         :key="collection.name"
@@ -263,15 +263,20 @@ export default {
       return this.listData.filter((item) => item.name.toLowerCase().includes(keyword))
     },
     countPassedTotal() {
-      return this.listData.map((item) => item.assertions.total - item.assertions.failed).reduce((a, b) => a + b, 0)
+      return this.listData
+        ? this.listData.map((item) => item.assertions.total - item.assertions.failed).reduce((a, b) => a + b, 0)
+        : null
     },
     countFailedTotal() {
-      return this.listData.map((item) => item.assertions.failed).reduce((a, b) => a + b, 0)
+      return this.listData
+        ? this.listData.map((item) => item.assertions.failed).reduce((a, b) => a + b, 0)
+        : null
     }
   },
   watch: {
     listData(val) {
-      if (val) this.activeCollection = this.listData[0].name
+      console.log(val)
+      if (val && val[0]) this.activeCollection = this.listData[0].name
     },
     keyword(val) {
       if (val && this.filteredData.length !== 0) this.activeCollection = this.filteredData[0].name
@@ -286,7 +291,8 @@ export default {
           return this.formatData(report.json_file)
         })
         .catch(() => {
-          this.$router.push({ name: 'Postman' })
+          this.listData = []
+          // this.$router.push({ name: 'Postman' })
         })
     },
     formatData(rowData) {

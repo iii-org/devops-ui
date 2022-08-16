@@ -12,7 +12,7 @@
         </el-col>
       </el-row>
     </div>
-    <draggable
+    <Draggable
       :list="list"
       v-bind="$attrs"
       class="board-column-content"
@@ -317,13 +317,13 @@
           />
         </transition>
       </div>
-    </draggable>
+    </Draggable>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import draggable from 'vuedraggable'
+import Draggable from 'vuedraggable'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
@@ -337,7 +337,7 @@ export default {
     Tracker,
     Priority,
     Status,
-    draggable
+    Draggable
   },
   filters: {
     lengthFilter(value) {

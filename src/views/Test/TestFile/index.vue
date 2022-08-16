@@ -117,7 +117,7 @@
             {{ $t('general.Edit') }}
           </el-button>
           <el-button size="small" class="buttonSecondaryReverse" icon="el-icon-circle-plus" @click="handleCreatePlan(scope.row)">
-            新增計畫
+            {{ $t('Test.TestFile.AddPlan') }}
           </el-button>
           <el-popconfirm
             :confirm-button-text="$t('general.Delete')"
@@ -312,7 +312,7 @@ export default {
     },
     handleCreatePlan(collection) {
       this['qa/setFileName'](collection)
-      this.$router.push({ name: 'CreateTestPlan' })
+      this.$router.push({ name: 'IssueDetail' })
     },
     resetFilterVersionSoftwareData() {
       this.listFilterSoftwareData = this.listData
@@ -408,7 +408,7 @@ export default {
       this.form = form
     },
     onRelationIssueDialog(id) {
-      this.$router.push({ name: 'TestPlanDetail', params: { issueId: id }})
+      this.$router.push({ name: 'IssueDetail', params: { issueId: id }})
     },
     async removeTestPlanRelation(file_relation, file_name) {
       this.listLoading = true
@@ -427,7 +427,8 @@ export default {
       this.listLoading = false
     },
     toResultList(row) {
-      this.$router.push({ name: row.software_name.toLowerCase() })
+      const target = row.software_name.toLowerCase()
+      this.$router.push({ name: `${target.charAt(0).toUpperCase()}${target.slice(1)}` })
     },
     hasTestPlans(row) {
       return row.hasOwnProperty('test_plans') && row.test_plans.length > 0

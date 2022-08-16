@@ -2,7 +2,14 @@
   <div>
     <ToolBar>
       <span slot="toolName">WebInspect</span>
-      <el-button slot="link" type="text" icon="el-icon-tickets" :class="!disabled ? 'linkTextColor' : ''" :disabled="disabled" @click="openWebInspect">
+      <el-button
+        slot="link"
+        type="text"
+        icon="el-icon-tickets"
+        :class="!disabled ? 'linkTextColor' : ''"
+        :disabled="disabled"
+        @click="openWebInspect"
+      >
         {{ $t('TestReport.DetailReport') }}
       </el-button>
     </ToolBar>

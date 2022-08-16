@@ -625,6 +625,7 @@ export default {
       branch: 'Branch'
     },
     TestFile: {
+      AddPlan: 'Add Plan',
       UploadTestSet: 'Upload Test Set',
       TestSoftware: 'Test Software',
       TestName: 'Test Name',

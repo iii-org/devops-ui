@@ -620,6 +620,7 @@ export default {
       branch: '分支'
     },
     TestFile: {
+      AddPlan: '新增計畫',
       UploadTestSet: '上傳測試集',
       TestSoftware: '測試軟體',
       TestName: '測試名稱',

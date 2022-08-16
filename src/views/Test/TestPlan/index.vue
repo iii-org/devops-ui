@@ -27,13 +27,16 @@
             trigger="click"
           >
             <el-menu class="download">
-              <el-menu-item :disabled="selectedProjectId === -1 || allDataLoading"
-                            @click="downloadExcel(allDownloadData)"
+              <el-menu-item
+                :disabled="selectedProjectId === -1 || allDataLoading"
+                @click="downloadExcel(allDownloadData)"
               >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
-              <el-menu-item v-show="hasSelectedTestPlan" :disabled="selectedProjectId === -1"
-                            @click="downloadExcel(selectedTestPlan)"
+              <el-menu-item
+                v-show="hasSelectedTestPlan"
+                :disabled="selectedProjectId === -1"
+                @click="downloadExcel(selectedTestPlan)"
               >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
               </el-menu-item>
@@ -91,8 +94,11 @@
                         {{ child.software_name }} - {{ child.file_name }}
                         <template v-if="child.the_last_test_result">
                           ({{ child.the_last_test_result.branch }} -
-                          <el-link class="linktextColor" target="_blank" style="font-size: 16px"
-                                   :href="child.the_last_test_result.commit_url"
+                          <el-link
+                            class="linktextColor"
+                            target="_blank"
+                            style="font-size: 16px"
+                            :href="child.the_last_test_result.commit_url"
                           >
                             <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
                             {{ child.the_last_test_result.commit_id }}
@@ -108,24 +114,52 @@
               </ul>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">
+          <el-table-column
+            :label="$t('general.Type')"
+            width="130"
+            prop="tracker"
+            sortable="custom"
+          >
             <template slot-scope="{row}">
               <Tracker v-if="row.tracker.name" :name="$t(`Issue.${row.tracker.name}`)" :type="row.tracker.name" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip prop="id" sortable="custom">
+          <el-table-column
+            :label="$t('Issue.Id')"
+            min-width="280"
+            show-overflow-tooltip
+            prop="id"
+            sortable="custom"
+          >
             <template slot-scope="scope">
               <span class="text-success mr-2">#{{ scope.row.id }}</span>
-              <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
+              <el-tag
+                v-for="item in scope.row.tags"
+                :key="item.id"
+                size="mini"
+                class="mr-1"
+              >[{{ item.name }}]</el-tag>
               {{ scope.row.name }}
             </template>
           </el-table-column>
-          <el-table-column align="center" :label="$t('Issue.Priority')" width="150" prop="priority" sortable="custom">
+          <el-table-column
+            align="center"
+            :label="$t('Issue.Priority')"
+            width="150"
+            prop="priority"
+            sortable="custom"
+          >
             <template slot-scope="{row}">
               <Priority v-if="row.priority.name" :name="$t(`Issue.${row.priority.name}`)" :type="row.priority.name" />
             </template>
           </el-table-column>
-          <el-table-column align="center" :label="$t('general.Status')" width="150" prop="status" sortable="custom">
+          <el-table-column
+            align="center"
+            :label="$t('general.Status')"
+            width="150"
+            prop="status"
+            sortable="custom"
+          >
             <template slot-scope="{row}">
               <Status
                 v-if="row.status.name"
@@ -133,8 +167,13 @@
               />
             </template>
           </el-table-column>
-          <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to"
-                           sortable="custom" show-overflow-tooltip
+          <el-table-column
+            align="center"
+            :label="$t('Issue.Assignee')"
+            min-width="180"
+            prop="assigned_to"
+            sortable="custom"
+            show-overflow-tooltip
           >
             <template v-if="scope.row.assigned_to" slot-scope="scope">
               <span>{{ scope.row.assigned_to.name }}</span>
@@ -428,7 +467,6 @@ export default {
       }
       return result
     },
-
     dataCleanExcel(fetchData) {
       const exportColumn = {
         name: { column: ['id', 'name'], root: true },
@@ -522,14 +560,14 @@ export default {
       })
       return result
     },
-    prepareExcel(result) {
+    onDowdloadExcel(result) {
       const worksheet = XLSX.utils.json_to_sheet(result)
       this.$excel(worksheet, 'testplan')
     },
     async downloadExcel(selectedTestPlan) {
       let result = await this.fetchDataExcel(selectedTestPlan)
       result = this.dataCleanExcel(result)
-      await this.prepareExcel(result)
+      await this.onDowdloadExcel(result)
     },
     onContextMenu({ row, column, event }) {
       this.handleContextMenu(row, column, event)
