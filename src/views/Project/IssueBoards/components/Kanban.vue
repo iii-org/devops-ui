@@ -499,18 +499,19 @@ export default {
       const fromName = evt.from.classList[1]
       const toClassObj = this.status.find((item) => item.name === toName)
       const fromClassObj = this.status.find((item) => item.name === fromName)
-      const element = evt.draggedContext.element
-      return this.isIssueNormal(toClassObj, fromClassObj, element, evt)
+      return this.isIssueNormal(toClassObj, fromClassObj, evt)
     },
-    isIssueNormal(toClassObj, fromClassObj, element, evt) {
+    isIssueNormal(toClassObj, fromClassObj, evt) {
+      const element = evt.draggedContext.element
       switch (this.dimension) {
         case 'status':
-          return this.isStatusNormal(toClassObj, fromClassObj, element, evt)
+          return this.isStatusNormal(toClassObj, fromClassObj, evt)
         case 'priority':
           return this.isPriorityNormal(element)
       }
     },
-    isStatusNormal(toClassObj, fromClassObj, element, evt) {
+    isStatusNormal(toClassObj, fromClassObj, evt) {
+      const element = evt.draggedContext.element
       const isAssigned = this.isAssigned(toClassObj, fromClassObj, element)
       const isChildrenIssuesClosed = toClassObj.is_closed === true ? this.isChildrenIssuesClosed(element) : true
       const isForceTracker = this.isTrackerStrict(element)
