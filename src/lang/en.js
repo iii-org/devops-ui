@@ -46,6 +46,7 @@ export default {
     FromCollection: 'From Postman Collection',
     CheckMarx: 'CheckMarx',
     SonarQube: 'SonarQube',
+    Sbom: 'Sbom',
     WebInspect: 'WebInspect',
     WebInspectReport: '@:general.Report',
     Zap: 'OWASP ZAP',
@@ -82,6 +83,7 @@ export default {
     Monitoring: 'III DevOps Service Monitoring',
     Deploy: 'Deploy',
     DockerReport: 'Docker Test Report',
+    SbomReport: 'Docker Test Report',
     Activities: 'Activities',
     TemplateManage: 'Template Manage'
   },
@@ -358,6 +360,21 @@ export default {
     Canceled: 'Canceled',
     Failed: 'Failed',
     InProcess: 'In Process'
+  },
+  SBOM: {
+    Branch: '@:general.Branch',
+    Commit: 'Commit',
+    PackageCount: 'Package Count',
+    HighSeverity: 'High Severity',
+    MediumSeverity: 'Medium Severity',
+    LowSeverity: 'Low Severity',
+    RunAt: 'Start Time',
+    Report: '@:general.Report',
+    TraceabilityDownload: 'Software traceability list download.',
+    VulnerabilityReport: 'Vulnerability Scan Report',
+    Success: 'Success',
+    Running: 'Running',
+    Fail: 'Fail'
   },
   WebInspect: {
     ScanId: 'Scan ID',
