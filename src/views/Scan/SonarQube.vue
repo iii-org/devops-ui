@@ -58,9 +58,11 @@
             :href="scope.row.issue_link"
           >
             <svg-icon
+              v-if="scope.row.commit_id "
               class="mr-1"
               icon-class="ion-git-commit-outline"
-            />{{ scope.row.commit_id }}
+            />
+            <span>{{ scope.row.commit_id }}</span>
           </el-link>
         </template>
       </el-table-column>
