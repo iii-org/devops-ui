@@ -93,7 +93,7 @@ export default {
     openWebInspect() {
       const { scan_id, run_at } = this.webinspect[0]
       const routeUrl = this.$router.resolve({
-        name: 'WebinspectReport', params: { scanId: scan_id, run_at }
+        name: 'WIEReportViewer', params: { scanId: scan_id, run_at }
       })
       window.open(routeUrl.href, '_blank')
     }
