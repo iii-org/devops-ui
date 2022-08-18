@@ -100,7 +100,6 @@
             :element-loading-text="$t('Loading')"
             :data="listData"
             size="small"
-            border
             fit
           >
             <el-table-column type="expand">
@@ -258,10 +257,6 @@ export default {
       }
     },
     async fetchData() {
-      if (this.listData.length === 0) {
-        this.listData = []
-        return
-      }
       this.listLoading = true
       const res = await getSbomRiskDetail(this.sbomId, this.params)
       this.listData = res.data.detail_list
@@ -297,8 +292,8 @@ export default {
           return '#606260'
       }
     },
-    getRowClass(row) {
-      if (!row.row.description) return 'hide-expand-icon'
+    getRowClass({ row }) {
+      return row.description ? '' : 'row-expand-cover'
     },
     handleBackPage() {
       this.$router.go(-1)
@@ -309,6 +304,10 @@ export default {
 
 <style lang="scss" scoped>
 @import 'src/styles/theme/variables.scss';
+
+>>> .row-expand-cover .el-table__expand-column .cell {
+  display: none;
+}
 
 >>> .el-divider__text {
   font-size: 18px;
