@@ -95,7 +95,6 @@
             {{ $t('Docker.AlertDetail') }}
           </div>
           <el-table
-            ref="sbomTable"
             v-loading="listLoading"
             :row-class-name="getRowClass"
             :element-loading-text="$t('Loading')"
@@ -135,6 +134,9 @@
               prop="versions"
               align="center"
             />
+            <template slot="empty">
+              <el-empty :description="$t('general.NoData')" />
+            </template>
           </el-table>
           <pagination
             :total="listQuery.total"
@@ -157,7 +159,7 @@ import {
   getSbomRiskOverview,
   getSbomRiskDetail
 } from '@/api_v2/sbom'
-import MixinElTable from '@/mixins/MixinElTable'
+import Pagination from '@/components/Pagination'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 
 const params = () => ({
@@ -167,14 +169,12 @@ const params = () => ({
 
 const listQuery = () => ({
   total: 0,
-  current: 0,
-  per_page: 0
+  current: 0
 })
 
 export default {
   name: 'SbomReport',
-  components: { ElTableColumnTag },
-  mixins: [MixinElTable],
+  components: { ElTableColumnTag, Pagination },
   data() {
     return {
       params: params(),
@@ -217,8 +217,7 @@ export default {
         if (Object.keys(val).length > 0 && val.hasOwnProperty('name')) {
           this.fetchTestReport()
         }
-      },
-      immediate: true
+      }
     }
   },
   mounted() {
@@ -242,21 +241,27 @@ export default {
           getSbomRiskDetail(this.sbomId, this.params)
         ]).then((res) => {
           const [overview, detail] = res.map((item) => item.data)
+          if (Object.keys(overview).length === 0 || Object.keys(detail).length === 0) return
           this.summaryData = this.setSummaryData(overview)
           this.listData = detail.detail_list
           this.listQuery = detail.page
-          this.timeNow = UTCtoLocalTime(localStorage.getItem('sbomTime'))
-          this.$once('hook:beforeDestroy', () => {
-            localStorage.removeItem('sbomTime')
-          })
         })
       } catch (error) {
         console.error(error)
       } finally {
         this.listLoading = false
+        this.timeNow = localStorage.getItem('sbomTime') !== 'null'
+          ? UTCtoLocalTime(localStorage.getItem('sbomTime')) : '-'
+        this.$once('hook:beforeDestroy', () => {
+          localStorage.removeItem('sbomTime')
+        })
       }
     },
     async fetchData() {
+      if (this.listData.length === 0) {
+        this.listData = []
+        return
+      }
       this.listLoading = true
       const res = await getSbomRiskDetail(this.sbomId, this.params)
       this.listData = res.data.detail_list
