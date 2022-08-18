@@ -87,6 +87,7 @@ stages:
       - filepreview
       - router
       - twentyissues
+      - sbom
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -114,6 +115,7 @@ stages:
       - filepreview
       - router
       - twentyissues
+      - sbom
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -137,6 +139,7 @@ stages:
       - filepreview
       - router
       - twentyissues
+      - sbom
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -176,6 +179,7 @@ stages:
       - filepreview
       - router
       - twentyissues
+      - sbom
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -208,6 +212,7 @@ stages:
       - filepreview
       - router
       - twentyissues
+      - sbom
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -238,6 +243,7 @@ stages:
       - filepreview
       - router
       - twentyissues
+      - sbom
 - name: Test--ZAP
   iiidevops: zap
   steps:
