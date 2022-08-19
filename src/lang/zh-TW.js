@@ -506,7 +506,7 @@ export default {
     AskDeleteIssue: '關閉工作項目/議題?',
     DeleteIssueReason: '請註明關閉原因',
     Unlink: '移除關聯',
-    TestFile: '@:route.testFile',
+    TestFile: '@:route.TestFile',
     TestResult: '@:TestCase.TestResult',
     Files: '附件',
     UploadFiles: '附件上傳',
