@@ -70,7 +70,7 @@ export default {
   },
   computed: {
     disabled() {
-      return this.checkmarx[0] ? Object.keys(this.checkmarx[0]).length === 0 : true
+      return this.checkmarx[0] ? !this.checkmarx[0].report_ready : true
     }
   },
   methods: {
