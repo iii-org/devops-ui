@@ -267,9 +267,9 @@
           <el-upload
             ref="upload"
             drag
+            multiple
             action=""
             :auto-upload="false"
-            :on-exceed="handleExceed"
             :on-change="handleChange"
           >
             <div>
@@ -617,13 +617,6 @@ export default {
       })
       if (this.parentId) this.$emit('has-children')
       return result
-    },
-    handleExceed() {
-      this.$message({
-        title: this.$t('general.Warning'),
-        message: this.$t('Notify.SingleFileLimit'),
-        type: 'warning'
-      })
     },
     async handleChange(file, fileList) {
       const { raw, size, name } = file
