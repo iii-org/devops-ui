@@ -10,14 +10,22 @@
         :span="14"
         :lg="16"
       >
-        <a
-          class="el-upload-list__item-name"
-          @click="handlePreview(file)"
+        <el-tooltip
+          :disabled="clientWidth >= scrollWidth"
+          placement="bottom"
         >
-          <em class="el-icon-document" />{{ file.filename }} ({{
-            $dayjs(file.created_on).format('YYYY-MM-DD hh:mm:ss')
-          }})
-        </a>
+          <div slot="content">
+            {{ file.filename }} ({{ $dayjs(file.created_on).format('YYYY-MM-DD hh:mm:ss') }})
+          </div>
+          <a
+            class="el-upload-list__item-name"
+            @click="handlePreview(file)"
+          >
+            <em class="el-icon-document" />{{ file.filename }} ({{
+              $dayjs(file.created_on).format('YYYY-MM-DD hh:mm:ss')
+            }})
+          </a>
+        </el-tooltip>
       </el-col>
       <el-col
         :span="10"
@@ -124,7 +132,9 @@ export default {
       },
       imageArray: [],
       imageIndex: 0,
-      imageHeight: '300'
+      imageHeight: '300',
+      clientWidth: 0,
+      scrollWidth: 0
     }
   },
   computed: {
@@ -138,6 +148,7 @@ export default {
   },
   mounted() {
     this.handleImageArray()
+    this.resizeImageHeight()
     window.addEventListener('resize', this.resizeImageHeight)
     window.addEventListener('keydown', this.handleCarousel)
   },
@@ -209,6 +220,11 @@ export default {
       }
     },
     resizeImageHeight() {
+      const imageName = document.querySelector('.el-upload-list__item-name')
+      if (imageName) {
+        this.clientWidth = imageName.clientWidth
+        this.scrollWidth = imageName.scrollWidth
+      }
       if (this.$refs.image === undefined) return
       this.$nextTick(() => {
         this.imageHeight = this.$refs.image[this.imageIndex].height

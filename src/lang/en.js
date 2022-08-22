@@ -510,7 +510,7 @@ export default {
     AskDeleteIssue: 'Close work item/issue?',
     DeleteIssueReason: 'Please specify the reason for closure',
     Unlink: 'Unlink',
-    TestFile: '@:route.testFile',
+    TestFile: '@:route.TestFile',
     TestResult: '@:TestCase.TestResult',
     Files: 'Files',
     UploadFiles: 'Upload Files',
