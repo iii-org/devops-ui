@@ -56,6 +56,7 @@ stages:
       - master
       - develop
       - twentyissues
+      - GitGraph
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
   steps:
