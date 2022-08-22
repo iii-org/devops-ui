@@ -34,6 +34,7 @@ stages:
       - develop
       - twentyissues
       - routerfromapi
+      - echart
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
