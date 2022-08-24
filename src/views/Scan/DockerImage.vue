@@ -44,13 +44,18 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-tag
+      <ElTableColumnTag
         :label="$t('general.Status')"
         prop="scan_status"
         size="medium"
         location="docker"
         min-width="130"
         i18n-key="Docker"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('Docker.Size')"
+        prop="size"
       />
       <el-table-column
         align="center"
@@ -77,7 +82,7 @@
         :label="$t('Docker.Fixable')"
         prop="fixable"
       />
-      <el-table-column-time
+      <ElTableColumnTime
         :label="$t('general.RunAt')"
         prop="start_time"
       />
@@ -195,9 +200,10 @@ export default {
       this.$router.push({
         name: 'DockerReport',
         params: {
+          projectId: this.selectedProjectId,
           commitId: row.commit,
           commitBranch: row.branch,
-          projectId: this.selectedProjectId
+          size: row.size ? row.size : '-'
         }
       })
     }

@@ -58,7 +58,7 @@
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
-      <modify-version-dialog ref="modifyVersionDialog" @update="loadData" />
+      <ModifyVersionDialog ref="modifyVersionDialog" @update="loadData" />
     </template>
   </div>
 </template>

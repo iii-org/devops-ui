@@ -1054,7 +1054,6 @@ export default {
     NotePlaceholder: '請輸入版本說明，也可透過上方之議題版本內的已關閉議題清單進行複製、貼到此處。',
     ReleaseWarning: '包版版號與映像檔路徑皆可多個，唯版本路徑僅可至多兩個',
     Tags: '備註標籤',
-    CustomPath: '自定義路徑',
     StopReleaseWarning: '請檢查映像檔路徑是否符合格式。',
     StopAddingPathWarning: '請檢查輸入的映像檔路徑是否符合以下格式。',
     FormatWarning: '(主要名稱):(標籤) ex. branch:version'
@@ -1363,9 +1362,8 @@ export default {
   },
   Docker: {
     Title: 'Docker映像檔安全掃描​',
-    Overview: '總覽​',
+    Overview: '總　覽​',
     Severity: '風險等級​',
-    Count: '數量​',
     Critical: '嚴重​',
     High: '高',
     Medium: '中',
@@ -1383,7 +1381,8 @@ export default {
     Complete: '@:Status.Finished',
     Scanning: '掃描中',
     Queued: '排程中',
-    'Not Scanned': '準備中'
+    'Not Scanned': '準備中',
+    Size: '檔案大小'
   },
   RedmineMail: {
     Warning: '[注意] Email 服務啟用或停用，將觸發 Redmine 重啟。其重啟時間將影響 3-5分鐘平台無法使用，請謹慎設定利用。'

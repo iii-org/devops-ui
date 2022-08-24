@@ -6,7 +6,9 @@
           <template v-if="stepActive === 0" slot="description">
             <span>
               {{ $t('Release.IssueVersionWarning1') }}
-              <el-button type="text" size="mini" @click="isShowVersions = true">{{ $t('Version.Manage') }} </el-button>
+              <el-button type="text" size="mini" @click="$emit('toggleShowVersions')">
+                {{ $t('Version.Manage') }}
+              </el-button>
               {{ $t('Release.IssueVersionWarning2') }}
             </span>
           </template>
@@ -20,7 +22,9 @@
         </el-step>
         <el-step :title="$t('Release.ReleaseVersion')">
           <template v-if="stepActive === 2" slot="description">
-            <span>{{ $t('Release.ReleaseVersionWarning') }}</span>
+            <span>
+              {{ $t('Release.ReleaseVersionWarning') }}
+            </span>
           </template>
         </el-step>
       </el-steps>
@@ -28,6 +32,7 @@
         <IssueVersion
           v-if="stepActive === 0"
           :release-data="releaseData"
+          :is-show-versions="isShowVersions"
           @onNext="next"
           @initReleaseData="initData"
         />
@@ -47,9 +52,6 @@
         />
       </section>
     </el-card>
-    <el-dialog :visible.sync="isShowVersions" width="60%">
-      <ProjectVersions v-if="isShowVersions" :is-show-title="true" />
-    </el-dialog>
   </div>
 </template>
 
@@ -83,13 +85,17 @@ export default {
   components: {
     IssueVersion: () => import('./IssueVersion/index'),
     ImageVersion: () => import('./ImageVersion/index'),
-    PackageVersion: () => import('./PackageVersion'),
-    ProjectVersions: () => import('@/views/Plan/Settings/components/ProjectVersions')
+    PackageVersion: () => import('./PackageVersion')
+  },
+  props: {
+    isShowVersions: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
       stepActive: 0,
-      isShowVersions: false,
       releaseData: releaseData(),
       updateData: updateData()
     }
@@ -98,7 +104,7 @@ export default {
     ...mapGetters(['selectedProjectId'])
   },
   watch: {
-    selectedProjectId(val) {
+    selectedProjectId() {
       this.stepActive = 0
     }
   },

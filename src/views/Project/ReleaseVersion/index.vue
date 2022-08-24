@@ -19,7 +19,7 @@
             </el-button>
             <el-button
               type="primary"
-              @click="isShowVersions = !isShowVersions"
+              @click="toggleShowVersions"
             >
               <span class="el-icon-document" />
               <span>{{ $t('Version.Manage') }}</span>
@@ -35,8 +35,16 @@
       </el-col>
     </el-row>
     <el-divider />
-    <ReleaseTable v-if="state === 'STATE_INIT'" :keywords="keywords" />
-    <CreateRelease v-else-if="state === 'STATE_CREATE_RELEASE'" @initState="state = 'STATE_INIT'" />
+    <ReleaseTable
+      v-if="state === 'STATE_INIT'"
+      :keywords="keywords"
+    />
+    <CreateRelease
+      v-else-if="state === 'STATE_CREATE_RELEASE'"
+      :is-show-versions="isShowVersions"
+      @toggleShowVersions="toggleShowVersions"
+      @initState="state = 'STATE_INIT'"
+    />
     <el-dialog :visible.sync="isShowVersions" width="60%">
       <ProjectVersions v-if="isShowVersions" :is-show-title="true" />
     </el-dialog>
@@ -71,6 +79,9 @@ export default {
     toggleCreateRelease() {
       if (this.state === 'STATE_INIT') this.state = 'STATE_CREATE_RELEASE'
       else this.state = 'STATE_INIT'
+    },
+    toggleShowVersions() {
+      this.isShowVersions = !this.isShowVersions
     }
   }
 }
