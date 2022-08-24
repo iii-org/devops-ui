@@ -267,10 +267,9 @@
           <el-upload
             ref="upload"
             drag
+            multiple
             action=""
             :auto-upload="false"
-            :limit="1"
-            :on-exceed="handleExceed"
             :on-change="handleChange"
           >
             <div>
@@ -605,8 +604,9 @@ export default {
             form.append(objKey, data[objKey])
           })
           if (this.uploadFileList.length > 0) {
-            form.append('upload_content_type', this.uploadFileList[0].raw.type)
-            form.append('upload_file', this.uploadFileList[0].raw, this.uploadFileList[0].raw.name)
+            this.uploadFileList.forEach(list => {
+              form.append('upload_files', list.raw)
+            })
           }
           await this.saveData(form)
           result = true
@@ -617,13 +617,6 @@ export default {
       })
       if (this.parentId) this.$emit('has-children')
       return result
-    },
-    handleExceed() {
-      this.$message({
-        title: this.$t('general.Warning'),
-        message: this.$t('Notify.SingleFileLimit'),
-        type: 'warning'
-      })
     },
     async handleChange(file, fileList) {
       const { raw, size, name } = file
