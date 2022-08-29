@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="text-sm mt-2 mb-3">{{ $t('Issue.Notes') }}</div>
-    <editor
+    <Editor
       ref="mdEditor"
       initial-edit-type="wysiwyg"
       :options="editorOptions"
