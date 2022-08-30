@@ -118,6 +118,8 @@ export default {
     3002: '偵測到您的登入權限異動，請重新整理頁面，以確保操作順暢。',
     3003: '您不被允許存取其他使用者的資料。',
     3004: '僅專案經理才可設置，請洽專案經理協助。',
+    3007: '{plugin_name} 佈署失敗，請洽III DevOps服務團隊',
+    3008: '本環境尚未佈署服務套件。({plugin_name})',
     4001: '該議題不存在。',
     4002: '議題在此版本 {version_ids} 尚未結束',
     4003: '議題 {issue_id}, {issue_to_id} 無法建立關聯。',
@@ -295,7 +297,8 @@ export default {
     RedmineMailWarning: '[注意] Redmine 將重新啟動，服務即將暫停，請3-5分鐘後再重新登入使用',
     RedmineMailActiveWarning: '平台Email設定尚未啟用，請洽系統管理者',
     RedmineMailAutoDisableWarning: '您的Email通知已被關閉，因後台Email設定尚未啟用或已關閉，請洽系統管理者',
-    RedmineMailConfirmWarning: '信箱（SMTP）設定修改，即將重啟Redmine，屆時將導致DevOps平台停止服務5-8分鐘，請問確定要執行修改並重啟Redmine嗎？'
+    RedmineMailConfirmWarning: '信箱（SMTP）設定修改，即將重啟Redmine，屆時將導致DevOps平台停止服務5-8分鐘，請問確定要執行修改並重啟Redmine嗎？',
+    ExcalidrawAliveWarning: '白板伺服器失效，請洽III DevOps服務團隊'
   },
   RuleMsg: {
     PleaseInput: '請輸入',

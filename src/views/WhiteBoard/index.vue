@@ -5,12 +5,12 @@
         slot="button"
         class="buttonPrimary"
         icon="el-icon-plus"
-        :disabled="isClose"
+        :disabled="isDisabled"
         @click="handleCreate"
       >
         {{ $t('general.Add') }}
       </el-button>
-      <SearchFilter :keyword.sync="keyword" />
+      <SearchFilter :is-excalidraw-alive="isExcalidrawAlive" :keyword.sync="keyword" />
     </ProjectListSelector>
     <el-divider />
     <el-table
@@ -36,7 +36,7 @@
             slot="reference"
             type="primary"
             style="font-size: 16px"
-            :disabled="isClose"
+            :disabled="isDisabled"
             @click="handleEdit(scope.row,true)"
           >
             {{ scope.row.name }}
@@ -44,7 +44,7 @@
           <el-link
             size="small"
             :underline="false"
-            :disabled="isClose"
+            :disabled="isDisabled"
             @click="handleEdit(scope.row,true)"
           >
             <em class="ri-external-link-line" />
@@ -86,7 +86,7 @@
             size="mini"
             class="buttonPrimaryReverse"
             icon="el-icon-edit"
-            :disabled="isClose"
+            :disabled="isDisabled"
             @click="handleEdit(scope.row,false)"
           >
             {{ $t('general.Edit') }}
@@ -103,7 +103,7 @@
               slot="reference"
               size="mini"
               type="danger"
-              :disabled="isClose"
+              :disabled="isDisabled"
             >
               <em class="el-icon-delete" />
               {{ $t('general.Delete') }}
@@ -141,6 +141,7 @@
 import { mapGetters } from 'vuex'
 import { BasicData, Table, Pagination, SearchBar, ProjectSelector } from '@/newMixins'
 import { getExcalidraw, deleteExcalidraw } from '@/api_v2/excalidraw'
+import { getExcalidrawStatus } from '@/api_v2/monitoring'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import SearchFilter from './components/SearchFilter'
 import CreateBoardDialog from './components/CreateBoardDialog'
@@ -154,11 +155,18 @@ export default {
     return {
       searchKeys: ['name'],
       issueQuery: null,
-      isClose: false
+      isClosed: false,
+      isExcalidrawAlive: false
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId'])
+    ...mapGetters(['selectedProjectId']),
+    isDisabled() {
+      return this.isClosed || !this.isExcalidrawAlive
+    }
+  },
+  async mounted() {
+    this.isExcalidrawAlive = (await getExcalidrawStatus()).status
   },
   methods: {
     async fetchData() {
@@ -166,7 +174,7 @@ export default {
         return (await getExcalidraw({ project_id: this.selectedProjectId })).data
       } catch (error) {
         console.error(error)
-        this.isClose = true
+        this.isClosed = true
         return []
       }
     },
@@ -174,7 +182,7 @@ export default {
       this.listQuery = listQuery
     },
     handleError() {
-      this.isClose = true
+      this.isClosed = true
       this.listData = []
     },
     handleCreate() {

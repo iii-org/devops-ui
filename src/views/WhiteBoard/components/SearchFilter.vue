@@ -1,5 +1,12 @@
 <template>
   <div>
+    <span
+      v-if="!isExcalidrawAlive"
+      style="color: red; font-size: 12px;"
+    >
+      <em class="ri-error-warning-fill ri-lg" />
+      {{ $t('Notify.ExcalidrawAliveWarning') }}
+    </span>
     <el-input
       v-if="searchVisible"
       v-model="keyword"
@@ -36,6 +43,12 @@
 
 export default {
   name: 'SearchFilter',
+  props: {
+    isExcalidrawAlive: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       searchVisible: false,

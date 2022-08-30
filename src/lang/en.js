@@ -118,6 +118,8 @@ export default {
     3002: 'The user permission has changed, please reload the page for further operations.',
     3003: "You are not permitted to access another user's data.",
     3004: 'Only project owner can set it, please contact project owner for assistance.',
+    3007: '{plugin_name} deployment failed, please contact DevOps for assistance.',
+    3008: 'Service has not been deployed.({plugin_name})',
     4001: 'Issue not found.',
     4002: 'Issue in Versions {version_ids} not closed.',
     4003: 'Issues {issue_id}, {issue_to_id} can not create relations.',
@@ -297,7 +299,8 @@ export default {
     RedminemailWarning: '[Warning] Redmine will restart, the service is about to be suspended, please log in after 3-5 minutes.',
     RedmineMailActiveWarning: 'Mail notification setting can not be opened, when mail server is disable.',
     RedmineMailAutoDisableWarning: 'Email notification is disabled, it might caused by disabled or invalid email setting at backend. Please contact with system administrator for further information.',
-    RedmineMailConfirmWarning: 'Mail(SMTP) setting modification will be restarted to Redmine, which will cause the DEVOPS platform to stop the service for 5-8 minutes. If it is necessary to perform modification and restart the redmine?'
+    RedmineMailConfirmWarning: 'Mail(SMTP) setting modification will be restarted to Redmine, which will cause the DEVOPS platform to stop the service for 5-8 minutes. If it is necessary to perform modification and restart the redmine?',
+    ExcalidrawAliveWarning: 'Excalidraw service failed, please contact DevOps for assistance.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
