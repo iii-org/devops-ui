@@ -402,7 +402,8 @@ export default {
       pickerOptions(startDate) {
         return {
           disabledDate(time) {
-            return time.getTime() < new Date(startDate).getTime()
+            const start_date = new Date(startDate).setHours(0)
+            return time.getTime() < new Date(start_date).getTime()
           }
         }
       },
