@@ -76,8 +76,7 @@ export default {
     }
   },
   watch: {
-    value(newVal) {
-      this.$refs.mdEditor.invoke('setMarkdown', newVal)
+    value() {
       this.componentKey += 1
     },
     oldValue() {
