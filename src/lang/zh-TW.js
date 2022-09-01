@@ -46,6 +46,7 @@ export default {
     FromCollection: '來自 Postman Collection',
     CheckMarx: '白箱測試(CheckMarx)',
     SonarQube: '白箱測試(SonarQube)',
+    Sbom: '軟體成分組成(Sbom)',
     WebInspect: '黑箱測試(WebInspect)',
     WebInspectReport: '@:general.Report',
     Zap: '黑箱測試(OWASP ZAP)',
@@ -82,6 +83,7 @@ export default {
     Monitoring: 'III DevOps 服務監控',
     Deploy: '遠端部署',
     DockerReport: 'Docker 測試彙整',
+    SbomReport: 'Docker 測試彙整',
     Activities: '服務操作',
     TemplateManage: '範本管理'
   },
@@ -358,6 +360,21 @@ export default {
     Canceled: '已取消',
     Failed: '掃描失敗',
     InProcess: '產生中'
+  },
+  SBOM: {
+    Branch: '@:general.Branch',
+    Commit: 'Commit',
+    PackageCount: '套件數',
+    HighSeverity: '高風險',
+    MediumSeverity: '中風險',
+    LowSeverity: '低風險',
+    RunAt: '開始時間',
+    Report: '@:general.Report',
+    TraceabilityDownload: '軟體溯源清單下載',
+    VulnerabilityReport: '弱點掃描報告',
+    Success: '成功',
+    Running: '進行中',
+    Fail: '失敗'
   },
   Cmas: {
     SUCCESS: '掃描完成',

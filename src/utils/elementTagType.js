@@ -63,6 +63,12 @@ export const checkMarx = {
   PreScan: 'slow'
 }
 
+export const sbom = {
+  Success: 'success',
+  Running: 'slow',
+  Fail: 'danger'
+}
+
 export const zap = {
   Finished: 'success',
   Scanning: 'slow',
