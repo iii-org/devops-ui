@@ -271,7 +271,7 @@ export default {
         })
       } else {
         clearTimeout(this.timer)
-        this.openFullLoading()
+        this.loadingInstance.close()
       }
     }
   },
@@ -322,9 +322,8 @@ export default {
     openFullLoading(loadingText) {
       // handle i18n log warning when loadingText is undefined
       const text = loadingText ? this.$t(`LoadingText.${loadingText}`) : this.$t('LoadingText.integrationProject')
-      if (loadingText) this.loadingInstance.setText(text)
       // set loading text every 3 second
-      else this.loadingInstance.close() // if loadingText is undefined, close the instance
+      this.loadingInstance.setText(text)
     },
     handleSendData() {
       const result = Object.assign({}, this.form)
