@@ -87,6 +87,22 @@
               :list-loading="listLoading"
             />
           </div>
+          <!-- ISO weakness test -->
+          <div v-show="harbor || anchore">
+            <el-divider content-position="center">{{ $t('TestReport.ISOWeaknessTesting') }}</el-divider>
+            <ClairReport
+              v-show="harbor"
+              ref="clair"
+              :clair="harbor"
+              :list-loading="listLoading"
+            />
+            <!-- <AnchoreReport
+              v-show="anchore"
+              ref="anchore"
+              :anchore="anchore"
+              :list-loading="listLoading"
+            /> -->
+          </div>
           <!-- black box test -->
           <div v-show="zap || webinspect">
             <el-divider content-position="center">{{ $t('TestReport.BlackBoxTesting') }}</el-divider>
@@ -142,6 +158,8 @@ import { getProjectCommitTestSummary, getProjectInfos } from '@/api/projects'
 import XLSX from 'xlsx'
 import SonarQubeReport from '@/views/Progress/Pipelines/components/SonarQubeReport'
 import CheckMarxReport from '@/views/Progress/Pipelines/components/CheckMarxReport'
+import ClairReport from '@/views/Progress/Pipelines/components/ClairReport'
+// import AnchoreReport from '@/views/Progress/Pipelines/components/AnchoreReport'
 import ZapReport from '@/views/Progress/Pipelines/components/ZapReport'
 import WebInspectReport from '@/views/Progress/Pipelines/components/WebInspectReport'
 import PostmanReport from '@/views/Progress/Pipelines/components/PostmanReport'
@@ -152,6 +170,8 @@ const downloadFileName = 'DevOps_test_report'
 const dataName = [
   'sonarqube',
   'checkmarx',
+  'harbor',
+  // 'anchore',
   'zap',
   'webinspect',
   'cmas',
@@ -164,6 +184,8 @@ export default {
   components: {
     SonarQubeReport,
     CheckMarxReport,
+    ClairReport,
+    // AnchoreReport,
     ZapReport,
     WebInspectReport,
     CmasReport,
@@ -177,6 +199,8 @@ export default {
       listLoading: false,
       sonarqube: [],
       checkmarx: [],
+      harbor: [],
+      anchore: [],
       zap: [],
       webinspect: [],
       cmas: [],

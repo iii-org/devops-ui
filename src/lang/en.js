@@ -1021,6 +1021,19 @@ export default {
     fullLog: 'Report',
     testId: 'Test ID'
   },
+  Clair: {
+    size: 'Size',
+    critical: 'Critical',
+    high: 'High',
+    medium: 'Medium',
+    low: 'Low'
+  },
+  Anchore: {
+    count: 'Plugin Count',
+    high: 'High',
+    medium: 'Medium',
+    low: 'Low'
+  },
   Zap: {
     id: 'ID',
     critical: 'Critical',
@@ -1140,6 +1153,7 @@ export default {
     TestTime: 'Test Time',
     Commit: 'Commit',
     WhiteBoxTesting: 'White-box Testing(Source Code Scanning)',
+    ISOWeaknessTesting: 'ISO Weakness Testing',
     BlackBoxTesting: 'Black-box Testing(Weakness Scanning)',
     AppScriptTesting: 'APP Script Testing',
     ApiScriptTesting: 'API Script Testing',

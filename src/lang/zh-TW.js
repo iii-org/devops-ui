@@ -1014,6 +1014,19 @@ export default {
     fullLog: '報表',
     testId: '測試編號'
   },
+  Clair: {
+    size: '檔案大小',
+    critical: '嚴重',
+    high: '高風險',
+    medium: '中風險',
+    low: '低風險'
+  },
+  Anchore: {
+    count: '套件數',
+    high: '高風險',
+    medium: '中風險',
+    low: '低風險'
+  },
   Zap: {
     id: '編號',
     critical: '嚴重',
@@ -1133,6 +1146,7 @@ export default {
     TestTime: '測試時間',
     Commit: '提交碼',
     WhiteBoxTesting: '白箱測試(原始碼掃描)',
+    ISOWeaknessTesting: '映像檔弱點掃描',
     BlackBoxTesting: '黑箱測試(弱點掃描)',
     AppScriptTesting: 'APP測試',
     ApiScriptTesting: 'API腳本測試',
