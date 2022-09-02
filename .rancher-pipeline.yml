@@ -32,7 +32,6 @@ stages:
       include:
       - master
       - develop
-      - twentyissues
       - routerfromapi
       - echart
 - name: Test--Checkmarx source code scan
@@ -55,7 +54,6 @@ stages:
       include:
       - master
       - develop
-      - twentyissues
       - GitGraph
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
@@ -88,10 +86,9 @@ stages:
       - redminemail
       - filepreview
       - router
-      - twentyissues
       - sbom
-      - upload
       - testb1
+      - advancedbranchsetting
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -118,10 +115,9 @@ stages:
       - redminemail
       - filepreview
       - router
-      - twentyissues
       - sbom
-      - upload
       - testb1
+      - advancedbranchsetting
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -144,10 +140,9 @@ stages:
       - redminemail
       - filepreview
       - router
-      - twentyissues
       - sbom
-      - upload
       - testb1
+      - advancedbranchsetting
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -186,10 +181,9 @@ stages:
       - redminemail
       - filepreview
       - router
-      - twentyissues
       - sbom
-      - upload
       - testb1
+      - advancedbranchsetting
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -221,10 +215,9 @@ stages:
       - redminemail
       - filepreview
       - router
-      - twentyissues
       - sbom
-      - upload
       - testb1
+      - advancedbranchsetting
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -254,10 +247,9 @@ stages:
       - redminemail
       - filepreview
       - router
-      - twentyissues
       - sbom
-      - upload
       - testb1
+      - advancedbranchsetting
 - name: Test--ZAP
   iiidevops: zap
   steps:
