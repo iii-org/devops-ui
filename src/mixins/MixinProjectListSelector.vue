@@ -26,7 +26,7 @@ export default {
       return listData.filter(data => {
         let result = false
         for (const value of searchKeys) {
-          if (data[value] === null) data[value] = ''
+          if (!data[value] && typeof (data[value]) !== 'number') data[value] = ''
           // distinguish string and number, string to lowercase while number to string, and only Checkmarx uses number
           const columnValue = typeof data[value] === 'string'
             ? data[value].toLowerCase() : data[value].toString()

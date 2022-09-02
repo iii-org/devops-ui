@@ -30,3 +30,4 @@ export const getUser = async (page = 1, per_page = 10, search = '') => {
 
 export const getUserMessageInfo = (user_id) => request.get(`/v2/user/message_type/${user_id}`)
 export const updateUserMessageInfo = (user_id, data) => request.patch(`/v2/user/message_type/${user_id}`, data)
+export const getRouter = () => request.get(`/v2/ui_router`)

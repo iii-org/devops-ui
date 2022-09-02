@@ -12,7 +12,7 @@
         </el-col>
       </el-row>
     </div>
-    <draggable
+    <Draggable
       :list="list"
       v-bind="$attrs"
       class="board-column-content"
@@ -317,13 +317,13 @@
           />
         </transition>
       </div>
-    </draggable>
+    </Draggable>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import draggable from 'vuedraggable'
+import Draggable from 'vuedraggable'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
@@ -337,7 +337,7 @@ export default {
     Tracker,
     Priority,
     Status,
-    draggable
+    Draggable
   },
   filters: {
     lengthFilter(value) {
@@ -499,18 +499,19 @@ export default {
       const fromName = evt.from.classList[1]
       const toClassObj = this.status.find((item) => item.name === toName)
       const fromClassObj = this.status.find((item) => item.name === fromName)
-      const element = evt.draggedContext.element
-      return this.isIssueNormal(toClassObj, fromClassObj, element, evt)
+      return this.isIssueNormal(toClassObj, fromClassObj, evt)
     },
-    isIssueNormal(toClassObj, fromClassObj, element, evt) {
+    isIssueNormal(toClassObj, fromClassObj, evt) {
+      const element = evt.draggedContext.element
       switch (this.dimension) {
         case 'status':
-          return this.isStatusNormal(toClassObj, fromClassObj, element, evt)
+          return this.isStatusNormal(toClassObj, fromClassObj, evt)
         case 'priority':
           return this.isPriorityNormal(element)
       }
     },
-    isStatusNormal(toClassObj, fromClassObj, element, evt) {
+    isStatusNormal(toClassObj, fromClassObj, evt) {
+      const element = evt.draggedContext.element
       const isAssigned = this.isAssigned(toClassObj, fromClassObj, element)
       const isChildrenIssuesClosed = toClassObj.is_closed === true ? this.isChildrenIssuesClosed(element) : true
       const isForceTracker = this.isTrackerStrict(element)

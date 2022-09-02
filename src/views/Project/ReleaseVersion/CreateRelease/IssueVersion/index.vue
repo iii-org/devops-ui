@@ -69,6 +69,10 @@ export default {
     releaseData: {
       type: Object,
       default: () => ({})
+    },
+    isShowVersions: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -92,6 +96,9 @@ export default {
   watch: {
     hasOpenIssue(val) {
       if (val) this.showUnClosedIssuesWarning()
+    },
+    isShowVersions(val) {
+      if (!val) this.loadData()
     }
   },
   mounted() {

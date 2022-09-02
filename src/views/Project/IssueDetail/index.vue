@@ -163,7 +163,7 @@
               :span="24"
               class="moveEditor mb-3"
             >
-              <issue-notes-editor ref="IssueNotesEditor" />
+              <IssueNotesEditor ref="IssueNotesEditor" />
             </el-col>
             <el-col :span="24">
               <el-tabs

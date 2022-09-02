@@ -76,7 +76,7 @@ export default {
       }
     },
     pageCount() {
-      return this.$refs['pagination'].pagerCount - 1
+      return this.$refs['pagination'].internalPageCount
     }
   },
   methods: {

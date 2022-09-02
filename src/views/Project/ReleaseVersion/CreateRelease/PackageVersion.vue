@@ -67,20 +67,7 @@
               :label="$t('Release.ImagePath')"
               class="flex cursor-pointer"
             >
-              <el-tooltip placement="top">
-                <template slot="content">
-                  <span>project</span>
-                  <span style="color: #f56c6c;">/</span>
-                  <span>branch</span>
-                  <span style="color: #f56c6c;">:</span>
-                  <span>version</span>
-                </template>
-                <el-input v-model="imagePath">
-                  <template slot="prepend">
-                    <span class="cursor-pointer">{{ imageProject }}/</span>
-                  </template>
-                </el-input>
-              </el-tooltip>
+              <span>{{ imageProject }}/{{ imagePath }}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -165,7 +152,7 @@ export default {
       handler(val) {
         if (!val || !this.releaseData.branch) return ''
         const version = this.releaseVersionOptions.find(option => option.value === val)
-        this.imagePath = `${this.releaseData.branch}:${version.label}`
+        this.imagePath = `${this.imageProject}:${version.label}`
       },
       immediate: true
     }

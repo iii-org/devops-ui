@@ -46,6 +46,7 @@ export default {
     FromCollection: '來自 Postman Collection',
     CheckMarx: '白箱測試(CheckMarx)',
     SonarQube: '白箱測試(SonarQube)',
+    Sbom: '軟體成分組成(Sbom)',
     WebInspect: '黑箱測試(WebInspect)',
     WebInspectReport: '@:general.Report',
     Zap: '黑箱測試(OWASP ZAP)',
@@ -82,6 +83,7 @@ export default {
     Monitoring: 'III DevOps 服務監控',
     Deploy: '遠端部署',
     DockerReport: 'Docker 測試彙整',
+    SbomReport: 'Docker 測試彙整',
     Activities: '服務操作',
     TemplateManage: '範本管理'
   },
@@ -115,9 +117,11 @@ export default {
     2008: '使用者 {user_id} 有在專案內，無法變更其角色。',
     2011: '部屬主機 {server_name} 無法被存取。',
     3001: '您的角色沒有權限進行此項操作。',
-    3002: '您已非專案成員。',
+    3002: '偵測到您的登入權限異動，請重新整理頁面，以確保操作順暢。',
     3003: '您不被允許存取其他使用者的資料。',
     3004: '僅專案經理才可設置，請洽專案經理協助。',
+    3007: '{plugin_name} 佈署失敗，請洽III DevOps服務團隊',
+    3008: '本環境尚未佈署服務套件。({plugin_name})',
     4001: '該議題不存在。',
     4002: '議題在此版本 {version_ids} 尚未結束',
     4003: '議題 {issue_id}, {issue_to_id} 無法建立關聯。',
@@ -295,7 +299,8 @@ export default {
     RedmineMailWarning: '[注意] Redmine 將重新啟動，服務即將暫停，請3-5分鐘後再重新登入使用',
     RedmineMailActiveWarning: '平台Email設定尚未啟用，請洽系統管理者',
     RedmineMailAutoDisableWarning: '您的Email通知已被關閉，因後台Email設定尚未啟用或已關閉，請洽系統管理者',
-    RedmineMailConfirmWarning: '信箱（SMTP）設定修改，即將重啟Redmine，屆時將導致DevOps平台停止服務5-8分鐘，請問確定要執行修改並重啟Redmine嗎？'
+    RedmineMailConfirmWarning: '信箱（SMTP）設定修改，即將重啟Redmine，屆時將導致DevOps平台停止服務5-8分鐘，請問確定要執行修改並重啟Redmine嗎？',
+    ExcalidrawAliveWarning: '白板伺服器失效，請洽III DevOps服務團隊'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -355,6 +360,21 @@ export default {
     Canceled: '已取消',
     Failed: '掃描失敗',
     InProcess: '產生中'
+  },
+  SBOM: {
+    Branch: '@:general.Branch',
+    Commit: 'Commit',
+    PackageCount: '套件數',
+    HighSeverity: '高風險',
+    MediumSeverity: '中風險',
+    LowSeverity: '低風險',
+    RunAt: '開始時間',
+    Report: '@:general.Report',
+    TraceabilityDownload: '軟體溯源清單下載',
+    VulnerabilityReport: '弱點掃描報告',
+    Success: '成功',
+    Running: '進行中',
+    Fail: '失敗'
   },
   Cmas: {
     SUCCESS: '掃描完成',
@@ -506,7 +526,7 @@ export default {
     AskDeleteIssue: '關閉工作項目/議題?',
     DeleteIssueReason: '請註明關閉原因',
     Unlink: '移除關聯',
-    TestFile: '@:route.testFile',
+    TestFile: '@:route.TestFile',
     TestResult: '@:TestCase.TestResult',
     Files: '附件',
     UploadFiles: '附件上傳',
@@ -620,6 +640,7 @@ export default {
       branch: '分支'
     },
     TestFile: {
+      AddPlan: '新增計畫',
       UploadTestSet: '上傳測試集',
       TestSoftware: '測試軟體',
       TestName: '測試名稱',
@@ -993,6 +1014,19 @@ export default {
     fullLog: '報表',
     testId: '測試編號'
   },
+  Clair: {
+    size: '檔案大小',
+    critical: '嚴重',
+    high: '高風險',
+    medium: '中風險',
+    low: '低風險'
+  },
+  Anchore: {
+    count: '套件數',
+    high: '高風險',
+    medium: '中風險',
+    low: '低風險'
+  },
   Zap: {
     id: '編號',
     critical: '嚴重',
@@ -1053,7 +1087,6 @@ export default {
     NotePlaceholder: '請輸入版本說明，也可透過上方之議題版本內的已關閉議題清單進行複製、貼到此處。',
     ReleaseWarning: '包版版號與映像檔路徑皆可多個，唯版本路徑僅可至多兩個',
     Tags: '備註標籤',
-    CustomPath: '自定義路徑',
     StopReleaseWarning: '請檢查映像檔路徑是否符合格式。',
     StopAddingPathWarning: '請檢查輸入的映像檔路徑是否符合以下格式。',
     FormatWarning: '(主要名稱):(標籤) ex. branch:version'
@@ -1113,6 +1146,7 @@ export default {
     TestTime: '測試時間',
     Commit: '提交碼',
     WhiteBoxTesting: '白箱測試(原始碼掃描)',
+    ISOWeaknessTesting: '映像檔弱點掃描',
     BlackBoxTesting: '黑箱測試(弱點掃描)',
     AppScriptTesting: 'APP測試',
     ApiScriptTesting: 'API腳本測試',
@@ -1362,9 +1396,8 @@ export default {
   },
   Docker: {
     Title: 'Docker映像檔安全掃描​',
-    Overview: '總覽​',
+    Overview: '總　覽​',
     Severity: '風險等級​',
-    Count: '數量​',
     Critical: '嚴重​',
     High: '高',
     Medium: '中',
@@ -1382,7 +1415,8 @@ export default {
     Complete: '@:Status.Finished',
     Scanning: '掃描中',
     Queued: '排程中',
-    'Not Scanned': '準備中'
+    'Not Scanned': '準備中',
+    Size: '檔案大小'
   },
   RedmineMail: {
     Warning: '[注意] Email 服務啟用或停用，將觸發 Redmine 重啟。其重啟時間將影響 3-5分鐘平台無法使用，請謹慎設定利用。'

@@ -46,6 +46,7 @@ export default {
     FromCollection: 'From Postman Collection',
     CheckMarx: 'CheckMarx',
     SonarQube: 'SonarQube',
+    Sbom: 'Sbom',
     WebInspect: 'WebInspect',
     WebInspectReport: '@:general.Report',
     Zap: 'OWASP ZAP',
@@ -82,6 +83,7 @@ export default {
     Monitoring: 'III DevOps Service Monitoring',
     Deploy: 'Deploy',
     DockerReport: 'Docker Test Report',
+    SbomReport: 'Docker Test Report',
     Activities: 'Activities',
     TemplateManage: 'Template Manage'
   },
@@ -115,9 +117,11 @@ export default {
     2008: 'The user {user_id} in a project, cannot change his role.',
     2011: 'The clusters {server_name} cannot be attached.',
     3001: "The user doesn't have permission for this operation.",
-    3002: 'You are not participating in this project.',
+    3002: 'The user permission has changed, please reload the page for further operations.',
     3003: "You are not permitted to access another user's data.",
     3004: 'Only project owner can set it, please contact project owner for assistance.',
+    3007: '{plugin_name} deployment failed, please contact DevOps for assistance.',
+    3008: 'Service has not been deployed.({plugin_name})',
     4001: 'Issue not found.',
     4002: 'Issue in Versions {version_ids} not closed.',
     4003: 'Issues {issue_id}, {issue_to_id} can not create relations.',
@@ -297,7 +301,8 @@ export default {
     RedminemailWarning: '[Warning] Redmine will restart, the service is about to be suspended, please log in after 3-5 minutes.',
     RedmineMailActiveWarning: 'Mail notification setting can not be opened, when mail server is disable.',
     RedmineMailAutoDisableWarning: 'Email notification is disabled, it might caused by disabled or invalid email setting at backend. Please contact with system administrator for further information.',
-    RedmineMailConfirmWarning: 'Mail(SMTP) setting modification will be restarted to Redmine, which will cause the DEVOPS platform to stop the service for 5-8 minutes. If it is necessary to perform modification and restart the redmine?'
+    RedmineMailConfirmWarning: 'Mail(SMTP) setting modification will be restarted to Redmine, which will cause the DEVOPS platform to stop the service for 5-8 minutes. If it is necessary to perform modification and restart the redmine?',
+    ExcalidrawAliveWarning: 'Excalidraw service failed, please contact DevOps for assistance.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -358,6 +363,21 @@ export default {
     Canceled: 'Canceled',
     Failed: 'Failed',
     InProcess: 'In Process'
+  },
+  SBOM: {
+    Branch: '@:general.Branch',
+    Commit: 'Commit',
+    PackageCount: 'Package Count',
+    HighSeverity: 'High Severity',
+    MediumSeverity: 'Medium Severity',
+    LowSeverity: 'Low Severity',
+    RunAt: 'Start Time',
+    Report: '@:general.Report',
+    TraceabilityDownload: 'Software traceability list download.',
+    VulnerabilityReport: 'Vulnerability Scan Report',
+    Success: 'Success',
+    Running: 'Running',
+    Fail: 'Fail'
   },
   WebInspect: {
     ScanId: 'Scan ID',
@@ -510,7 +530,7 @@ export default {
     AskDeleteIssue: 'Close work item/issue?',
     DeleteIssueReason: 'Please specify the reason for closure',
     Unlink: 'Unlink',
-    TestFile: '@:route.testFile',
+    TestFile: '@:route.TestFile',
     TestResult: '@:TestCase.TestResult',
     Files: 'Files',
     UploadFiles: 'Upload Files',
@@ -625,6 +645,7 @@ export default {
       branch: 'Branch'
     },
     TestFile: {
+      AddPlan: 'Add Plan',
       UploadTestSet: 'Upload Test Set',
       TestSoftware: 'Test Software',
       TestName: 'Test Name',
@@ -1000,6 +1021,19 @@ export default {
     fullLog: 'Report',
     testId: 'Test ID'
   },
+  Clair: {
+    size: 'Size',
+    critical: 'Critical',
+    high: 'High',
+    medium: 'Medium',
+    low: 'Low'
+  },
+  Anchore: {
+    count: 'Plugin Count',
+    high: 'High',
+    medium: 'Medium',
+    low: 'Low'
+  },
   Zap: {
     id: 'ID',
     critical: 'Critical',
@@ -1060,7 +1094,6 @@ export default {
     NotePlaceholder: 'Please enter a version note, or copy and paste here from the list of closed issues in the issue version above.',
     ReleaseWarning: 'There can be multiple versions and image file paths, but only two version paths can be at most',
     Tags: 'Tags',
-    CustomPath: 'Custom Path',
     StopReleaseWarning: 'Please check if the image file path matches the format.',
     StopAddingPathWarning: 'Please check if the input image file is in line with the following format.',
     FormatWarning: '(Primary name): (Tag) EX. Branch: Version'
@@ -1120,6 +1153,7 @@ export default {
     TestTime: 'Test Time',
     Commit: 'Commit',
     WhiteBoxTesting: 'White-box Testing(Source Code Scanning)',
+    ISOWeaknessTesting: 'ISO Weakness Testing',
     BlackBoxTesting: 'Black-box Testing(Weakness Scanning)',
     AppScriptTesting: 'APP Script Testing',
     ApiScriptTesting: 'API Script Testing',
@@ -1373,7 +1407,6 @@ export default {
     Title: 'Docker Image Vulnerability Scan Report​',
     Overview: 'Overview',
     Severity: 'Severity',
-    Count: 'Count',
     Critical: 'Critical',
     High: 'High',
     Medium: 'Medium',
@@ -1391,7 +1424,8 @@ export default {
     Complete: '@:Status.Finished',
     Scanning: 'Scanning',
     Queued: 'Queued',
-    'Not Scanned': 'NotRunning'
+    'Not Scanned': 'NotRunning',
+    Size: 'Size'
   },
   RedmineMail: {
     Warning: '[Note] Email service is enabled or decentralized, which restarts the trigger RedMine.The restart time will affect the 3-5 minutes of the platform cannot be used, please set it with caution.'

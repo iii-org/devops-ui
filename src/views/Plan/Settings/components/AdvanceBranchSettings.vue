@@ -1,14 +1,30 @@
 <template>
-  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
+  <el-row
+    v-loading="isLoading"
+    :element-loading-text="$t('Loading')"
+    class="app-container"
+  >
     <el-col>
-      <el-row :gutter="10" type="flex" align="middle">
+      <el-row
+        :gutter="10"
+        type="flex"
+        align="middle"
+      >
         <el-col :span="2">
-          <el-button type="text" size="medium" icon="el-icon-arrow-left" class="text-title linkTextColor" @click="handleBack">
+          <el-button
+            type="text"
+            size="medium"
+            icon="el-icon-arrow-left"
+            class="text-title linkTextColor"
+            @click="handleBack"
+          >
             {{ $t('general.Back') }}
           </el-button>
         </el-col>
         <el-col :span="16">
-          <span class="text-title">{{ selectedProject.display }}</span>
+          <span class="text-title">
+            {{ selectedProject.display }}
+          </span>
         </el-col>
         <el-col :span="6" class="text-right">
           <el-input
@@ -23,15 +39,42 @@
 
       <el-divider />
       <div class="flex justify-between mb-3">
-        <div v-if="isShowWarning" style="color: red; font-size: 12px;" class="mt-3">{{ $t('Notify.pluginRepeatMessage') }}</div>
-        <div v-else />
+        <div
+          style="color: red; font-size: 12px;"
+          class="mt-3"
+        >
+          {{ isShowWarning ? $t('Notify.pluginRepeatMessage') : '' }}
+        </div>
         <div>
-          <el-button class="buttonSecondaryReverse" size="small" @click="handleReset">{{ $t('general.Cancel') }}</el-button>
-          <el-button class="buttonPrimary" size="small" @click="updatePipelineBranch">{{ $t('general.Save') }}</el-button>
+          <el-button
+            class="buttonSecondaryReverse"
+            size="small"
+            @click="handleReset"
+          >
+            {{ $t('general.Cancel') }}
+          </el-button>
+          <el-button
+            class="buttonPrimary"
+            size="small"
+            :disabled="isShowWarning"
+            @click="updatePipelineBranch"
+          >
+            {{ $t('general.Save') }}
+          </el-button>
         </div>
       </div>
-      <el-table :data="filteredData" fit :cell-style="cellStyle">
-        <el-table-column :label="$t('Git.Branch')" align="center" prop="branch" width="100" />
+      <el-table
+        ref="tableData"
+        :data="filteredData"
+        :cell-style="cellStyle"
+        fit
+      >
+        <el-table-column
+          :label="$t('Git.Branch')"
+          align="center"
+          prop="branch"
+          width="100"
+        />
         <el-table-column
           :label="$t('general.Description')"
           align="center"
@@ -39,14 +82,22 @@
           show-overflow-tooltip
           min-width="120"
         />
-        <el-table-column-time :label="$t('general.LastUpdateTime')" prop="commit_time" width="160" />
-        <el-table-column v-for="(tool, idx) in testingToolNames" :key="`${tool.name}-${idx}`" align="center" width="120">
-          <template slot="header">
+        <el-table-column-time
+          :label="$t('general.LastUpdateTime')"
+          prop="commit_time"
+          width="160"
+        />
+        <el-table-column
+          v-for="(tool, idx) in testingToolNames"
+          :key="`${tool.name}-${idx}`"
+          align="center"
+          width="120"
+        >
+          <template slot="header" slot-scope="scope">
             <div class="mb-2">{{ tool.name }}</div>
             <el-checkbox
               v-if="listData.length > 1"
               v-model="tool.selectedAll"
-              size="small"
               @change="handleSelectAll(tool)"
             />
           </template>
@@ -73,8 +124,6 @@ export default {
   mixins: [BasicData, SearchBar, Pagination, Table],
   data() {
     return {
-      services: ['Web', 'Database'],
-      dependenceKeys: ['Postman', 'WebInspect', 'ZAP', 'SideeX'],
       isLoading: false,
       searchKeys: ['branch'],
       testingToolNames: [],
@@ -115,8 +164,8 @@ export default {
         item.testing_tools.reduce((preVal, curVal) => {
           const enable = 'enable'
           const hasProperty = preVal.hasOwnProperty(curVal.name)
-          if (hasProperty && preVal[curVal.name] === curVal[enable]) showWarning = false
-          else showWarning = true
+          if (hasProperty && preVal[curVal.name] !== curVal[enable]) showWarning = true
+          else showWarning = false
           preVal[curVal.name] = curVal[enable]
           return preVal
         }, {})
@@ -219,30 +268,9 @@ export default {
           if (testingTool.name === name) testingTool.enable = selectedAll
         })
       )
-      if (this.dependenceKeys.includes(name)) this.selectAllService(selectedAll)
-      if (this.services.includes(name)) this.selectAllDependence(selectedAll)
     },
-    selectAllService(selectedAll) {
-      if (!selectedAll) return
-      this.services.forEach(name => {
-        this.onSelected(selectedAll, name)
-      })
-    },
-    selectAllDependence(selectedAll) {
-      if (selectedAll) return
-      this.dependenceKeys.forEach(name => {
-        this.onSelected(selectedAll, name)
-      })
-    },
-    onSelected(selectedAll, name) {
-      const toolList = this.testingToolNames.map(tool => tool.name)
-      if (toolList.includes(name)) {
-        this.handleSelectAll({ selectedAll, name })
-        this.checkAllSelect({ name })
-      }
-    },
-    checkAllSelect(tool, branch) {
-      const { name, enable } = tool
+    checkAllSelect(tool) {
+      const { name } = tool
       this.isChanged = true
       const status = this.filteredData
         .flatMap(i => i.testing_tools)
@@ -251,47 +279,6 @@ export default {
       const value = status.every(i => i === true)
       const idx = this.testingToolNames.findIndex(i => i.name === name)
       this.testingToolNames[idx].selectedAll = value
-      this.handleDependence(enable, name, branch)
-      if (this.dependenceKeys.includes(name)) this.checkServiceAllSelect()
-    },
-    checkServiceAllSelect() {
-      const toolList = this.testingToolNames.map(tool => tool.name)
-      this.services.forEach(name => {
-        if (toolList.includes(name)) {
-          this.checkAllSelect({ name })
-        }
-      })
-    },
-    checkDependenceAllSelect() {
-      const toolList = this.testingToolNames.map(tool => tool.name)
-      this.dependenceKeys.forEach(name => {
-        if (toolList.includes(name)) {
-          this.checkAllSelect({ name })
-        }
-      })
-    },
-    handleDependence(enable, name, branch) {
-      if (!branch) return
-      if (this.services.includes(name)) this.selectDependence(enable, branch)
-      if (this.dependenceKeys.includes(name)) this.selectServices(enable, branch)
-    },
-    selectDependence(enable, branch) {
-      if (enable) return
-      const idx = this.listData.findIndex(item => item.branch === branch)
-      this.dependenceKeys.forEach(key => {
-        const toolIdx = this.listData[idx].testing_tools.findIndex(item => item.name === key)
-        if (toolIdx < 0) return
-        this.listData[idx].testing_tools[toolIdx].enable = enable
-      })
-    },
-    selectServices(enable, branch) {
-      if (!enable) return
-      const idx = this.listData.findIndex(item => item.branch === branch)
-      this.services.forEach(key => {
-        const toolIdx = this.listData[idx].testing_tools.findIndex(item => item.name === key)
-        if (toolIdx < 0) return
-        this.listData[idx].testing_tools[toolIdx].enable = enable
-      })
     },
     handleReset() {
       this.testingToolNames = []

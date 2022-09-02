@@ -14,32 +14,20 @@
           @click="handleToTestReport(scope)"
         />
       </el-tooltip>
-      <el-tooltip :content="$t('Release.CustomPath')" placement="top">
-        <em
-          class="el-icon-edit cursor-pointer"
-          @click="showInput('IS_EDIT_ROUTE')"
-        />
-      </el-tooltip>
     </div>
     <el-tooltip v-else placement="top">
-      <template v-if="inputState === 'IS_EDIT_ROUTE'" slot="content">
-        <span>{{ $t('general.Format') }}: </span>
-        <span style="color: #f56c6c;" class="font-bold">
-          branch:version
-        </span>
-      </template>
-      <template v-else-if="inputState === 'IS_EDIT_TAG'" slot="content">
+      <template slot="content">
         <span>{{ $t('general.Edit') }}{{ $t('general.Tag') }}</span>
       </template>
       <el-input
         v-model="inputValue"
-        :placeholder="placeholder"
+        :placeholder="$t('general.Input', { item: $t('general.Tag') })"
       >
         <em
           slot="suffix"
           class="el-icon-circle-plus cursor-pointer button"
           :style="getStyle('buttonPrimary')"
-          @click="inputState === 'IS_EDIT_TAG' ? saveTag() : checkPath()"
+          @click="saveTag()"
         />
         <em
           slot="suffix"
@@ -68,8 +56,7 @@ export default {
   data() {
     return {
       inputValue: '',
-      isShowInput: false,
-      inputState: null
+      isShowInput: false
     }
   },
   computed: {
@@ -79,22 +66,16 @@ export default {
     },
     releaseId() {
       return this.scope.row.id
-    },
-    placeholder() {
-      return this.inputState === 'IS_EDIT_TAG'
-        ? this.$t('general.Input', { item: this.$t('general.Tag') })
-        : this.$t('general.Input', { item: this.$t('general.Path') })
     }
   },
   watch: {
-    inputState(state) {
-      this.$emit('onEditTag', state === 'IS_EDIT_TAG')
+    isShowInput(state) {
+      this.$emit('onEditTag', state)
     }
   },
   methods: {
-    showInput(state) {
+    showInput() {
       this.isShowInput = true
-      this.inputState = state
       this.$emit('onShowAll')
     },
     getStyle(colorCode) {
@@ -115,20 +96,20 @@ export default {
           this.showErrorMessage(error)
         })
     },
-    checkPath() {
-      const isPassRules = /:/.test(this.inputValue)
-      if (!isPassRules) {
-        const h = this.$createElement
-        this.showErrorMessage(
-          h('p', { style: 'color: #f56c6c; font-size: 14px;' }, [
-            h('div', null, this.$t('Release.StopAddingPathWarning')),
-            h('div', null, this.$t('Release.FormatWarning'))
-          ])
-        )
-        return
-      }
-      this.saveRepo()
-    },
+    // checkPath() {
+    //   const isPassRules = /:/.test(this.inputValue)
+    //   if (!isPassRules) {
+    //     const h = this.$createElement
+    //     this.showErrorMessage(
+    //       h('p', { style: 'color: #f56c6c; font-size: 14px;' }, [
+    //         h('div', null, this.$t('Release.StopAddingPathWarning')),
+    //         h('div', null, this.$t('Release.FormatWarning'))
+    //       ])
+    //     )
+    //     return
+    //   }
+    //   this.saveRepo()
+    // },
     async saveRepo() {
       const formData = new FormData()
       formData.append('image_path', this.inputValue)
@@ -148,7 +129,6 @@ export default {
     init() {
       this.inputValue = ''
       this.isShowInput = false
-      this.inputState = null
     },
     handleToTestReport(scope) {
       this.$router.push({

@@ -63,7 +63,12 @@
         @pagination="onPagination"
       />
     </component>
-    <el-dialog v-if="!inDialog" :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectList.NAME')" top="3vh">
+    <el-dialog
+      v-if="!inDialog"
+      :visible.sync="dialogVisible.projectList"
+      :title="$t('Dashboard.ADMIN.ProjectList.NAME')"
+      top="3vh"
+    >
       <AdminProjectList :data="getProjectListDetailData" :in-dialog="true" />
     </el-dialog>
   </el-row>
@@ -84,8 +89,8 @@ export default {
       default: () => []
     },
     dialogVisible: {
-      type: Boolean,
-      default: false
+      type: Object,
+      default: () => {}
     },
     inDialog: {
       type: Boolean,
@@ -98,7 +103,6 @@ export default {
         page: 1,
         limit: 10
       },
-      detailDialog: false,
       detailData: [],
       searchKeys: ['project_name', 'owner_name'],
       searchStatus: ''
@@ -119,9 +123,13 @@ export default {
     searchStatus(value) {
       this.filterData(value)
     },
-    dialogVisible(value) {
-      this.detailDialog = value
-      this.$emit('dialog-visible', { key: 'passingRate', value: value })
+    dialogVisible: {
+      handler(value) {
+        if (value.projectList) {
+          this.loadData()
+        }
+      },
+      deep: true
     }
   },
   methods: {

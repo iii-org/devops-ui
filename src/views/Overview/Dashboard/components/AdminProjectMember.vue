@@ -8,9 +8,9 @@
       theme="macarons"
       @click="onClickChart"
     />
-    <no-data v-else />
+    <NoData v-else />
     <el-dialog
-      :visible.sync="detailDialog"
+      :visible.sync="dialogVisible.projectMember"
       :title="$t('Dashboard.ADMIN.ProjectMembers.NAME')"
       top="3vh"
       @close="closeHandler"
@@ -34,18 +34,41 @@
         >
           <el-table-column type="expand">
             <template slot-scope="props">
-              <admin-member-table :loading="props.row.loading" :data="props.row.children" />
+              <AdminMemberTable :loading="props.row.loading" :data="props.row.children" />
             </template>
           </el-table-column>
-          <el-table-column show-overflow-tooltip :label="$t('Dashboard.ADMIN.ProjectMembers.project_name')" prop="project_name" sortable />
-          <el-table-column show-overflow-tooltip :label="$t('Dashboard.ADMIN.ProjectMembers.owner_name')" prop="owner_name" sortable>
+          <el-table-column
+            show-overflow-tooltip
+            :label="$t('Dashboard.ADMIN.ProjectMembers.project_name')"
+            prop="project_name"
+            sortable
+          />
+          <el-table-column
+            show-overflow-tooltip
+            :label="$t('Dashboard.ADMIN.ProjectMembers.owner_name')"
+            prop="owner_name"
+            sortable
+          >
             <template slot-scope="props">
               {{ `${props.row.owner_name} (${props.row.owner_login})` }}
             </template>
           </el-table-column>
-          <el-table-column :label="$t('Dashboard.ADMIN.ProjectMembers.member_count')" prop="member_count" sortable />
-          <el-table-column show-overflow-tooltip :label="$t('Dashboard.ADMIN.ProjectMembers.start_date')" prop="start_date" sortable />
-          <el-table-column show-overflow-tooltip prop="end_date" :label="$t('Dashboard.ADMIN.ProjectMembers.end_date')" sortable />
+          <el-table-column
+            :label="$t('Dashboard.ADMIN.ProjectMembers.member_count')"
+            prop="member_count"
+            sortable
+          />
+          <el-table-column
+            show-overflow-tooltip
+            :label="$t('Dashboard.ADMIN.ProjectMembers.start_date')"
+            prop="start_date"
+            sortable
+          />
+          <el-table-column
+            show-overflow-tooltip prop="end_date"
+            :label="$t('Dashboard.ADMIN.ProjectMembers.end_date')"
+            sortable
+          />
         </el-table>
         <pagination
           :total="filteredData.length"
@@ -63,7 +86,6 @@
 <script>
 import VChart from 'vue-echarts'
 import { use } from 'echarts/core'
-
 import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart } from 'echarts/charts'
 import { getProjectMembersByProjectID, getProjectMembersDetail } from '@/api/dashboard'
@@ -85,18 +107,17 @@ export default {
   props: {
     data: {
       type: Function,
-      default: () => []
+      default: () => ([])
     },
     dialogVisible: {
-      type: Boolean,
-      default: false
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
     return {
       loading: false,
       chartData: [],
-      detailDialog: false,
       searchKeys: ['project_name', 'owner_name']
     }
   },
@@ -137,14 +158,13 @@ export default {
     }
   },
   watch: {
-    detailDialog(value) {
-      if (value) {
-        this.loadData()
-      }
-    },
-    dialogVisible(value) {
-      this.detailDialog = value
-      this.$emit('dialog-visible', { key: 'projectMember', value: value })
+    dialogVisible: {
+      handler(value) {
+        if (value.projectMember) {
+          this.loadData()
+        }
+      },
+      deep: true
     }
   },
   mounted() {
@@ -157,11 +177,9 @@ export default {
       this.loading = false
     },
     async loadData() {
-      if (this.detailDialog) {
-        this.listLoading = true
-        this.listData = await this.fetchData()
-        this.listLoading = false
-      }
+      this.listLoading = true
+      this.listData = await this.fetchData()
+      this.listLoading = false
     },
     async fetchData() {
       return getProjectMembersDetail().then(res => {
@@ -178,7 +196,7 @@ export default {
       this.$set(row, 'loading', false)
     },
     onClickChart(row) {
-      this.detailDialog = true
+      this.dialogVisible.projectMember = true
       this.keyword = row.name
     },
     closeHandler() {

@@ -83,7 +83,7 @@ import { getWebInspectReport } from '@/api/webInspect'
 const parser = new xml2js.Parser({ explicitArray: false, mergeAttrs: true })
 
 export default {
-  name: 'WIEViewer',
+  name: 'WIEReportViewer',
   data() {
     return {
       runAt: null,

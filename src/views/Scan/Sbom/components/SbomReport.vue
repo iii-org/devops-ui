@@ -15,17 +15,6 @@
           <span>{{ $t('Docker.Title') }}</span>
         </span>
       </div>
-      <div>
-        <!-- <el-button
-          v-show="!listLoading"
-          type="text"
-          class="linkTextColor"
-          icon="el-icon-download"
-          @click="downloadPdf"
-        >
-          {{ $t('TestReport.DownloadPdf') }}
-        </el-button> -->
-      </div>
     </div>
     <div ref="pdfPage">
       <el-card shadow="never">
@@ -42,11 +31,8 @@
             text-shadow: #b3b1b1 0.05em 0.05em 0.1em;
           "
         >{{ $t('Docker.Title') }}</div>
-        <div class="text-center font-bold" style="padding-top: 20px;">
-          {{ scanner.name }} {{ scanner.version }}
-        </div>
         <div style="padding: 40px;">
-          <ul class="text-base font-semibold">
+          <ul class="text-base mb-10 font-semibold">
             <li>{{ $t('general.project_name') }}: {{ projectName }}</li>
             <li>{{ $t('TestReport.TestTime') }}: {{ timeNow }}</li>
             <li>
@@ -54,7 +40,6 @@
               {{ branch }} /<svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
               {{ commitId }}
             </li>
-            <li>{{ $t('Docker.Size') }}: {{ size }}</li>
           </ul>
           <!-- white box test -->
           <div
@@ -88,13 +73,8 @@
                 }"
               >
                 <p>{{ $t(`Docker.${item.severity}`) }}</p>
-                <p
-                  style="
-                    fontSize: 40px;
-                    margin: 10px;
-                  "
-                >
-                  {{ item.value }}
+                <p style="fontSize: 40px; margin: 10px;">
+                  {{ item.value || 0 }}
                 </p>
               </el-card>
             </el-col>
@@ -110,28 +90,26 @@
             {{ $t('Docker.AlertDetail') }}
           </div>
           <el-table
-            ref="table_checkmarx"
             v-loading="listLoading"
-            class="mb-10"
+            :row-class-name="getRowClass"
             :element-loading-text="$t('Loading')"
             :data="listData"
             size="small"
-            border
             fit
           >
-            <el-table-column align="center" type="index" width="50" />
-            <el-table-column align="center" width="180px" :label="$t('Docker.Vulnerability')" prop="id">
-              <template slot-scope="scope">
-                <el-link
-                  class="linkTextColor"
-                  target="_blank"
-                  style="font-size: 16px"
-                  :href="scope.row.links[0]"
-                >
-                  {{ scope.row.id }}
-                </el-link>
+            <el-table-column type="expand">
+              <template slot-scope="{row}">
+                <p class="ml-3">
+                  {{ row.description }}
+                </p>
               </template>
             </el-table-column>
+            <el-table-column
+              :label="$t('Docker.Vulnerability')"
+              prop="id"
+              align="center"
+              width="180px"
+            />
             <ElTableColumnTag
               :label="$t('Docker.Severity')"
               prop="severity"
@@ -140,49 +118,27 @@
               min-width="130"
               i18n-key="Docker"
             />
-            <el-table-column align="center" :label="$t('Docker.Package')" prop="package" />
-            <el-table-column align="center" :label="$t('Docker.CurrentVersion')" prop="version" />
-            <el-table-column align="center" :label="$t('Docker.FixedVersion')" prop="fix_version" />
+            <el-table-column
+              :label="$t('Docker.CurrentVersion')"
+              prop="version"
+              align="center"
+            />
+            <el-table-column
+              :label="$t('Docker.FixedVersion')"
+              prop="versions"
+              align="center"
+            />
+            <template slot="empty">
+              <el-empty :description="$t('general.NoData')" />
+            </template>
           </el-table>
-          <div
-            class="text-center font-bold"
-            style="
-              padding: 10px;
-              background: #606260;
-              color: #fff;
-            "
-          >
-            {{ $t('Docker.Reference') }}
-          </div>
-          <el-table
-            ref="table_checkmarx"
-            v-loading="listLoading"
-            class="mb-10"
-            :element-loading-text="$t('Loading')"
-            :data="listData"
-            size="small"
-            border
-            fit
-          >
-            <el-table-column align="center" type="index" width="50" />
-            <el-table-column align="center" width="180px" :label="$t('Docker.Vulnerability')" prop="id">
-              <template slot-scope="scope">
-                <el-link
-                  class="linkTextColor"
-                  target="_blank"
-                  style="font-size: 16px"
-                  :href="scope.row.links[0]"
-                >
-                  {{ scope.row.id }}
-                </el-link>
-              </template>
-            </el-table-column>
-            <el-table-column header-align="center" :label="$t('general.Description')" prop="description">
-              <template slot-scope="scope">
-                {{ scope.row.description || '-' }}
-              </template>
-            </el-table-column>
-          </el-table>
+          <pagination
+            :total="listQuery.total"
+            :page="listQuery.page"
+            :limit="listQuery.per_page"
+            :layout="'total, prev, pager, next'"
+            @pagination="onPagination"
+          />
         </div>
       </el-card>
     </div>
@@ -192,21 +148,34 @@
 <script>
 import { mapGetters } from 'vuex'
 import { UTCtoLocalTime } from '@/filters/index'
-import { getHarborScanReport } from '@/api_v2/harbor'
 import { getProjectInfos } from '@/api/projects'
+import {
+  getSbomRiskOverview,
+  getSbomRiskDetail
+} from '@/api_v2/sbom'
+import Pagination from '@/components/Pagination'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 
-const downloadFileName = 'Docker_Image_Vulnerability_Scan_Report'
+const params = () => ({
+  per_page: 10,
+  page: 1
+})
+
+const listQuery = () => ({
+  total: 0,
+  current: 0
+})
 
 export default {
-  name: 'DockerReport',
-  components: { ElTableColumnTag },
+  name: 'SbomReport',
+  components: { ElTableColumnTag, Pagination },
   data() {
     return {
+      params: params(),
+      listQuery: listQuery(),
       title: 'III DevOps',
       listLoading: false,
       listData: [],
-      scanner: [],
       summaryData: [],
       severityLevel: [
         'Critical',
@@ -232,8 +201,8 @@ export default {
     commitId() {
       return this.$route.params.commitId
     },
-    size() {
-      return this.$route.params.size
+    sbomId() {
+      return this.$route.params.sbomId
     }
   },
   watch: {
@@ -242,8 +211,7 @@ export default {
         if (Object.keys(val).length > 0 && val.hasOwnProperty('name')) {
           this.fetchTestReport()
         }
-      },
-      immediate: true
+      }
     }
   },
   mounted() {
@@ -262,24 +230,38 @@ export default {
     async fetchTestReport() {
       this.listLoading = true
       try {
-        const res = await getHarborScanReport(this.project.name, { branch: this.branch, commit_id: this.commitId })
-        this.summaryData = this.setSummaryData(res.data.overview)
-        this.listData = this.sortVulnerabilityData(res.data.vulnerabilities)
-        this.timeNow = UTCtoLocalTime(res.data.generated_at)
-        this.scanner = res.data.scanner
+        await Promise.all([
+          getSbomRiskOverview(this.sbomId),
+          getSbomRiskDetail(this.sbomId, this.params)
+        ]).then((res) => {
+          const [overview, detail] = res.map((item) => item.data)
+          if (Object.keys(overview).length === 0 || Object.keys(detail).length === 0) return
+          this.summaryData = this.setSummaryData(overview)
+          this.listData = detail.detail_list
+          this.listQuery = detail.page
+        })
       } catch (error) {
         console.error(error)
       } finally {
         this.listLoading = false
+        this.timeNow = localStorage.getItem('sbomTime') !== 'null'
+          ? UTCtoLocalTime(localStorage.getItem('sbomTime')) : '-'
+        this.$once('hook:beforeDestroy', () => {
+          localStorage.removeItem('sbomTime')
+        })
       }
     },
-    sortVulnerabilityData(data) {
-      var sortedData = []
-      for (const severity of this.summaryData.map(s => s.severity)) {
-        const sorted = data.filter(item => item.severity === severity)
-        sortedData = [...sortedData, ...sorted]
-      }
-      return sortedData
+    async fetchData() {
+      this.listLoading = true
+      const res = await getSbomRiskDetail(this.sbomId, this.params)
+      this.listData = res.data.detail_list
+      this.listQuery = res.data.page
+      this.listLoading = false
+    },
+    async onPagination(query) {
+      const { page } = query
+      this.params.page = page
+      await this.fetchData()
     },
     setSummaryData(data) {
       var summary = []
@@ -305,11 +287,11 @@ export default {
           return '#606260'
       }
     },
+    getRowClass({ row }) {
+      return row.description ? '' : 'row-expand-cover'
+    },
     handleBackPage() {
       this.$router.go(-1)
-    },
-    async downloadPdf() {
-      await this.$pdf(this.$refs.pdfPage, downloadFileName)
     }
   }
 }
@@ -317,6 +299,10 @@ export default {
 
 <style lang="scss" scoped>
 @import 'src/styles/theme/variables.scss';
+
+>>> .row-expand-cover .el-table__expand-column .cell {
+  display: none;
+}
 
 >>> .el-divider__text {
   font-size: 18px;

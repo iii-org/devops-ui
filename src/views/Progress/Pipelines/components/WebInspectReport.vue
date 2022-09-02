@@ -2,7 +2,14 @@
   <div>
     <ToolBar>
       <span slot="toolName">WebInspect</span>
-      <el-button slot="link" type="text" icon="el-icon-tickets" :class="!disabled ? 'linkTextColor' : ''" :disabled="disabled" @click="openWebInspect">
+      <el-button
+        slot="link"
+        type="text"
+        icon="el-icon-tickets"
+        :class="!disabled ? 'linkTextColor' : ''"
+        :disabled="disabled"
+        @click="openWebInspect"
+      >
         {{ $t('TestReport.DetailReport') }}
       </el-button>
     </ToolBar>
@@ -86,7 +93,7 @@ export default {
     openWebInspect() {
       const { scan_id, run_at } = this.webinspect[0]
       const routeUrl = this.$router.resolve({
-        name: 'WebinspectReport', params: { scanId: scan_id, run_at }
+        name: 'WIEReportViewer', params: { scanId: scan_id, run_at }
       })
       window.open(routeUrl.href, '_blank')
     }

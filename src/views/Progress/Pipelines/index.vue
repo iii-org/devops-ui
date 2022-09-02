@@ -189,7 +189,7 @@ const listQuery = () => ({
 })
 
 export default {
-  name: 'ProgressPipelinesSocket',
+  name: 'Pipelines',
   components: { ElTableColumnTime, TestDetail, ProjectListSelector, Pagination, PipelineSettingsTable },
   mixins: [CancelRequest],
   data() {

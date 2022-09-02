@@ -33,7 +33,9 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button class="buttonSecondaryReverse" @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+      <el-button class="buttonSecondaryReverse" @click="dialogVisible = false">
+        {{ $t('general.Cancel') }}
+      </el-button>
       <el-button class="buttonPrimary" :loading="btnConfirmLoading" @click="handleConfirm">
         {{ $t('general.Confirm') }}
       </el-button>

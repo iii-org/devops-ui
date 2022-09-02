@@ -244,10 +244,12 @@ export default {
     ...mapGetters(['selectedProjectId'])
   },
   methods: {
-    handleUploadClose() {
+    async handleUploadClose() {
       const sendForm = new FormData()
       const uploadFileList = this.$refs.IssueFileUploader.uploadFileList
-      uploadFileList.length > 0 ? this.uploadFiles(sendForm, uploadFileList) : null
+      if (uploadFileList.length > 0) {
+        await this.uploadFiles(sendForm, uploadFileList)
+      }
       this.$refs.IssueFileUploader.$refs.fileUploader.clearFiles()
       this.$refs.IssueFileUploader.uploadFileList = []
       this.uploadDialogVisible = false
@@ -256,15 +258,10 @@ export default {
       // use one by one edit issue to upload file
       const { issueId } = this
       try {
-        const uploadApi = fileList.map(function (item) {
-          const sendForm = new FormData()
-          sendForm.delete('upload_file')
-          sendForm.delete('upload_content_type')
-          sendForm.append('upload_content_type', item.raw.type)
-          sendForm.append('upload_file', item.raw, item.raw.name)
-          return updateIssue(issueId, sendForm)
+        fileList.forEach((item) => {
+          sendForm.append('upload_files', item.raw)
         })
-        await Promise.all(uploadApi)
+        await updateIssue(issueId, sendForm)
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),

@@ -34,3 +34,5 @@ export const getAllUser = async () => {
   }
   return userList
 }
+
+export const getRouter = () => request.get(`/ui_router`)

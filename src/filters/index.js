@@ -18,6 +18,16 @@ export function relativeTime(dateTime) {
     : '-'
 }
 
+export function formatTime(dateTime) {
+  const localTime = dayjs
+    .utc(dateTime)
+    .format('YYYY-MM-DD HH:mm:ss')
+  if (dateTime === 'Invalid date') {
+    return '-'
+  }
+  return localTime
+}
+
 export function UTCtoLocalTime(utcTime) {
   const localTime = dayjs
     .utc(utcTime)

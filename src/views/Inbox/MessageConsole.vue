@@ -11,7 +11,7 @@
         >
           {{ $t('general.Back') }}
         </el-button>
-        <el-button 
+        <el-button
           class="buttonSecondary"
           @click="createMessage"
         >
@@ -164,20 +164,20 @@
       :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
-    <el-row 
+    <el-row
       type="flex"
       class="ps"
       justify="end"
     >
       {{ $t('Inbox.MessageNote') }}
     </el-row>
-    <CreateMessage 
-      ref="createDialog" 
+    <CreateMessage
+      ref="createDialog"
       :alert-list="options"
       :is-edit="isEdit"
       :message-data="messageData"
       @edit="isEdit = false"
-      @load-data="fetchData" 
+      @load-data="fetchData"
     />
   </div>
 </template>
@@ -196,9 +196,9 @@ const params = () => ({
 
 export default {
   name: 'Inbox',
-  components: { 
-    SearchFilter, 
-    ElTableColumnTime, 
+  components: {
+    SearchFilter,
+    ElTableColumnTime,
     CreateMessage: () => import('./components/CreateMessage.vue')
   },
   mixins: [BasicData, Pagination],
@@ -362,7 +362,7 @@ export default {
         })
     },
     handleBack() {
-      this.$router.push({ name: 'inbox' })
+      this.$router.push({ name: 'Inbox' })
     }
   }
 }
@@ -371,6 +371,6 @@ export default {
 <style lang="scss">
 .ps {
   /* color: #e66262;  */
-  margin-top: 12px 
+  margin-top: 12px
 }
 </style>
