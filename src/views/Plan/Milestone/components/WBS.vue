@@ -894,7 +894,7 @@ export default {
         const data = {}
         Object.keys(row).forEach((item) => {
           if (row[item] && typeof row[item] === 'object') {
-            data[`${item}_id`] = row[item]['id'] ? row[item]['id'] : row[item]
+            data[`${item}_id`] = row[item]['id'] ? row[item]['id'] : null
           } else {
             data[item] = row[item]
           }
