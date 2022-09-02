@@ -32,7 +32,6 @@ stages:
       include:
       - master
       - develop
-      - routerfromapi
       - echart
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
@@ -54,7 +53,6 @@ stages:
       include:
       - master
       - develop
-      - GitGraph
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
   steps:
