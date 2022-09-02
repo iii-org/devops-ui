@@ -73,13 +73,8 @@
                 }"
               >
                 <p>{{ $t(`Docker.${item.severity}`) }}</p>
-                <p
-                  style="
-                    fontSize: 40px;
-                    margin: 10px;
-                  "
-                >
-                  {{ item.value }}
+                <p style="fontSize: 40px; margin: 10px;">
+                  {{ item.value || 0 }}
                 </p>
               </el-card>
             </el-col>

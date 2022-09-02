@@ -97,19 +97,47 @@
       <el-table-column
         :label="$t('SBOM.PackageCount')"
         prop="package_nums"
-      />
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.package_nums">
+            {{ scope.row.package_nums }}
+          </span>
+          <span v-else>0</span>
+        </template>
+      </el-table-column>
       <el-table-column
         :label="$t('SBOM.HighSeverity')"
         prop="scan_overview.High"
-      />
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.scan_overview && scope.row.scan_overview.High">
+            {{ scope.row.scan_overview.High }}
+          </span>
+          <span v-else>0</span>
+        </template>
+      </el-table-column>
       <el-table-column
         :label="$t('SBOM.MediumSeverity')"
         prop="scan_overview.Medium"
-      />
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.scan_overview && scope.row.scan_overview.Medium">
+            {{ scope.row.scan_overview.Medium }}
+          </span>
+          <span v-else>0</span>
+        </template>
+      </el-table-column>
       <el-table-column
         :label="$t('SBOM.LowSeverity')"
         prop="scan_overview.Low"
-      />
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.scan_overview && scope.row.scan_overview.Low">
+            {{ scope.row.scan_overview.Low }}
+          </span>
+          <span v-else>0</span>
+        </template>
+      </el-table-column>
       <el-table-column-time
         :label="$t('SBOM.RunAt')"
         prop="created_at"
