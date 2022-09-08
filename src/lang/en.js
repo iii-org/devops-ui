@@ -159,6 +159,7 @@ export default {
     Add: 'Add',
     Edit: 'Edit',
     Delete: 'Delete',
+    Clear: 'Clear',
     Participate: 'Participate',
     ProjectId: 'Project ID',
     Remove: 'Remove',
@@ -645,6 +646,15 @@ export default {
       branch: 'Branch'
     },
     TestFile: {
+      CreateTestData: 'Create Test Data',
+      CreateTestDataSetting: 'Create Test Data Setting',
+      ParamsAndRange: 'Params and Range',
+      ParamsLimit: 'Params Limit',
+      CreateNow: 'Create Now',
+      SettingReference: 'Setting Reference',
+      ConnectTestPlan: 'Connect Test Plan',
+      DeleteTestFile: 'Delete Test File',
+      SetPlan: 'Set Plan',
       AddPlan: 'Add Plan',
       UploadTestSet: 'Upload Test Set',
       TestSoftware: 'Test Software',

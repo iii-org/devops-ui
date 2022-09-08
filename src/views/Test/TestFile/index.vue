@@ -113,7 +113,74 @@
       </el-table-column>
       <el-table-column :label="$t('general.Actions')" width="350">
         <template slot-scope="scope">
-          <el-button size="small" class="buttonPrimaryReverse" icon="el-icon-edit" @click="handleRelatedPlan(scope.row)">
+          <el-tooltip
+            v-if="scope.row.software_name === 'SideeX'"
+            placement="bottom"
+            :content="$t('Test.TestFile.CreateTestData')"
+          >
+            <el-link
+              type="primary"
+              style="font-size: 30px;"
+              icon="ri-exchange-funds-line"
+              :underline="false"
+              @click="handleCreateTestData(scope.row)"
+            />
+          </el-tooltip>
+          <el-tooltip
+            placement="bottom"
+            :content="$t('Test.TestFile.ConnectTestPlan')"
+          >
+            <el-popover
+              placement="bottom"
+              trigger="click"
+            >
+              <div>
+                <el-link
+                  style="display: block; font-size: 16px;"
+                  :underline="false"
+                  @click="handleRelatedPlan(scope.row)"
+                >
+                  {{ $t('Test.TestFile.SetPlan') }}
+                </el-link>
+                <el-link
+                  style="display: block; font-size: 16px;"
+                  :underline="false"
+                  @click="handleCreatePlan(scope.row)"
+                >
+                  {{ $t('Test.TestFile.AddPlan') }}
+                </el-link>
+              </div>
+              <el-link
+                slot="reference"
+                type="success"
+                style="font-size: 30px;"
+                icon="ri-links-line"
+                :underline="false"
+              />
+            </el-popover>
+          </el-tooltip>
+          <el-tooltip
+            placement="bottom"
+            :content="$t('Test.TestFile.DeleteTestFile')"
+          >
+            <el-popconfirm
+              :confirm-button-text="$t('general.Delete')"
+              :cancel-button-text="$t('general.Cancel')"
+              icon="el-icon-info"
+              icon-color="red"
+              :title="$t('Issue.DeleteFile')"
+              @confirm="deleteTestFile(scope.row.software_name, scope.row.file_name)"
+            >
+              <el-link
+                slot="reference"
+                type="danger"
+                style="font-size: 30px;"
+                icon="el-icon-delete"
+                :underline="false"
+              />
+            </el-popconfirm>
+          </el-tooltip>
+          <!-- <el-button size="small" class="buttonPrimaryReverse" icon="el-icon-edit" @click="handleRelatedPlan(scope.row)">
             {{ $t('general.Edit') }}
           </el-button>
           <el-button size="small" class="buttonSecondaryReverse" icon="el-icon-circle-plus" @click="handleCreatePlan(scope.row)">
@@ -130,7 +197,7 @@
             <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete">
               {{ $t('general.Delete') }}
             </el-button>
-          </el-popconfirm>
+          </el-popconfirm> -->
         </template>
       </el-table-column>
       <template slot="empty">
@@ -179,6 +246,34 @@
         <el-button class="buttonPrimary" @click="uploadCollection">{{ $t('File.Upload') }} </el-button>
       </template>
     </el-dialog>
+    <el-dialog
+      v-loading="listLoading"
+      :element-loading-text="$t('Loading')"
+      :visible.sync="createTestDataDialogVisible"
+      :show-close="false"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      width="50%"
+      top="8vh"
+      append-to-body
+      destroy-on-close
+    >
+      <CreateTestDataDialog ref="createTestDataDialog" />
+      <template slot="footer">
+        <el-button
+          class="buttonPrimary"
+          @click="uploadCollection"
+        >
+          {{ $t('Test.TestFile.CreateNow') }}
+        </el-button>
+        <el-button
+          class="buttonSecondaryReverse"
+          @click="toggleDialogVisible('createTestData')"
+        >
+          {{ $t('general.Close') }}
+        </el-button>
+      </template>
+    </el-dialog>
     <ContextMenu
       ref="contextmenu"
       :visible="contextMenu.visible"
@@ -203,12 +298,14 @@ import {
 } from '@/api/qa'
 import RelatedPlanDialog from './components/RelatedPlanDialog'
 import CollectionFileUploader from './components/CollectionFileUploader'
+import CreateTestDataDialog from './components/CreateTestDataDialog'
 import IssueRow from '@/components/Issue/components/IssueRow'
 
 export default {
   name: 'TestFile',
   components: {
     CollectionFileUploader,
+    CreateTestDataDialog,
     RelatedPlanDialog,
     IssueRow
   },
@@ -231,6 +328,7 @@ export default {
         visible: false,
         id: null
       },
+      createTestDataDialogVisible: false,
       relatedPlanDialogVisible: false,
       uploadDialogVisible: false,
       expandedRow: []
@@ -287,6 +385,10 @@ export default {
       //   this.keyword = this.userName
       // }
       return data
+    },
+    handleCreateTestData(collection) {
+      this.toggleDialogVisible('createTestData')
+      this.selectedCollection = collection
     },
     handleRelatedPlan(collection) {
       this.toggleDialogVisible('relatedPlan')
