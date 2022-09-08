@@ -33,6 +33,7 @@ stages:
       - master
       - develop
       - echart
+      - milestoneaddissue
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -84,9 +85,8 @@ stages:
       - redminemail
       - filepreview
       - router
-      - sbom
       - testb1
-      - advancedbranchsetting
+      - milestoneaddissue
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -113,9 +113,8 @@ stages:
       - redminemail
       - filepreview
       - router
-      - sbom
       - testb1
-      - advancedbranchsetting
+      - milestoneaddissue
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -138,9 +137,8 @@ stages:
       - redminemail
       - filepreview
       - router
-      - sbom
       - testb1
-      - advancedbranchsetting
+      - milestoneaddissue
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -179,9 +177,8 @@ stages:
       - redminemail
       - filepreview
       - router
-      - sbom
       - testb1
-      - advancedbranchsetting
+      - milestoneaddissue
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -213,9 +210,8 @@ stages:
       - redminemail
       - filepreview
       - router
-      - sbom
       - testb1
-      - advancedbranchsetting
+      - milestoneaddissue
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -245,9 +241,8 @@ stages:
       - redminemail
       - filepreview
       - router
-      - sbom
       - testb1
-      - advancedbranchsetting
+      - milestoneaddissue
 - name: Test--ZAP
   iiidevops: zap
   steps:
