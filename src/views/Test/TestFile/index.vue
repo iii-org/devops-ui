@@ -180,24 +180,6 @@
               />
             </el-popconfirm>
           </el-tooltip>
-          <!-- <el-button size="small" class="buttonPrimaryReverse" icon="el-icon-edit" @click="handleRelatedPlan(scope.row)">
-            {{ $t('general.Edit') }}
-          </el-button>
-          <el-button size="small" class="buttonSecondaryReverse" icon="el-icon-circle-plus" @click="handleCreatePlan(scope.row)">
-            {{ $t('Test.TestFile.AddPlan') }}
-          </el-button>
-          <el-popconfirm
-            :confirm-button-text="$t('general.Delete')"
-            :cancel-button-text="$t('general.Cancel')"
-            icon="el-icon-info"
-            icon-color="red"
-            :title="$t('Issue.DeleteFile')"
-            @confirm="deleteTestFile(scope.row.software_name, scope.row.file_name)"
-          >
-            <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete">
-              {{ $t('general.Delete') }}
-            </el-button>
-          </el-popconfirm> -->
         </template>
       </el-table-column>
       <template slot="empty">
@@ -246,34 +228,12 @@
         <el-button class="buttonPrimary" @click="uploadCollection">{{ $t('File.Upload') }} </el-button>
       </template>
     </el-dialog>
-    <el-dialog
-      v-loading="listLoading"
-      :element-loading-text="$t('Loading')"
-      :visible.sync="createTestDataDialogVisible"
-      :show-close="false"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      width="50%"
-      top="8vh"
-      append-to-body
-      destroy-on-close
-    >
-      <CreateTestDataDialog ref="createTestDataDialog" />
-      <template slot="footer">
-        <el-button
-          class="buttonPrimary"
-          @click="uploadCollection"
-        >
-          {{ $t('Test.TestFile.CreateNow') }}
-        </el-button>
-        <el-button
-          class="buttonSecondaryReverse"
-          @click="toggleDialogVisible('createTestData')"
-        >
-          {{ $t('general.Close') }}
-        </el-button>
-      </template>
-    </el-dialog>
+    <CreateTestDataDialog
+      v-if="createTestDataDialogVisible"
+      ref="createTestDataDialog"
+      :dialog-visible.sync="createTestDataDialogVisible"
+      :file-name="selectedFileName"
+    />
     <ContextMenu
       ref="contextmenu"
       :visible="contextMenu.visible"
@@ -324,6 +284,7 @@ export default {
       listFilterSoftwareData: [],
       form: {},
       selectedCollection: {},
+      selectedFileName: '',
       relationIssue: {
         visible: false,
         id: null
@@ -386,9 +347,9 @@ export default {
       // }
       return data
     },
-    handleCreateTestData(collection) {
+    handleCreateTestData(row) {
       this.toggleDialogVisible('createTestData')
-      this.selectedCollection = collection
+      this.selectedFileName = row.file_name
     },
     handleRelatedPlan(collection) {
       this.toggleDialogVisible('relatedPlan')

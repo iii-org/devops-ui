@@ -1,5 +1,14 @@
 <template>
-  <div>
+  <el-dialog
+    :visible.sync="dialogVisible"
+    :show-close="false"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    width="50%"
+    top="8vh"
+    append-to-body
+    destroy-on-close
+  >
     <el-row>
       <el-col>
         <h2 class="text-center">
@@ -7,7 +16,11 @@
         </h2>
       </el-col>
     </el-row>
-    <el-row class="el-card scroll">
+    <el-row
+      v-loading="isLoading"
+      class="el-card scroll"
+      :element-loading-text="$t('Loading')"
+    >
       <el-col class="el-card__body">
         <el-row :gutter="20">
           <el-col :span="24" class="mb-5">
@@ -15,7 +28,7 @@
               {{ $t('Test.TestFile.ParamsAndRange') }}
             </h4>
             <el-form>
-              <template v-for="item in params">
+              <template v-for="(item,index) in params">
                 <el-form-item :key="item.name">
                   <el-col :span="5">
                     <span class="font-bold">{{ item.name }}</span>
@@ -25,13 +38,14 @@
                       v-model="item.type"
                       :placeholder="$t('RuleMsg.PleaseSelect')"
                     >
-                      <el-option label="文字" value="text" />
-                      <el-option label="數值" value="value" />
+                      <el-option label="文字" value="string" />
+                      <el-option label="數值" value="integer" />
+                      <el-option label="陣列" value="list" />
                     </el-select>
                   </el-col>
                   <el-col :span="9">
                     <el-input
-                      v-model="item.range"
+                      v-model="item.value"
                       placeholder="請輸入範圍,請以,隔開,如1,2,3"
                     />
                   </el-col>
@@ -39,6 +53,7 @@
                     <el-button
                       type="danger"
                       icon="el-icon-close"
+                      @click="clear(index)"
                     >
                       {{ $t('general.Clear') }}
                     </el-button>
@@ -80,44 +95,105 @@
         </el-row>
       </el-col>
     </el-row>
-  </div>
+    <template slot="footer">
+      <el-button
+        :loading="isLoading"
+        :disabled="isDisabled"
+        class="buttonPrimary"
+        @click="create"
+      >
+        {{ $t('Test.TestFile.CreateNow') }}
+      </el-button>
+      <el-button
+        :loading="isLoading"
+        class="buttonSecondaryReverse"
+        @click="close"
+      >
+        {{ $t('general.Close') }}
+      </el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { getSideexVariable, updateSideexVariable } from '@/api/sideex'
 
 export default {
   name: 'CreateTestDataDialog',
+  props: {
+    dialogVisible: {
+      type: Boolean,
+      default: false
+    },
+    fileName: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       isLoading: false,
-      params: [{
-        name: 'Percentage',
-        type: '',
-        range: ''
-      }],
+      params: [],
       limit: '',
-      limitPlaceholder: `IF [File system] = "FAT" THEN [Size] <= 4096;
-IF [File system] = "FAT32" THEN [Size] <= 32000;
-
-IF [File system] <> "NTFS" OR
-( [File system] =  "NTFS" AND [Cluster size] > 4096 )
-THEN [Compression] = "Off";
-
-IF NOT ( [File system] = "NTFS" OR
-      ( [File system] = "NTFS" AND NOT [Cluster size] <= 4096 ))
-THEN [Compression] = "Off";`
+      limitPlaceholder: `IF [File system] = "FAT" THEN [Size] <= 4096;\nIF [File system] = "FAT32" THEN [Size] <= 32000;\n
+IF [File system] <> "NTFS" OR\n  ( [File system] =  "NTFS" AND [Cluster size] > 4096 )\nTHEN [Compression] = "Off";\n
+IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster size] <= 4096 ))\nTHEN [Compression] = "Off";`
     }
   },
   computed: {
-    ...mapGetters(['selectedProject']),
-    selectedProjectId() {
-      return this.selectedProject.id
+    ...mapGetters(['selectedProjectId']),
+    isDisabled() {
+      return this.params.some((item) => item.value === '')
     }
   },
   mounted() {
+    this.fetchData()
   },
   methods: {
+    async fetchData() {
+      this.isLoading = true
+      const data = (await getSideexVariable(this.selectedProjectId, { filename: this.fileName })).data
+      this.params = data.var.map((item) => ({
+        name: item.name,
+        type: item.type,
+        value: item.value.toString()
+      }))
+      this.limit = data.rule.toString()
+      this.isLoading = false
+    },
+    clear(index) {
+      this.params[index].value = ''
+    },
+    async create() {
+      this.isLoading = true
+      const data = {
+        var: this.params.map((item) => ({
+          name: item.name,
+          type: item.type,
+          value: item.type === 'integer'
+            ? item.value.split(',').map(Number)
+            : item.value.split(',')
+        })),
+        rule: []
+      }
+      try {
+        await updateSideexVariable(this.selectedProjectId, data)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Added'),
+          type: 'success'
+        })
+      } catch (e) {
+        console.error(e)
+      } finally {
+        this.isLoading = false
+        this.close()
+      }
+    },
+    close() {
+      this.$emit('update:dialogVisible', false)
+    }
   }
 }
 </script>
