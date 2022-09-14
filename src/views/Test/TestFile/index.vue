@@ -120,7 +120,7 @@
           >
             <el-link
               type="primary"
-              style="font-size: 30px;"
+              style="font-size: 20px;"
               icon="ri-exchange-funds-line"
               :underline="false"
               @click="handleCreateTestData(scope.row)"
@@ -153,7 +153,7 @@
               <el-link
                 slot="reference"
                 type="success"
-                style="font-size: 30px;"
+                style="font-size: 20px;"
                 icon="ri-links-line"
                 :underline="false"
               />
@@ -174,7 +174,7 @@
               <el-link
                 slot="reference"
                 type="danger"
-                style="font-size: 30px;"
+                style="font-size: 20px;"
                 icon="el-icon-delete"
                 :underline="false"
               />

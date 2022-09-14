@@ -63,27 +63,17 @@
       :visible.sync="relationDialog.visible"
       :close-on-click-modal="false"
       width="80%"
-      :show-close="false"
       append-to-body
     >
       <div slot="title">
         <el-row slot="title" type="flex" align="middle">
           <el-col :xs="24" :md="16">
-            <el-button
-              type="text"
-              size="medium"
-              icon="el-icon-arrow-left"
-              class="previous text-title linkTextColor"
-              @click="toggleRelationDialog(relationDialog.target)"
-            >
-              {{ $t('general.Back') }}
-            </el-button>
             <span class="text-title">
               {{ $t('general.Settings', { name: $t('Issue.' + relationDialog.target + 'Issue') }) }}
             </span>
           </el-col>
           <el-col :xs="24" :md="8" class="text-right">
-            <el-button class="buttonPrimary" @click="onSaveCheckRelationIssue">
+            <el-button class="buttonPrimary mr-5" @click="onSaveCheckRelationIssue">
               {{ $t('general.Save') }}
             </el-button>
           </el-col>

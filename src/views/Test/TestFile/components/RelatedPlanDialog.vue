@@ -9,15 +9,6 @@
         :xs="24"
         :md="16"
       >
-        <el-button
-          type="text"
-          size="medium"
-          icon="el-icon-arrow-left"
-          class="previous text-h6 linkTextColor"
-          @click="onBack"
-        >
-          {{ $t('general.Back') }}
-        </el-button>
         <span class="text-h6">{{ collection.file_name }}</span> -
         <IssueTitle
           ref="IssueTitle"
@@ -35,6 +26,13 @@
           @click="handleAddConfirm"
         >
           {{ $t('general.Save') }}
+        </el-button>
+        <el-button
+          class="buttonSecondaryReverse"
+          :loading="btnConfirmLoading"
+          @click="onClose"
+        >
+          {{ $t('general.Close') }}
         </el-button>
       </el-col>
     </el-row>
@@ -281,7 +279,7 @@ export default {
         this.onAddIssue(row)
       }
     },
-    onBack() {
+    onClose() {
       this.$emit('close-dialog', 'relatedPlan')
     },
     onAddIssue(row) {

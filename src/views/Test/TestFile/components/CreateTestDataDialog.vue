@@ -27,40 +27,43 @@
             <h4 class="mb-3">
               {{ $t('Test.TestFile.ParamsAndRange') }}
             </h4>
-            <el-form>
-              <template v-for="(item,index) in params">
-                <el-form-item :key="item.name">
-                  <el-col :span="5">
+            <template v-for="(item,index) in params">
+              <el-form ref="rules" :key="index" :model="item" :rules="rules">
+                <el-col :span="5">
+                  <el-form-item prop="name">
                     <span class="font-bold">{{ item.name }}</span>
-                  </el-col>
-                  <el-col :span="5">
+                  </el-form-item>
+                </el-col>
+                <el-col :span="5">
+                  <el-form-item prop="type">
                     <el-select
                       v-model="item.type"
                       :placeholder="$t('RuleMsg.PleaseSelect')"
                     >
-                      <el-option label="文字" value="string" />
-                      <el-option label="數值" value="integer" />
-                      <el-option label="陣列" value="list" />
+                      <el-option label="文字" value="str" />
+                      <el-option label="數值" value="int" />
                     </el-select>
-                  </el-col>
-                  <el-col :span="9">
+                  </el-form-item>
+                </el-col>
+                <el-col :span="10">
+                  <el-form-item prop="value">
                     <el-input
                       v-model="item.value"
                       placeholder="請輸入範圍,請以,隔開,如1,2,3"
                     />
-                  </el-col>
-                  <el-col :span="5">
-                    <el-button
-                      type="danger"
-                      icon="el-icon-close"
-                      @click="clear(index)"
-                    >
-                      {{ $t('general.Clear') }}
-                    </el-button>
-                  </el-col>
-                </el-form-item>
-              </template>
-            </el-form>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="4">
+                  <el-button
+                    type="danger"
+                    icon="el-icon-close"
+                    @click="clear(index)"
+                  >
+                    {{ $t('general.Clear') }}
+                  </el-button>
+                </el-col>
+              </el-form>
+            </template>
           </el-col>
           <el-col :span="24">
             <div class="flex justify-between mb-3">
@@ -138,7 +141,16 @@ export default {
       limit: '',
       limitPlaceholder: `IF [File system] = "FAT" THEN [Size] <= 4096;\nIF [File system] = "FAT32" THEN [Size] <= 32000;\n
 IF [File system] <> "NTFS" OR\n  ( [File system] =  "NTFS" AND [Cluster size] > 4096 )\nTHEN [Compression] = "Off";\n
-IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster size] <= 4096 ))\nTHEN [Compression] = "Off";`
+IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster size] <= 4096 ))\nTHEN [Compression] = "Off";`,
+      rules: {
+        type: [
+          { required: true, message: '請選擇類型' }
+        ],
+        value: [
+          { required: true, message: '請填上範圍' },
+          { validator: this.numberCheck, trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -151,6 +163,14 @@ IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster 
     this.fetchData()
   },
   methods: {
+    numberCheck (rule, value, callback) {
+      if (this.params.filter((item) => item.value === value)[0].type !== 'int') callback()
+      if (!value.split(',').every((item) => /^\+?[1-9][0-9]*$/.test(item))) {
+        callback(new Error('請確認所輸入都是正整數!'))
+      } else {
+        callback()
+      }
+    },
     async fetchData() {
       this.isLoading = true
       const data = (await getSideexVariable(this.selectedProjectId, { filename: this.fileName })).data
@@ -166,12 +186,15 @@ IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster 
       this.params[index].value = ''
     },
     async create() {
+      const validity = []
+      this.$refs['rules'].forEach((item) => { item.validate((valid) => { validity.push(valid) }) })
+      if (!validity.every((item) => item)) return
       this.isLoading = true
       const data = {
         var: this.params.map((item) => ({
           name: item.name,
           type: item.type,
-          value: item.type === 'integer'
+          value: item.type === 'int'
             ? item.value.split(',').map(Number)
             : item.value.split(',')
         })),
@@ -199,6 +222,9 @@ IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster 
 </script>
 
 <style lang="scss" scoped>
+>>> .el-dialog__body {
+  padding-top: 0;
+}
 .scroll {
   overflow: auto;
   height: 500px;
