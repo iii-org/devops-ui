@@ -4,16 +4,15 @@
     v-loading="isLoading"
     :model="form"
     :rules="rules"
+    inline
     class="custom-list"
   >
     <el-row>
-      <el-col
-        :md="12"
-        :span="24"
-      >
+      <el-col :md="12" :span="24">
         <el-form-item
-          :label="$t('general.Name')"
           prop="name"
+          :label="$t('general.Name')"
+          style="width: 100%;"
         >
           <el-input
             v-model="form.name"
@@ -21,11 +20,11 @@
           />
         </el-form-item>
       </el-col>
-      <el-col
-        :md="12"
-        :span="24"
-      >
-        <el-form-item :label="$t('Issue.RelatedIssue')">
+      <el-col :md="12" :span="24">
+        <el-form-item
+          :label="$t('Issue.RelatedIssue')"
+          style="width: 100%;"
+        >
           <el-select
             v-model="form.issue_ids"
             style="width: 100%"
@@ -80,13 +79,10 @@ export default {
       issueLoading: false,
       issueList: [],
       rules: {
-        name: [
-          {
-            required: true,
-            message: this.$t('RuleMsg.PleaseSelect') + this.$t('general.Name'),
-            trigger: 'blur'
-          }
-        ]
+        name: [{
+          required: true, trigger: 'blur',
+          message: this.$t('RuleMsg.PleaseSelect') + this.$t('general.Name')
+        }]
       }
     }
   },
@@ -144,6 +140,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+>>> .el-form-item__content{
+  width: 80%;;
+}
 </style>

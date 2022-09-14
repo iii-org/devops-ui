@@ -154,7 +154,6 @@ export default {
   data() {
     return {
       searchKeys: ['name'],
-      issueQuery: null,
       isClosed: false,
       isExcalidrawAlive: false
     }
@@ -189,7 +188,7 @@ export default {
       this.$refs.CreateBoardDialog.dialogVisible = true
     },
     async handleAfterCreate(row) {
-      this.$refs.EditBoardDialog.isCollapse = ['1']
+      this.$refs.EditBoardDialog.isCollapse = ['2']
       this.$refs.EditBoardDialog.row = row
       this.$nextTick(() => {
         setTimeout(() => {
@@ -198,7 +197,7 @@ export default {
       })
     },
     handleEdit(row, isCollapse) {
-      this.$refs.EditBoardDialog.isCollapse = isCollapse ? ['1'] : []
+      this.$refs.EditBoardDialog.isCollapse = isCollapse ? ['2'] : ['1', '2']
       this.$refs.EditBoardDialog.row = row
       this.$nextTick(() => {
         this.$refs.EditBoardDialog.dialogVisible = true
