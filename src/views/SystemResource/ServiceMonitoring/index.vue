@@ -8,7 +8,7 @@
       </div>
       <el-divider />
       <el-card>
-        <el-table v-loading="isLoading" :element-loading-text="$t('Loading')" :data="listData" fit>
+        <el-table :data="listData" fit>
           <el-table-column :label="$t('ServiceMonitoring.Services')" align="center" width="200" prop="name" />
           <el-table-column :label="$t('ServiceMonitoring.Health')" align="center" width="100">
             <template slot-scope="scope">
@@ -19,11 +19,21 @@
           </el-table-column>
           <el-table-column :label="$t('ServiceMonitoring.Logs')" align="center">
             <template slot-scope="scope">
-              <div v-if="scope.row.message === null">-</div>
+              <el-skeleton
+                v-if="scope.row.status === 'loading'"
+                :rows="1"
+                animated
+              />
+              <div v-else-if="scope.row.message === null">-</div>
               <div v-else>{{ scope.row.message }}</div>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('ServiceMonitoring.LastUpdateTime')" align="center" prop="datetime" width="200" />
+          <el-table-column :label="$t('ServiceMonitoring.LastUpdateTime')" align="center" prop="datetime" width="200">
+            <template slot-scope="scope">
+              <div v-if="scope.row.status === 'loading'">{{ $t('Loading') }}</div>
+              <div v-else>{{ scope.row.datetime }}</div>
+            </template>
+          </el-table-column>
           <el-table-column
             :label="$t('general.Actions')"
             align="center"
@@ -31,6 +41,7 @@
           >
             <template slot-scope="scope">
               <el-button
+                :loading="scope.row.status === 'loading'"
                 size="mini"
                 class="buttonPrimaryReverse"
                 @click="handleCheck(scope.row.name)"
@@ -69,7 +80,6 @@ export default {
   name: 'ServiceMonitoring',
   data() {
     return {
-      isLoading: false,
       listData: [],
       harborStatus: false
     }
@@ -80,7 +90,6 @@ export default {
   },
   methods: {
     async loadData() {
-      this.isLoading = true
       this.listData = listData()
       await getHarborStatus().then(async (res) => {
         if (res.status) {
@@ -94,8 +103,6 @@ export default {
       })
       const apis = [getRancherStatus, getK8sStatus, getRedmineStatus, getSonarqubeStatus, getGitlabStatus]
       apis.forEach(async (api) => { await this.fetchData(api) })
-
-      this.isLoading = false
     },
     async fetchData(api) {
       await api().then((res) => {
