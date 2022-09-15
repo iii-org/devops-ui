@@ -103,7 +103,7 @@
         :loading="isLoading"
         :disabled="isDisabled"
         class="buttonPrimary"
-        @click="create"
+        @click="update"
       >
         {{ $t('Test.TestFile.CreateNow') }}
       </el-button>
@@ -120,7 +120,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getSideexVariable, updateSideexVariable } from '@/api/sideex'
+import {
+  getSideexVariable,
+  updateSideexVariable,
+  generateSideex
+} from '@/api/sideex'
 
 export default {
   name: 'CreateTestDataDialog',
@@ -150,7 +154,11 @@ IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster 
           { required: true, message: '請填上範圍' },
           { validator: this.numberCheck, trigger: 'blur' }
         ]
-      }
+      },
+      createLoading: false,
+      loadingText: ['createRedmine', 'createGitLab', 'createHarbor', 'integrationProject'],
+      loadingInstance: {},
+      timer: ''
     }
   },
   computed: {
@@ -159,10 +167,40 @@ IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster 
       return this.params.some((item) => item.value === '')
     }
   },
+  watch: {
+    createLoading(val) {
+      if (val) {
+        this.loadingInstance = this.$loading({
+          text: this.$t('Loading'),
+          lock: true,
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)',
+          customClass: 'project-dialog-loading'
+        })
+        this.loadingText.forEach((text, index) => {
+          this.timer = setTimeout(() =>
+            this.openFullLoading(text), 3000 * index
+          )
+        })
+      } else {
+        clearTimeout(this.timer)
+        this.loadingInstance.close()
+        this.close()
+      }
+    }
+  },
   mounted() {
     this.fetchData()
   },
   methods: {
+    openFullLoading(loadingText) {
+      // handle i18n log warning when loadingText is undefined
+      const text = loadingText
+        ? this.$t(`LoadingText.${loadingText}`)
+        : this.$t('LoadingText.integrationProject')
+      // set loading text every 3 second
+      this.loadingInstance.setText(text)
+    },
     numberCheck (rule, value, callback) {
       if (this.params.filter((item) => item.value === value)[0].type !== 'int') callback()
       if (!value.split(',').every((item) => /^\+?[1-9][0-9]*$/.test(item))) {
@@ -185,11 +223,11 @@ IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster 
     clear(index) {
       this.params[index].value = ''
     },
-    async create() {
+    async update() {
       const validity = []
       this.$refs['rules'].forEach((item) => { item.validate((valid) => { validity.push(valid) }) })
       if (!validity.every((item) => item)) return
-      this.isLoading = true
+      this.createLoading = true
       const data = {
         var: this.params.map((item) => ({
           name: item.name,
@@ -202,6 +240,16 @@ IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster 
       }
       try {
         await updateSideexVariable(this.selectedProjectId, data)
+      } catch (e) {
+        console.error(e)
+        this.createLoading = false
+      } finally {
+        this.generate()
+      }
+    },
+    async generate() {
+      try {
+        await generateSideex(this.selectedProjectId, { filename: this.fileName })
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Added'),
@@ -210,8 +258,7 @@ IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster 
       } catch (e) {
         console.error(e)
       } finally {
-        this.isLoading = false
-        this.close()
+        this.createLoading = false
       }
     },
     close() {
