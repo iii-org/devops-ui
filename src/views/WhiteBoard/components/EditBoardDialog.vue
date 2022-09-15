@@ -75,7 +75,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userName'])
+    ...mapGetters(['selectedProjectId', 'userName']),
+    formHeight() {
+      return this.isCollapse.includes('1') ? 0 : 60
+    }
   },
   watch: {
     row(value) {
@@ -83,10 +86,12 @@ export default {
         this.form.issue_ids = value.issue_ids
         this.form.name = value.name
       }
+    },
+    isCollapse: {
+      handler: 'handleHeight'
     }
   },
   mounted() {
-    this.handleHeight()
     window.addEventListener('resize', this.handleHeight)
   },
   destroyed() {
@@ -94,7 +99,7 @@ export default {
   },
   methods: {
     handleHeight() {
-      this.excalidrawHeight = window.innerHeight - 185
+      this.excalidrawHeight = window.innerHeight + this.formHeight - 185
     },
     handleEdit() {
       this.$refs['ExcalidrawForm'].$refs['form'].validate(async(valid) => {
