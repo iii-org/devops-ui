@@ -68,7 +68,7 @@
           <el-col :span="24">
             <div class="flex justify-between mb-3">
               <h4 style="display: inline;">
-                {{ $t('Test.TestFile.ParamsLimit') }}
+                {{ $t('Test.TestFile.ParamsRule') }}
               </h4>
               <div>
                 {{ $t('Test.TestFile.SettingReference') }}
@@ -83,10 +83,10 @@
             </div>
             <el-col :span="24">
               <el-input
-                v-model="limit"
+                v-model="rule"
                 type="textarea"
                 :rows="10"
-                :placeholder="limitPlaceholder"
+                :placeholder="rulePlaceholder"
               />
             </el-col>
             <el-col :span="24">
@@ -142,10 +142,10 @@ export default {
     return {
       isLoading: false,
       params: [],
-      limit: '',
-      limitPlaceholder: `IF [File system] = "FAT" THEN [Size] <= 4096;\nIF [File system] = "FAT32" THEN [Size] <= 32000;\n
-IF [File system] <> "NTFS" OR\n  ( [File system] =  "NTFS" AND [Cluster size] > 4096 )\nTHEN [Compression] = "Off";\n
-IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster size] <= 4096 ))\nTHEN [Compression] = "Off";`,
+      rule: '',
+      rulePlaceholder: `IF [File system] = "FAT" THEN [Size] <= 4096;\nIF [File system] = "FAT32" THEN [Size] <= 32000;\n
+IF [File system] <> "NTFS" OR\n ( [File system] = "NTFS" AND [Cluster size] > 4096 )\nTHEN [Compression] = "Off";\n
+IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster size] <= 4096 )\nTHEN [Compression] = "Off";`,
       rules: {
         type: [
           { required: true, message: '請選擇類型' }
@@ -215,9 +215,9 @@ IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster 
       this.params = data.var.map((item) => ({
         name: item.name,
         type: item.type,
-        value: item.value.toString()
+        value: item.value.join()
       }))
-      this.limit = data.rule.toString()
+      this.rule = data.rule.join('\n')
       this.isLoading = false
     },
     clear(index) {
@@ -236,7 +236,8 @@ IF NOT ( [File system] = "NTFS" OR\n  ( [File system] = "NTFS" AND NOT [Cluster 
             ? item.value.split(',').map(Number)
             : item.value.split(',')
         })),
-        rule: []
+        rule: this.rule.split(';').filter((item) => item !== '')
+          .map((item) => item.replace(/\r\n|\n/g, '').replace(/\"/g, "'") + ';')
       }
       try {
         await updateSideexVariable(this.selectedProjectId, data)

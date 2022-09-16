@@ -644,7 +644,7 @@ export default {
       CreateTestData: '產生測試資料',
       CreateTestDataSetting: '測試資料產生設定',
       ParamsAndRange: '變數名稱與範圍制定',
-      ParamsLimit: '變數指定限制',
+      ParamsRule: '變數指定限制',
       CreateNow: '立即產生',
       SettingReference: '設定方式請參照',
       ConnectTestPlan: '關聯測試計畫',

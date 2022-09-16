@@ -649,7 +649,7 @@ export default {
       CreateTestData: 'Create Test Data',
       CreateTestDataSetting: 'Create Test Data Setting',
       ParamsAndRange: 'Params and Range',
-      ParamsLimit: 'Params Limit',
+      ParamsRule: 'Params Rule',
       CreateNow: 'Create Now',
       SettingReference: 'Setting Reference',
       ConnectTestPlan: 'Connect Test Plan',
