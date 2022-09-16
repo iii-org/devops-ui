@@ -24,7 +24,7 @@
                 :rows="1"
                 animated
               />
-              <div v-else-if="scope.row.message === null">-</div>
+              <div v-else-if="!scope.row.message">-</div>
               <div v-else>{{ scope.row.message }}</div>
             </template>
           </el-table-column>
@@ -91,23 +91,28 @@ export default {
   methods: {
     async loadData() {
       this.listData = listData()
-      await getHarborStatus().then(async (res) => {
-        if (res.status) {
-          await getHarborCapacity().then((item) => {
-            this.$set(this.listData, 0, this.handleData(item))
-          })
-        } else {
-          this.$set(this.listData, 0, this.handleData(res))
-        }
-        this.harborStatus = res.status
-      })
-      const apis = [getRancherStatus, getK8sStatus, getRedmineStatus, getSonarqubeStatus, getGitlabStatus]
-      apis.forEach(async (api) => { await this.fetchData(api) })
+      const apis = [
+        getHarborStatus,
+        getRancherStatus,
+        getK8sStatus,
+        getRedmineStatus,
+        getSonarqubeStatus,
+        getGitlabStatus
+      ]
+      apis.forEach((api) => { this.fetchData(api) })
     },
     async fetchData(api) {
       await api().then((res) => {
-        this.listData.splice(1, 1)
-        this.listData.push(this.handleData(res))
+        if (res.name === 'K8s') res.name = 'Kubernetes'
+        const idx = this.listData.findIndex((item) => item.name === res.name)
+        if (res.name === 'Harbor' && res.status) {
+          getHarborCapacity().then((item) => {
+            this.$set(this.listData, idx, this.handleData(item))
+          })
+          this.harborStatus = res.status
+        } else {
+          this.$set(this.listData, idx, this.handleData(res))
+        }
       })
     },
     handleUpdate() {
@@ -121,7 +126,7 @@ export default {
       })
     },
     handleData(res) {
-      if (res.name === 'Harbor nfs folder storage remain.') { res.name = 'Harbor' }
+      if (res.hasOwnProperty('error_title')) res.name = 'Harbor'
       const datetime = this.$dayjs().local(res.datetime).format('YYYY-MM-DD HH:mm:ss')
       res.datetime = datetime
       return res
@@ -135,15 +140,16 @@ export default {
       const apis = {
         Harbor: this.harborStatus ? getHarborCapacity : getHarborStatus,
         Rancher: getRancherStatus,
-        K8s: getK8sStatus,
+        Kubernetes: getK8sStatus,
         Redmine: getRedmineStatus,
         Sonarqube: getSonarqubeStatus,
         Gitlab: getGitlabStatus
       }
-      const index = this.listData.findIndex((item) => item.name === name)
-      this.$set(this.listData[index], 'status', 'loading')
+      const idx = this.listData.findIndex((item) => item.name === name)
+      this.$set(this.listData[idx], 'status', 'loading')
       await apis[name]().then((res) => {
-        this.$set(this.listData, index, this.handleData(res))
+        if (res.name === 'K8s') res.name = 'Kubernetes'
+        this.$set(this.listData, idx, this.handleData(res))
       })
     }
   }
