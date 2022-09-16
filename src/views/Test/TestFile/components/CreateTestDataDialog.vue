@@ -25,9 +25,9 @@
         <el-row :gutter="20">
           <el-col :span="24" class="mb-5">
             <h4 class="mb-3">
-              {{ $t('Test.TestFile.ParamsAndRange') }}
+              {{ $t('Test.TestFile.VariableAndRange') }}
             </h4>
-            <template v-for="(item,index) in params">
+            <template v-for="(item,index) in variable">
               <el-form ref="rules" :key="index" :model="item" :rules="rules">
                 <el-col :span="5">
                   <el-form-item prop="name">
@@ -40,8 +40,8 @@
                       v-model="item.type"
                       :placeholder="$t('RuleMsg.PleaseSelect')"
                     >
-                      <el-option label="文字" value="str" />
-                      <el-option label="數值" value="int" />
+                      <el-option :label="$t('Validation.String')" value="str" />
+                      <el-option :label="$t('Validation.Number')" value="int" />
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -49,7 +49,7 @@
                   <el-form-item prop="value">
                     <el-input
                       v-model="item.value"
-                      placeholder="請輸入範圍,請以,隔開,如1,2,3"
+                      :placeholder="$t('Test.TestFile.rangePlaceholder')"
                     />
                   </el-form-item>
                 </el-col>
@@ -68,7 +68,7 @@
           <el-col :span="24">
             <div class="flex justify-between mb-3">
               <h4 style="display: inline;">
-                {{ $t('Test.TestFile.ParamsRule') }}
+                {{ $t('Test.TestFile.VariableLimit') }}
               </h4>
               <div>
                 {{ $t('Test.TestFile.SettingReference') }}
@@ -83,15 +83,15 @@
             </div>
             <el-col :span="24">
               <el-input
-                v-model="rule"
+                v-model="limit"
                 type="textarea"
                 :rows="10"
-                :placeholder="rulePlaceholder"
+                :placeholder="limitPlaceholder"
               />
             </el-col>
             <el-col :span="24">
               <span class="text-danger">
-                [注意] 欲設限之變數，記得以中括弧包起來，如[變數]
+                {{ $t('Test.TestFile.limitNotes') }}
               </span>
             </el-col>
           </el-col>
@@ -141,22 +141,22 @@ export default {
   data() {
     return {
       isLoading: false,
-      params: [],
-      rule: '',
-      rulePlaceholder: `IF [File system] = "FAT" THEN [Size] <= 4096;\nIF [File system] = "FAT32" THEN [Size] <= 32000;\n
+      variable: [],
+      limit: '',
+      limitPlaceholder: `IF [File system] = "FAT" THEN [Size] <= 4096;\nIF [File system] = "FAT32" THEN [Size] <= 32000;\n
 IF [File system] <> "NTFS" OR\n ( [File system] = "NTFS" AND [Cluster size] > 4096 )\nTHEN [Compression] = "Off";\n
 IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster size] <= 4096 )\nTHEN [Compression] = "Off";`,
       rules: {
         type: [
-          { required: true, message: '請選擇類型' }
+          { required: true, message: this.$t('Validation.Select', [this.$t('Test.TestFile.type')]) }
         ],
         value: [
-          { required: true, message: '請填上範圍' },
+          { required: true, message: this.$t('Validation.Input', [this.$t('Test.TestFile.range')]) },
           { validator: this.numberCheck, trigger: 'blur' }
         ]
       },
       createLoading: false,
-      loadingText: ['createRedmine', 'createGitLab', 'createHarbor', 'integrationProject'],
+      loadingText: ['saveParamsSetting', 'createTestData', 'sideeXTestDataConverting'],
       loadingInstance: {},
       timer: ''
     }
@@ -164,7 +164,7 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
   computed: {
     ...mapGetters(['selectedProjectId']),
     isDisabled() {
-      return this.params.some((item) => item.value === '')
+      return this.variable.some((item) => item.value === '')
     }
   },
   watch: {
@@ -197,12 +197,12 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       // handle i18n log warning when loadingText is undefined
       const text = loadingText
         ? this.$t(`LoadingText.${loadingText}`)
-        : this.$t('LoadingText.integrationProject')
+        : this.$t('LoadingText.sideeXTestDataConverting')
       // set loading text every 3 second
       this.loadingInstance.setText(text)
     },
     numberCheck (rule, value, callback) {
-      if (this.params.filter((item) => item.value === value)[0].type !== 'int') callback()
+      if (this.variable.filter((item) => item.value === value)[0].type !== 'int') callback()
       if (!value.split(',').every((item) => /^\+?[1-9][0-9]*$/.test(item))) {
         callback(new Error('請確認所輸入都是正整數!'))
       } else {
@@ -212,16 +212,16 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
     async fetchData() {
       this.isLoading = true
       const data = (await getSideexVariable(this.selectedProjectId, { filename: this.fileName })).data
-      this.params = data.var.map((item) => ({
+      this.variable = data.var.map((item) => ({
         name: item.name,
         type: item.type,
         value: item.value.join()
       }))
-      this.rule = data.rule.join('\n')
+      this.limit = data.rule.join('\n')
       this.isLoading = false
     },
     clear(index) {
-      this.params[index].value = ''
+      this.variable[index].value = ''
     },
     async update() {
       const validity = []
@@ -229,14 +229,14 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       if (!validity.every((item) => item)) return
       this.createLoading = true
       const data = {
-        var: this.params.map((item) => ({
+        var: this.variable.map((item) => ({
           name: item.name,
           type: item.type,
           value: item.type === 'int'
             ? item.value.split(',').map(Number)
             : item.value.split(',')
         })),
-        rule: this.rule.split(';').filter((item) => item !== '')
+        rule: this.limit.split(';').filter((item) => item !== '')
           .map((item) => item.replace(/\r\n|\n/g, '').replace(/\"/g, "'") + ';')
       }
       try {

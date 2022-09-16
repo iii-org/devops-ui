@@ -643,8 +643,8 @@ export default {
     TestFile: {
       CreateTestData: '產生測試資料',
       CreateTestDataSetting: '測試資料產生設定',
-      ParamsAndRange: '變數名稱與範圍制定',
-      ParamsRule: '變數指定限制',
+      VariableAndRange: '變數名稱與範圍制定',
+      VariableLimit: '變數指定限制',
       CreateNow: '立即產生',
       SettingReference: '設定方式請參照',
       ConnectTestPlan: '關聯測試計畫',
@@ -655,7 +655,11 @@ export default {
       TestSoftware: '測試軟體',
       TestName: '測試名稱',
       PostmanUpload: 'Postman檔案名稱: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex檔案名稱: {file_name}.json'
+      SideeXUpload: 'Sideex檔案名稱: {file_name}.json',
+      type: '類型',
+      range: '範圍',
+      rangePlaceholder: '請輸入範圍,請以,隔開,如1,2,3',
+      limitNotes: '[注意] 欲設限之變數，記得以中括弧包起來，如[變數]'
     }
   },
   Wiki: {
@@ -1121,7 +1125,10 @@ export default {
     createGitLab: '創建GitLab資源中...',
     createHarbor: '連結Harbor資源...',
     integrationProject: '開始整合專案資源...',
-    loadingTemplateText: '更新所有範本最新資訊中'
+    loadingTemplateText: '更新所有範本最新資訊中',
+    saveParamsSetting: '儲存參數設定....',
+    createTestData: '產生測試資料....',
+    sideeXTestDataConverting: 'SideeX測試檔轉置中....'
   },
   TrackManagement: {
     description: '變更內容(議題描述)',
@@ -1266,7 +1273,8 @@ export default {
     Select: '請選擇 {0}',
     Invalid: '{0} 無效，請重新輸入',
     Range: '數值範圍是 {0} ~ {1}',
-    Number: '數值'
+    Number: '數值',
+    String: '文字'
   },
   ServiceMonitoring: {
     Services: '服務',

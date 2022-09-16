@@ -648,8 +648,8 @@ export default {
     TestFile: {
       CreateTestData: 'Create Test Data',
       CreateTestDataSetting: 'Create Test Data Setting',
-      ParamsAndRange: 'Params and Range',
-      ParamsRule: 'Params Rule',
+      VariableAndRange: 'Variable and Range',
+      VariableLimit: 'Variable Limit',
       CreateNow: 'Create Now',
       SettingReference: 'Setting Reference',
       ConnectTestPlan: 'Connect Test Plan',
@@ -660,7 +660,11 @@ export default {
       TestSoftware: 'Test Software',
       TestName: 'Test Name',
       PostmanUpload: 'Postman Filename Rule: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex Filename Rule: {file_name}.json'
+      SideeXUpload: 'Sideex Filename Rule: {file_name}.json',
+      type: 'type',
+      range: 'range',
+      rangePlaceholder: 'Input range, separate by ",",like 1,2,3',
+      limitNotes: '[Attention] Want to limit the variable, make sure enclose it in brackets, such as [variable]'
     }
   },
   Wiki: {
@@ -1128,7 +1132,10 @@ export default {
     createGitLab: 'Creating GitLab resources...',
     createHarbor: 'Linking to Harbor resources...',
     integrationProject: 'Start integrating project resources...',
-    loadingTemplateText: 'Update latest templates'
+    loadingTemplateText: 'Update latest templates',
+    saveParamsSetting: 'Save Params Setting....',
+    createTestData: 'Create Test Data....',
+    sideeXTestDataConverting: 'SideeX Test Data Converting....'
   },
   TrackManagement: {
     description: 'Change content(Issue description)',
@@ -1274,7 +1281,8 @@ export default {
     Select: 'Please Select {0}',
     Invalid: '{0} is invalid',
     Range: 'The number range is {0} ~ {1}',
-    Number: 'Number'
+    Number: 'Number',
+    String: 'String'
   },
   ServiceMonitoring: {
     Services: 'Services',
