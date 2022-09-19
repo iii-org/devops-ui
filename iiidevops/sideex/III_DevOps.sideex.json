@@ -169,7 +169,7 @@
                 "options": [
                   {
                     "type": "other",
-                    "value": "test-pm"
+                    "value": "${pm-account}"
                   }
                 ],
                 "tac": ""
@@ -219,7 +219,7 @@
                 "options": [
                   {
                     "type": "other",
-                    "value": "Iii123456789!"
+                    "value": "${password}"
                   }
                 ],
                 "tac": ""
