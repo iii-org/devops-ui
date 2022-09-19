@@ -58,23 +58,10 @@
 
 <script>
 import {
-  getRancherStatus,
-  getK8sStatus,
-  getRedmineStatus,
-  getGitlabStatus,
-  getHarborStatus,
-  getHarborCapacity,
-  getSonarqubeStatus
-} from '@/api/monitoring'
-
-const listData = () => ([
-  { name: 'Harbor', status: 'loading' },
-  { name: 'Kubernetes', status: 'loading' },
-  { name: 'Sonarqube', status: 'loading' },
-  { name: 'Redmine', status: 'loading' },
-  { name: 'Rancher', status: 'loading' },
-  { name: 'Gitlab', status: 'loading' }
-])
+  getSystemServerList,
+  getServerStatus,
+  getHarborUsage
+} from '@/api_v2/monitoring'
 
 export default {
   name: 'ServiceMonitoring',
@@ -90,26 +77,22 @@ export default {
   },
   methods: {
     async loadData() {
-      this.listData = listData()
-      const apis = [
-        getHarborStatus,
-        getRancherStatus,
-        getK8sStatus,
-        getRedmineStatus,
-        getSonarqubeStatus,
-        getGitlabStatus
-      ]
-      apis.forEach((api) => { this.fetchData(api) })
+      this.listData = (await getSystemServerList()).data.map((item) => ({
+        name: item,
+        status: 'loading'
+      }))
+      this.listData.forEach((item) => {
+        this.fetchData(item.name)
+      })
     },
-    async fetchData(api) {
-      await api().then((res) => {
-        if (res.name === 'K8s') res.name = 'Kubernetes'
+    async fetchData(name) {
+      await getServerStatus(name.toLowerCase()).then((res) => {
         const idx = this.listData.findIndex((item) => item.name === res.name)
         if (res.name === 'Harbor' && res.status) {
-          getHarborCapacity().then((item) => {
-            this.$set(this.listData, idx, this.handleData(item))
-          })
           this.harborStatus = res.status
+          getHarborUsage().then((res) => {
+            this.$set(this.listData, idx, this.handleData(res))
+          })
         } else {
           this.$set(this.listData, idx, this.handleData(res))
         }
@@ -126,7 +109,7 @@ export default {
       })
     },
     handleData(res) {
-      if (res.hasOwnProperty('error_title')) res.name = 'Harbor'
+      if (res.name === 'Harbor nfs folder storage remain.') res.name = 'Harbor'
       const datetime = this.$dayjs().local(res.datetime).format('YYYY-MM-DD HH:mm:ss')
       res.datetime = datetime
       return res
@@ -137,20 +120,17 @@ export default {
       else return 'danger'
     },
     async handleCheck(name) {
-      const apis = {
-        Harbor: this.harborStatus ? getHarborCapacity : getHarborStatus,
-        Rancher: getRancherStatus,
-        Kubernetes: getK8sStatus,
-        Redmine: getRedmineStatus,
-        Sonarqube: getSonarqubeStatus,
-        Gitlab: getGitlabStatus
-      }
       const idx = this.listData.findIndex((item) => item.name === name)
       this.$set(this.listData[idx], 'status', 'loading')
-      await apis[name]().then((res) => {
-        if (res.name === 'K8s') res.name = 'Kubernetes'
-        this.$set(this.listData, idx, this.handleData(res))
-      })
+      if (name === 'Harbor' && this.harborStatus) {
+        await getHarborUsage().then((res) => {
+          this.$set(this.listData, idx, this.handleData(res))
+        })
+      } else {
+        await getServerStatus(name.toLowerCase()).then((res) => {
+          this.$set(this.listData, idx, this.handleData(res))
+        })
+      }
     }
   }
 }

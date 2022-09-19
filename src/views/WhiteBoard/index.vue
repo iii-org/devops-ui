@@ -141,7 +141,7 @@
 import { mapGetters } from 'vuex'
 import { BasicData, Table, Pagination, SearchBar, ProjectSelector } from '@/newMixins'
 import { getExcalidraw, deleteExcalidraw } from '@/api_v2/excalidraw'
-import { getExcalidrawStatus } from '@/api_v2/monitoring'
+import { getServerStatus } from '@/api_v2/monitoring'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import SearchFilter from './components/SearchFilter'
 import CreateBoardDialog from './components/CreateBoardDialog'
@@ -165,7 +165,7 @@ export default {
     }
   },
   async mounted() {
-    this.isExcalidrawAlive = (await getExcalidrawStatus()).status
+    this.isExcalidrawAlive = (await getServerStatus('excalidraw')).status
   },
   methods: {
     async fetchData() {

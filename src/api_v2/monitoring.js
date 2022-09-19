@@ -1,13 +1,9 @@
 import request from '@/utils/request'
 
+export const getSystemServerList = () => request.get(`/v2/monitoring/services_list`)
 export const getSystemServerStatus = () => request.get(`/v2/monitoring/alive`)
-export const getRancherStatus = () => request.get(`/v2/monitoring/rancher/alive`)
-export const getK8sStatus = () => request.get(`/v2/monitoring/k8s/alive`)
-export const getRedmineStatus = () => request.get(`/v2/monitoring/redmine/alive`)
-export const getGitlabStatus = () => request.get(`/v2/monitoring/gitlab/alive`)
-export const getHarborStatus = () => request.get(`/v2/monitoring/harbor/alive`)
-export const getExcalidrawStatus = () => request.get(`/v2/monitoring/excalidraw/alive`)
-export const getSonarqubeStatus = () => request.get(`/v2/monitoring/sonarqube/alive`)
+export const getServerStatus = (server) => request.get(`/v2/monitoring/${server}/alive`)
+export const getHarborUsage = () => request.get(`/v2/monitoring/harbor/usage`)
 export const setReadMessage = (user_id, msg_ids) => request.post(`/v2/notification_message_reply/${user_id}`, msg_ids)
 export const getMessageList = (params) => request.get(`/v2/notification_message_list`, { params })
 export const getMessageListAdmin = (params) => request.get(`/v2/notification_message_list/admin`, { params })
