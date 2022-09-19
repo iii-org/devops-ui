@@ -46,7 +46,7 @@ export default {
     FromCollection: 'From Postman Collection',
     CheckMarx: 'CheckMarx',
     SonarQube: 'SonarQube',
-    Sbom: 'Sbom',
+    Sbom: 'SBOM',
     WebInspect: 'WebInspect',
     WebInspectReport: '@:general.Report',
     Zap: 'OWASP ZAP',
@@ -364,7 +364,7 @@ export default {
     Failed: 'Failed',
     InProcess: 'In Process'
   },
-  SBOM: {
+  Sbom: {
     Branch: '@:general.Branch',
     Commit: 'Commit',
     PackageCount: 'Package Count',

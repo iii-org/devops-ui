@@ -1,3 +1,3 @@
 export default {
-  'description': 'Sbom 原始碼掃描'
+  'description': 'SBOM 原始碼掃描'
 }

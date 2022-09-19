@@ -1,3 +1,3 @@
 export default {
-  'description': 'Sbom source code scan'
+  'description': 'SBOM source code scan'
 }

@@ -46,7 +46,7 @@ export default {
     FromCollection: '來自 Postman Collection',
     CheckMarx: '白箱測試(CheckMarx)',
     SonarQube: '白箱測試(SonarQube)',
-    Sbom: '軟體成分組成(Sbom)',
+    Sbom: '軟體成分組成(SBOM)',
     WebInspect: '黑箱測試(WebInspect)',
     WebInspectReport: '@:general.Report',
     Zap: '黑箱測試(OWASP ZAP)',
@@ -361,7 +361,7 @@ export default {
     Failed: '掃描失敗',
     InProcess: '產生中'
   },
-  SBOM: {
+  Sbom: {
     Branch: '@:general.Branch',
     Commit: 'Commit',
     PackageCount: '套件數',
