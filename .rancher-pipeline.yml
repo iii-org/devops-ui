@@ -34,7 +34,6 @@ stages:
       - develop
       - echart
       - milestoneaddissue
-      - pict
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -339,3 +338,4 @@ stages:
     branch:
       include:
       - develop
+      - pict
