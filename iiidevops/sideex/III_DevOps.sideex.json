@@ -169,7 +169,7 @@
                 "options": [
                   {
                     "type": "other",
-                    "value": "${pm-account}"
+                    "value": "${test-username}"
                   }
                 ],
                 "tac": ""
@@ -219,7 +219,7 @@
                 "options": [
                   {
                     "type": "other",
-                    "value": "${password}"
+                    "value": "${test-password}"
                   }
                 ],
                 "tac": ""
