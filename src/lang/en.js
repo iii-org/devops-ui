@@ -287,6 +287,7 @@ export default {
     UnSavedChanges: 'Do you really want to leave? you have unsaved changes!',
     confirmDelete: 'Are you sure to @:(general.Delete)?',
     confirmClose: 'Are you sure to @:(general.Close)?',
+    confirmModify: 'Are you sure to @:(general.Modify)?',
     confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？',
     confirmEditProject: 'Applying a new template will replace this project repository, and this is unrecoverable. Please confirm the action.',
     logoutNotifications: 'The session has timed out. Please click re-login button to login back again.',
@@ -662,7 +663,6 @@ export default {
       PostmanUpload: 'Postman Filename Rule: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
       SideeXUpload: 'Sideex Filename Rule: {file_name}.json',
       type: 'type',
-      range: 'range',
       rangePlaceholder: 'Input range, separate by ",",like 1,2,3',
       limitNotes: '[Attention] Want to limit the variable, make sure enclose it in brackets, such as [variable]'
     }

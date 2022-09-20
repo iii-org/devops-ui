@@ -28,14 +28,21 @@
               {{ $t('Test.TestFile.VariableAndRange') }}
             </h4>
             <template v-for="(item,index) in variable">
-              <el-form ref="rules" :key="index" :model="item" :rules="rules">
+              <el-form ref="rules" :key="index" :model="item">
                 <el-col :span="5">
                   <el-form-item prop="name">
                     <span class="font-bold">{{ item.name }}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="5">
-                  <el-form-item prop="type">
+                  <el-form-item
+                    prop="type"
+                    :rules="{
+                      trigger: 'blur',
+                      required: item.value ? true : false,
+                      message: $t('Validation.Select', [$t('Test.TestFile.type')])
+                    }"
+                  >
                     <el-select
                       v-model="item.type"
                       :placeholder="$t('RuleMsg.PleaseSelect')"
@@ -46,7 +53,10 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="10">
-                  <el-form-item prop="value">
+                  <el-form-item
+                    prop="value"
+                    :rules=" { validator: numberCheck, trigger: 'blur' }"
+                  >
                     <el-input
                       v-model="item.value"
                       :placeholder="$t('Test.TestFile.rangePlaceholder')"
@@ -86,6 +96,7 @@
                 v-model="limit"
                 type="textarea"
                 :rows="10"
+                :disabled="isDisabled"
                 :placeholder="limitPlaceholder"
               />
             </el-col>
@@ -100,16 +111,16 @@
     </el-row>
     <template slot="footer">
       <el-button
+        class="buttonPrimary"
         :loading="isLoading"
         :disabled="isDisabled"
-        class="buttonPrimary"
-        @click="update"
+        @click="confirm"
       >
         {{ $t('Test.TestFile.CreateNow') }}
       </el-button>
       <el-button
-        :loading="isLoading"
         class="buttonSecondaryReverse"
+        :loading="isLoading"
         @click="close"
       >
         {{ $t('general.Close') }}
@@ -146,15 +157,6 @@ export default {
       limitPlaceholder: `IF [File system] = "FAT" THEN [Size] <= 4096;\nIF [File system] = "FAT32" THEN [Size] <= 32000;\n
 IF [File system] <> "NTFS" OR\n ( [File system] = "NTFS" AND [Cluster size] > 4096 )\nTHEN [Compression] = "Off";\n
 IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster size] <= 4096 )\nTHEN [Compression] = "Off";`,
-      rules: {
-        type: [
-          { required: true, message: this.$t('Validation.Select', [this.$t('Test.TestFile.type')]) }
-        ],
-        value: [
-          { required: true, message: this.$t('Validation.Input', [this.$t('Test.TestFile.range')]) },
-          { validator: this.numberCheck, trigger: 'blur' }
-        ]
-      },
       createLoading: false,
       loadingText: ['saveParamsSetting', 'createTestData', 'sideeXTestDataConverting'],
       loadingInstance: {},
@@ -164,7 +166,7 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
   computed: {
     ...mapGetters(['selectedProjectId']),
     isDisabled() {
-      return this.variable.some((item) => item.value === '')
+      return this.variable.every((item) => item.value === '')
     }
   },
   watch: {
@@ -202,12 +204,12 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       this.loadingInstance.setText(text)
     },
     numberCheck (rule, value, callback) {
-      if (this.variable.filter((item) => item.value === value)[0].type !== 'int') callback()
+      const variable = this.variable.find((item) => item.value === value)
+      if (variable.type !== 'int' || !variable.type || !variable.value) callback()
       if (!value.split(',').every((item) => /^\+?[1-9][0-9]*$/.test(item))) {
         callback(new Error('請確認所輸入都是正整數!'))
-      } else {
-        callback()
       }
+      callback()
     },
     async fetchData() {
       this.isLoading = true
@@ -215,37 +217,48 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       this.variable = data.var.map((item) => ({
         name: item.name,
         type: item.type,
-        value: item.value.join()
+        value: typeof item.value === 'string' ? item.value.join() : item.value
       }))
       this.limit = data.rule.join('\n')
       this.isLoading = false
     },
     clear(index) {
+      this.variable[index].type = ''
       this.variable[index].value = ''
     },
-    async update() {
+    confirm() {
       const validity = []
       this.$refs['rules'].forEach((item) => { item.validate((valid) => { validity.push(valid) }) })
       if (!validity.every((item) => item)) return
+      this.$confirm(this.$t('Notify.confirmModify'), this.$t('general.Warning'), {
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.update()
+      }).catch(() => {})
+    },
+    async update() {
       this.createLoading = true
       const data = {
-        var: this.variable.map((item) => ({
-          name: item.name,
-          type: item.type,
-          value: item.type === 'int'
-            ? item.value.split(',').map(Number)
-            : item.value.split(',')
-        })),
+        var: this.variable
+          .filter((item) => item.name && item.type)
+          .map((item) => ({
+            name: item.name,
+            type: item.type,
+            value: item.type === 'int'
+              ? item.value.split(',').map(Number)
+              : item.value.split(',')
+          })),
         rule: this.limit.split(';').filter((item) => item !== '')
           .map((item) => item.replace(/\r\n|\n/g, '').replace(/\"/g, "'") + ';')
       }
       try {
         await updateSideexVariable(this.selectedProjectId, data)
+        this.generate()
       } catch (e) {
         console.error(e)
         this.createLoading = false
-      } finally {
-        this.generate()
       }
     },
     async generate() {

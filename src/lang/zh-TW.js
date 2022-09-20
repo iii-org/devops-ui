@@ -287,6 +287,7 @@ export default {
     UnSavedChanges: '您編輯的內容尚未儲存，確定離開嗎？',
     confirmDelete: '確定@:(general.Delete)嗎？',
     confirmClose: '確定@:(general.Close)嗎？',
+    confirmModify: '確定@:(general.Modify)嗎？',
     confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？',
     confirmEditProject: '範本更換，將直接取代成您選擇的範本程式，請問確認要覆蓋嗎？',
     logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。',
@@ -657,7 +658,6 @@ export default {
       PostmanUpload: 'Postman檔案名稱: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
       SideeXUpload: 'Sideex檔案名稱: {file_name}.json',
       type: '類型',
-      range: '範圍',
       rangePlaceholder: '請輸入範圍,請以,隔開,如1,2,3',
       limitNotes: '[注意] 欲設限之變數，記得以中括弧包起來，如[變數]'
     }
