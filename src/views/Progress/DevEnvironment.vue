@@ -380,7 +380,7 @@ export default {
           services: service_port_mapping.map((servicePort) => ({
             services: servicePort.services.map((service) => ({
               type: service.service_type,
-              label: `${service.service_type} (post:${service.target_port})`,
+              label: `${service.service_type} (port:${service.target_port})`,
               url: service.url[0]
             }))
           }))
