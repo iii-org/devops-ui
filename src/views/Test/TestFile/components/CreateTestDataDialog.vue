@@ -217,7 +217,7 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       this.variable = data.var.map((item) => ({
         name: item.name,
         type: item.type,
-        value: typeof item.value === 'string' ? item.value.join() : item.value
+        value: typeof item.value === 'string' ? item.value : item.value.join()
       }))
       this.limit = data.rule.join('\n')
       this.isLoading = false
