@@ -324,10 +324,18 @@ export default {
         callback()
       }
     }
+    const validateAssignedTo = (rule, value, callback) => {
+      if ((!value || value === '') && this.form.status_id >= 2) {
+        callback(new Error('This Status need a assignee.'))
+      } else {
+        callback()
+      }
+    }
     return {
       issueFormRules: {
         name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
         parent_id: [{ validator: validateParentId, trigger: 'blur' }],
+        assigned_to_id: [{ validator: validateAssignedTo, trigger: 'blur' }],
         tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
         status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
         priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
