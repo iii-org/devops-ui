@@ -14,7 +14,7 @@
   },
   "suites": [
     {
-      "title": "III DevOps 議堤功能測試",
+      "title": "III DevOps 議題功能測試",
       "enableOnPlaying": true,
       "cases": [
         {
