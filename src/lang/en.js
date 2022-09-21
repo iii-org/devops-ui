@@ -288,6 +288,7 @@ export default {
     confirmDelete: 'Are you sure to @:(general.Delete)?',
     confirmClose: 'Are you sure to @:(general.Close)?',
     confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？',
+    confirmDeleteSideex: 'Are you sure you want to delete all configurations and records related to combined testing of this project?',
     confirmEditProject: 'Applying a new template will replace this project repository, and this is unrecoverable. Please confirm the action.',
     confirmVariableSetting: 'Attention, You still have unset variables！ Are you sure you want to generate test data directly？',
     logoutNotifications: 'The session has timed out. Please click re-login button to login back again.',

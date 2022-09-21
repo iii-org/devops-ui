@@ -113,10 +113,10 @@
       />
     </div>
     <template slot="footer">
-      <!-- <div class="flex justify-between">
+      <div class="flex justify-between">
         <span>
           <el-button
-            v-if="selectedProject.owner_id === userId"
+            v-if="selectedProject.owner_id === userId || userRole==='Administrator'"
             type="danger"
             :loading="isLoading"
             :disabled="isDisabled"
@@ -125,24 +125,24 @@
             {{ $t('general.Delete') }}
           </el-button>
         </span>
-        <span> -->
-      <el-button
-        class="buttonPrimary"
-        :loading="isLoading"
-        :disabled="isDisabled"
-        @click="confirm"
-      >
-        {{ $t('Test.TestFile.CreateNow') }}
-      </el-button>
-      <el-button
-        class="buttonSecondaryReverse"
-        :loading="isLoading"
-        @click="close"
-      >
-        {{ $t('general.Close') }}
-      </el-button>
-      <!-- </span>
-      </div> -->
+        <span>
+          <el-button
+            class="buttonPrimary"
+            :loading="isLoading"
+            :disabled="isDisabled"
+            @click="confirm"
+          >
+            {{ $t('Test.TestFile.CreateNow') }}
+          </el-button>
+          <el-button
+            class="buttonSecondaryReverse"
+            :loading="isLoading"
+            @click="close"
+          >
+            {{ $t('general.Close') }}
+          </el-button>
+        </span>
+      </div>
     </template>
   </el-dialog>
 </template>
@@ -152,6 +152,7 @@ import { mapGetters } from 'vuex'
 import {
   getSideexVariable,
   updateSideexVariable,
+  deleteSideexVariable,
   generateSideex
 } from '@/api/sideex'
 
@@ -182,7 +183,7 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'selectedProject', 'userId']),
+    ...mapGetters(['selectedProjectId', 'selectedProject', 'userId', 'userRole']),
     isAllFill() {
       return this.variable.every((item) => item.value)
     },
@@ -300,27 +301,27 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
         this.createLoading = false
       }
     },
-    // remove() {
-    //   this.$confirm(this.$t('Notify.confirmDelete'), this.$t('general.Warning'), {
-    //     confirmButtonText: this.$t('general.Confirm'),
-    //     cancelButtonText: this.$t('general.Cancel'),
-    //     type: 'warning'
-    //   }).then(async() => {
-    //     this.isLoading = true
-    //     try {
-    //       // await generateSideex(this.selectedProjectId, { filename: this.fileName })
-    //       this.$message({
-    //         title: this.$t('general.Success'),
-    //         message: this.$t('Notify.Deleted'),
-    //         type: 'success'
-    //       })
-    //     } catch (e) {
-    //       console.error(e)
-    //     } finally {
-    //       this.isLoading = false
-    //     }
-    //   }).catch(() => {})
-    // },
+    remove() {
+      this.$confirm(this.$t('Notify.confirmDeleteSideex'), this.$t('general.Warning'), {
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel'),
+        type: 'warning'
+      }).then(async() => {
+        this.isLoading = true
+        try {
+          await deleteSideexVariable(this.selectedProjectId)
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Deleted'),
+            type: 'success'
+          })
+        } catch (e) {
+          console.error(e)
+        } finally {
+          this.isLoading = false
+        }
+      }).catch(() => {})
+    },
     close() {
       this.$emit('update:dialogVisible', false)
     }

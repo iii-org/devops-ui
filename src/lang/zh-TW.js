@@ -288,6 +288,7 @@ export default {
     confirmDelete: '確定@:(general.Delete)嗎？',
     confirmClose: '確定@:(general.Close)嗎？',
     confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？',
+    confirmDeleteSideex: '確定刪除該專案所有組合測試相關的設定檔及紀錄嗎？',
     confirmEditProject: '範本更換，將直接取代成您選擇的範本程式，請問確認要覆蓋嗎？',
     confirmVariableSetting: '注意，您尚有變數未設定！要直接產生測試資料嗎？',
     logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。',
