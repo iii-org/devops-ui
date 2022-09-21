@@ -159,6 +159,7 @@ export default {
     Add: 'Add',
     Edit: 'Edit',
     Delete: 'Delete',
+    Clear: 'Clear',
     Participate: 'Participate',
     ProjectId: 'Project ID',
     Remove: 'Remove',
@@ -288,6 +289,7 @@ export default {
     confirmClose: 'Are you sure to @:(general.Close)?',
     confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？',
     confirmEditProject: 'Applying a new template will replace this project repository, and this is unrecoverable. Please confirm the action.',
+    confirmVariableSetting: 'Attention, You still have unset variables！ Are you sure you want to generate test data directly？',
     logoutNotifications: 'The session has timed out. Please click re-login button to login back again.',
     pluginWarnNotifications:
       'Please ensure that the status of the Plugin switch with the same name is the same before saving and executing.',
@@ -645,12 +647,25 @@ export default {
       branch: 'Branch'
     },
     TestFile: {
+      CreateTestData: 'Create Test Data',
+      CreateTestDataSetting: 'Create Test Data Setting',
+      VariableAndRange: 'Variable and Range',
+      VariableLimit: 'Variable Limit',
+      CreateNow: 'Create Now',
+      SettingReference: 'Setting Reference',
+      ConnectTestPlan: 'Connect Test Plan',
+      DeleteTestFile: 'Delete Test File',
+      SetPlan: 'Set Plan',
       AddPlan: 'Add Plan',
       UploadTestSet: 'Upload Test Set',
       TestSoftware: 'Test Software',
       TestName: 'Test Name',
       PostmanUpload: 'Postman Filename Rule: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex Filename Rule: {file_name}.json'
+      SideeXUpload: 'Sideex Filename Rule: {file_name}.json',
+      Type: 'type',
+      RangePlaceholder: 'Input range, separate by ",",like 1,2,3',
+      LimitNotes: '[Attention] Want to limit the variable, make sure enclose it in brackets, such as [variable]',
+      EnterPositive: 'Please make sure the input is a positive integer!'
     }
   },
   Wiki: {
@@ -1118,7 +1133,10 @@ export default {
     createGitLab: 'Creating GitLab resources...',
     createHarbor: 'Linking to Harbor resources...',
     integrationProject: 'Start integrating project resources...',
-    loadingTemplateText: 'Update latest templates'
+    loadingTemplateText: 'Update latest templates',
+    saveParamsSetting: 'Save Params Setting....',
+    createTestData: 'Create Test Data....',
+    sideeXTestDataConverting: 'SideeX Test Data Converting....'
   },
   TrackManagement: {
     description: 'Change content(Issue description)',
@@ -1264,7 +1282,8 @@ export default {
     Select: 'Please Select {0}',
     Invalid: '{0} is invalid',
     Range: 'The number range is {0} ~ {1}',
-    Number: 'Number'
+    Number: 'Number',
+    String: 'String'
   },
   ServiceMonitoring: {
     Services: 'Services',

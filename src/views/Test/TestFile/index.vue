@@ -113,24 +113,73 @@
       </el-table-column>
       <el-table-column :label="$t('general.Actions')" width="350">
         <template slot-scope="scope">
-          <el-button size="small" class="buttonPrimaryReverse" icon="el-icon-edit" @click="handleRelatedPlan(scope.row)">
-            {{ $t('general.Edit') }}
-          </el-button>
-          <el-button size="small" class="buttonSecondaryReverse" icon="el-icon-circle-plus" @click="handleCreatePlan(scope.row)">
-            {{ $t('Test.TestFile.AddPlan') }}
-          </el-button>
-          <el-popconfirm
-            :confirm-button-text="$t('general.Delete')"
-            :cancel-button-text="$t('general.Cancel')"
-            icon="el-icon-info"
-            icon-color="red"
-            :title="$t('Issue.DeleteFile')"
-            @confirm="deleteTestFile(scope.row.software_name, scope.row.file_name)"
+          <el-tooltip
+            v-if="scope.row.software_name === 'SideeX'"
+            placement="bottom"
+            :content="$t('Test.TestFile.CreateTestData')"
           >
-            <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete">
-              {{ $t('general.Delete') }}
-            </el-button>
-          </el-popconfirm>
+            <el-link
+              type="primary"
+              style="font-size: 20px;"
+              icon="ri-exchange-funds-line"
+              :underline="false"
+              @click="handleCreateTestData(scope.row)"
+            />
+          </el-tooltip>
+          <el-tooltip
+            placement="bottom"
+            :content="$t('Test.TestFile.ConnectTestPlan')"
+          >
+            <el-popover
+              placement="bottom"
+              trigger="click"
+            >
+              <div>
+                <el-link
+                  style="display: block; font-size: 16px;"
+                  :underline="false"
+                  @click="handleRelatedPlan(scope.row)"
+                >
+                  {{ $t('Test.TestFile.SetPlan') }}
+                </el-link>
+                <el-link
+                  style="display: block; font-size: 16px;"
+                  :underline="false"
+                  @click="handleCreatePlan(scope.row)"
+                >
+                  {{ $t('Test.TestFile.AddPlan') }}
+                </el-link>
+              </div>
+              <el-link
+                slot="reference"
+                type="success"
+                style="font-size: 20px;"
+                icon="ri-links-line"
+                :underline="false"
+              />
+            </el-popover>
+          </el-tooltip>
+          <el-tooltip
+            placement="bottom"
+            :content="$t('Test.TestFile.DeleteTestFile')"
+          >
+            <el-popconfirm
+              :confirm-button-text="$t('general.Delete')"
+              :cancel-button-text="$t('general.Cancel')"
+              icon="el-icon-info"
+              icon-color="red"
+              :title="$t('Issue.DeleteFile')"
+              @confirm="deleteTestFile(scope.row.software_name, scope.row.file_name)"
+            >
+              <el-link
+                slot="reference"
+                type="danger"
+                style="font-size: 20px;"
+                icon="el-icon-delete"
+                :underline="false"
+              />
+            </el-popconfirm>
+          </el-tooltip>
         </template>
       </el-table-column>
       <template slot="empty">
@@ -179,6 +228,12 @@
         <el-button class="buttonPrimary" @click="uploadCollection">{{ $t('File.Upload') }} </el-button>
       </template>
     </el-dialog>
+    <CreateTestDataDialog
+      v-if="createTestDataDialogVisible"
+      ref="createTestDataDialog"
+      :dialog-visible.sync="createTestDataDialogVisible"
+      :file-name="selectedFileName"
+    />
     <ContextMenu
       ref="contextmenu"
       :visible="contextMenu.visible"
@@ -203,12 +258,14 @@ import {
 } from '@/api/qa'
 import RelatedPlanDialog from './components/RelatedPlanDialog'
 import CollectionFileUploader from './components/CollectionFileUploader'
+import CreateTestDataDialog from './components/CreateTestDataDialog'
 import IssueRow from '@/components/Issue/components/IssueRow'
 
 export default {
   name: 'TestFile',
   components: {
     CollectionFileUploader,
+    CreateTestDataDialog,
     RelatedPlanDialog,
     IssueRow
   },
@@ -227,10 +284,12 @@ export default {
       listFilterSoftwareData: [],
       form: {},
       selectedCollection: {},
+      selectedFileName: '',
       relationIssue: {
         visible: false,
         id: null
       },
+      createTestDataDialogVisible: false,
       relatedPlanDialogVisible: false,
       uploadDialogVisible: false,
       expandedRow: []
@@ -287,6 +346,10 @@ export default {
       //   this.keyword = this.userName
       // }
       return data
+    },
+    handleCreateTestData(row) {
+      this.toggleDialogVisible('createTestData')
+      this.selectedFileName = row.file_name
     },
     handleRelatedPlan(collection) {
       this.toggleDialogVisible('relatedPlan')
