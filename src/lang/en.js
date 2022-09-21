@@ -287,9 +287,9 @@ export default {
     UnSavedChanges: 'Do you really want to leave? you have unsaved changes!',
     confirmDelete: 'Are you sure to @:(general.Delete)?',
     confirmClose: 'Are you sure to @:(general.Close)?',
-    confirmModify: 'Are you sure to @:(general.Modify)?',
     confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？',
     confirmEditProject: 'Applying a new template will replace this project repository, and this is unrecoverable. Please confirm the action.',
+    confirmVariableSetting: 'Attention, You still have unset variables！ Are you sure you want to generate test data directly？',
     logoutNotifications: 'The session has timed out. Please click re-login button to login back again.',
     pluginWarnNotifications:
       'Please ensure that the status of the Plugin switch with the same name is the same before saving and executing.',
@@ -662,9 +662,10 @@ export default {
       TestName: 'Test Name',
       PostmanUpload: 'Postman Filename Rule: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
       SideeXUpload: 'Sideex Filename Rule: {file_name}.json',
-      type: 'type',
-      rangePlaceholder: 'Input range, separate by ",",like 1,2,3',
-      limitNotes: '[Attention] Want to limit the variable, make sure enclose it in brackets, such as [variable]'
+      Type: 'type',
+      RangePlaceholder: 'Input range, separate by ",",like 1,2,3',
+      LimitNotes: '[Attention] Want to limit the variable, make sure enclose it in brackets, such as [variable]',
+      EnterPositive: 'Please make sure the input is a positive integer!'
     }
   },
   Wiki: {

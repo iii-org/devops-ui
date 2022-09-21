@@ -9,73 +9,72 @@
     append-to-body
     destroy-on-close
   >
-    <el-row>
-      <el-col>
-        <h2 class="text-center">
-          {{ $t('Test.TestFile.CreateTestDataSetting') }}
-        </h2>
-      </el-col>
-    </el-row>
-    <el-row
+    <h2 class="text-center">
+      {{ $t('Test.TestFile.CreateTestDataSetting') }}
+    </h2>
+    <div
       v-loading="isLoading"
       class="el-card scroll"
       :element-loading-text="$t('Loading')"
     >
-      <el-col class="el-card__body">
-        <el-row :gutter="20">
-          <el-col :span="24" class="mb-5">
+      <div v-if="variable.length > 0" class="el-card__body">
+        <el-row :gutter="10">
+          <el-col class="mb-5">
             <h4 class="mb-3">
               {{ $t('Test.TestFile.VariableAndRange') }}
             </h4>
-            <template v-for="(item,index) in variable">
-              <el-form ref="rules" :key="index" :model="item">
-                <el-col :span="5">
-                  <el-form-item prop="name">
-                    <span class="font-bold">{{ item.name }}</span>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="5">
-                  <el-form-item
-                    prop="type"
-                    :rules="{
-                      trigger: 'blur',
-                      required: item.value ? true : false,
-                      message: $t('Validation.Select', [$t('Test.TestFile.type')])
-                    }"
+            <el-form
+              v-for="(item,index) in variable"
+              ref="form"
+              :key="index"
+              :model="item"
+            >
+              <el-col :span="4">
+                <el-form-item prop="name">
+                  <span class="font-bold">{{ item.name }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="5">
+                <el-form-item
+                  prop="type"
+                  :rules="{
+                    trigger: 'blur',
+                    required: item.value ? true : false,
+                    message: $t('Validation.Select', [$t('Test.TestFile.Type')])
+                  }"
+                >
+                  <el-select
+                    v-model="item.type"
+                    :placeholder="$t('RuleMsg.PleaseSelect')"
                   >
-                    <el-select
-                      v-model="item.type"
-                      :placeholder="$t('RuleMsg.PleaseSelect')"
-                    >
-                      <el-option :label="$t('Validation.String')" value="str" />
-                      <el-option :label="$t('Validation.Number')" value="int" />
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="10">
-                  <el-form-item
-                    prop="value"
-                    :rules=" { validator: numberCheck, trigger: 'blur' }"
-                  >
-                    <el-input
-                      v-model="item.value"
-                      :placeholder="$t('Test.TestFile.rangePlaceholder')"
-                    />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-button
-                    type="danger"
-                    icon="el-icon-close"
-                    @click="clear(index)"
-                  >
-                    {{ $t('general.Clear') }}
-                  </el-button>
-                </el-col>
-              </el-form>
-            </template>
+                    <el-option :label="$t('Validation.String')" value="str" />
+                    <el-option :label="$t('Validation.Number')" value="int" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item
+                  prop="value"
+                  :rules=" { validator: numberCheck, trigger: 'blur' }"
+                >
+                  <el-input
+                    v-model="item.value"
+                    :placeholder="$t('Test.TestFile.RangePlaceholder')"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="3">
+                <el-button
+                  type="danger"
+                  icon="el-icon-close"
+                  @click="clear(index)"
+                >
+                  {{ $t('general.Clear') }}
+                </el-button>
+              </el-col>
+            </el-form>
           </el-col>
-          <el-col :span="24">
+          <el-col>
             <div class="flex justify-between mb-3">
               <h4 style="display: inline;">
                 {{ $t('Test.TestFile.VariableLimit') }}
@@ -91,7 +90,7 @@
                 </el-link>
               </div>
             </div>
-            <el-col :span="24">
+            <el-col>
               <el-input
                 v-model="limit"
                 type="textarea"
@@ -100,16 +99,33 @@
                 :placeholder="limitPlaceholder"
               />
             </el-col>
-            <el-col :span="24">
+            <el-col>
               <span class="text-danger">
-                {{ $t('Test.TestFile.limitNotes') }}
+                {{ $t('Test.TestFile.LimitNotes') }}
               </span>
             </el-col>
           </el-col>
         </el-row>
-      </el-col>
-    </el-row>
+      </div>
+      <el-empty
+        v-else
+        :description="$t('general.NoData')"
+      />
+    </div>
     <template slot="footer">
+      <!-- <div class="flex justify-between">
+        <span>
+          <el-button
+            v-if="selectedProject.owner_id === userId"
+            type="danger"
+            :loading="isLoading"
+            :disabled="isDisabled"
+            @click="remove"
+          >
+            {{ $t('general.Delete') }}
+          </el-button>
+        </span>
+        <span> -->
       <el-button
         class="buttonPrimary"
         :loading="isLoading"
@@ -125,6 +141,8 @@
       >
         {{ $t('general.Close') }}
       </el-button>
+      <!-- </span>
+      </div> -->
     </template>
   </el-dialog>
 </template>
@@ -164,7 +182,10 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
+    ...mapGetters(['selectedProjectId', 'selectedProject', 'userId']),
+    isAllFill() {
+      return this.variable.every((item) => item.value)
+    },
     isDisabled() {
       return this.variable.every((item) => item.value === '')
     }
@@ -207,7 +228,7 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       const variable = this.variable.find((item) => item.value === value)
       if (variable.type !== 'int' || !variable.type || !variable.value) callback()
       if (!value.split(',').every((item) => /^\+?[1-9][0-9]*$/.test(item))) {
-        callback(new Error('請確認所輸入都是正整數!'))
+        callback(new Error(this.$t('Test.TestFile.EnterPositive')))
       }
       callback()
     },
@@ -228,15 +249,19 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
     },
     confirm() {
       const validity = []
-      this.$refs['rules'].forEach((item) => { item.validate((valid) => { validity.push(valid) }) })
+      this.$refs['form'].forEach((item) => { item.validate((valid) => { validity.push(valid) }) })
       if (!validity.every((item) => item)) return
-      this.$confirm(this.$t('Notify.confirmModify'), this.$t('general.Warning'), {
-        confirmButtonText: this.$t('general.Confirm'),
-        cancelButtonText: this.$t('general.Cancel'),
-        type: 'warning'
-      }).then(() => {
+      if (this.isAllFill) {
         this.update()
-      }).catch(() => {})
+      } else {
+        this.$confirm(this.$t('Notify.confirmVariableSetting'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        }).then(() => {
+          this.update()
+        }).catch(() => {})
+      }
     },
     async update() {
       this.createLoading = true
@@ -275,6 +300,27 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
         this.createLoading = false
       }
     },
+    // remove() {
+    //   this.$confirm(this.$t('Notify.confirmDelete'), this.$t('general.Warning'), {
+    //     confirmButtonText: this.$t('general.Confirm'),
+    //     cancelButtonText: this.$t('general.Cancel'),
+    //     type: 'warning'
+    //   }).then(async() => {
+    //     this.isLoading = true
+    //     try {
+    //       // await generateSideex(this.selectedProjectId, { filename: this.fileName })
+    //       this.$message({
+    //         title: this.$t('general.Success'),
+    //         message: this.$t('Notify.Deleted'),
+    //         type: 'success'
+    //       })
+    //     } catch (e) {
+    //       console.error(e)
+    //     } finally {
+    //       this.isLoading = false
+    //     }
+    //   }).catch(() => {})
+    // },
     close() {
       this.$emit('update:dialogVisible', false)
     }
@@ -284,7 +330,7 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
 
 <style lang="scss" scoped>
 >>> .el-dialog__body {
-  padding-top: 0;
+  padding: 10px 20px;
 }
 .scroll {
   overflow: auto;

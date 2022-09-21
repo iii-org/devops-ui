@@ -287,9 +287,9 @@ export default {
     UnSavedChanges: '您編輯的內容尚未儲存，確定離開嗎？',
     confirmDelete: '確定@:(general.Delete)嗎？',
     confirmClose: '確定@:(general.Close)嗎？',
-    confirmModify: '確定@:(general.Modify)嗎？',
     confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？',
     confirmEditProject: '範本更換，將直接取代成您選擇的範本程式，請問確認要覆蓋嗎？',
+    confirmVariableSetting: '注意，您尚有變數未設定！要直接產生測試資料嗎？',
     logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。',
     pluginWarnNotifications: '請確保同名 Plugin 開關的狀態一致再進行儲存和執行。',
     pluginRepeatMessage: '紅底為同分支有重複項目設定，請確認其設置為一致(如同為開或關)，以確保 Pipeline 運作正常。',
@@ -657,9 +657,10 @@ export default {
       TestName: '測試名稱',
       PostmanUpload: 'Postman檔案名稱: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
       SideeXUpload: 'Sideex檔案名稱: {file_name}.json',
-      type: '類型',
-      rangePlaceholder: '請輸入範圍,請以,隔開,如1,2,3',
-      limitNotes: '[注意] 欲設限之變數，記得以中括弧包起來，如[變數]'
+      Type: '類型',
+      RangePlaceholder: '請輸入範圍,請以,隔開,如1,2,3',
+      LimitNotes: '[注意] 欲設限之變數，記得以中括弧包起來，如[變數]',
+      EnterPositive: '請確認所輸入都是正整數!'
     }
   },
   Wiki: {
