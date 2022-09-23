@@ -273,6 +273,7 @@ export default {
         this.$nextTick(() => {
           clearTimeout(this.timer)
           this.loadingInstance.close()
+          this.$emit('update')
         })
       }
     }
@@ -315,9 +316,8 @@ export default {
             })
           })
           .finally(() => {
-            this.isLoading = false
             this.showDialog = false
-            this.$emit('update')
+            this.isLoading = false
           })
       })
     },
