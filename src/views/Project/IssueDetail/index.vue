@@ -954,13 +954,17 @@ export default {
       this.tagsString = ''
       const sendData = Object.assign({}, this.form)
       const notes = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')
-      if (notes !== '') sendData['notes'] = notes
       // Object.keys(sendData).map(item => {
       //   if (sendData[item] === '' || !sendData[item]) delete sendData[item]
       // })
       const sendForm = new FormData()
-      this.filterImage(notes, sendForm, false)
-      this.filterImage(sendData['description'], sendForm, true)
+      if (notes !== '') {
+        sendData['notes'] = notes
+        this.filterImage(sendData['notes'], sendForm, false)
+      }
+      if (sendData['description'] !== '') {
+        this.filterImage(sendData['description'], sendForm, true)
+      }
       Object.keys(sendData).forEach((objKey) => {
         if ((objKey === 'start_date' || objKey === 'end_date') && !sendData[objKey]) {
           sendForm.append(objKey, '')

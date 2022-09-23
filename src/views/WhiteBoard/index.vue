@@ -72,6 +72,7 @@
             :key="item"
             size="mini"
             class="mr-1"
+            @click="enterDetail(item)"
           >
             {{ item }}
           </el-tag>
@@ -214,6 +215,9 @@ export default {
         this.handleError()
       }
     },
+    enterDetail(issueId) {
+      this.$router.push({ name: 'IssueDetail', params: { issueId }})
+    },
     showSuccessMessage(message) {
       this.$message({
         title: this.$t('general.Success'),
@@ -224,3 +228,8 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.el-tag {
+  cursor: pointer;
+}
+</style>
