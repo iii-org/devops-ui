@@ -270,8 +270,10 @@ export default {
           this.timer = setTimeout(() => this.openFullLoading(text), 3000 * index)
         })
       } else {
-        clearTimeout(this.timer)
-        this.loadingInstance.close()
+        this.$nextTick(() => {
+          clearTimeout(this.timer)
+          this.loadingInstance.close()
+        })
       }
     }
   },
