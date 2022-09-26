@@ -291,7 +291,7 @@ export default {
     ElSelectAll,
     QuickAddIssue
   },
-  mixins: [ IssueList ],
+  mixins: [IssueList],
   data() {
     return {
       quickAddTopicDialogVisible: false,
@@ -466,7 +466,6 @@ export default {
       }
       return sort
     },
-    
     showSelectedGroupByName() {
       return this.groupByOptions.find((item) => item.value === this.groupBy.dimension).label
     },
