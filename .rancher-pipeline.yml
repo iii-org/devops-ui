@@ -32,7 +32,6 @@ stages:
       include:
       - master
       - echart
-      - milestoneaddissue
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -77,16 +76,10 @@ stages:
       include:
       - master
       - develop
-      - messagesettings
       - errorcode
       - pluginchart
-      - redminemail
-      - filepreview
-      - router
-      - testb1
-      - milestoneaddissue
       - pict
-      - attachment
+      - login
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -107,16 +100,10 @@ stages:
       include:
       - master
       - develop
-      - messagesettings
       - errorcode
       - pluginchart
-      - redminemail
-      - filepreview
-      - router
-      - testb1
-      - milestoneaddissue
       - pict
-      - attachment
+      - login
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -133,16 +120,10 @@ stages:
       include:
       - develop
       - master
-      - messagesettings
       - errorcode
       - pluginchart
-      - redminemail
-      - filepreview
-      - router
-      - testb1
-      - milestoneaddissue
       - pict
-      - attachment
+      - login
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -175,16 +156,10 @@ stages:
       include:
       - master
       - develop
-      - messagesettings
       - errorcode
       - pluginchart
-      - redminemail
-      - filepreview
-      - router
-      - testb1
-      - milestoneaddissue
       - pict
-      - attachment
+      - login
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -210,16 +185,10 @@ stages:
       include:
       - master
       - develop
-      - messagesettings
       - errorcode
       - pluginchart
-      - redminemail
-      - filepreview
-      - router
-      - testb1
-      - milestoneaddissue
       - pict
-      - attachment
+      - login
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -243,16 +212,10 @@ stages:
       include:
       - master
       - develop
-      - messagesettings
       - errorcode
       - pluginchart
-      - redminemail
-      - filepreview
-      - router
-      - testb1
-      - milestoneaddissue
       - pict
-      - attachment
+      - login
 - name: Test--ZAP
   iiidevops: zap
   steps:
