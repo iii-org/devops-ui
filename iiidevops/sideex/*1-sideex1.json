@@ -14,11 +14,11 @@
     },
     "suites": [
         {
-            "title": "III DevOps 1",
+            "title": "III DevOps 議題功能測試",
             "enableOnPlaying": true,
             "cases": [
                 {
-                    "title": "PM \u767b\u5165\u8207\u767b\u51fa",
+                    "title": "PM 登入與登出",
                     "enableOnPlaying": true,
                     "networkSpeed": 21.13,
                     "records": [
@@ -93,7 +93,7 @@
                                     },
                                     {
                                         "type": "name",
-                                        "value": "name=\u5e33\u865f"
+                                        "value": "name=帳號"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -105,11 +105,11 @@
                                     },
                                     {
                                         "type": "xpath:attributes",
-                                        "value": "//input[@name='\u5e33\u865f']"
+                                        "value": "//input[@name='帳號']"
                                     },
                                     {
                                         "type": "css:position",
-                                        "value": "css=input[name=\"\u5e33\u865f\"]"
+                                        "value": "css=input[name=\"帳號\"]"
                                     }
                                 ],
                                 "tac": "TAC_LOCATOR:N4IgLghgxgtAbgUwE4GcCWB7AdiAXCARgDpiCQAaEADwAcIwALPEAehYBM04BtAATXYBeAOQQaNYQF0OXbgWkAzDEgC2c6Zx4AmDbPkye+tFhoBXMOoogMYZoGY9QPphVjBDyhIAcwByEFQmbGZraUkABGxuwIVMxkIQCeNP74YFHBIBDmGFAYKjQANggpzNhW+dAIDBh5kUj2TpRYvkkgjlZQeRAoKMwIeTCB5gD6g8ZYyFZ5WfSYWADySDUxIAC+lFl0buAQ3k3Mmlbs9BDwMADMAAyhAOwAbACs51rMbR1dPX0DaZNQ09jzi-gyKtrFAaLVcFhTHk8msoDgIVCYSCoHhuJJYbZ8GhsZE4BgaCgAASAMe1AD0eKyAA"
@@ -143,7 +143,7 @@
                                     },
                                     {
                                         "type": "name",
-                                        "value": "name=\u5e33\u865f"
+                                        "value": "name=帳號"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -155,11 +155,11 @@
                                     },
                                     {
                                         "type": "xpath:attributes",
-                                        "value": "//input[@name='\u5e33\u865f']"
+                                        "value": "//input[@name='帳號']"
                                     },
                                     {
                                         "type": "css:position",
-                                        "value": "css=input[name=\"\u5e33\u865f\"]"
+                                        "value": "css=input[name=\"帳號\"]"
                                     }
                                 ],
                                 "tac": "TAC_LOCATOR:N4IgLghgxgtAbgUwE4GcCWB7AdiAXCARgDpiCQAaEADwAcIwALPEAehYBM04BtAATXYBeAOQQaNYQF0OXbgWkAzDEgC2c6Zx4AmDbPkye+tFhoBXMOoogMYZoGY9QPphVjBDyhIAcwByEFQmbGZraUkABGxuwIVMxkIQCeNP74YFHBIBDmGFAYKjQANggpzNhW+dAIDBh5kUj2TpRYvkkgjlZQeRAoKMwIeTCB5gD6g8ZYyFZ5WfSYWADySDUxIAC+lFl0buAQ3k3Mmlbs9BDwMADMAAyhAOwAbACs51rMbR1dPX0DaZNQ09jzi-gyKtrFAaLVcFhTHk8msoDgIVCYSCoHhuJJYbZ8GhsZE4BgaCgAASAMe1AD0eKyAA"
@@ -169,7 +169,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "demo_pm"
+                                        "value": "momo-pm"
                                     }
                                 ],
                                 "tac": ""
@@ -453,7 +453,7 @@
                     ]
                 },
                 {
-                    "title": "\u5efa\u7acb\u6e2c\u8a66\u5c08\u6848",
+                    "title": "建立測試專案",
                     "enableOnPlaying": true,
                     "networkSpeed": 21.92,
                     "records": [
@@ -766,7 +766,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(\u4e2d\u6587\nEnglish)"
+                                        "value": "(中文\nEnglish)"
                                     },
                                     {
                                         "type": "id",
@@ -812,7 +812,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(\u4e2d\u6587)"
+                                        "value": "(中文)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -1136,7 +1136,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "\u81ea\u52d5\u6e2c\u8a66\u5c08\u6848001"
+                                        "value": "自動測試專案001"
                                     }
                                 ],
                                 "tac": ""
@@ -1568,7 +1568,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "\u9019\u662f\u81ea\u52d5\u6e2c\u8a66\u5c08\u6848"
+                                        "value": "這是自動測試專案"
                                     }
                                 ],
                                 "tac": ""
@@ -2564,7 +2564,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "\u9019\u662f\u81ea\u52d5\u6e2c\u8a66\u7528\u5c08\u6848"
+                                        "value": "這是自動測試用專案"
                                     }
                                 ],
                                 "tac": ""
@@ -3436,7 +3436,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "\u9019\u662f\u81ea\u52d5\u6e2c\u8a66\u7528\u5c08\u6848001"
+                                        "value": "這是自動測試用專案001"
                                     }
                                 ],
                                 "tac": ""
@@ -3776,7 +3776,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "\u9019\u662f\u81ea\u52d5\u6e2c\u8a66\u7528\u5c08\u6848-001"
+                                        "value": "這是自動測試用專案-001"
                                     }
                                 ],
                                 "tac": ""
@@ -4308,7 +4308,7 @@
                     ]
                 },
                 {
-                    "title": "\u8a2d\u5b9a\u5c08\u6848\u7248\u672c\u8207\u6210\u54e1",
+                    "title": "設定專案版本與成員",
                     "enableOnPlaying": true,
                     "networkSpeed": 26.19,
                     "records": [
@@ -5165,7 +5165,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "\u96db\u578b\u7248\u672c"
+                                        "value": "雛型版本"
                                     }
                                 ],
                                 "tac": ""
@@ -5811,7 +5811,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "\u91cb\u51fa\u7b2c\u4e00\u7248"
+                                        "value": "釋出第一版"
                                     }
                                 ],
                                 "tac": ""
@@ -6289,7 +6289,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "\u6e2c\u8a66"
+                                        "value": "測試"
                                     }
                                 ],
                                 "tac": ""
@@ -7623,7 +7623,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "\u6e2c\u8a66\u6a19\u7c64ABC"
+                                        "value": "測試標籤ABC"
                                     }
                                 ],
                                 "tac": ""
@@ -7865,7 +7865,7 @@
                     ]
                 },
                 {
-                    "title": "WBS \u898f\u5283\u5de5\u4f5c",
+                    "title": "WBS 規劃工作",
                     "enableOnPlaying": true,
                     "networkSpeed": 12.64,
                     "records": [
@@ -8470,7 +8470,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "1. \u5de5\u4f5c\u9805\u76ee"
+                                        "value": "1. 工作項目"
                                     }
                                 ],
                                 "tac": ""
@@ -8730,7 +8730,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "2. \u5de5\u4f5c\u9805\u76ee"
+                                        "value": "2. 工作項目"
                                     }
                                 ],
                                 "tac": ""
@@ -8910,7 +8910,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "3. \u5de5\u4f5c\u9805\u76ee"
+                                        "value": "3. 工作項目"
                                     }
                                 ],
                                 "tac": ""
@@ -8976,7 +8976,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(2. \u5de5\u4f5c\u9805\u76ee)"
+                                        "value": "(2. 工作項目)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -9018,7 +9018,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(2. \u5de5\u4f5c\u9805\u76ee)"
+                                        "value": "(2. 工作項目)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -9250,7 +9250,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "2.1 \u6a4b\u5883\u63cf\u8ff0"
+                                        "value": "2.1 橋境描述"
                                     }
                                 ],
                                 "tac": ""
@@ -9552,7 +9552,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(2.1 \u6a4b\u5883\u63cf\u8ff0)"
+                                        "value": "(2.1 橋境描述)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -9620,7 +9620,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "2.1 \u60c5\u5883\u63cf\u8ff0"
+                                        "value": "2.1 情境描述"
                                     }
                                 ],
                                 "tac": ""
@@ -9686,7 +9686,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(2. \u5de5\u4f5c\u9805\u76ee)"
+                                        "value": "(2. 工作項目)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -9728,7 +9728,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(2. \u5de5\u4f5c\u9805\u76ee)"
+                                        "value": "(2. 工作項目)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -9770,7 +9770,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(2. \u5de5\u4f5c\u9805\u76ee)"
+                                        "value": "(2. 工作項目)"
                                     },
                                     {
                                         "type": "xpath:position",
@@ -10128,7 +10128,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "2.2 \u60c5\u5883\u63cf\u8ff0"
+                                        "value": "2.2 情境描述"
                                     }
                                 ],
                                 "tac": ""
@@ -10594,7 +10594,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(1. \u5de5\u4f5c\u9805\u76ee)"
+                                        "value": "(1. 工作項目)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -10864,7 +10864,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "1.1 \u60c5\u5883\u63cf\u8ff0"
+                                        "value": "1.1 情境描述"
                                     }
                                 ],
                                 "tac": ""
@@ -11254,7 +11254,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(1.1 \u60c5\u5883\u63cf\u8ff0)"
+                                        "value": "(1.1 情境描述)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -11578,7 +11578,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "1.1.1 \u529f\u80fd\u8a2d\u8a08"
+                                        "value": "1.1.1 功能設計"
                                     }
                                 ],
                                 "tac": ""
@@ -12686,7 +12686,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(1.1.1 \u529f\u80fd\u8a2d\u8a08)"
+                                        "value": "(1.1.1 功能設計)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -12842,7 +12842,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(1.1 \u60c5\u5883\u63cf\u8ff0)"
+                                        "value": "(1.1 情境描述)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -12884,7 +12884,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(1.1 \u60c5\u5883\u63cf\u8ff0)"
+                                        "value": "(1.1 情境描述)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -12926,7 +12926,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(1.1 \u60c5\u5883\u63cf\u8ff0)"
+                                        "value": "(1.1 情境描述)"
                                     },
                                     {
                                         "type": "xpath:position",
@@ -13154,7 +13154,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(2.2 \u60c5\u5883\u63cf\u8ff0)"
+                                        "value": "(2.2 情境描述)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -13196,7 +13196,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(1. \u5de5\u4f5c\u9805\u76ee)"
+                                        "value": "(1. 工作項目)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -13390,7 +13390,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(2.2 \u60c5\u5883\u63cf\u8ff0)"
+                                        "value": "(2.2 情境描述)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -13432,7 +13432,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(2.2 \u60c5\u5883\u63cf\u8ff0)"
+                                        "value": "(2.2 情境描述)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -13664,7 +13664,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(2.1 \u60c5\u5883\u63cf\u8ff0)"
+                                        "value": "(2.1 情境描述)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -13706,7 +13706,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(2.1 \u60c5\u5883\u63cf\u8ff0)"
+                                        "value": "(2.1 情境描述)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -13976,7 +13976,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(2. \u5de5\u4f5c\u9805\u76ee)"
+                                        "value": "(2. 工作項目)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -14170,7 +14170,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(3. \u5de5\u4f5c\u9805\u76ee)"
+                                        "value": "(3. 工作項目)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
@@ -14212,7 +14212,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(3. \u5de5\u4f5c\u9805\u76ee Tag ...)"
+                                        "value": "(3. 工作項目 Tag ...)"
                                     },
                                     {
                                         "type": "xpath:position",
@@ -14250,7 +14250,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(3. \u5de5\u4f5c\u9805\u76ee)"
+                                        "value": "(3. 工作項目)"
                                     },
                                     {
                                         "type": "xpath:position",
@@ -14588,7 +14588,7 @@
                     ]
                 },
                 {
-                    "title": "\u522a\u9664\u6e2c\u8a66\u5c08\u6848",
+                    "title": "刪除測試專案",
                     "enableOnPlaying": true,
                     "networkSpeed": 22.6,
                     "records": [
@@ -14869,7 +14869,7 @@
                                 "options": [
                                     {
                                         "type": "tac",
-                                        "value": "(Delete \u300cauto...)"
+                                        "value": "(Delete 「auto...)"
                                     },
                                     {
                                         "type": "xpath:idRelative",
