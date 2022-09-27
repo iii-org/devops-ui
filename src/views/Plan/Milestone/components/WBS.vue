@@ -314,15 +314,6 @@
       <div slot="title">
         <el-row slot="title" type="flex" align="middle">
           <el-col :xs="24" :md="16">
-            <el-button
-              type="text"
-              size="medium"
-              icon="el-icon-arrow-left"
-              class="previous text-title linkTextColor"
-              @click="toggleRelationDialog(relationDialog.target)"
-            >
-              {{ $t('general.Back') }}
-            </el-button>
             <span class="text-title">
               {{ $t('general.Settings', { name: $t('Issue.' + relationDialog.target + 'Issue') }) }}
             </span>
@@ -330,6 +321,9 @@
           <el-col :xs="24" :md="8" class="text-right">
             <el-button class="buttonPrimary" @click="onSaveCheckRelationIssue">
               {{ $t('general.Save') }}
+            </el-button>
+            <el-button class="buttonSecondaryReverse" @click="toggleRelationDialog(relationDialog.target)">
+              {{ $t('general.Close') }}
             </el-button>
           </el-col>
         </el-row>

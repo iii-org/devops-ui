@@ -173,16 +173,13 @@ export default {
       this.listQuery = listQuery
     },
     async getFileNameListData() {
-      const res = await getFileNameList()
-      this.fileNameList = res.data
+      this.fileNameList = (await getFileNameList()).data
     },
     async isGitlabStatus() {
-      const res = await getGitlabStatus()
-      this.gitlabStatus = res.data.status
+      this.gitlabStatus = (await getGitlabStatus()).data.status
     },
     async isGitlabDomainIP() {
-      const res = await isGitlabDomainIP()
-      this.gitlabDomainIP = res.is_ip
+      this.gitlabDomainIP = (await isGitlabDomainIP()).is_ip
     }
   }
 }

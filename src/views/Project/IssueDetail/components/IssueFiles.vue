@@ -19,6 +19,7 @@
           </div>
           <a
             class="el-upload-list__item-name"
+            @mouseover="checkWidth"
             @click="handlePreview(file)"
           >
             <em class="el-icon-document" />{{ file.filename }} ({{
@@ -189,6 +190,10 @@ export default {
       const idx = this.issueFile.findIndex((item) => item.id === id)
       this.issueFile.splice(idx, 1)
     },
+    checkWidth(e) {
+      this.clientWidth = e.target.clientWidth
+      this.scrollWidth = e.target.scrollWidth
+    },
     async handleImageArray() {
       if (this.imageArray.length !== 0) this.imageArray = []
       for (const item of this.issueFile) {
@@ -220,11 +225,6 @@ export default {
       }
     },
     resizeImageHeight() {
-      const imageName = document.querySelector('.el-upload-list__item-name')
-      if (imageName) {
-        this.clientWidth = imageName.clientWidth
-        this.scrollWidth = imageName.scrollWidth
-      }
       if (this.$refs.image === undefined) return
       this.$nextTick(() => {
         this.imageHeight = this.$refs.image[this.imageIndex].height

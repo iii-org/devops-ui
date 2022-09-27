@@ -72,6 +72,7 @@
             :key="item"
             size="mini"
             class="mr-1"
+            @click="enterDetail(item)"
           >
             {{ item }}
           </el-tag>
@@ -141,7 +142,7 @@
 import { mapGetters } from 'vuex'
 import { BasicData, Table, Pagination, SearchBar, ProjectSelector } from '@/newMixins'
 import { getExcalidraw, deleteExcalidraw } from '@/api_v2/excalidraw'
-import { getExcalidrawStatus } from '@/api_v2/monitoring'
+import { getServerStatus } from '@/api_v2/monitoring'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import SearchFilter from './components/SearchFilter'
 import CreateBoardDialog from './components/CreateBoardDialog'
@@ -154,7 +155,6 @@ export default {
   data() {
     return {
       searchKeys: ['name'],
-      issueQuery: null,
       isClosed: false,
       isExcalidrawAlive: false
     }
@@ -166,7 +166,7 @@ export default {
     }
   },
   async mounted() {
-    this.isExcalidrawAlive = (await getExcalidrawStatus()).status
+    this.isExcalidrawAlive = (await getServerStatus('excalidraw')).status
   },
   methods: {
     async fetchData() {
@@ -189,7 +189,7 @@ export default {
       this.$refs.CreateBoardDialog.dialogVisible = true
     },
     async handleAfterCreate(row) {
-      this.$refs.EditBoardDialog.isCollapse = ['1']
+      this.$refs.EditBoardDialog.isCollapse = ['2']
       this.$refs.EditBoardDialog.row = row
       this.$nextTick(() => {
         setTimeout(() => {
@@ -198,7 +198,7 @@ export default {
       })
     },
     handleEdit(row, isCollapse) {
-      this.$refs.EditBoardDialog.isCollapse = isCollapse ? ['1'] : []
+      this.$refs.EditBoardDialog.isCollapse = isCollapse ? ['2'] : ['1', '2']
       this.$refs.EditBoardDialog.row = row
       this.$nextTick(() => {
         this.$refs.EditBoardDialog.dialogVisible = true
@@ -215,6 +215,9 @@ export default {
         this.handleError()
       }
     },
+    enterDetail(issueId) {
+      this.$router.push({ name: 'IssueDetail', params: { issueId }})
+    },
     showSuccessMessage(message) {
       this.$message({
         title: this.$t('general.Success'),
@@ -225,3 +228,8 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.el-tag {
+  cursor: pointer;
+}
+</style>

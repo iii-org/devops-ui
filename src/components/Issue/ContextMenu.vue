@@ -62,22 +62,13 @@
     <el-dialog
       :visible.sync="relationDialog.visible"
       :close-on-click-modal="false"
-      width="80%"
       :show-close="false"
+      width="80%"
       append-to-body
     >
       <div slot="title">
         <el-row slot="title" type="flex" align="middle">
           <el-col :xs="24" :md="16">
-            <el-button
-              type="text"
-              size="medium"
-              icon="el-icon-arrow-left"
-              class="previous text-title linkTextColor"
-              @click="toggleRelationDialog(relationDialog.target)"
-            >
-              {{ $t('general.Back') }}
-            </el-button>
             <span class="text-title">
               {{ $t('general.Settings', { name: $t('Issue.' + relationDialog.target + 'Issue') }) }}
             </span>
@@ -85,6 +76,9 @@
           <el-col :xs="24" :md="8" class="text-right">
             <el-button class="buttonPrimary" @click="onSaveCheckRelationIssue">
               {{ $t('general.Save') }}
+            </el-button>
+            <el-button class="buttonSecondaryReverse" @click="toggleRelationDialog(relationDialog.target)">
+              {{ $t('general.Close') }}
             </el-button>
           </el-col>
         </el-row>
@@ -116,21 +110,36 @@
     <el-dialog
       v-if="row.project"
       :visible.sync="addTopicDialogVisible"
+      :show-close="false"
+      :close-on-click-modal="false"
       width="50%"
       top="5px"
-      :close-on-click-modal="false"
       destroy-on-close
       append-to-body
     >
       <template slot="title">
-        {{ $t('Issue.AddIssue') }}
-        <el-button
-          v-if="parentId!==0"
-          class="buttonPrimary float-right mr-5"
-          @click="handleAdvancedImport"
-        >
-          {{ $t('Issue.ImportParentIssueData') }}
-        </el-button>
+        <el-row slot="title" type="flex" align="middle">
+          <el-col :xs="24" :md="16">
+            <span class="text-title">
+              {{ $t('Issue.AddIssue') }}
+            </span>
+          </el-col>
+          <el-col :xs="24" :md="8" class="text-right">
+            <el-button
+              v-if="parentId!==0"
+              class="buttonPrimary"
+              @click="handleAdvancedImport"
+            >
+              {{ $t('Issue.ImportParentIssueData') }}
+            </el-button>
+            <el-button
+              class="buttonSecondaryReverse"
+              @click="handleCloseDialog()"
+            >
+              {{ $t('general.Close') }}
+            </el-button>
+          </el-col>
+        </el-row>
       </template>
       <AddIssue
         v-if="addTopicDialogVisible"

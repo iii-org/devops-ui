@@ -13,7 +13,7 @@
             size="small"
             class="buttonSecondary"
             icon="el-icon-plus"
-            @click="handleShowAddDialog"
+            @click="handleQuickAddClose"
           >
             {{ $t('Issue.AddIssue') }}
           </el-button>
@@ -24,7 +24,7 @@
         :filter-options="filterOptions"
         :list-loading="listLoading"
         :selection-options="contextOptions"
-        :prefill="{ filterValue, keyword, displayClosed, originFilterValue }"
+        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed,originFilterValue:originFilterValue }"
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
       >
@@ -185,10 +185,17 @@
       </SearchFilter>
     </ProjectListSelector>
     <el-divider />
+    <QuickAddIssue
+      ref="quickAddIssue"
+      :save-data="saveIssue"
+      :project-id="selectedProjectId"
+      :visible.sync="quickAddTopicDialogVisible"
+      @add-issue="advancedAddIssue"
+    />
     <div
       ref="wrapper"
       class="wrapper"
-      :class="{'is-panel':relationIssue}"
+      :class="{'show-quick':quickAddTopicDialogVisible}"
     >
       <el-tabs
         v-model="activeTab"
@@ -248,48 +255,13 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <el-dialog
-      :title="$t('Issue.AddIssue')"
-      :visible.sync="showAddIssue"
-      width="50%"
-      top="50px"
-      :close-on-click-modal="false"
-      destroy-on-close
-      append-to-body
-      @close="handleCloseAddDialog"
-    >
-      <AddIssue
-        ref="AddIssue"
-        :project-id="projectId"
-        :prefill="form"
-        :save-data="saveIssue"
-        @add-topic-visible="handleCloseAddDialog"
-      />
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          id="dialog-btn-cancel"
-          class="buttonSecondaryReverse"
-          :disabled="loadingSave"
-          @click="handleAdvancedClose"
-        >{{ $t('general.Cancel') }}</el-button>
-        <el-button
-          id="dialog-btn-confirm"
-          :loading="loadingSave"
-          class="buttonPrimary"
-          @click="handleAdvancedSave"
-        >
-          {{ $t('general.Confirm') }}
-        </el-button>
-      </span>
-    </el-dialog>
   </el-row>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { QuickAddIssue } from '@/components/Issue'
+import { IssueList } from '@/newMixins'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Gantt from '@/views/Plan/Milestone/components/Gantt'
 import WBS from '@/views/Plan/Milestone/components/WBS'
@@ -307,7 +279,6 @@ import {
 import { addIssue, getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
 import XLSX from 'xlsx'
 import ElSelectAll from '@/components/ElSelectAll'
-import AddIssue from '@/components/Issue/AddIssue'
 
 export default {
   name: 'ProjectMilestone',
@@ -318,10 +289,12 @@ export default {
     Gantt,
     ProjectListSelector,
     ElSelectAll,
-    AddIssue
+    QuickAddIssue
   },
+  mixins: [IssueList],
   data() {
     return {
+      quickAddTopicDialogVisible: false,
       listLoading: false,
       contentLoading: false,
       updateLoading: false,
@@ -334,8 +307,6 @@ export default {
       displayClosed: false,
       tableHeight: 0,
       relationIssue: false,
-      showAddIssue: false,
-      loadingSave: false,
       fixed_version_closed: false,
       form: {},
       groupBy: {
@@ -495,12 +466,6 @@ export default {
       }
       return sort
     },
-    filterClosedStatus() {
-      return function (statusList) {
-        if (this.displayClosed) return statusList
-        return statusList.filter((item) => item.is_closed === false)
-      }
-    },
     showSelectedGroupByName() {
       return this.groupByOptions.find((item) => item.value === this.groupBy.dimension).label
     },
@@ -515,10 +480,13 @@ export default {
     }
   },
   watch: {
-    selectedProjectId() {
-      this.onChangeFilter()
-      this.loadSelectionList()
-      this.$refs['searchFilter'].cleanFilter()
+    selectedProjectId: {
+      async handler() {
+        this.keyword = ''
+        await this.onChangeFilter()
+        await this.loadSelectionList()
+        await this.$refs['searchFilter'].cleanFilter()
+      }
     },
     fixed_version_closed(value) {
       this.loadVersionList(value)
@@ -541,8 +509,9 @@ export default {
     }
     this.onChangeFilter()
   },
-  mounted() {
+  async mounted() {
     this.loadReportStatus()
+    this.onChangeFilter()
     this.$nextTick(() => {
       this.tableHeight = this.$refs['wrapper'].clientHeight
     })
@@ -650,10 +619,10 @@ export default {
       })
       this.displayFields = res.data
     },
-    onChangeFilter() {
-      if (this.$refs['WBS']) this.$refs['WBS'].loadData()
-      if (this.$refs['Gantt']) this.$refs['Gantt'].loadData()
-      if (this.$refs['Board']) this.$refs['Board'].loadData()
+    async onChangeFilter() {
+      if (this.$refs['WBS']) await this.$refs['WBS'].loadData()
+      if (this.$refs['Gantt']) await this.$refs['Gantt'].loadData()
+      if (this.$refs['Board']) await this.$refs['Board'].loadData()
       // this.$refs[this.activeTab].loadData()
     },
     prepareExcel(result) {
@@ -745,51 +714,6 @@ export default {
         }
       }
       return label
-    },
-    handleCloseAddDialog() {
-      this.showAddIssue = false
-    },
-    handleShowAddDialog() {
-      this.form = {
-        tracker_id: null,
-        name: null,
-        assigned_to_id: null,
-        status_id: 1,
-        priority_id: 3
-      }
-      const dimensions = ['fixed_version', 'tracker', 'status', 'assigned_to', 'version', 'priority']
-      dimensions.forEach((item) => {
-        if (
-          this.filterValue &&
-          this.filterValue[item] !== 'null' &&
-          !!this.filterValue[item] &&
-          this.filterValue[item] !== ''
-        ) {
-          this.$set(this.form, item + '_id', this.filterValue[item])
-        }
-      })
-      if (this.filterValue.hasOwnProperty('due_date_start')) {
-        if (this.filterValue.due_date_start !== null) {
-          this.$set(this.form, 'start_date', this.filterValue.due_date_start)
-        }
-      }
-      if (this.filterValue.hasOwnProperty('due_date_end')) {
-        if (this.filterValue.due_date_end !== null) {
-          this.$set(this.form, 'due_date', this.filterValue.due_date_end)
-        }
-      }
-      if (this.filterValue.hasOwnProperty('tags')) {
-        if (this.filterValue.tags && this.filterValue.tags.length > 0) {
-          this.$set(this.form, 'tags', this.filterValue.tags)
-        }
-      }
-      this.showAddIssue = true
-    },
-    handleAdvancedClose() {
-      this.$refs['AddIssue'].handleClose()
-    },
-    handleAdvancedSave() {
-      this.$refs['AddIssue'].handleSave()
     },
     async saveIssue(data) {
       this.loadingSave = true

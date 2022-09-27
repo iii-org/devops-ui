@@ -250,13 +250,13 @@ export default {
         await editPipelineBranch(this.selectedRepositoryId, sendData)
         this.isChanged = false
       } catch (err) {
-        this.fetchPipelineBranch()
         this.$message({
           title: this.$t('general.Error'),
           message: err,
           type: 'error'
         })
       } finally {
+        this.fetchPipelineBranch()
         this.isLoading = false
       }
     },

@@ -46,7 +46,7 @@ export default {
     FromCollection: '來自 Postman Collection',
     CheckMarx: '白箱測試(CheckMarx)',
     SonarQube: '白箱測試(SonarQube)',
-    Sbom: '軟體成分組成(Sbom)',
+    Sbom: '軟體成分組成(SBOM)',
     WebInspect: '黑箱測試(WebInspect)',
     WebInspectReport: '@:general.Report',
     Zap: '黑箱測試(OWASP ZAP)',
@@ -159,6 +159,7 @@ export default {
     Add: '新增',
     Edit: '編輯',
     Delete: '刪除',
+    Clear: '清除',
     Participate: '參與專案',
     ProjectId: '專案代碼',
     Remove: '移除',
@@ -287,7 +288,9 @@ export default {
     confirmDelete: '確定@:(general.Delete)嗎？',
     confirmClose: '確定@:(general.Close)嗎？',
     confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？',
+    confirmDeleteSideex: '確定刪除該專案所有組合測試相關的設定檔及紀錄嗎？',
     confirmEditProject: '範本更換，將直接取代成您選擇的範本程式，請問確認要覆蓋嗎？',
+    confirmVariableSetting: '注意，您尚有變數未設定！要直接產生測試資料嗎？',
     logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。',
     pluginWarnNotifications: '請確保同名 Plugin 開關的狀態一致再進行儲存和執行。',
     pluginRepeatMessage: '紅底為同分支有重複項目設定，請確認其設置為一致(如同為開或關)，以確保 Pipeline 運作正常。',
@@ -361,7 +364,7 @@ export default {
     Failed: '掃描失敗',
     InProcess: '產生中'
   },
-  SBOM: {
+  Sbom: {
     Branch: '@:general.Branch',
     Commit: 'Commit',
     PackageCount: '套件數',
@@ -640,12 +643,25 @@ export default {
       branch: '分支'
     },
     TestFile: {
-      AddPlan: '新增計畫',
+      CreateTestData: '產生測試資料',
+      CreateTestDataSetting: '測試資料產生設定',
+      VariableAndRange: '變數名稱與範圍制定',
+      VariableLimit: '變數指定限制',
+      CreateNow: '立即產生',
+      SettingReference: '設定方式請參照',
+      ConnectTestPlan: '關聯測試計畫',
+      DeleteTestFile: '刪除測試檔案',
+      SetPlan: '設定測試計畫',
+      AddPlan: '新增測試計畫',
       UploadTestSet: '上傳測試集',
       TestSoftware: '測試軟體',
       TestName: '測試名稱',
       PostmanUpload: 'Postman檔案名稱: {file_name}.postman_collection.json ( Postman UI 匯出的格式(V2.1))',
-      SideeXUpload: 'Sideex檔案名稱: {file_name}.json'
+      SideeXUpload: 'Sideex檔案名稱: {file_name}.json',
+      Type: '類型',
+      RangePlaceholder: '請輸入範圍,請以,隔開,如1,2,3',
+      LimitNotes: '[注意] 欲設限之變數，記得以中括弧包起來，如[變數]',
+      EnterPositive: '請確認所輸入都是正整數!'
     }
   },
   Wiki: {
@@ -1111,7 +1127,10 @@ export default {
     createGitLab: '創建GitLab資源中...',
     createHarbor: '連結Harbor資源...',
     integrationProject: '開始整合專案資源...',
-    loadingTemplateText: '更新所有範本最新資訊中'
+    loadingTemplateText: '更新所有範本最新資訊中',
+    saveParamsSetting: '儲存參數設定....',
+    createTestData: '產生測試資料....',
+    sideeXTestDataConverting: 'SideeX測試檔轉置中....'
   },
   TrackManagement: {
     description: '變更內容(議題描述)',
@@ -1256,7 +1275,8 @@ export default {
     Select: '請選擇 {0}',
     Invalid: '{0} 無效，請重新輸入',
     Range: '數值範圍是 {0} ~ {1}',
-    Number: '數值'
+    Number: '數值',
+    String: '文字'
   },
   ServiceMonitoring: {
     Services: '服務',

@@ -2,42 +2,44 @@
   <el-dialog
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
-    :fullscreen="true"
-    :show-close="false"
+    top="1vh"
+    width="98%"
+    append-to-body
     @closed="onDialogClosed"
   >
-    <span slot="title">
-      <div class="flex items-center justify-between">
-        <div>
+    <el-collapse v-if="dialogVisible" v-model="isCollapse">
+      <el-collapse-item name="1">
+        <div slot="title" style="margin-left: auto;">
+          <div class="text-title">
+            {{ $t('general.Settings', { name: $t('Issue.Issue') }) }}
+          </div>
+        </div>
+        <el-row>
+          <el-col :md="22" :span="20">
+            <ExcalidrawForm
+              ref="ExcalidrawForm"
+              :form="form"
+              :is-loading="isLoading"
+            />
+          </el-col>
+          <el-col :md="2" :span="4">
+            <el-button
+              :loading="isLoading"
+              type="primary"
+              size="medium"
+              @click="handleEdit"
+            >
+              {{ $t('general.Confirm') }}
+            </el-button>
+          </el-col>
+        </el-row>
+      </el-collapse-item>
+      <el-collapse-item name="2">
+        <div slot="title" style="margin-right: auto;">
           <div class="text-title">
             {{ $t('Excalidraw.EditBoard') }}
           </div>
         </div>
-        <div>
-          <el-button
-            class="buttonSecondaryReverse"
-            :loading="isLoading"
-            @click="onDialogClosed"
-          >
-            {{ $t('general.Close') }}
-          </el-button>
-          <el-button
-            type="primary"
-            :loading="isLoading"
-            @click="handleEdit"
-          >
-            {{ $t('general.Confirm') }}
-          </el-button>
-        </div>
-      </div>
-    </span>
-    <ExcalidrawForm
-      ref="ExcalidrawForm"
-      :form="form"
-      :is-loading="isLoading"
-    />
-    <el-collapse v-if="dialogVisible" v-model="isCollapse">
-      <el-collapse-item title="Excalidraw" name="1">
         <iframe
           title="excalidraw"
           :src="row.url + '#' + userName"
@@ -69,20 +71,14 @@ export default {
       isLoading: false,
       isCollapse: [],
       row: {},
-      form: formTemplate(),
-      rules: {
-        name: [
-          {
-            required: true,
-            message: this.$t('RuleMsg.PleaseSelect') + this.$t('general.Name'),
-            trigger: 'blur'
-          }
-        ]
-      }
+      form: formTemplate()
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userName'])
+    ...mapGetters(['selectedProjectId', 'userName']),
+    formHeight() {
+      return this.isCollapse.includes('1') ? 0 : 60
+    }
   },
   watch: {
     row(value) {
@@ -91,24 +87,20 @@ export default {
         this.form.name = value.name
       }
     },
-    dialogVisible(value) {
-      if (value) {
-        window.history.pushState(null, '')
-      } else {
-        window.history.back()
-      }
+    isCollapse: {
+      handler: 'handleHeight'
     }
   },
   mounted() {
-    this.handleHeight()
     window.addEventListener('resize', this.handleHeight)
-    window.addEventListener('popstate', this.goBackConfirm, false)
   },
   destroyed() {
     window.removeEventListener('resize', this.handleHeight)
-    window.removeEventListener('popstate', this.goBackConfirm, false)
   },
   methods: {
+    handleHeight() {
+      this.excalidrawHeight = window.innerHeight + this.formHeight - 185
+    },
     handleEdit() {
       this.$refs['ExcalidrawForm'].$refs['form'].validate(async(valid) => {
         if (valid) {
@@ -136,29 +128,26 @@ export default {
     },
     onDialogClosed() {
       this.row = {}
-      this.$refs['ExcalidrawForm'].$refs['form'].resetFields()
       this.dialogVisible = false
-    },
-    handleHeight() {
-      this.excalidrawHeight = window.innerHeight - Array.from(document.querySelectorAll('.el-collapse-item'))
-        .reduce((s, el) => { return s + el.children[0].offsetHeight }, 0) - 250
-    },
-    goBackConfirm() {
-      if (this.dialogVisible) {
-        this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
-          confirmButtonText: this.$t('general.Confirm'),
-          cancelButtonText: this.$t('general.Cancel'),
-          type: 'warning'
-        }).then(() => {
-          window.history.back()
-        }).catch(() => {
-          window.history.pushState(null, '')
-        })
-      }
     }
   }
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+>>> .el-dialog__header {
+  padding: 0;
+}
+
+>>> .el-dialog__body {
+  padding: 0 3rem 0 10px;
+}
+
+>>> .el-collapse-item__content {
+  padding-bottom: 0;
+}
+
+>>> .el-collapse-item__arrow {
+  margin-left: 8px;
+}
 </style>

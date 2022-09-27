@@ -88,14 +88,14 @@
               :effect="getTagEffect(scope.row.scan_status)"
             >
               <span>
-                {{ $t(`SBOM.${scope.row.scan_status}`) }}
+                {{ $t(`Sbom.${scope.row.scan_status}`) }}
               </span>
             </el-tag>
           </template>
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('SBOM.PackageCount')"
+        :label="$t('Sbom.PackageCount')"
         prop="package_nums"
       >
         <template slot-scope="scope">
@@ -106,7 +106,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('SBOM.HighSeverity')"
+        :label="$t('Sbom.HighSeverity')"
         prop="scan_overview.High"
       >
         <template slot-scope="scope">
@@ -117,7 +117,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('SBOM.MediumSeverity')"
+        :label="$t('Sbom.MediumSeverity')"
         prop="scan_overview.Medium"
       >
         <template slot-scope="scope">
@@ -128,7 +128,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('SBOM.LowSeverity')"
+        :label="$t('Sbom.LowSeverity')"
         prop="scan_overview.Low"
       >
         <template slot-scope="scope">
@@ -139,17 +139,17 @@
         </template>
       </el-table-column>
       <el-table-column-time
-        :label="$t('SBOM.RunAt')"
+        :label="$t('Sbom.RunAt')"
         prop="created_at"
       />
       <el-table-column
-        :label="$t('SBOM.Report')"
+        :label="$t('Sbom.Report')"
         width="100"
       >
         <template slot-scope="scope">
           <el-tooltip
             placement="bottom"
-            :content="$t('SBOM.TraceabilityDownload')"
+            :content="$t('Sbom.TraceabilityDownload')"
           >
             <el-popover
               placement="bottom"
@@ -185,7 +185,7 @@
           </el-tooltip>
           <el-tooltip
             placement="bottom-end"
-            :content="$t('SBOM.VulnerabilityReport')"
+            :content="$t('Sbom.VulnerabilityReport')"
           >
             <el-link
               :class="!scope.row.finished ? '' : 'linkTextColor'"

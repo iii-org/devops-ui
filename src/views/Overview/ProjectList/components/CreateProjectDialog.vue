@@ -270,8 +270,11 @@ export default {
           this.timer = setTimeout(() => this.openFullLoading(text), 3000 * index)
         })
       } else {
-        clearTimeout(this.timer)
-        this.loadingInstance.close()
+        this.$nextTick(() => {
+          clearTimeout(this.timer)
+          this.loadingInstance.close()
+          this.$emit('update')
+        })
       }
     }
   },
@@ -313,9 +316,8 @@ export default {
             })
           })
           .finally(() => {
-            this.isLoading = false
             this.showDialog = false
-            this.$emit('update')
+            this.isLoading = false
           })
       })
     },

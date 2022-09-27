@@ -330,6 +330,7 @@ import dayjs from 'dayjs'
 import { Status, Tracker, ExpandSection } from '@/components/Issue'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
 import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
+import { atob } from '@/utils/base64'
 import getPageTitle from '@/utils/getPageTitle'
 import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
@@ -927,15 +928,43 @@ export default {
       formData.append('project_id', this.formProjectId)
       return formData
     },
-    submitIssue() {
+    dataURLtoFile(fileName, dataUrl) {
+      const arr = dataUrl.split(',')
+      const mime = arr[0].match(/:(.*?);/)[1]
+      const bstr = atob(arr[1])
+      let n = bstr.length
+      const u8arr = new Uint8Array(n)
+      while (n--) { u8arr[n] = bstr.charCodeAt(n) }
+      return new File([u8arr], fileName, { type: mime })
+    },
+    filterImage(str, sendForm, checkDuplicate) {
+      const arr = str.split(/!\[(.+?)\)/g).filter((item) => (/(.+?)\]\(data:.+/g).test(item))
+      if (arr.length > 0) {
+        arr.forEach((item) => {
+          const fileArray = item.split('](')
+          const file = this.dataURLtoFile(fileArray[0], fileArray[1])
+          if (checkDuplicate && this.files.some((element) =>
+            file.name === element.filename && file.size === element.filesize
+          )) return
+          sendForm.append('upload_files', file)
+        })
+      }
+    },
+    async submitIssue() {
       this.tagsString = ''
       const sendData = Object.assign({}, this.form)
       const notes = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')
-      if (notes !== '') sendData['notes'] = notes
       // Object.keys(sendData).map(item => {
       //   if (sendData[item] === '' || !sendData[item]) delete sendData[item]
       // })
       const sendForm = new FormData()
+      if (notes !== '') {
+        sendData['notes'] = notes
+        this.filterImage(sendData['notes'], sendForm, false)
+      }
+      if (sendData['description'] !== '') {
+        this.filterImage(sendData['description'], sendForm, true)
+      }
       Object.keys(sendData).forEach((objKey) => {
         if ((objKey === 'start_date' || objKey === 'end_date') && !sendData[objKey]) {
           sendForm.append(objKey, '')

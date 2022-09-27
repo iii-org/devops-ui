@@ -8,7 +8,7 @@
       </div>
       <el-divider />
       <el-card>
-        <el-table v-loading="isLoading" :element-loading-text="$t('Loading')" :data="listData" fit>
+        <el-table :data="listData" fit>
           <el-table-column :label="$t('ServiceMonitoring.Services')" align="center" width="200" prop="name" />
           <el-table-column :label="$t('ServiceMonitoring.Health')" align="center" width="100">
             <template slot-scope="scope">
@@ -19,11 +19,21 @@
           </el-table-column>
           <el-table-column :label="$t('ServiceMonitoring.Logs')" align="center">
             <template slot-scope="scope">
-              <div v-if="scope.row.message === null">-</div>
+              <el-skeleton
+                v-if="scope.row.status === 'loading'"
+                :rows="1"
+                animated
+              />
+              <div v-else-if="!scope.row.message">-</div>
               <div v-else>{{ scope.row.message }}</div>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('ServiceMonitoring.LastUpdateTime')" align="center" prop="datetime" width="200" />
+          <el-table-column :label="$t('ServiceMonitoring.LastUpdateTime')" align="center" prop="datetime" width="200">
+            <template slot-scope="scope">
+              <div v-if="scope.row.status === 'loading'">{{ $t('Loading') }}</div>
+              <div v-else>{{ scope.row.datetime }}</div>
+            </template>
+          </el-table-column>
           <el-table-column
             :label="$t('general.Actions')"
             align="center"
@@ -31,6 +41,7 @@
           >
             <template slot-scope="scope">
               <el-button
+                :loading="scope.row.status === 'loading'"
                 size="mini"
                 class="buttonPrimaryReverse"
                 @click="handleCheck(scope.row.name)"
@@ -47,29 +58,15 @@
 
 <script>
 import {
-  getRancherStatus,
-  getK8sStatus,
-  getRedmineStatus,
-  getGitlabStatus,
-  getHarborStatus,
-  getHarborCapacity,
-  getSonarqubeStatus
-} from '@/api/monitoring'
-
-const listData = () => ([
-  { name: 'Harbor', status: 'loading' },
-  { name: 'Kubernetes', status: 'loading' },
-  { name: 'Sonarqube', status: 'loading' },
-  { name: 'Redmine', status: 'loading' },
-  { name: 'Rancher', status: 'loading' },
-  { name: 'Gitlab', status: 'loading' }
-])
+  getSystemServerList,
+  getServerStatus,
+  getHarborUsage
+} from '@/api_v2/monitoring'
 
 export default {
   name: 'ServiceMonitoring',
   data() {
     return {
-      isLoading: false,
       listData: [],
       harborStatus: false
     }
@@ -80,27 +77,25 @@ export default {
   },
   methods: {
     async loadData() {
-      this.isLoading = true
-      this.listData = listData()
-      await getHarborStatus().then(async (res) => {
-        if (res.status) {
-          await getHarborCapacity().then((item) => {
-            this.$set(this.listData, 0, this.handleData(item))
+      this.listData = (await getSystemServerList()).data.map((item) => ({
+        name: item,
+        status: 'loading'
+      }))
+      this.listData.forEach((item) => {
+        this.fetchData(item.name)
+      })
+    },
+    async fetchData(name) {
+      await getServerStatus(name.toLowerCase()).then((res) => {
+        const idx = this.listData.findIndex((item) => item.name === res.name)
+        if (res.name === 'Harbor' && res.status) {
+          this.harborStatus = res.status
+          getHarborUsage().then((res) => {
+            this.$set(this.listData, idx, this.handleData(res))
           })
         } else {
-          this.$set(this.listData, 0, this.handleData(res))
+          this.$set(this.listData, idx, this.handleData(res))
         }
-        this.harborStatus = res.status
-      })
-      const apis = [getRancherStatus, getK8sStatus, getRedmineStatus, getSonarqubeStatus, getGitlabStatus]
-      apis.forEach(async (api) => { await this.fetchData(api) })
-
-      this.isLoading = false
-    },
-    async fetchData(api) {
-      await api().then((res) => {
-        this.listData.splice(1, 1)
-        this.listData.push(this.handleData(res))
       })
     },
     handleUpdate() {
@@ -114,7 +109,7 @@ export default {
       })
     },
     handleData(res) {
-      if (res.name === 'Harbor nfs folder storage remain.') { res.name = 'Harbor' }
+      if (res.name === 'Harbor nfs folder storage remain.') res.name = 'Harbor'
       const datetime = this.$dayjs().local(res.datetime).format('YYYY-MM-DD HH:mm:ss')
       res.datetime = datetime
       return res
@@ -125,19 +120,17 @@ export default {
       else return 'danger'
     },
     async handleCheck(name) {
-      const apis = {
-        Harbor: this.harborStatus ? getHarborCapacity : getHarborStatus,
-        Rancher: getRancherStatus,
-        K8s: getK8sStatus,
-        Redmine: getRedmineStatus,
-        Sonarqube: getSonarqubeStatus,
-        Gitlab: getGitlabStatus
+      const idx = this.listData.findIndex((item) => item.name === name)
+      this.$set(this.listData[idx], 'status', 'loading')
+      if (name === 'Harbor' && this.harborStatus) {
+        await getHarborUsage().then((res) => {
+          this.$set(this.listData, idx, this.handleData(res))
+        })
+      } else {
+        await getServerStatus(name.toLowerCase()).then((res) => {
+          this.$set(this.listData, idx, this.handleData(res))
+        })
       }
-      const index = this.listData.findIndex((item) => item.name === name)
-      this.$set(this.listData[index], 'status', 'loading')
-      await apis[name]().then((res) => {
-        this.$set(this.listData, index, this.handleData(res))
-      })
     }
   }
 }

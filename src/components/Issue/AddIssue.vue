@@ -53,12 +53,10 @@
             <el-option
               v-for="item in assigned_to"
               :key="item.login"
-              :label="item.name"
+              :label="`${item.name}（${item.login}）`"
               :value="item.id"
               :class="item.class"
-            >
-              {{ item.name }}{{ `（${item.login}）` }}
-            </el-option>
+            />
           </el-select>
         </el-form-item>
       </el-col>
