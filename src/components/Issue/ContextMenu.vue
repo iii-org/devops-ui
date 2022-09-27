@@ -78,7 +78,7 @@
               {{ $t('general.Save') }}
             </el-button>
             <el-button class="buttonSecondaryReverse" @click="toggleRelationDialog(relationDialog.target)">
-              {{ $t('general.Back') }}
+              {{ $t('general.Close') }}
             </el-button>
           </el-col>
         </el-row>
@@ -136,7 +136,7 @@
               class="buttonSecondaryReverse"
               @click="handleCloseDialog()"
             >
-              {{ $t('general.Back') }}
+              {{ $t('general.Close') }}
             </el-button>
           </el-col>
         </el-row>
