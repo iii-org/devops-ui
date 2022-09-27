@@ -4,7 +4,7 @@ COPY package*.json ./
 COPY yarn.lock ./
 RUN yarn install
 COPY . .
-RUN git rev-parse HEAD > git_commit && echo "1.21.0-dev" > git_tag && git log -1 --date=iso8601 --format="%ad" > git_date
+RUN git rev-parse HEAD > git_commit && echo "1.21.0" > git_tag && git log -1 --date=iso8601 --format="%ad" > git_date
 RUN echo -e "\nVUE_APP_COMMIT='$(cat git_commit)'\nVUE_APP_TAG='$(cat git_tag)'\nVUE_APP_DATE='$(cat git_date)'" >> .env.production
 RUN yarn run build:prod
 
