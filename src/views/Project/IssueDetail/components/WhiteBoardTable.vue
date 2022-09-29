@@ -20,14 +20,14 @@
             slot="reference"
             type="primary"
             style="font-size: 16px"
-            @click="handleEdit(scope.row,true)"
+            @click="handleEdit(scope.row)"
           >
             {{ scope.row.name }}
           </el-link>
           <el-link
             size="small"
             :underline="false"
-            @click="handleEdit(scope.row,true)"
+            @click="handleEdit(scope.row)"
           >
             <em class="ri-external-link-line" />
           </el-link>
@@ -75,7 +75,7 @@ export default {
       this.$emit('update')
     },
     handleEdit(row) {
-      this.$refs.EditBoardDialog.isCollapse = ['1']
+      this.$refs.EditBoardDialog.isCollapse = ['2']
       this.$refs.EditBoardDialog.row = row
       this.$nextTick(() => {
         this.$refs.EditBoardDialog.dialogVisible = true

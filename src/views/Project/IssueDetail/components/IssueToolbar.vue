@@ -48,6 +48,15 @@
           </el-popover>
         </template>
         <el-link
+          class="linkTextColor ml-3"
+          :underline="false"
+          :disabled="isButtonDisabled"
+          @click="toggleExcalidrawDialog"
+        >
+          <em class="el-icon-data-board" />
+          {{ $t('Excalidraw.CreateBoard') }}
+        </el-link>
+        <el-link
           v-if="issueTracker==='Test Plan'"
           class="linkTextColor ml-3"
           :underline="false"
@@ -66,7 +75,8 @@
           class="linkTextColor"
           :underline="false"
         >
-          <em class="el-icon-link" /> Redmine
+          <em class="el-icon-link" />
+          Redmine
         </el-link>
       </div>
     </div>
@@ -147,7 +157,7 @@
       </span>
     </el-dialog>
     <el-dialog
-      :visible.sync="relationDialog"
+      :visible.sync="relationDialogVisible"
       :close-on-click-modal="false"
       width="80%"
       :show-close="false"
@@ -177,11 +187,42 @@
         </el-row>
       </div>
       <SettingRelationIssue
-        v-if="relationDialog"
+        v-if="relationDialogVisible"
         ref="settingRelationIssue"
         :row.sync="row"
         target="Children"
       />
+    </el-dialog>
+    <el-dialog
+      :visible.sync="excalidrawDialogVisible"
+      :title="$t('Excalidraw.CreateBoard')"
+      top="3vh"
+      width="30%"
+      destroy-on-close
+      append-to-body
+    >
+      <el-input
+        v-model="excalidrawName"
+        v-loading="isLoading"
+        :placeholder="$t('RuleMsg.PleaseInput') + $t('Excalidraw.Name')"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button
+          class="buttonSecondaryReverse"
+          :loading="isLoading"
+          @click="toggleExcalidrawDialog"
+        >
+          {{ $t('general.Close') }}
+        </el-button>
+        <el-button
+          type="primary"
+          :loading="isLoading"
+          :disabled="!excalidrawName"
+          @click="handleCreateExcalidraw"
+        >
+          {{ $t('general.Add') }}
+        </el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -190,6 +231,7 @@
 import IssueFileUploader from './IssueFileUploader'
 import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
 import { addIssue, updateIssue } from '@/api/issue'
+import { createExcalidraw } from '@/api_v2/excalidraw'
 import AddIssue from '@/components/Issue/AddIssue'
 import { mapGetters } from 'vuex'
 
@@ -235,8 +277,10 @@ export default {
       isLoading: false,
       uploadDialogVisible: false,
       addTopicDialogVisible: false,
+      relationDialogVisible: false,
+      excalidrawDialogVisible: false,
+      excalidrawName: '',
       specialSymbols: '\ / : * ? " < > | # { } % ~ &',
-      relationDialog: false,
       form: {}
     }
   },
@@ -316,7 +360,11 @@ export default {
       this.$refs['AddIssue'].handleSave()
     },
     toggleRelationDialog() {
-      this.relationDialog = !this.relationDialog
+      this.relationDialogVisible = !this.relationDialogVisible
+    },
+    toggleExcalidrawDialog() {
+      this.excalidrawDialogVisible = !this.excalidrawDialogVisible
+      this.excalidrawName = ''
     },
     onSaveCheckRelationIssue() {
       this.$refs.settingRelationIssue.$refs.issueForm.validate((valid) => {
@@ -354,6 +402,27 @@ export default {
         this.$emit('updateFamilyData')
       } catch (e) {
         console.error(e)
+      }
+    },
+    async handleCreateExcalidraw() {
+      this.isLoading = true
+      try {
+        const sendData = new FormData()
+        sendData.append('project_id', this.projectId)
+        sendData.append('issue_ids', this.issueId)
+        sendData.append('name', this.excalidrawName)
+        await createExcalidraw(sendData)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Added'),
+          type: 'success'
+        })
+        this.$emit('updateWhiteBoard', this.excalidrawName)
+      } catch (error) {
+        console.error(error)
+      } finally {
+        this.isLoading = false
+        this.toggleExcalidrawDialog()
       }
     },
     loadingUpdate(value, upload) {

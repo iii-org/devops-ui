@@ -95,6 +95,7 @@
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
                 @updateFamilyData="getIssueFamilyData(issue)"
+                @updateWhiteBoard="updateWhiteBoard"
               />
             </el-col>
           </el-row>
@@ -167,7 +168,7 @@
             </el-col>
             <el-col :span="24">
               <el-tabs
-                ref="IssueNotesDialog"
+                v-model="issueTabs"
                 type="border-card"
               >
                 <el-tab-pane :label="$t('Issue.History')">
@@ -194,6 +195,7 @@
                 <el-tab-pane
                   v-if="issue.excalidraw && issue.excalidraw.length !== 0"
                   :label="$t('Excalidraw.Whiteboard')"
+                  name="whiteBoard"
                 >
                   <WhiteBoardTable
                     ref="WhiteBoardTable"
@@ -438,7 +440,8 @@ export default {
       projectRelationList: [],
       isShowDialog: false,
       storagePId: '',
-      issueProject: {}
+      issueProject: {},
+      issueTabs: ''
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -1213,6 +1216,12 @@ export default {
     },
     onContextMenu({ row, column, event }) {
       this.handleContextMenu(row, column, event)
+    },
+    async updateWhiteBoard(excalidrawName) {
+      await this.fetchIssueLink()
+      this.issueTabs = 'whiteBoard'
+      const row = this.issue.excalidraw.find((item) => item.name === excalidrawName)
+      this.$refs['WhiteBoardTable'].handleEdit(row)
     },
     sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms))
