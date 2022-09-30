@@ -80,6 +80,7 @@ stages:
       - pluginchart
       - pict
       - login
+      - issuewhiteboard
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -104,6 +105,7 @@ stages:
       - pluginchart
       - pict
       - login
+      - issuewhiteboard
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -124,6 +126,7 @@ stages:
       - pluginchart
       - pict
       - login
+      - issuewhiteboard
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -160,6 +163,7 @@ stages:
       - pluginchart
       - pict
       - login
+      - issuewhiteboard
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -189,6 +193,7 @@ stages:
       - pluginchart
       - pict
       - login
+      - issuewhiteboard
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -216,6 +221,7 @@ stages:
       - pluginchart
       - pict
       - login
+      - issuewhiteboard
 - name: Test--ZAP
   iiidevops: zap
   steps:
