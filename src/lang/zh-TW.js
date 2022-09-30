@@ -1305,6 +1305,8 @@ export default {
     SystemConfig: '系統參數',
     Content: '狀態 / 設定內容',
     FileType: '檔案上傳類型',
+    FileSize: '檔案上傳大小',
+    FileSizeDescription: '檔案單次上傳大小限制',
     GitLabExternalAccess: 'GitLab對外連線',
     UploadFileTypes: '檔案上傳類型設定',
     FileExtension: '副檔名',

@@ -5,17 +5,16 @@
       <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
       <div class="text-xs text-gray-400">
         <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
-        <div>{{ $t('File.AllowedFileTypes') }}: {{ fileType }}</div>
+        <div>{{ $t('File.AllowedFileTypes') }}: {{ fileTypeLimit }}</div>
       </div>
     </div>
   </el-upload>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {
-  getFileTypeLimit,
-  getFileTypeList,
-  isAllowedFileTypeList,
+  isAllowedTypes,
   fileSizeToMB,
   containSpecialChar
 } from '@/utils/extension'
@@ -24,31 +23,23 @@ export default {
   name: 'IssueFileUploader',
   data() {
     return {
-      uploadFileList: [],
-      fileSizeLimit: '5MB',
-      fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
-      fileTypeList: {}
+      uploadFileList: []
     }
   },
-  mounted() {
-    this.fetchFileData()
+  computed: {
+    ...mapGetters(['fileSizeLimit', 'fileTypeLimit'])
   },
-
   methods: {
-    async fetchFileData() {
-      this.fileType = await getFileTypeLimit()
-      this.fileTypeList = await getFileTypeList()
-    },
     async handleChange(file, fileList) {
       const { raw, size, name } = file
-      if (!isAllowedFileTypeList(this.fileTypeList, raw.type)) {
+      if (!isAllowedTypes(raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
           type: 'warning'
         })
         fileList.splice(fileList.length - 1, 1)
-      } else if (fileSizeToMB(size) > 5) {
+      } else if (fileSizeToMB(size) > Number(this.fileSizeLimit.replace(/\D/g, ''))) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.FileSizeLimit', { size: this.fileSizeLimit }),

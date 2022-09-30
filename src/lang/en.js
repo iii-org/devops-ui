@@ -1313,6 +1313,8 @@ export default {
     SystemConfig: 'System Config',
     Content: 'Status / Content',
     FileType: 'File type',
+    FileSize: 'File size',
+    FileSizeDescription: 'Maximum size of each uploading file',
     GitLabExternalAccess: 'GitLab external access',
     UploadFileTypes: 'Upload file types',
     FileExtension: 'File extension',

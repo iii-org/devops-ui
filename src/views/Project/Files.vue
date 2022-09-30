@@ -179,7 +179,12 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button class="buttonSecondaryReverse" @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button
+          class="buttonSecondaryReverse"
+          @click="dialogVisible = false"
+        >
+          {{ $t('general.Cancel') }}
+        </el-button>
         <el-button
           class="buttonPrimary"
           :loading="memberConfirmLoading"
@@ -192,13 +197,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {
-  getFileTypeLimit,
-  getFileTypeList,
-  isAllowedFileTypeList,
+  isAllowedTypes,
   fileSizeToMB,
   containSpecialChar
-} from '@/utils/extension.js'
+} from '@/utils/extension'
 import {
   deleteProjectFile,
   downloadProjectFile,
@@ -230,11 +234,11 @@ export default {
       loadingInstance: '',
       isDownloading: false,
       searchKeys: ['filename'],
-      fileSizeLimit: '20 MB',
-      fileTypeLimit: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
-      fileTypeList: {},
       specialSymbols: '* ? " < > | # { } % ~ &'
     }
+  },
+  computed: {
+    ...mapGetters(['fileSizeLimit', 'fileTypeLimit'])
   },
   methods: {
     showNoProjectWarning() {
@@ -254,8 +258,6 @@ export default {
         getProjectVersion(this.selectedProjectId)
       ])
       this.versionList = res[1].data.versions
-      this.fileTypeLimit = await getFileTypeLimit()
-      this.fileTypeList = await getFileTypeList()
       return this.sortFiles(res[0].data.files)
     },
     sortFiles(files) {
@@ -298,14 +300,14 @@ export default {
     },
     async handleChange(file, fileList) {
       const { raw, size, name } = file
-      if (!isAllowedFileTypeList(this.fileTypeList, raw.type)) {
+      if (!isAllowedTypes(raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
           type: 'warning'
         })
         this.$refs['upload'].clearFiles()
-      } else if (fileSizeToMB(size) > 20) {
+      } else if (fileSizeToMB(size) > Number(this.fileSizeLimit.replace(/\D/g, ''))) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.FileSizeLimit', { size: this.fileSizeLimit }),
