@@ -1429,6 +1429,8 @@ export default {
     Reference: '風險敍述參照',
     Vulnerability: '弱點項目​',
     Package: '資源套件​​',
+    Licenses: '軟體授權條款',
+    Type: '安裝類別',
     CurrentVersion: '目前版本​',
     FixedVersion: '已修復版本​',
     Success: '@:general.Success',

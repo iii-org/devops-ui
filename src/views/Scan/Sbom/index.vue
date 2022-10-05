@@ -312,7 +312,7 @@ export default {
     fetchTestReport(row, item) {
       getSbomDownloadFile(row.id, { file_name: item })
         .then((res) => {
-          const url = window.URL.createObjectURL(new Blob([res]))
+          const url = window.URL.createObjectURL(res)
           const link = document.createElement('a')
           link.href = url
           link.setAttribute('download', item)

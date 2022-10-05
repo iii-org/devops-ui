@@ -1438,6 +1438,8 @@ export default {
     Reference: 'Reference',
     Vulnerability: 'Vulnerability',
     Package: 'Package',
+    Licenses: 'Licenses',
+    Type: 'Type',
     CurrentVersion: 'Current Version',
     FixedVersion: 'Fixed in Version',
     Success: '@:general.Success',
