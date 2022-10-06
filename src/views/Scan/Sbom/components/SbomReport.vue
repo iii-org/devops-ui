@@ -40,6 +40,7 @@
               {{ branch }} /<svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
               {{ commitId }}
             </li>
+            <li>{{ $t('Sbom.PackageCount') }}: {{ packageCount }}</li>
           </ul>
           <!-- white box test -->
           <div
@@ -116,6 +117,7 @@
             >
               <template slot-scope="{row}">
                 <el-link
+                  type="primary"
                   target="_blank"
                   :href="row.dataSource"
                 >
@@ -138,14 +140,49 @@
               min-width="100"
             >
               <template slot-scope="{row}">
-                <ul class="text-left">
-                  <li
-                    v-for="item in row.licenses"
-                    :key="item"
+                <el-tooltip
+                  v-if="row.licenses"
+                  effect="dark"
+                  placement="right"
+                  :disabled="row.licenses.length < 3"
+                >
+                  <ul
+                    v-if="row.licenses.length > 2"
+                    slot="content"
+                    class="text-left"
+                    style="
+                      margin: 0;
+                      padding-left: 1rem;
+                    "
                   >
-                    {{ item }}
-                  </li>
-                </ul>
+                    <li
+                      v-for="(item, index) in row.licenses"
+                      :key="index"
+                    >
+                      {{ item }}
+                    </li>
+                  </ul>
+                  <ul
+                    class="text-left"
+                    style="
+                      margin: 0;
+                      padding-left: 1rem;
+                    "
+                  >
+                    <li
+                      v-for="(item, index) in row.licenses.slice(0,2)"
+                      :key="index"
+                    >
+                      {{ item }}
+                      <div
+                        v-if="row.licenses.length > 2 && index === 1"
+                        class="font-bold"
+                      >
+                        more . . .
+                      </div>
+                    </li>
+                  </ul>
+                </el-tooltip>
               </template>
             </el-table-column>
             <el-table-column
@@ -161,17 +198,53 @@
             <el-table-column
               :label="$t('Docker.FixedVersion')"
               prop="versions"
+              align="center"
               min-width="100"
             >
               <template slot-scope="{row}">
-                <ul class="text-left">
-                  <li
-                    v-for="item in row.versions"
-                    :key="item"
+                <el-tooltip
+                  v-if="row.versions"
+                  effect="dark"
+                  placement="left"
+                  :disabled="row.versions.length < 3"
+                >
+                  <ul
+                    v-if="row.versions.length > 2"
+                    slot="content"
+                    class="text-left"
+                    style="
+                      margin: 0;
+                      padding-left: 1rem;
+                    "
                   >
-                    {{ item }}
-                  </li>
-                </ul>
+                    <li
+                      v-for="(item, index) in row.versions"
+                      :key="index"
+                    >
+                      {{ item }}
+                    </li>
+                  </ul>
+                  <ul
+                    class="text-left"
+                    style="
+                      margin: 0;
+                      padding-left: 1rem;
+                    "
+                  >
+                    <li
+                      v-for="(item, index) in row.versions.slice(0,2)"
+                      :key="index"
+                    >
+                      {{ item }}
+                      <div
+                        v-if="row.versions.length > 2 && index === 1"
+                        class="font-bold"
+                      >
+                        more . . .
+                      </div>
+                    </li>
+                  </ul>
+                </el-tooltip>
               </template>
             </el-table-column>
             <template slot="empty">
@@ -182,7 +255,7 @@
             :total="listQuery.total"
             :page="listQuery.current"
             :limit="listQuery.per_page"
-            :page-sizes="[50, 100, 200, 300]"
+            :page-sizes="[50, 100, 200, 300, listQuery.total]"
             :layout="'total, sizes, prev, pager, next'"
             @pagination="onPagination"
           />
@@ -246,6 +319,9 @@ export default {
     },
     sbomId() {
       return this.$route.params.sbomId
+    },
+    packageCount() {
+      return this.$route.params.packageCount
     }
   },
   watch: {
@@ -387,5 +463,9 @@ export default {
   padding-top: 20px;
   // outline: solid 8px $appMainBg;
   box-shadow: -20px 0px 0px 0px $appMainBg, 20px 0px 0px 0px $appMainBg;
+}
+
+>>> .el-link--inner{
+  border-bottom: 1px solid #409eff;
 }
 </style>

@@ -367,7 +367,7 @@ export default {
   Sbom: {
     Branch: '@:general.Branch',
     Commit: 'Commit',
-    PackageCount: '套件數',
+    PackageCount: '套件數量',
     HighSeverity: '高風險',
     MediumSeverity: '中風險',
     LowSeverity: '低風險',
@@ -1038,7 +1038,7 @@ export default {
     low: '低風險'
   },
   Anchore: {
-    count: '套件數',
+    count: '套件數量',
     high: '高風險',
     medium: '中風險',
     low: '低風險'
