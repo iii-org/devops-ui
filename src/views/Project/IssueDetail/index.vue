@@ -171,17 +171,21 @@
                 v-model="issueTabs"
                 type="border-card"
               >
-                <el-tab-pane :label="$t('Issue.History')">
+                <el-tab-pane
+                  :label="$t('Issue.History')"
+                  name="history"
+                >
                   <IssueNotesDialog
                     :height="dialogHeight"
                     :data="journals"
                     @show-parent-issue="onRelationIssueDialog"
                   />
                 </el-tab-pane>
-                <el-tab-pane>
-                  <template #label>
+                <el-tab-pane name="commitLog">
+                  <template slot="label">
                     <span>
-                      <em class="ri-git-commit-line" />{{ $t('Issue.Commit') }}
+                      <em class="ri-git-commit-line" />
+                      {{ $t('Issue.Commit') }}
                     </span>
                   </template>
                   <AdminCommitLog
@@ -194,11 +198,17 @@
                 </el-tab-pane>
                 <el-tab-pane
                   v-if="issue.excalidraw && issue.excalidraw.length !== 0"
-                  :label="$t('Excalidraw.Whiteboard')"
                   name="whiteBoard"
                 >
+                  <template slot="label">
+                    <span>
+                      <em class="el-icon-data-line" />
+                      {{ $t('Excalidraw.Whiteboard') }}
+                    </span>
+                  </template>
                   <WhiteBoardTable
                     ref="WhiteBoardTable"
+                    :issue-id="issueId"
                     :excalidraw-data="issue.excalidraw"
                     :height="dialogHeight"
                     @update="fetchIssueLink"
@@ -441,7 +451,7 @@ export default {
       isShowDialog: false,
       storagePId: '',
       issueProject: {},
-      issueTabs: ''
+      issueTabs: 'history'
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -539,6 +549,9 @@ export default {
           this.isShowDialog = true
         }
       }
+    },
+    'issue.excalidraw'(val) {
+      if (val.length === 0) this.issueTabs = 'history'
     }
   },
   async mounted() {

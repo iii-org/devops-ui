@@ -410,14 +410,14 @@ export default {
         const sendData = new FormData()
         sendData.append('project_id', this.projectId)
         sendData.append('issue_ids', this.issueId)
-        sendData.append('name', this.excalidrawName)
+        sendData.append('name', this.excalidrawName.trim())
         await createExcalidraw(sendData)
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Added'),
           type: 'success'
         })
-        this.$emit('updateWhiteBoard', this.excalidrawName)
+        this.$emit('updateWhiteBoard', this.excalidrawName.trim())
       } catch (error) {
         console.error(error)
       } finally {
