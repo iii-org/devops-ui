@@ -169,7 +169,57 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "devops-pm"
+                                        "value": "IIIdevops123!"
+                                    }
+                                ],
+                                "tac": ""
+                            },
+                            "pwt": {
+                                "pbw": 0,
+                                "paw": 0,
+                                "prw": 0,
+                                "pdw": 0
+                            },
+                            "comment": false
+                        },
+                        {
+                            "name": "sendKeys",
+                            "target": {
+                                "usedIndex": 0,
+                                "options": [
+                                    {
+                                        "type": "tac",
+                                        "value": "(<input/>)"
+                                    },
+                                    {
+                                        "type": "name",
+                                        "value": "name=password"
+                                    },
+                                    {
+                                        "type": "xpath:idRelative",
+                                        "value": "//div[@id='app']/div[1]/form[1]/div[3]/div[1]/div[1]/input[1]"
+                                    },
+                                    {
+                                        "type": "xpath:position",
+                                        "value": "//div[3]/div[1]/div[1]/input[1]"
+                                    },
+                                    {
+                                        "type": "xpath:attributes",
+                                        "value": "//input[@name='password']"
+                                    },
+                                    {
+                                        "type": "css:position",
+                                        "value": "css=input[name=\"password\"]"
+                                    }
+                                ],
+                                "tac": "TAC_LOCATOR:N4IgLghgxgtAbgUwE4GcCWB7AdiAXCARgDpiCQAaEADwAcIwALPEAehYBM04BtAATXYBeAOQQaNYQF0OXbgWkAzDEgC2c6Zx4BmDbPkye+tFhoBXMOoogMYZoDHtQD0eVjBDyhIAcwByEFQmbGZraUkABGxuwIVMwATFZgAJ40-vh0KCgA7srsVhDmGFAYKjQANghgKdY4lKXQCAwYJZFI9k6UWL6VaZnZVlAlEOnMCCUwgeYA+hPGWMhWJQX0mFgA8kjNzGQAvpQFdG7gEN6dzJpW7PQQ8DBaAAyhAOwAbACst3H4fQND+CNjJuZ5oswMs1ht8NtdlAaC1cFhTCUSlCcHCEUjrFAoHhuJIobZ8IBmPUA+mEAAkA3m6AU0UQFsgA"
+                            },
+                            "value": {
+                                "usedIndex": 0,
+                                "options": [
+                                    {
+                                        "type": "other",
+                                        "value": "jonathan"
                                     }
                                 ],
                                 "tac": ""
@@ -220,56 +270,6 @@
                                     {
                                         "type": "other",
                                         "value": "xyz"
-                                    }
-                                ],
-                                "tac": ""
-                            },
-                            "pwt": {
-                                "pbw": 0,
-                                "paw": 0,
-                                "prw": 0,
-                                "pdw": 0
-                            },
-                            "comment": false
-                        },
-                        {
-                            "name": "sendKeys",
-                            "target": {
-                                "usedIndex": 0,
-                                "options": [
-                                    {
-                                        "type": "tac",
-                                        "value": "(<input/>)"
-                                    },
-                                    {
-                                        "type": "name",
-                                        "value": "name=password"
-                                    },
-                                    {
-                                        "type": "xpath:idRelative",
-                                        "value": "//div[@id='app']/div[1]/form[1]/div[3]/div[1]/div[1]/input[1]"
-                                    },
-                                    {
-                                        "type": "xpath:position",
-                                        "value": "//div[3]/div[1]/div[1]/input[1]"
-                                    },
-                                    {
-                                        "type": "xpath:attributes",
-                                        "value": "//input[@name='password']"
-                                    },
-                                    {
-                                        "type": "css:position",
-                                        "value": "css=input[name=\"password\"]"
-                                    }
-                                ],
-                                "tac": "TAC_LOCATOR:N4IgLghgxgtAbgUwE4GcCWB7AdiAXCARgDpiCQAaEADwAcIwALPEAehYBM04BtAATXYBeAOQQaNYQF0OXbgWkAzDEgC2c6Zx4BmDbPkye+tFhoBXMOoogMYZoDHtQD0eVjBDyhIAcwByEFQmbGZraUkABGxuwIVMwATFZgAJ40-vh0KCgA7srsVhDmGFAYKjQANghgKdY4lKXQCAwYJZFI9k6UWL6VaZnZVlAlEOnMCCUwgeYA+hPGWMhWJQX0mFgA8kjNzGQAvpQFdG7gEN6dzJpW7PQQ8DBaAAyhAOwAbACst3H4fQND+CNjJuZ5oswMs1ht8NtdlAaC1cFhTCUSlCcHCEUjrFAoHhuJIobZ8IBmPUA+mEAAkA3m6AU0UQFsgA"
-                            },
-                            "value": {
-                                "usedIndex": 0,
-                                "options": [
-                                    {
-                                        "type": "other",
-                                        "value": "${KEY_ENTER}"
                                     }
                                 ],
                                 "tac": ""
@@ -704,7 +704,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "${KEY_ENTER}"
+                                        "value": "xyz"
                                     }
                                 ],
                                 "tac": ""
@@ -8776,7 +8776,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "${KEY_ENTER}"
+                                        "value": "xyz"
                                     }
                                 ],
                                 "tac": ""
@@ -8956,7 +8956,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "${KEY_ENTER}"
+                                        "value": "xyz"
                                     }
                                 ],
                                 "tac": ""
@@ -9666,7 +9666,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "${KEY_ENTER}"
+                                        "value": "xyz"
                                     }
                                 ],
                                 "tac": ""
@@ -11234,7 +11234,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "${KEY_ENTER}"
+                                        "value": "xyz"
                                     }
                                 ],
                                 "tac": ""
@@ -12174,7 +12174,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "${KEY_ENTER}"
+                                        "value": "xyz"
                                     }
                                 ],
                                 "tac": ""
