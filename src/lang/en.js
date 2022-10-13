@@ -169,7 +169,6 @@ export default {
     Confirm: 'Confirm',
     Save: 'Save',
     Cancel: 'Cancel',
-    Restore: 'Restore',
     SearchName: 'Search Name',
     SearchBranch: 'Search Branch',
     Description: 'Description',
@@ -272,7 +271,6 @@ export default {
     Submit: 'Submit',
     TemporarySaved: 'Temporary Saved successful',
     Saved: 'Saved successful',
-    Restored: 'Restored successful',
     NoEmpty: 'Content must not be empty',
     Same: 'The new value is same with old value.',
     SwitchLanguage: 'Switch Language Success',
@@ -291,7 +289,6 @@ export default {
     confirmClose: 'Are you sure to @:(general.Close)?',
     confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？',
     confirmDeleteSideex: 'Are you sure you want to delete all configurations and records related to combined testing of this project?',
-    confirmRestore: 'Are you sure to @:(general.Restore)?',
     confirmEditProject: 'Applying a new template will replace this project repository, and this is unrecoverable. Please confirm the action.',
     confirmVariableSetting: 'Attention, You still have unset variables！ Are you sure you want to generate test data directly？',
     logoutNotifications: 'The session has timed out. Please click re-login button to login back again.',
@@ -1403,8 +1400,7 @@ export default {
     Whiteboard: 'Whiteboard',
     Name: 'Whiteboard Name',
     CreateBoard: 'Create Whiteboard',
-    EditBoard: 'Edit Whiteboard',
-    RestoreBoard: 'RestoreBoard'
+    EditBoard: 'Edit Whiteboard'
   },
   IssueMatrix: {
     Relations: 'Relationship',

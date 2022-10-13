@@ -3,7 +3,7 @@
     :title="$t('Excalidraw.CreateBoard')"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
-    :before-close="onDialogClosed"
+    @closed="onDialogClosed"
   >
     <ExcalidrawForm
       ref="ExcalidrawForm"
@@ -42,14 +42,9 @@ const formTemplate = () => ({
 export default {
   name: 'CreateBoardDialog',
   components: { ExcalidrawForm },
-  props: {
-    dialogVisible: {
-      type: Boolean,
-      default: false
-    }
-  },
   data() {
     return {
+      dialogVisible: false,
       isLoading: false,
       form: formTemplate(),
       row: {},
@@ -100,8 +95,32 @@ export default {
     onDialogClosed() {
       this.form = formTemplate()
       this.$refs['ExcalidrawForm'].$refs['form'].resetFields()
-      this.$emit('update:dialogVisible', false)
+      this.dialogVisible = false
     }
   }
 }
 </script>
+
+<style lang="scss">
+.custom-list {
+  .el-row {
+    font-size: 0;
+  }
+
+  .el-col {
+    float: none;
+    padding: 0 10px;
+    vertical-align: top;
+    display: inline-block;
+    @media (max-width: 767px) {
+      width: 100%;
+      display: block;
+    }
+  }
+
+  .el-form-item__label {
+    float: none;
+    text-align: left;
+  }
+}
+</style>

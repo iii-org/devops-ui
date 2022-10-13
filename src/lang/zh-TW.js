@@ -169,7 +169,6 @@ export default {
     Confirm: '確認',
     Save: '儲存',
     Cancel: '取消',
-    Restore: '復原',
     SearchName: '搜尋名稱',
     SearchBranch: '搜尋分支',
     Description: '描述',
@@ -272,7 +271,6 @@ export default {
     Submit: '已送出',
     TemporarySaved: '已暫存',
     Saved: '已儲存',
-    Restored: '已還原',
     NoEmpty: '內容不得為空',
     Same: '內容相同，未變更。',
     SwitchLanguage: '更換語言成功',
@@ -291,7 +289,6 @@ export default {
     confirmClose: '確定@:(general.Close)嗎？',
     confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？',
     confirmDeleteSideex: '確定刪除該專案所有組合測試相關的設定檔及紀錄嗎？',
-    confirmRestore: '確定@:(general.Restore)嗎？',
     confirmEditProject: '範本更換，將直接取代成您選擇的範本程式，請問確認要覆蓋嗎？',
     confirmVariableSetting: '注意，您尚有變數未設定！要直接產生測試資料嗎？',
     logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。',
@@ -1394,8 +1391,7 @@ export default {
     Whiteboard: '協作白板',
     Name: '白板名稱',
     CreateBoard: '新增白板',
-    EditBoard: '編輯白板',
-    RestoreBoard: '版本還原'
+    EditBoard: '編輯白板'
   },
   IssueMatrix: {
     Relations: '關係',
