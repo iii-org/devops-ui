@@ -80,10 +80,10 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - pict
       - login
       - issuewhiteboard
       - uploadfilesize
+      - restorewhiteboard
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -106,10 +106,10 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - pict
       - login
       - issuewhiteboard
       - uploadfilesize
+      - restorewhiteboard
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -128,10 +128,10 @@ stages:
       - master
       - errorcode
       - pluginchart
-      - pict
       - login
       - issuewhiteboard
       - uploadfilesize
+      - restorewhiteboard
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -166,10 +166,10 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - pict
       - login
       - issuewhiteboard
       - uploadfilesize
+      - restorewhiteboard
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -197,10 +197,10 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - pict
       - login
       - issuewhiteboard
       - uploadfilesize
+      - restorewhiteboard
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -226,10 +226,10 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - pict
       - login
       - issuewhiteboard
       - uploadfilesize
+      - restorewhiteboard
 - name: Test--Anchore SBOM
   iiidevops: anchore
   steps:
@@ -334,4 +334,3 @@ stages:
     branch:
       include:
       - develop
-      - pict
