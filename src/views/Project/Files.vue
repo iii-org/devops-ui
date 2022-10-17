@@ -238,7 +238,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['fileSizeLimit', 'fileTypeLimit'])
+    ...mapGetters(['fileSizeLimit', 'fileTypeLimit', 'allowedFileType'])
   },
   methods: {
     showNoProjectWarning() {
@@ -329,7 +329,7 @@ export default {
       this.$refs['fileForm'].validate(async (valid) => {
         if (valid) {
           const data = this.fileForm
-          const filetype = this.fileTypeList[this.uploadFileList[0].raw.type]
+          const filetype = this.allowedFileType[this.uploadFileList[0].raw.type]
           const form = new FormData()
           if (data.name !== '') {
             form.append('file', this.uploadFileList[0].raw, `${data.name}${filetype}`)

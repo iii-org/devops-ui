@@ -25,7 +25,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import {
-  isAllowedTypes,
+  isEmptyOrTXT,
   fileSizeToMB,
   containSpecialChar
 } from '@/utils/extension'
@@ -41,11 +41,12 @@ export default {
   data() {
     return {
       limit: 1,
-      uploadFileList: []
+      uploadFileList: [],
+      fileTypeLimit: 'TXT'
     }
   },
   computed: {
-    ...mapGetters(['fileSizeLimit', 'fileTypeLimit'])
+    ...mapGetters(['fileSizeLimit'])
   },
   methods: {
     async handleChange(file, fileList) {
@@ -53,7 +54,7 @@ export default {
       const unsupportedFileFormatWarning = this.$t('Notify.UnsupportedFileFormat')
       const fileSizeLimitWarning = this.$t('Notify.FileSizeLimit', { size: this.fileSizeLimit })
       const FileNameLimitWarning = this.$t('Notify.FileNameLimit')
-      if (!isAllowedTypes(raw.type)) {
+      if (!isEmptyOrTXT(raw.type)) {
         this.showWarning(unsupportedFileFormatWarning)
         fileList.splice(fileList.length - 1, 1)
       } else if (fileSizeToMB(size) > Number(this.fileSizeLimit.replace(/\D/g, ''))) {

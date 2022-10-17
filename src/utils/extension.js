@@ -5,6 +5,14 @@ export const isAllowedTypes = fileType => {
   return map[fileType] !== undefined
 }
 
+export const isEmptyOrTXT = fileType => {
+  const map = {
+    '': '',
+    'text/plain': '.txt'
+  }
+  return map[fileType] !== undefined
+}
+
 export const isJSON = fileType => {
   const map = {
     'application/json': '.json'
