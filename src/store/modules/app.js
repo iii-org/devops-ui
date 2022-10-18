@@ -1,6 +1,12 @@
 import Cookies from 'js-cookie'
 import { getLanguage } from '@/lang'
 import { getRoleList } from '@/api/user'
+import {
+  getUploadFileSize,
+  updateUploadFileSize,
+  getUploadFileType,
+  getUploadFileTypeList
+} from '@/api_v2/systemParameter'
 
 const state = {
   sidebar: {
@@ -9,7 +15,10 @@ const state = {
   },
   device: 'desktop',
   language: getLanguage(),
-  roleList: []
+  roleList: [],
+  fileSize: '',
+  fileType: '',
+  fileTypeList: ''
 }
 
 const mutations = {
@@ -36,6 +45,15 @@ const mutations = {
   },
   SET_ROLE_LIST: (state, roleList) => {
     state.roleList = roleList
+  },
+  SET_FILE_SIZE: (state, fileSize) => {
+    state.fileSize = fileSize
+  },
+  SET_FILE_TYPE: (state, fileType) => {
+    state.fileType = fileType
+  },
+  SET_FILE_TYPE_LIST: (state, fileTypeList) => {
+    state.fileTypeList = fileTypeList
   }
 }
 
@@ -60,6 +78,45 @@ const actions = {
         return Promise.reject(e)
       })
     commit('SET_ROLE_LIST', result)
+  },
+  async setFileSize({ commit }) {
+    const result = await getUploadFileSize()
+      .then((res) => {
+        return Promise.resolve(res.upload_file_size)
+      }).catch((e) => {
+        return Promise.reject(e)
+      })
+    commit('SET_FILE_SIZE', result + 'MB')
+  },
+  async updateFileSize({ commit }, data) {
+    await updateUploadFileSize(data)
+      .then(() => {
+        commit('SET_FILE_SIZE', data.upload_file_size + 'MB')
+      }).catch((error) => {
+        console.error(error.toString())
+      })
+  },
+  async setFileType({ commit }) {
+    const result = await getUploadFileType()
+      .then((res) => {
+        return Promise.resolve(res.data.filter((item) => item !== '').toString())
+      }).catch((e) => {
+        return Promise.reject(e)
+      })
+    commit('SET_FILE_TYPE', result)
+  },
+  async setFileTypeList({ commit }) {
+    const result = await getUploadFileTypeList()
+      .then((res) => {
+        return Promise.resolve(
+          Object.assign({}, ...res.data.upload_file_types.map((item) => ({
+            [item['MIME Type']] : item['file extension']
+          })))
+        )
+      }).catch((e) => {
+        return Promise.reject(e)
+      })
+    commit('SET_FILE_TYPE_LIST', result)
   }
 }
 

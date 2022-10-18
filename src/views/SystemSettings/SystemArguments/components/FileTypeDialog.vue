@@ -1,7 +1,6 @@
 <template>
   <el-dialog
     :visible.sync="dialogVisible"
-    height="100px"
     @closed="onDialogClosed"
   >
     <template slot="title" class="header-title">
@@ -30,7 +29,7 @@
         </div>
       </div>
       <el-divider class="my-2" />
-      <div v-show="isAdding">
+      <div v-show="isAdding" class="m-5">
         <el-form ref="form" :model="form" :rules="formRules" size="mini">
           <el-row :gutter="20">
             <el-col :span="24" :sm="12" :md="8" :lg="6">
@@ -93,18 +92,16 @@
         <el-table-column
           prop="fileExtension"
           :label="$t('SystemConfigs.FileExtension')"
-          min-width="150"
+          min-width="100"
         >
           <template slot-scope="scope">
             <el-form-item
               v-show="scope.row.edit"
               :prop="'pagedData.'+ scope.$index +'.fileExtension'"
               :rules="formTableRules.fileExtension"
+              :style="isSaved ? 'margin-bottom: 0;' : ''"
             >
-              <el-input
-                v-model="scope.row.fileExtension"
-                type="text"
-              />
+              <el-input v-model="scope.row.fileExtension" />
             </el-form-item>
             <span v-show="!scope.row.edit">{{ scope.row.fileExtension }}</span>
           </template>
@@ -119,11 +116,9 @@
               v-show="scope.row.edit"
               :prop="'pagedData.'+ scope.$index +'.mimeType'"
               :rules="formTableRules.mimeType"
+              :style="isSaved ? 'margin-bottom: 0;' : ''"
             >
-              <el-input
-                v-model="scope.row.mimeType"
-                type="text"
-              />
+              <el-input v-model="scope.row.mimeType" />
             </el-form-item>
             <span v-show="!scope.row.edit">{{ scope.row.mimeType }}</span>
           </template>
@@ -131,18 +126,16 @@
         <el-table-column
           prop="name"
           :label="$t('general.Name')"
-          width="150"
+          min-width="150"
         >
           <template slot-scope="scope">
             <el-form-item
               v-show="scope.row.edit"
               :prop="'pagedData.'+ scope.$index +'.name'"
               :rules="formTableRules.name"
+              :style="isSaved ? 'margin-bottom: 0;' : ''"
             >
-              <el-input
-                v-model="scope.row.name"
-                type="text"
-              />
+              <el-input v-model="scope.row.name" />
             </el-form-item>
             <span v-show="!scope.row.edit">{{ scope.row.name }}</span>
           </template>
@@ -219,14 +212,15 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import MixinElTable from '@/mixins/MixinElTable'
 import {
-  getUploadFileType,
+  getUploadFileTypeList,
   addUploadFileType,
-  editUploadFileType,
+  updateUploadFileType,
   deleteUploadFileType
-} from '@/api_v2/fileType'
+} from '@/api_v2/systemParameter'
 
 const defaultFormData = () => ({
   name: '',
@@ -303,8 +297,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions('app', ['setFileType', 'setFileTypeList']),
     async fetchData() {
-      const res = await getUploadFileType()
+      const res = await getUploadFileTypeList()
       const uploadFileTypesList = res.data.upload_file_types.map((item) => ({
         id: item.id,
         name: item.name,
@@ -366,6 +361,7 @@ export default {
               message: this.$t('Notify.Added'),
               type: 'success'
             })
+            this.updateFileTypeStatus()
             this.handleCancel()
             await this.loadData()
           } catch (error) {
@@ -403,6 +399,7 @@ export default {
           message: this.$t('Notify.Deleted'),
           type: 'success'
         })
+        this.updateFileTypeStatus()
         await this.loadData()
       } catch (error) {
         console.error(error)
@@ -426,12 +423,13 @@ export default {
         sendData.append('mimetype', row.mimeType)
         sendData.append('file_extension', row.fileExtension)
         try {
-          await editUploadFileType(row.id, sendData)
+          await updateUploadFileType(row.id, sendData)
           this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Updated'),
             type: 'success'
           })
+          this.updateFileTypeStatus()
           this.isSaved = true
           await this.loadData()
         } catch (error) {
@@ -455,6 +453,10 @@ export default {
       row.fileExtension = this.originData[i].fileExtension
       row.edit = this.originData[i].edit
     },
+    updateFileTypeStatus() {
+      this.setFileType()
+      this.setFileTypeList()
+    },
     onDialogClosed() {
       this.$nextTick(() => {
         this.handleCancel()
@@ -475,9 +477,5 @@ export default {
   content:'*';
   color:#ff4949;
   margin-right: 4px;
-}
-
->>> .el-form-item__content {
-  display: inline-block;
 }
 </style>

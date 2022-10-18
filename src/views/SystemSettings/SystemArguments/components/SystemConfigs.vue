@@ -40,12 +40,12 @@
         align="center"
       >
         <template slot-scope="scope">
-          <span v-if="scope.row.type === 'fileType'">
+          <span v-if="scope.row.type === 'string'">
             {{ scope.row.content }}
           </span>
           <span v-else>
-            <el-tag :type="scope.row.disabled === true ? 'success' : 'danger'">
-              <span>{{ scope.row.disabled === true ? $t('general.Enable') : $t('general.Disable') }}</span>
+            <el-tag :type="scope.row.content === true ? 'success' : 'danger'">
+              <span>{{ scope.row.content === true ? $t('general.Enable') : $t('general.Disable') }}</span>
             </el-tag>
           </span>
         </template>
@@ -57,11 +57,11 @@
       >
         <template slot-scope="scope">
           <el-button
-            v-if="scope.row.type === 'fileType'"
+            v-if="scope.row.type === 'string'"
             size="mini"
             type="primary"
             icon="el-icon-edit"
-            @click="handleEdit()"
+            @click="scope.row.method"
           >
             {{ $t('general.Edit') }}
           </el-button>
@@ -69,22 +69,21 @@
             v-else
             size="mini"
             :disabled="gitlabDomainIP"
-            @click="handleActive(!scope.row.disabled)"
+            @click="scope.row.method(!scope.row.content)"
           >
             <div v-if="gitlabDomainIP">
-              {{ !scope.row.disabled ? $t('general.Enable') : $t('general.Disable') }}
+              {{ !scope.row.content ? $t('general.Enable') : $t('general.Disable') }}
             </div>
             <div v-else class="flex items-center">
-              <span class="dot" :class="!scope.row.disabled ? 'bg-success' : 'bg-danger'" />
-              <span class="ml-2" :class="!scope.row.disabled ? 'text-success' : 'text-danger'">
-                {{ !scope.row.disabled ? $t('general.Enable') : $t('general.Disable') }}
+              <span class="dot" :class="!scope.row.content ? 'bg-success' : 'bg-danger'" />
+              <span class="ml-2" :class="!scope.row.content ? 'text-success' : 'text-danger'">
+                {{ !scope.row.content ? $t('general.Enable') : $t('general.Disable') }}
               </span>
             </div>
           </el-button>
         </template>
       </el-table-column>
     </el-table>
-
     <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
@@ -93,16 +92,67 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-
-    <FileTypeDialog ref="FileTypeDialog" @reload="fetchData" />
+    <FileTypeDialog
+      ref="FileTypeDialog"
+      @reload="fetchData"
+    />
+    <el-dialog
+      :visible.sync="fileSizeDialogVisible"
+      :title="$t('general.Edit')+$t('SystemConfigs.FileSize')"
+      width="30%"
+      destroy-on-close
+      append-to-body
+    >
+      <el-form
+        ref="form"
+        v-loading="isLoading"
+        :model="form"
+      >
+        <el-form-item
+          prop="fileSize"
+          :rules="[
+            { type: 'number',
+              required: true,
+              min: 0,
+              max: 100,
+              message: 'Please type number from 0 to 100'
+            }
+          ]"
+        >
+          <el-input
+            v-model.number="form.fileSize"
+            :placeholder="$t('RuleMsg.PleaseInput') + $t('SystemConfigs.FileSize')"
+          >
+            <template slot="prepend">{{ $t('SystemConfigs.FileSize') }} :</template>
+            <template slot="append">MB</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item class="text-right">
+          <el-button
+            class="buttonSecondaryReverse"
+            :loading="isLoading"
+            @click="handleEditFileSize"
+          >
+            {{ $t('general.Close') }}
+          </el-button>
+          <el-button
+            type="primary"
+            :loading="isLoading"
+            @click="handleUpdateFileSize"
+          >
+            {{ $t('general.Confirm') }}
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import MixinElTable from '@/mixins/MixinElTable'
 import FileTypeDialog from './FileTypeDialog'
-import { getFileNameList } from '@/api_v2/fileType'
 import {
   getGitlabStatus,
   editGitlabStatus,
@@ -117,46 +167,80 @@ export default {
     return {
       tableData: [
         {
-          type: 'fileType',
+          type: 'string',
           name: this.$t('SystemConfigs.FileType'),
           description: 'Define Upload types for issue attachments and project files',
-          content: ''
+          content: '',
+          method: this.handleEditFileName
         },
         {
-          type: 'gitLabExternalAccess',
+          type: 'string',
+          name: this.$t('SystemConfigs.FileSize'),
+          description: this.$t('SystemConfigs.FileSizeDescription'),
+          content: '',
+          method: this.handleEditFileSize
+        },
+        {
+          type: 'boolean',
           name: this.$t('SystemConfigs.GitLabExternalAccess'),
           description: `For security concern, III DevOps only enable Gitlab internal access.
                         But Will not be affected in the IP mode`,
-          disabled: false
+          content: false,
+          method: this.handleGitlabActive
         }
       ],
-      fileNameList: '',
-      gitlabStatus: false,
+      isLoading: false,
+      fileSizeDialogVisible: false,
+      form: {
+        fileSize: ''
+      },
       gitlabDomainIP: false
     }
   },
-  mounted() {
-    this.isGitlabDomainIP()
+  computed: {
+    ...mapGetters(['fileSizeLimit', 'fileTypeLimit'])
   },
   methods: {
+    ...mapActions('app', ['updateFileSize']),
     async fetchData() {
-      await this.getFileNameListData()
-      await this.isGitlabStatus()
-      this.tableData[0].content = this.fileNameList.toString()
-      this.tableData[1].disabled = this.gitlabStatus
+      this.gitlabDomainIP = (await isGitlabDomainIP()).is_ip
+      this.tableData[0].content = this.fileTypeLimit
+      this.tableData[1].content = this.fileSizeLimit
+      this.tableData[2].content = (await getGitlabStatus()).data.status
       return this.tableData
     },
-    handleEdit() {
+    handleEditFileName() {
       this.$refs['FileTypeDialog'].dialogVisible = true
       this.$refs['FileTypeDialog'].loadData()
     },
-    async handleActive(active) {
+    handleEditFileSize() {
+      this.form.fileSize = Number(this.fileSizeLimit.replace(/\D/g, ''))
+      this.fileSizeDialogVisible = !this.fileSizeDialogVisible
+    },
+    handleUpdateFileSize() {
+      this.$refs['form'].validate(async(valid) => {
+        if (!valid) return
+        this.isLoading = true
+        try {
+          await this.updateFileSize({ upload_file_size: this.form.fileSize })
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
+          })
+          await this.loadData()
+          this.handleEditFileSize()
+        } catch (error) {
+          console.error(error)
+        } finally {
+          this.isLoading = false
+        }
+      })
+    },
+    async handleGitlabActive(active) {
       this.listLoading = true
-      const data = {
-        action: active ? 'open' : 'close'
-      }
       try {
-        await editGitlabStatus(data)
+        await editGitlabStatus({ action: active ? 'open' : 'close' })
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
@@ -171,15 +255,6 @@ export default {
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
-    },
-    async getFileNameListData() {
-      this.fileNameList = (await getFileNameList()).data
-    },
-    async isGitlabStatus() {
-      this.gitlabStatus = (await getGitlabStatus()).data.status
-    },
-    async isGitlabDomainIP() {
-      this.gitlabDomainIP = (await isGitlabDomainIP()).is_ip
     }
   }
 }

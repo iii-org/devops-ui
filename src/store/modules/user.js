@@ -78,6 +78,9 @@ const actions = {
     await dispatch('projects/getSelectionOptions', null, { root: true })
 
     dispatch('app/setRoleList', null, { root: true })
+    dispatch('app/setFileSize', null, { root: true })
+    dispatch('app/setFileType', null, { root: true })
+    dispatch('app/setFileTypeList', null, { root: true })
     commit('SET_USER_ROLE', user.default_role_name)
     const myProjects = rootState.projects.options
 

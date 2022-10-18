@@ -33,6 +33,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import { isJSON, fileSizeToMB, containSpecialChar } from '@/utils/extension'
 
 const fileRegex = { Postman: '.postman_collection.json$', SideeX: '.json$' }
@@ -74,10 +75,12 @@ export default {
         },
         { validator: uploadValidator, trigger: 'change' }]
       },
-      fileSizeLimit: '5 MB',
       fileTypeLimit: 'JSON',
       specialSymbols: '* ? " < > | # { } % ~ &'
     }
+  },
+  computed: {
+    ...mapGetters(['fileSizeLimit'])
   },
   mounted() {
     this.resetUpload()
@@ -92,7 +95,7 @@ export default {
           type: 'warning'
         })
         this.resetUpload()
-      } else if (fileSizeToMB(size) > 5) {
+      } else if (fileSizeToMB(size) > Number(this.fileSizeLimit.replace(/\D/g, ''))) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.FileSizeLimit', { size: this.fileSizeLimit }),
