@@ -643,6 +643,7 @@ export default {
       branch: '分支'
     },
     TestFile: {
+      TestData: '組合測試集',
       CreateTestData: '產生測試資料',
       CreateTestDataSetting: '測試資料產生設定',
       VariableAndRange: '變數名稱與範圍制定',
@@ -1268,7 +1269,8 @@ export default {
     PairCondition: '請輸入{0}。 {1} 是一組條件。',
     ReleaseHelper: '若下拉未呈現任何版本可供選擇，請確認是否已執行過左方選單的「釋出版本」，或該釋出版本未含有映像檔。',
     NoSetting: '服務尚未建立，請洽系統管理員',
-    LinkToApplication: '連結到服務'
+    LinkToApplication: '連結到服務',
+    NameRule: `請輸入 2-30 英文為首之英數及'_'組合，注意英文須全為小寫且所設定之ID不可為全為數字。`
   },
   Validation: {
     Input: '請輸入 {0}',

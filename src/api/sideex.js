@@ -7,3 +7,4 @@ export const getSideexVariable = (project_id, data) => request.post(`/sideex/${p
 export const updateSideexVariable = (project_id, data) => request.put(`/sideex/${project_id}/jsonfile/varable`, data)
 export const deleteSideexVariable = (project_id) => request.delete(`/sideex/${project_id}/jsonfile/delete`)
 export const generateSideex = (project_id, data) => request.post(`/sideex/${project_id}/jsonfile/generate`, data)
+export const getSideexJson = (project_id) => request.get(`/sideex/${project_id}/download/result`)

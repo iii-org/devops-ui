@@ -648,6 +648,7 @@ export default {
       branch: 'Branch'
     },
     TestFile: {
+      TestData: 'Test Data(PICT)',
       CreateTestData: 'Create Test Data',
       CreateTestDataSetting: 'Create Test Data Setting',
       VariableAndRange: 'Variable and Range',
@@ -1276,7 +1277,8 @@ export default {
     PairCondition: 'Please input {0}. {1} are a pair condition.',
     ReleaseHelper: 'above release version requires an image included.',
     NoSetting: 'Deploy setting is not yet ready, please check with your system administrator.',
-    LinkToApplication: 'Link to application'
+    LinkToApplication: 'Link to application',
+    NameRule: `Please enter 2-30 English leading letters which combines with English, numbers or '_'. Note that the English must be all lowercase and the ID set cannot be all numbers.`
   },
   Validation: {
     Input: 'Please Input {0}',
