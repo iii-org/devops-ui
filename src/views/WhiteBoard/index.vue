@@ -10,7 +10,10 @@
       >
         {{ $t('general.Add') }}
       </el-button>
-      <SearchFilter :is-excalidraw-alive="isExcalidrawAlive" :keyword.sync="keyword" />
+      <SearchFilter
+        :is-excalidraw-alive="isExcalidrawAlive"
+        :keyword.sync="keyword"
+      />
     </ProjectListSelector>
     <el-divider />
     <el-table
@@ -110,13 +113,21 @@
               {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
+          <el-button
+            size="mini"
+            class="buttonSecondaryReverse"
+            :disabled="isDisabled"
+            @click="handleRestore(scope.row)"
+          >
+            {{ $t('general.Restore') }}
+          </el-button>
         </template>
       </el-table-column>
       <template slot="empty">
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
@@ -125,13 +136,22 @@
       @pagination="onPagination"
     />
     <CreateBoardDialog
-      ref="CreateBoardDialog"
+      :dialog-visible.sync="CreateBoardDialogVisible"
       @update="loadData"
-      @handle="handleAfterCreate"
+      @handle="handleEdit"
       @handleError="handleError"
     />
     <EditBoardDialog
       ref="EditBoardDialog"
+      :dialog-visible.sync="EditBoardDialogVisible"
+      :row.sync="row"
+      @update="loadData"
+      @handleError="handleError"
+    />
+    <RestoreBoardDialog
+      v-if="RestoreBoardDialogVisible"
+      :dialog-visible.sync="RestoreBoardDialogVisible"
+      :row="row"
       @update="loadData"
       @handleError="handleError"
     />
@@ -139,28 +159,39 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import { BasicData, Table, Pagination, SearchBar, ProjectSelector } from '@/newMixins'
 import { getExcalidraw, deleteExcalidraw } from '@/api_v2/excalidraw'
 import { getServerStatus } from '@/api_v2/monitoring'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import SearchFilter from './components/SearchFilter'
-import CreateBoardDialog from './components/CreateBoardDialog'
-import EditBoardDialog from './components/EditBoardDialog'
+import {
+  SearchFilter,
+  CreateBoardDialog,
+  EditBoardDialog,
+  RestoreBoardDialog
+} from './components'
 
 export default {
   name: 'WhiteBoardList',
-  components: { ElTableColumnTime, SearchFilter, CreateBoardDialog, EditBoardDialog },
+  components: {
+    ElTableColumnTime,
+    SearchFilter,
+    CreateBoardDialog,
+    EditBoardDialog,
+    RestoreBoardDialog
+  },
   mixins: [BasicData, Table, Pagination, SearchBar, ProjectSelector],
   data() {
     return {
       searchKeys: ['name'],
       isClosed: false,
-      isExcalidrawAlive: false
+      isExcalidrawAlive: false,
+      CreateBoardDialogVisible: false,
+      EditBoardDialogVisible: false,
+      RestoreBoardDialogVisible: false,
+      row: {}
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
     isDisabled() {
       return this.isClosed || !this.isExcalidrawAlive
     }
@@ -186,23 +217,12 @@ export default {
       this.listData = []
     },
     handleCreate() {
-      this.$refs.CreateBoardDialog.dialogVisible = true
+      this.CreateBoardDialogVisible = true
     },
-    async handleAfterCreate(row) {
-      this.$refs.EditBoardDialog.isCollapse = ['2']
-      this.$refs.EditBoardDialog.row = row
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.$refs.EditBoardDialog.dialogVisible = true
-        }, 500)
-      })
-    },
-    handleEdit(row, isCollapse) {
+    handleEdit(row, isCollapse = true) {
       this.$refs.EditBoardDialog.isCollapse = isCollapse ? ['2'] : ['1', '2']
-      this.$refs.EditBoardDialog.row = row
-      this.$nextTick(() => {
-        this.$refs.EditBoardDialog.dialogVisible = true
-      })
+      this.row = row
+      this.EditBoardDialogVisible = true
     },
     async handleDelete(row) {
       try {
@@ -214,6 +234,10 @@ export default {
         console.error(error)
         this.handleError()
       }
+    },
+    handleRestore(row) {
+      this.row = row
+      this.RestoreBoardDialogVisible = true
     },
     enterDetail(issueId) {
       this.$router.push({ name: 'IssueDetail', params: { issueId }})

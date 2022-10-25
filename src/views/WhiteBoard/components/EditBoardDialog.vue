@@ -5,7 +5,7 @@
     top="1vh"
     width="98%"
     append-to-body
-    @closed="onDialogClosed"
+    :before-close="onDialogClosed"
   >
     <el-collapse v-if="dialogVisible" v-model="isCollapse">
       <el-collapse-item name="1">
@@ -53,7 +53,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { updateExcalidraw } from '@/api_v2/excalidraw'
+import { updateExcalidraw, createExcalidrawHistory } from '@/api_v2/excalidraw'
 import ExcalidrawForm from '@/views/WhiteBoard/components/ExcalidrawForm'
 
 const formTemplate = () => ({
@@ -64,13 +64,21 @@ const formTemplate = () => ({
 export default {
   name: 'EditBoardDialog',
   components: { ExcalidrawForm },
+  props: {
+    dialogVisible: {
+      type: Boolean,
+      default: false
+    },
+    row: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
-      dialogVisible: false,
       excalidrawHeight: 0,
       isLoading: false,
       isCollapse: [],
-      row: {},
       form: formTemplate()
     }
   },
@@ -86,6 +94,10 @@ export default {
         this.form.issue_ids = value.issue_ids
         this.form.name = value.name
       }
+    },
+    async dialogVisible(value) {
+      await createExcalidrawHistory(this.row.id)
+      if (!value) this.$emit('update:row', {})
     },
     isCollapse: {
       handler: 'handleHeight'
@@ -127,8 +139,7 @@ export default {
       })
     },
     onDialogClosed() {
-      this.row = {}
-      this.dialogVisible = false
+      this.$emit('update:dialogVisible', false)
     }
   }
 }
