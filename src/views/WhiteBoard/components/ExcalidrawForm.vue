@@ -11,12 +11,12 @@
       <el-col :md="12" :span="24">
         <el-form-item
           prop="name"
-          :label="$t('general.Name')"
+          :label="$t('Excalidraw.Name')"
           style="width: 100%;"
         >
           <el-input
             v-model="form.name"
-            :placeholder="$t('RuleMsg.PleaseInput') + $t('general.Name')"
+            :placeholder="$t('RuleMsg.PleaseInput') + $t('Excalidraw.Name')"
           />
         </el-form-item>
       </el-col>

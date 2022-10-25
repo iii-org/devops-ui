@@ -3,12 +3,12 @@
     <ProjectListSelector>
       <el-button
         slot="button"
-        class="buttonPrimary"
+        class="buttonSecondary"
         icon="el-icon-plus"
         :disabled="isDisabled"
         @click="handleCreate"
       >
-        {{ $t('general.Add') }}
+        {{ $t('Excalidraw.CreateBoard') }}
       </el-button>
       <SearchFilter
         :is-excalidraw-alive="isExcalidrawAlive"
