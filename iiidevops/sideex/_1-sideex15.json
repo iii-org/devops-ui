@@ -169,7 +169,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "de"
+                                        "value": "mo-pm"
                                     }
                                 ],
                                 "tac": ""
@@ -219,7 +219,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "Pm"
+                                        "value": "7"
                                     }
                                 ],
                                 "tac": ""
