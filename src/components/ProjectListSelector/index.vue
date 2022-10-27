@@ -37,13 +37,9 @@
             ref="selectProject"
             v-model="projectValue"
             :placeholder="$t('Project.SelectProject')"
-            :loading="isLoading"
             filterable
-            remote
-            :remote-method="getSearchProject"
             class="project"
             :clearable="clearable"
-            @visible-change="isSelectVisible"
             @click.native="checkUnsavedChanges"
             @blur="selectVisible = false"
             @change="setChange"
@@ -170,9 +166,7 @@ export default {
       projectValue: '',
       selectVisible: false,
       toolbarVisible: false,
-      categoryProjectList: [],
-      isLoading: false,
-      isSearch: false
+      categoryProjectList: []
     }
   },
   computed: {
@@ -283,23 +277,13 @@ export default {
       })
       const starred = filteredArray.filter((item) => item.starred)
       const projects = filteredArray.filter((item) => !item.starred)
-      this.categoryProjectList = starred.length > 0
-        ? [
-          { label: this.$t('Project.Starred'), options: starred },
-          { options: projects }
-        ]
-        : [{ options: projects }]
-    },
-    async getSearchProject(keyword) {
-      this.isSearch = true
-      this.isLoading = true
-      await this.getMyProjectOptions(keyword)
-      this.getCategoryProjectList()
-      this.isLoading = false
-    },
-    isSelectVisible(visible) {
-      if (!visible && this.isSearch) this.getSearchProject()
-      this.isSearch = false
+      this.categoryProjectList = [
+        {
+          label: this.$t('Project.Starred'),
+          options: starred
+        },
+        { options: projects }
+      ]
     },
     copyUrl(text) {
       this.$copyText(text).then(
