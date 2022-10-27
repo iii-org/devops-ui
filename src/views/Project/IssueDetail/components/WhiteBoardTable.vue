@@ -80,6 +80,8 @@
     </el-table>
     <EditBoardDialog
       ref="EditBoardDialog"
+      :dialog-visible.sync="EditBoardDialogVisible"
+      :row.sync="row"
       @update="fetchData"
     />
   </div>
@@ -108,7 +110,9 @@ export default {
   },
   data() {
     return {
-      listLoading: false
+      listLoading: false,
+      EditBoardDialogVisible: false,
+      row: {}
     }
   },
   methods: {
@@ -117,10 +121,8 @@ export default {
     },
     handleEdit(row) {
       this.$refs.EditBoardDialog.isCollapse = ['2']
-      this.$refs.EditBoardDialog.row = row
-      this.$nextTick(() => {
-        this.$refs.EditBoardDialog.dialogVisible = true
-      })
+      this.row = row
+      this.EditBoardDialogVisible = true
     },
     async handleUnlink(row) {
       this.listLoading = true
