@@ -127,7 +127,7 @@
             />
           </el-tooltip>
           <el-tooltip
-            v-if="scope.row.software_name === 'SideeX'"
+            v-if="scope.row.software_name === 'SideeX' && isResultExist"
             placement="bottom"
             :content="$t('Test.TestFile.HistoryTestData')"
           >
@@ -287,6 +287,7 @@ import {
   CreateTestDataDialog,
   PreviewTestDataDialog
 } from './components'
+import { isSideexResultExist } from '@/api/sideex'
 import IssueRow from '@/components/Issue/components/IssueRow'
 
 export default {
@@ -320,6 +321,7 @@ export default {
       },
       variableList: [],
       isHistory: true,
+      isResultExist: false,
       createTestDataDialogVisible: false,
       previewTestDataDialogVisible: false,
       relatedPlanDialogVisible: false,
@@ -365,6 +367,7 @@ export default {
   methods: {
     ...mapActions(['projects/getProjectList', 'qa/setFileName']),
     async fetchData() {
+      this.isResultExist = (await isSideexResultExist(this.selectedProjectId)).data.result_file_exist
       let data = await getTestFileList(this.selectedProjectId)
       data = data.data
       this.software = [

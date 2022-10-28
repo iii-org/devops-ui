@@ -9,3 +9,4 @@ export const updateSideexVariable = (project_id, data) => request.put(`/sideex/$
 export const getSideexResult = (project_id) => request.get(`/sideex/${project_id}/generate_result`)
 export const generateSideex = (project_id, data) => request.post(`/sideex/${project_id}/jsonfile/generate`, data)
 export const getSideexHistory = (project_id) => request.get(`/sideex/${project_id}/history/result`)
+export const isSideexResultExist = (project_id) => request.get(`/sideex/${project_id}/result/exist`)
