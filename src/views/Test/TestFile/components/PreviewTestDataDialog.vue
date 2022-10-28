@@ -16,11 +16,18 @@
       v-loading="listLoading"
       :data="listData"
       :element-loading-text="$t('Loading')"
-      height="calc(100vh - 280px)"
+      height="calc(100vh - 450px)"
+      border
       fit
     >
       <el-table-column
-        v-for="item in variableName"
+        :label="$t('general.Index')"
+        type="index"
+        align="center"
+        width="100"
+      />
+      <el-table-column
+        v-for="item in variableList"
         :key="item"
         :label="item"
         :prop="item"
@@ -31,6 +38,21 @@
       </template>
     </el-table>
     <template slot="footer">
+      <el-button
+        v-if="!isHistory"
+        type="success"
+        :loading="isLoading"
+        @click="previous"
+      >
+        {{ $t('Test.TestFile.Previous') }}
+      </el-button>
+      <el-button
+        type="primary"
+        :loading="isLoading"
+        @click="confirm"
+      >
+        {{ $t('Test.TestFile.TestNow') }}
+      </el-button>
       <el-button
         class="buttonSecondaryReverse"
         :loading="isLoading"
@@ -44,7 +66,11 @@
 
 <script>
 import { BasicData } from '@/newMixins'
-import { getSideexJson } from '@/api/sideex'
+import {
+  getSideexResult,
+  generateSideex,
+  getSideexHistory
+} from '@/api/sideex'
 
 export default {
   name: 'PreviewTestDataDialog',
@@ -54,26 +80,98 @@ export default {
       type: Boolean,
       default: false
     },
-    variableName: {
+    createDialogVisible: {
+      type: Boolean,
+      default: false
+    },
+    fileName: {
+      type: String,
+      default: ''
+    },
+    isHistory: {
+      type: Boolean,
+      default: true
+    },
+    variableList: {
       type: Array,
       default: () => ([])
     }
   },
   data() {
     return {
-      isLoading: false
+      isLoading: false,
+      createLoading: false,
+      loadingText: ['saveParamsSetting', 'createTestData', 'sideeXTestDataConverting'],
+      loadingInstance: {}
     }
   },
   computed: {
   },
+  watch: {
+    createLoading(val) {
+      if (val) {
+        this.loadingInstance = this.$loading({
+          text: this.$t('Loading'),
+          lock: true,
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)',
+          customClass: 'project-dialog-loading'
+        })
+        this.loadingText.forEach((text, index) => {
+          this.timer = setTimeout(() =>
+            this.openFullLoading(text), 3000 * index
+          )
+        })
+      } else {
+        clearTimeout(this.timer)
+        this.loadingInstance.close()
+        this.close()
+      }
+    }
+  },
   methods: {
+    openFullLoading(loadingText) {
+      // handle i18n log warning when loadingText is undefined
+      const text = loadingText
+        ? this.$t(`LoadingText.${loadingText}`)
+        : this.$t('LoadingText.sideeXTestDataConverting')
+      // set loading text every 3 second
+      this.loadingInstance.setText(text)
+    },
     async fetchData() {
+      this.$emit('update:createDialogVisible', false)
       this.isLoading = true
-      const data = await getSideexJson(this.selectedProjectId)
+      let data = []
+      if (this.isHistory) {
+        data = await getSideexHistory(this.selectedProjectId)
+        this.$emit('update:variableList', Object.keys(data[0]))
+      } else {
+        data = (await getSideexResult(this.selectedProjectId)).data
+      }
       this.isLoading = false
       return data
     },
+    async confirm() {
+      this.createLoading = true
+      try {
+        await generateSideex(this.selectedProjectId, { filename: this.fileName })
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Added'),
+          type: 'success'
+        })
+      } catch (e) {
+        console.error(e)
+        this.createLoading = false
+      } finally {
+        this.createLoading = false
+      }
+    },
+    previous() {
+      this.$emit('update:createDialogVisible', true)
+    },
     close() {
+      this.$emit('update:isHistory', true)
       this.$emit('update:dialogVisible', false)
     }
   }
