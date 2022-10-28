@@ -1,6 +1,6 @@
 import { getUserInfo, login } from '@/api/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
-import router, { resetRouter } from '@/router/router'
+import { resetRouter, loadRouter } from '@/router/router'
 import VueJwtDecode from 'vue-jwt-decode'
 
 const getDefaultState = () => {
@@ -98,8 +98,7 @@ const actions = {
       await dispatch('projects/getIssueForceTracker', null, { root: true })
     }
 
-    const accessRoutes = await dispatch('permission/generateRoutes', user.default_role_name, { root: true })
-    router.addRoutes(accessRoutes)
+    loadRouter()
   },
 
   // user logout

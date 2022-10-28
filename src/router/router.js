@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
+import store from '@/store'
 import Layout from '@/layout'
 import ParentBlank from '@/layout/components/parentBlank'
 import pmRoute from './pm.json'
@@ -1144,6 +1145,16 @@ const router = createRouter()
 export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher
+}
+
+export async function loadRouter() {
+  const accessRoutes = await store.dispatch('permission/generateRoutes', store.getters.userRole)
+  router.addRoutes(accessRoutes)
+}
+
+export function reloadRouter() {
+  resetRouter()
+  loadRouter()
 }
 
 export default router
