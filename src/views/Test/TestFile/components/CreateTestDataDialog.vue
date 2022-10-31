@@ -201,10 +201,6 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
     },
     isDisabled() {
       return this.variable.every((item) => item.value === '')
-    },
-    isChanged() {
-      return this.originData.var.some((item, i) => item.value.join() !== this.variable[i].value) ||
-      this.originData.rule.join('\n') !== this.limit
     }
   },
   mounted() {
@@ -237,23 +233,19 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       this.variable[index].value = ''
     },
     next() {
-      if (this.isChanged) {
-        const validity = []
-        this.$refs['form'].forEach((item) => { item.validate((valid) => { validity.push(valid) }) })
-        if (!validity.every((item) => item)) return
-        if (this.isAllFill) {
-          this.update()
-        } else {
-          this.$confirm(this.$t('Notify.confirmVariableSetting'), this.$t('general.Warning'), {
-            confirmButtonText: this.$t('general.Confirm'),
-            cancelButtonText: this.$t('general.Cancel'),
-            type: 'warning'
-          }).then(() => {
-            this.update()
-          }).catch(() => {})
-        }
+      const validity = []
+      this.$refs['form'].forEach((item) => { item.validate((valid) => { validity.push(valid) }) })
+      if (!validity.every((item) => item)) return
+      if (this.isAllFill) {
+        this.update()
       } else {
-        this.getResult()
+        this.$confirm(this.$t('Notify.confirmVariableSetting'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        }).then(() => {
+          this.update()
+        }).catch(() => {})
       }
     },
     async update() {
@@ -312,6 +304,7 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       }).catch(() => {})
     },
     close() {
+      this.$emit('update')
       this.$emit('update:isHistory', true)
       this.$emit('update:dialogVisible', false)
     }

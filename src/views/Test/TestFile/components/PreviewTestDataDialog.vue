@@ -171,6 +171,7 @@ export default {
       this.$emit('update:createDialogVisible', true)
     },
     close() {
+      this.$emit('update')
       this.$emit('update:isHistory', true)
       this.$emit('update:dialogVisible', false)
     }

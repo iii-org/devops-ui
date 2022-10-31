@@ -249,6 +249,7 @@
       :file-name="selectedFileName"
       :is-history.sync="isHistory"
       :variable-list.sync="variableList"
+      @update="fetchData"
     />
     <PreviewTestDataDialog
       v-if="previewTestDataDialogVisible"
@@ -258,6 +259,7 @@
       :file-name="selectedFileName"
       :is-history.sync="isHistory"
       :variable-list.sync="variableList"
+      @update="fetchData"
     />
     <ContextMenu
       ref="contextmenu"
