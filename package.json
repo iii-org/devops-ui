@@ -51,7 +51,6 @@
     "vue-i18n": "^8.22.1",
     "vue-input-autowidth": "^1.0.11",
     "vue-jwt-decode": "^0.1.0",
-    "vue-markdown": "^2.2.4",
     "vue-router": "3.0.6",
     "vue-runtime-helpers": "^1.1.2",
     "vue-showdown": "^2.4.1",

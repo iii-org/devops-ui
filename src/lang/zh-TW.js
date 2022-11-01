@@ -169,6 +169,7 @@ export default {
     Confirm: '確認',
     Save: '儲存',
     Cancel: '取消',
+    Restore: '復原',
     SearchName: '搜尋名稱',
     SearchBranch: '搜尋分支',
     Description: '描述',
@@ -271,6 +272,7 @@ export default {
     Submit: '已送出',
     TemporarySaved: '已暫存',
     Saved: '已儲存',
+    Restored: '已還原',
     NoEmpty: '內容不得為空',
     Same: '內容相同，未變更。',
     SwitchLanguage: '更換語言成功',
@@ -289,6 +291,7 @@ export default {
     confirmClose: '確定@:(general.Close)嗎？',
     confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？',
     confirmDeleteSideex: '確定刪除該專案所有組合測試相關的設定檔及紀錄嗎？',
+    confirmRestore: '確定@:(general.Restore)嗎？',
     confirmEditProject: '範本更換，將直接取代成您選擇的範本程式，請問確認要覆蓋嗎？',
     confirmVariableSetting: '注意，您尚有變數未設定！要直接產生測試資料嗎？',
     logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。',
@@ -367,7 +370,7 @@ export default {
   Sbom: {
     Branch: '@:general.Branch',
     Commit: 'Commit',
-    PackageCount: '套件數',
+    PackageCount: '套件數量',
     HighSeverity: '高風險',
     MediumSeverity: '中風險',
     LowSeverity: '低風險',
@@ -643,11 +646,15 @@ export default {
       branch: '分支'
     },
     TestFile: {
+      TestData: '組合測試集',
       CreateTestData: '產生測試資料',
+      HistoryTestData: '歷史測試資料',
       CreateTestDataSetting: '測試資料產生設定',
       VariableAndRange: '變數名稱與範圍制定',
       VariableLimit: '變數指定限制',
-      CreateNow: '立即產生',
+      Previous: '上一步',
+      Next: '下一步',
+      TestNow: '立即測試',
       SettingReference: '設定方式請參照',
       ConnectTestPlan: '關聯測試計畫',
       DeleteTestFile: '刪除測試檔案',
@@ -1038,7 +1045,7 @@ export default {
     low: '低風險'
   },
   Anchore: {
-    count: '套件數',
+    count: '套件數量',
     high: '高風險',
     medium: '中風險',
     low: '低風險'
@@ -1268,7 +1275,8 @@ export default {
     PairCondition: '請輸入{0}。 {1} 是一組條件。',
     ReleaseHelper: '若下拉未呈現任何版本可供選擇，請確認是否已執行過左方選單的「釋出版本」，或該釋出版本未含有映像檔。',
     NoSetting: '服務尚未建立，請洽系統管理員',
-    LinkToApplication: '連結到服務'
+    LinkToApplication: '連結到服務',
+    NameRule: `請輸入 2-30 英文為首之英數及'_'組合，注意英文須全為小寫且所設定之ID不可為全為數字。`
   },
   Validation: {
     Input: '請輸入 {0}',
@@ -1305,6 +1313,8 @@ export default {
     SystemConfig: '系統參數',
     Content: '狀態 / 設定內容',
     FileType: '檔案上傳類型',
+    FileSize: '檔案上傳大小',
+    FileSizeDescription: '檔案單次上傳大小限制',
     GitLabExternalAccess: 'GitLab對外連線',
     UploadFileTypes: '檔案上傳類型設定',
     FileExtension: '副檔名',
@@ -1391,7 +1401,8 @@ export default {
     Whiteboard: '協作白板',
     Name: '白板名稱',
     CreateBoard: '新增白板',
-    EditBoard: '編輯白板'
+    EditBoard: '編輯白板',
+    RestoreBoard: '版本還原'
   },
   IssueMatrix: {
     Relations: '關係',
@@ -1429,6 +1440,8 @@ export default {
     Reference: '風險敍述參照',
     Vulnerability: '弱點項目​',
     Package: '資源套件​​',
+    Licenses: '軟體授權條款',
+    Type: '安裝類別',
     CurrentVersion: '目前版本​',
     FixedVersion: '已修復版本​',
     Success: '@:general.Success',

@@ -14,7 +14,7 @@
     },
     "suites": [
         {
-            "title": "III DevOps 議題功能測試",
+            "title": "1_III DevOps 議題功能測試-1",
             "enableOnPlaying": true,
             "cases": [
                 {
@@ -169,7 +169,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "devops-pm"
+                                        "value": "de"
                                     }
                                 ],
                                 "tac": ""
@@ -219,7 +219,7 @@
                                 "options": [
                                     {
                                         "type": "other",
-                                        "value": "Pm123456"
+                                        "value": "7"
                                     }
                                 ],
                                 "tac": ""

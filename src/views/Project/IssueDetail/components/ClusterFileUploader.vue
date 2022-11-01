@@ -16,14 +16,19 @@
         <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
         <div class="text-xs text-gray-400">
           <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
-          <div>{{ $t('File.AllowedFileTypes') }}: {{ fileType }}</div>
+          <div>{{ $t('File.AllowedFileTypes') }}: {{ fileTypeLimit }}</div>
         </div>
       </div>
     </el-upload>
   </div>
 </template>
 <script>
-import { isAllowedTypes, fileSizeToMB, containSpecialChar } from '@/utils/extension'
+import { mapGetters } from 'vuex'
+import {
+  isEmptyOrTXT,
+  fileSizeToMB,
+  containSpecialChar
+} from '@/utils/extension'
 
 export default {
   name: 'ClusterFileUploader',
@@ -37,9 +42,11 @@ export default {
     return {
       limit: 1,
       uploadFileList: [],
-      fileSizeLimit: '5MB',
-      fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs'
+      fileTypeLimit: 'TXT'
     }
+  },
+  computed: {
+    ...mapGetters(['fileSizeLimit'])
   },
   methods: {
     async handleChange(file, fileList) {
@@ -47,10 +54,10 @@ export default {
       const unsupportedFileFormatWarning = this.$t('Notify.UnsupportedFileFormat')
       const fileSizeLimitWarning = this.$t('Notify.FileSizeLimit', { size: this.fileSizeLimit })
       const FileNameLimitWarning = this.$t('Notify.FileNameLimit')
-      if (!isAllowedTypes(raw.type)) {
+      if (!isEmptyOrTXT(raw.type)) {
         this.showWarning(unsupportedFileFormatWarning)
         fileList.splice(fileList.length - 1, 1)
-      } else if (fileSizeToMB(size) > 5) {
+      } else if (fileSizeToMB(size) > Number(this.fileSizeLimit.replace(/\D/g, ''))) {
         this.showWarning(fileSizeLimitWarning)
         fileList.splice(fileList.length - 1, 1)
       } else if (containSpecialChar(name)) {

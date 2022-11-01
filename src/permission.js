@@ -51,9 +51,6 @@ const onHasToken = async (to, next) => {
     } else {
       try {
         await store.dispatch('user/getInfo')
-        const userRole = store.getters.userRole
-        const accessRoutes = await store.dispatch('permission/generateRoutes', userRole)
-        router.addRoutes(accessRoutes)
         next({ ...to, replace: true })
       } catch (error) {
         await store.dispatch('user/resetToken')

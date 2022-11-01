@@ -95,6 +95,7 @@
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
                 @updateFamilyData="getIssueFamilyData(issue)"
+                @updateWhiteBoard="updateWhiteBoard"
               />
             </el-col>
           </el-row>
@@ -167,20 +168,24 @@
             </el-col>
             <el-col :span="24">
               <el-tabs
-                ref="IssueNotesDialog"
+                v-model="issueTabs"
                 type="border-card"
               >
-                <el-tab-pane :label="$t('Issue.History')">
+                <el-tab-pane
+                  :label="$t('Issue.History')"
+                  name="history"
+                >
                   <IssueNotesDialog
                     :height="dialogHeight"
                     :data="journals"
                     @show-parent-issue="onRelationIssueDialog"
                   />
                 </el-tab-pane>
-                <el-tab-pane>
-                  <template #label>
+                <el-tab-pane name="commitLog">
+                  <template slot="label">
                     <span>
-                      <em class="ri-git-commit-line" />{{ $t('Issue.Commit') }}
+                      <em class="ri-git-commit-line" />
+                      {{ $t('Issue.Commit') }}
                     </span>
                   </template>
                   <AdminCommitLog
@@ -193,10 +198,17 @@
                 </el-tab-pane>
                 <el-tab-pane
                   v-if="issue.excalidraw && issue.excalidraw.length !== 0"
-                  :label="$t('Excalidraw.Whiteboard')"
+                  name="whiteBoard"
                 >
+                  <template slot="label">
+                    <span>
+                      <em class="el-icon-data-line" />
+                      {{ $t('Excalidraw.Whiteboard') }}
+                    </span>
+                  </template>
                   <WhiteBoardTable
                     ref="WhiteBoardTable"
+                    :issue-id="issueId"
                     :excalidraw-data="issue.excalidraw"
                     :height="dialogHeight"
                     @update="fetchIssueLink"
@@ -438,7 +450,8 @@ export default {
       projectRelationList: [],
       isShowDialog: false,
       storagePId: '',
-      issueProject: {}
+      issueProject: {},
+      issueTabs: 'history'
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -536,6 +549,9 @@ export default {
           this.isShowDialog = true
         }
       }
+    },
+    'issue.excalidraw'(val) {
+      if (val.length === 0) this.issueTabs = 'history'
     }
   },
   async mounted() {
@@ -1213,6 +1229,12 @@ export default {
     },
     onContextMenu({ row, column, event }) {
       this.handleContextMenu(row, column, event)
+    },
+    async updateWhiteBoard(excalidrawName) {
+      await this.fetchIssueLink()
+      this.issueTabs = 'whiteBoard'
+      const row = this.issue.excalidraw.find((item) => item.name === excalidrawName)
+      this.$refs['WhiteBoardTable'].handleEdit(row)
     },
     sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms))

@@ -127,6 +127,19 @@
             />
           </el-tooltip>
           <el-tooltip
+            v-if="scope.row.software_name === 'SideeX' && isResultExist"
+            placement="bottom"
+            :content="$t('Test.TestFile.HistoryTestData')"
+          >
+            <el-link
+              type="info"
+              style="font-size: 20px;"
+              icon="ri-history-line"
+              :underline="false"
+              @click="handleHistoryTestData(scope.row)"
+            />
+          </el-tooltip>
+          <el-tooltip
             placement="bottom"
             :content="$t('Test.TestFile.ConnectTestPlan')"
           >
@@ -232,7 +245,21 @@
       v-if="createTestDataDialogVisible"
       ref="createTestDataDialog"
       :dialog-visible.sync="createTestDataDialogVisible"
+      :preview-dialog-visible.sync="previewTestDataDialogVisible"
       :file-name="selectedFileName"
+      :is-history.sync="isHistory"
+      :variable-list.sync="variableList"
+      @update="fetchData"
+    />
+    <PreviewTestDataDialog
+      v-if="previewTestDataDialogVisible"
+      ref="previewTestDataDialog"
+      :dialog-visible.sync="previewTestDataDialogVisible"
+      :create-dialog-visible.sync="createTestDataDialogVisible"
+      :file-name="selectedFileName"
+      :is-history.sync="isHistory"
+      :variable-list.sync="variableList"
+      @update="fetchData"
     />
     <ContextMenu
       ref="contextmenu"
@@ -256,9 +283,13 @@ import {
   postTestFile,
   postTestPlanWithTestFile
 } from '@/api/qa'
-import RelatedPlanDialog from './components/RelatedPlanDialog'
-import CollectionFileUploader from './components/CollectionFileUploader'
-import CreateTestDataDialog from './components/CreateTestDataDialog'
+import {
+  RelatedPlanDialog,
+  CollectionFileUploader,
+  CreateTestDataDialog,
+  PreviewTestDataDialog
+} from './components'
+import { isSideexResultExist } from '@/api/sideex'
 import IssueRow from '@/components/Issue/components/IssueRow'
 
 export default {
@@ -266,6 +297,7 @@ export default {
   components: {
     CollectionFileUploader,
     CreateTestDataDialog,
+    PreviewTestDataDialog,
     RelatedPlanDialog,
     IssueRow
   },
@@ -289,7 +321,11 @@ export default {
         visible: false,
         id: null
       },
+      variableList: [],
+      isHistory: true,
+      isResultExist: false,
       createTestDataDialogVisible: false,
+      previewTestDataDialogVisible: false,
       relatedPlanDialogVisible: false,
       uploadDialogVisible: false,
       expandedRow: []
@@ -333,6 +369,7 @@ export default {
   methods: {
     ...mapActions(['projects/getProjectList', 'qa/setFileName']),
     async fetchData() {
+      this.isResultExist = (await isSideexResultExist(this.selectedProjectId)).data.result_file_exist
       let data = await getTestFileList(this.selectedProjectId)
       data = data.data
       this.software = [
@@ -350,6 +387,9 @@ export default {
     handleCreateTestData(row) {
       this.toggleDialogVisible('createTestData')
       this.selectedFileName = row.file_name
+    },
+    handleHistoryTestData() {
+      this.toggleDialogVisible('previewTestData')
     },
     handleRelatedPlan(collection) {
       this.toggleDialogVisible('relatedPlan')

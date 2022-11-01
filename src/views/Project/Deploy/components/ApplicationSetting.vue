@@ -3,7 +3,12 @@
     <el-row>
       <el-col>
         <el-form-item :label="$t('Deploy.Name')" prop="name">
-          <el-input v-model="deployForm.name" />
+          <el-input
+            v-model="deployForm.name"
+            :maxlength="30"
+            show-word-limit
+          />
+          <p class="helper">* {{ $t('Deploy.NameRule') }}</p>
         </el-form-item>
         <el-divider />
       </el-col>
@@ -46,7 +51,12 @@
             <el-row>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.Namespace')" prop="namespace">
-                  <el-input v-model="deployForm.namespace" />
+                  <el-input
+                    v-model="deployForm.namespace"
+                    :maxlength="30"
+                    show-word-limit
+                  />
+                  <p class="helper">* {{ $t('Deploy.NameRule') }}</p>
                 </el-form-item>
               </el-col>
               <el-col :md="12">
@@ -332,7 +342,15 @@ export default {
       },
       edit: {},
       deployFormRules: {
-        name: [{ required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Name')]), trigger: 'blur' }],
+        name: [
+          { required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Name')]), trigger: 'blur' },
+          {
+            required: true,
+            pattern: /^[a-z][a-z0-9_]{0,28}[a-z0-9]$/,
+            message: this.$t(`Validation.Invalid`, [this.$t('Deploy.Name')]),
+            trigger: 'blur'
+          }
+        ],
         cluster_id: [{
           required: true,
           message: this.$t(`Validation.Select`, [this.$t('Deploy.Cluster')]),
@@ -347,7 +365,7 @@ export default {
           { required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Namespace')]), trigger: 'blur' },
           {
             required: true,
-            pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
+            pattern: /^[a-z][a-z0-9_]{0,28}[a-z0-9]$/,
             message: this.$t(`Validation.Invalid`, [this.$t('Deploy.Namespace')]),
             trigger: 'blur'
           }

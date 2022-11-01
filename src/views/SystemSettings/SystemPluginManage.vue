@@ -126,6 +126,7 @@
 </template>
 
 <script>
+import { reloadRouter } from '@/router/router'
 import { getPlugins, getPluginDetails, updatePlugin, deletePlugin } from '@/api/systemPlugin'
 import { SearchBar, Pagination } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
@@ -187,6 +188,7 @@ export default {
         await updatePlugin(name, { disabled: !disabled })
         this.fetchData()
         this.isLoading = false
+        reloadRouter()
       }
     },
     handleClose() {
@@ -221,6 +223,7 @@ export default {
           }
         })
       }
+      reloadRouter()
     },
     handleDelete(pluginName) {
       this.isLoading = true

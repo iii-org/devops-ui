@@ -230,15 +230,11 @@ import { ElTableColumnTime } from '@/components'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 import * as elementTagType from '@/utils/elementTagType'
 
-const params = () => ({
-  per_page: 10,
-  page: 1
-})
-
 const listQuery = () => ({
   total: 0,
-  current: 0,
-  per_page: 0
+  current: 1,
+  per_page: 10,
+  page: 1
 })
 
 export default {
@@ -252,7 +248,6 @@ export default {
   data() {
     return {
       keyword: '',
-      params: params(),
       listQuery: listQuery(),
       sbomList: [],
       timeoutId: -1,
@@ -278,7 +273,7 @@ export default {
     async fetchData() {
       if (this.selectedProjectId === -1) return []
       this.listLoading = true
-      const res = await getSbomList(this.selectedProjectId, this.params)
+      const res = await getSbomList(this.selectedProjectId, this.listQuery)
       this.setListData(res)
       this.listLoading = false
     },
@@ -287,15 +282,15 @@ export default {
       this.listQuery = res.data.page
     },
     async onSearch(keyword) {
-      this.params.search = keyword
-      this.params.page = 1
-      if (keyword === '') delete this.params.search
+      this.listQuery.search = keyword
+      this.listQuery.page = 1
+      if (keyword === '') delete this.listQuery.search
       await this.fetchData()
     },
     async onPagination(query) {
       const { page } = query
-      this.params.page = page
-      if (this.keyword !== '') this.params.search = this.keyword
+      this.listQuery.page = page
+      if (this.keyword !== '') this.listQuery.search = this.keyword
       await this.fetchData()
     },
     fetchDownloadList(row) {
@@ -312,7 +307,7 @@ export default {
     fetchTestReport(row, item) {
       getSbomDownloadFile(row.id, { file_name: item })
         .then((res) => {
-          const url = window.URL.createObjectURL(new Blob([res]))
+          const url = window.URL.createObjectURL(res)
           const link = document.createElement('a')
           link.href = url
           link.setAttribute('download', item)
@@ -342,6 +337,7 @@ export default {
           commitId: row.commit,
           commitBranch: row.branch,
           sbomId: row.id,
+          packageCount: row.package_nums,
           projectId: this.selectedProjectId
         }
       })

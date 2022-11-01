@@ -116,7 +116,7 @@ const actions = {
   async getMyProjectOptions({ commit }) {
     try {
       let { projects } = await getMyProjectList(true)
-      projects = projects.sort((a, b) => a.id - b.id).sort((a, b) => (a.starred === b.starred ? 0 : a.starred ? -1 : 1))
+      // projects = projects.sort((a, b) => a.id - b.id).sort((a, b) => (a.starred === b.starred ? 0 : a.starred ? -1 : 1))
       commit('SET_OPTIONS', projects)
     } catch (error) {
       console.error(error.toString())

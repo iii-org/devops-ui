@@ -60,8 +60,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
   name: 'Login',
   data() {
@@ -101,7 +99,6 @@ export default {
     }
   },
   methods: {
-    ...mapGetters(['userRole']),
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -118,21 +115,15 @@ export default {
         this.loading = true
         this.$store
           .dispatch('user/login', this.loginForm)
-          .then(() => {
-            this.loading = false
-          })
           .then(async () => {
             await this.$store.dispatch('user/getInfo')
             this.$router.push({ path: this.redirect || '/' })
-            this.$router.go(0)
           })
           .catch((e) => {
             console.error(e)
             if (e.message === 'Request failed with status code 401') {
               console.error(e)
             }
-          })
-          .finally(() => {
             this.loading = false
           })
       })

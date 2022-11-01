@@ -169,6 +169,7 @@ export default {
     Confirm: 'Confirm',
     Save: 'Save',
     Cancel: 'Cancel',
+    Restore: 'Restore',
     SearchName: 'Search Name',
     SearchBranch: 'Search Branch',
     Description: 'Description',
@@ -271,6 +272,7 @@ export default {
     Submit: 'Submit',
     TemporarySaved: 'Temporary Saved successful',
     Saved: 'Saved successful',
+    Restored: 'Restored successful',
     NoEmpty: 'Content must not be empty',
     Same: 'The new value is same with old value.',
     SwitchLanguage: 'Switch Language Success',
@@ -289,6 +291,7 @@ export default {
     confirmClose: 'Are you sure to @:(general.Close)?',
     confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？',
     confirmDeleteSideex: 'Are you sure you want to delete all configurations and records related to combined testing of this project?',
+    confirmRestore: 'Are you sure to @:(general.Restore)?',
     confirmEditProject: 'Applying a new template will replace this project repository, and this is unrecoverable. Please confirm the action.',
     confirmVariableSetting: 'Attention, You still have unset variables！ Are you sure you want to generate test data directly？',
     logoutNotifications: 'The session has timed out. Please click re-login button to login back again.',
@@ -648,11 +651,15 @@ export default {
       branch: 'Branch'
     },
     TestFile: {
+      TestData: 'Test Data(PICT)',
       CreateTestData: 'Create Test Data',
+      HistoryTestData: 'History Test Data',
       CreateTestDataSetting: 'Create Test Data Setting',
       VariableAndRange: 'Variable and Range',
       VariableLimit: 'Variable Limit',
-      CreateNow: 'Create Now',
+      Previous: 'Previous',
+      Next: 'Next',
+      TestNow: 'Test Now',
       SettingReference: 'Setting Reference',
       ConnectTestPlan: 'Connect Test Plan',
       DeleteTestFile: 'Delete Test File',
@@ -1276,7 +1283,8 @@ export default {
     PairCondition: 'Please input {0}. {1} are a pair condition.',
     ReleaseHelper: 'above release version requires an image included.',
     NoSetting: 'Deploy setting is not yet ready, please check with your system administrator.',
-    LinkToApplication: 'Link to application'
+    LinkToApplication: 'Link to application',
+    NameRule: `Please enter 2-30 English leading letters which combines with English, numbers or '_'. Note that the English must be all lowercase and the ID set cannot be all numbers.`
   },
   Validation: {
     Input: 'Please Input {0}',
@@ -1313,6 +1321,8 @@ export default {
     SystemConfig: 'System Config',
     Content: 'Status / Content',
     FileType: 'File type',
+    FileSize: 'File size',
+    FileSizeDescription: 'Maximum size of each uploading file',
     GitLabExternalAccess: 'GitLab external access',
     UploadFileTypes: 'Upload file types',
     FileExtension: 'File extension',
@@ -1400,7 +1410,8 @@ export default {
     Whiteboard: 'Whiteboard',
     Name: 'Whiteboard Name',
     CreateBoard: 'Create Whiteboard',
-    EditBoard: 'Edit Whiteboard'
+    EditBoard: 'Edit Whiteboard',
+    RestoreBoard: 'RestoreBoard'
   },
   IssueMatrix: {
     Relations: 'Relationship',
@@ -1438,6 +1449,8 @@ export default {
     Reference: 'Reference',
     Vulnerability: 'Vulnerability',
     Package: 'Package',
+    Licenses: 'Licenses',
+    Type: 'Type',
     CurrentVersion: 'Current Version',
     FixedVersion: 'Fixed in Version',
     Success: '@:general.Success',

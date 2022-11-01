@@ -127,12 +127,12 @@
         </span>
         <span>
           <el-button
-            class="buttonPrimary"
+            type="primary"
             :loading="isLoading"
             :disabled="isDisabled"
-            @click="confirm"
+            @click="next"
           >
-            {{ $t('Test.TestFile.CreateNow') }}
+            {{ $t('Test.TestFile.Next') }}
           </el-button>
           <el-button
             class="buttonSecondaryReverse"
@@ -151,9 +151,8 @@
 import { mapGetters } from 'vuex'
 import {
   getSideexVariable,
-  updateSideexVariable,
   deleteSideexVariable,
-  generateSideex
+  updateSideexVariable
 } from '@/api/sideex'
 
 export default {
@@ -163,22 +162,35 @@ export default {
       type: Boolean,
       default: false
     },
+    previewDialogVisible: {
+      type: Boolean,
+      default: false
+    },
     fileName: {
       type: String,
       default: ''
+    },
+    isHistory: {
+      type: Boolean,
+      default: true
+    },
+    variableList: {
+      type: Array,
+      default: () => ([])
     }
   },
   data() {
     return {
       isLoading: false,
+      originData: {
+        var: [],
+        rule: []
+      },
       variable: [],
       limit: '',
       limitPlaceholder: `IF [File system] = "FAT" THEN [Size] <= 4096;\nIF [File system] = "FAT32" THEN [Size] <= 32000;\n
 IF [File system] <> "NTFS" OR\n ( [File system] = "NTFS" AND [Cluster size] > 4096 )\nTHEN [Compression] = "Off";\n
 IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster size] <= 4096 )\nTHEN [Compression] = "Off";`,
-      createLoading: false,
-      loadingText: ['saveParamsSetting', 'createTestData', 'sideeXTestDataConverting'],
-      loadingInstance: {},
       timer: ''
     }
   },
@@ -191,40 +203,10 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       return this.variable.every((item) => item.value === '')
     }
   },
-  watch: {
-    createLoading(val) {
-      if (val) {
-        this.loadingInstance = this.$loading({
-          text: this.$t('Loading'),
-          lock: true,
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)',
-          customClass: 'project-dialog-loading'
-        })
-        this.loadingText.forEach((text, index) => {
-          this.timer = setTimeout(() =>
-            this.openFullLoading(text), 3000 * index
-          )
-        })
-      } else {
-        clearTimeout(this.timer)
-        this.loadingInstance.close()
-        this.close()
-      }
-    }
-  },
   mounted() {
     this.fetchData()
   },
   methods: {
-    openFullLoading(loadingText) {
-      // handle i18n log warning when loadingText is undefined
-      const text = loadingText
-        ? this.$t(`LoadingText.${loadingText}`)
-        : this.$t('LoadingText.sideeXTestDataConverting')
-      // set loading text every 3 second
-      this.loadingInstance.setText(text)
-    },
     numberCheck (rule, value, callback) {
       const variable = this.variable.find((item) => item.value === value)
       if (variable.type !== 'int' || !variable.type || !variable.value) callback()
@@ -234,8 +216,10 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       callback()
     },
     async fetchData() {
+      this.$emit('update:previewDialogVisible', false)
       this.isLoading = true
       const data = (await getSideexVariable(this.selectedProjectId, { filename: this.fileName })).data
+      this.originData = JSON.parse(JSON.stringify(data))
       this.variable = data.var.map((item) => ({
         name: item.name,
         type: item.type,
@@ -248,7 +232,7 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       this.variable[index].type = ''
       this.variable[index].value = ''
     },
-    confirm() {
+    next() {
       const validity = []
       this.$refs['form'].forEach((item) => { item.validate((valid) => { validity.push(valid) }) })
       if (!validity.every((item) => item)) return
@@ -265,7 +249,7 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       }
     },
     async update() {
-      this.createLoading = true
+      this.isLoading = true
       const data = {
         var: this.variable
           .filter((item) => item.name && item.type)
@@ -281,24 +265,21 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       }
       try {
         await updateSideexVariable(this.selectedProjectId, data)
-        this.generate()
+        this.getResult()
       } catch (e) {
         console.error(e)
-        this.createLoading = false
+        this.isLoading = false
       }
     },
-    async generate() {
+    async getResult() {
       try {
-        await generateSideex(this.selectedProjectId, { filename: this.fileName })
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Added'),
-          type: 'success'
-        })
+        this.$emit('update:variableList', this.variable.map((item) => item.name))
+        this.$emit('update:isHistory', false)
       } catch (e) {
         console.error(e)
       } finally {
-        this.createLoading = false
+        this.$emit('update:previewDialogVisible', true)
+        this.isLoading = false
       }
     },
     remove() {
@@ -323,6 +304,8 @@ IF NOT ( [File system] = "NTFS" OR\n ( [File system] = "NTFS" AND NOT [Cluster s
       }).catch(() => {})
     },
     close() {
+      this.$emit('update')
+      this.$emit('update:isHistory', true)
       this.$emit('update:dialogVisible', false)
     }
   }

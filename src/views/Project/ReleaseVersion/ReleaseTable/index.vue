@@ -20,9 +20,10 @@
             <div class="ml-3" style="color: #409EFF;">
               {{ $t('Release.releaseNote') }}
             </div>
-            <VueMarkdown class="ml-5 primary">
-              {{ '\n' + row.note }}
-            </VueMarkdown>
+            <Viewer
+              class="ml-5 primary"
+              :initial-value="'\n' + row.note"
+            />
           </template>
         </el-table-column>
         <el-table-column
@@ -212,14 +213,14 @@ import { getReleaseVersion, deleteReleaseTag } from '@/api_v2/release'
 import { BasicData, Pagination, SearchBar } from '@/newMixins'
 import { UTCtoLocalTime } from '@/filters'
 import variables from '@/styles/theme/variables.scss'
-import VueMarkdown from 'vue-markdown'
+import { Viewer } from '@toast-ui/vue-editor'
 
 export default {
   name: 'ReleaseTable',
   components: {
     CommandSelector: () => import('./CommandSelector'),
     ActionInput: () => import('./ActionInput'),
-    VueMarkdown: VueMarkdown
+    Viewer
   },
   mixins: [BasicData, Pagination, SearchBar],
   model: {

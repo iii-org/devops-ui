@@ -1,6 +1,6 @@
 import { getUserInfo, login } from '@/api/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
-import { resetRouter } from '@/router/router'
+import { resetRouter, loadRouter } from '@/router/router'
 import VueJwtDecode from 'vue-jwt-decode'
 
 const getDefaultState = () => {
@@ -78,6 +78,9 @@ const actions = {
     await dispatch('projects/getSelectionOptions', null, { root: true })
 
     dispatch('app/setRoleList', null, { root: true })
+    dispatch('app/setFileSize', null, { root: true })
+    dispatch('app/setFileType', null, { root: true })
+    dispatch('app/setFileTypeList', null, { root: true })
     commit('SET_USER_ROLE', user.default_role_name)
     const myProjects = rootState.projects.options
 
@@ -94,6 +97,8 @@ const actions = {
       await dispatch('projects/getIssueStrictTracker', null, { root: true })
       await dispatch('projects/getIssueForceTracker', null, { root: true })
     }
+
+    loadRouter()
   },
 
   // user logout

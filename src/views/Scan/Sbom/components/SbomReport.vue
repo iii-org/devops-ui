@@ -40,6 +40,7 @@
               {{ branch }} /<svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
               {{ commitId }}
             </li>
+            <li>{{ $t('Sbom.PackageCount') }}: {{ packageCount }}</li>
           </ul>
           <!-- white box test -->
           <div
@@ -105,18 +106,89 @@
               </template>
             </el-table-column>
             <el-table-column
+              :label="$t('Docker.Package')"
+              prop="name"
+              align="center"
+            />
+            <el-table-column
               :label="$t('Docker.Vulnerability')"
               prop="id"
               align="center"
-              width="180px"
-            />
+            >
+              <template slot-scope="{row}">
+                <el-link
+                  type="primary"
+                  target="_blank"
+                  :href="row.dataSource"
+                >
+                  {{ row.id }}
+                </el-link>
+              </template>
+            </el-table-column>
             <ElTableColumnTag
               :label="$t('Docker.Severity')"
               prop="severity"
               size="small"
               location="docker"
-              min-width="130"
+              min-width="50"
               i18n-key="Docker"
+            />
+            <el-table-column
+              :label="$t('Docker.Licenses')"
+              prop="licenses"
+              align="center"
+              min-width="100"
+            >
+              <template slot-scope="{row}">
+                <el-tooltip
+                  v-if="row.licenses"
+                  effect="dark"
+                  placement="right"
+                  :disabled="row.licenses.length < 3"
+                >
+                  <ul
+                    v-if="row.licenses.length > 2"
+                    slot="content"
+                    class="text-left"
+                    style="
+                      margin: 0;
+                      padding-left: 1rem;
+                    "
+                  >
+                    <li
+                      v-for="(item, index) in row.licenses"
+                      :key="index"
+                    >
+                      {{ item }}
+                    </li>
+                  </ul>
+                  <ul
+                    class="text-left"
+                    style="
+                      margin: 0;
+                      padding-left: 1rem;
+                    "
+                  >
+                    <li
+                      v-for="(item, index) in row.licenses.slice(0,2)"
+                      :key="index"
+                    >
+                      {{ item }}
+                      <div
+                        v-if="row.licenses.length > 2 && index === 1"
+                        class="font-bold"
+                      >
+                        more . . .
+                      </div>
+                    </li>
+                  </ul>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="$t('Docker.Type')"
+              prop="type"
+              align="center"
             />
             <el-table-column
               :label="$t('Docker.CurrentVersion')"
@@ -127,16 +199,64 @@
               :label="$t('Docker.FixedVersion')"
               prop="versions"
               align="center"
-            />
+              min-width="100"
+            >
+              <template slot-scope="{row}">
+                <el-tooltip
+                  v-if="row.versions"
+                  effect="dark"
+                  placement="left"
+                  :disabled="row.versions.length < 3"
+                >
+                  <ul
+                    v-if="row.versions.length > 2"
+                    slot="content"
+                    class="text-left"
+                    style="
+                      margin: 0;
+                      padding-left: 1rem;
+                    "
+                  >
+                    <li
+                      v-for="(item, index) in row.versions"
+                      :key="index"
+                    >
+                      {{ item }}
+                    </li>
+                  </ul>
+                  <ul
+                    class="text-left"
+                    style="
+                      margin: 0;
+                      padding-left: 1rem;
+                    "
+                  >
+                    <li
+                      v-for="(item, index) in row.versions.slice(0,2)"
+                      :key="index"
+                    >
+                      {{ item }}
+                      <div
+                        v-if="row.versions.length > 2 && index === 1"
+                        class="font-bold"
+                      >
+                        more . . .
+                      </div>
+                    </li>
+                  </ul>
+                </el-tooltip>
+              </template>
+            </el-table-column>
             <template slot="empty">
               <el-empty :description="$t('general.NoData')" />
             </template>
           </el-table>
-          <pagination
+          <Pagination
             :total="listQuery.total"
-            :page="listQuery.page"
+            :page="listQuery.current"
             :limit="listQuery.per_page"
-            :layout="'total, prev, pager, next'"
+            :page-sizes="[50, 100, 200, 300, listQuery.total]"
+            :layout="'total, sizes, prev, pager, next'"
             @pagination="onPagination"
           />
         </div>
@@ -156,14 +276,11 @@ import {
 import Pagination from '@/components/Pagination'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 
-const params = () => ({
-  per_page: 10,
-  page: 1
-})
-
 const listQuery = () => ({
-  total: 0,
-  current: 0
+  per_page: 100,
+  page: 1,
+  current: 1,
+  total: 0
 })
 
 export default {
@@ -171,7 +288,6 @@ export default {
   components: { ElTableColumnTag, Pagination },
   data() {
     return {
-      params: params(),
       listQuery: listQuery(),
       title: 'III DevOps',
       listLoading: false,
@@ -203,6 +319,9 @@ export default {
     },
     sbomId() {
       return this.$route.params.sbomId
+    },
+    packageCount() {
+      return this.$route.params.packageCount
     }
   },
   watch: {
@@ -232,7 +351,7 @@ export default {
       try {
         await Promise.all([
           getSbomRiskOverview(this.sbomId),
-          getSbomRiskDetail(this.sbomId, this.params)
+          getSbomRiskDetail(this.sbomId, this.listQuery)
         ]).then((res) => {
           const [overview, detail] = res.map((item) => item.data)
           if (Object.keys(overview).length === 0 || Object.keys(detail).length === 0) return
@@ -253,14 +372,14 @@ export default {
     },
     async fetchData() {
       this.listLoading = true
-      const res = await getSbomRiskDetail(this.sbomId, this.params)
+      const res = await getSbomRiskDetail(this.sbomId, this.listQuery)
       this.listData = res.data.detail_list
       this.listQuery = res.data.page
       this.listLoading = false
     },
     async onPagination(query) {
-      const { page } = query
-      this.params.page = page
+      this.listQuery.per_page = query.limit
+      this.listQuery.page = query.page
       await this.fetchData()
     },
     setSummaryData(data) {
@@ -344,5 +463,9 @@ export default {
   padding-top: 20px;
   // outline: solid 8px $appMainBg;
   box-shadow: -20px 0px 0px 0px $appMainBg, 20px 0px 0px 0px $appMainBg;
+}
+
+>>> .el-link--inner{
+  border-bottom: 1px solid #409eff;
 }
 </style>

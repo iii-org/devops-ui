@@ -309,11 +309,14 @@
 
 <script>
 import dayjs from 'dayjs'
-import { getProjectAssignable, getProjectVersion, addProjectTags, getProjectInfos } from '@/api/projects'
 import {
-  getFileTypeLimit,
-  getFileTypeList,
-  isAllowedFileTypeList,
+  getProjectAssignable,
+  getProjectVersion,
+  addProjectTags,
+  getProjectInfos
+} from '@/api/projects'
+import {
+  isAllowedTypes,
   fileSizeToMB,
   containSpecialChar
 } from '@/utils/extension'
@@ -376,7 +379,6 @@ export default {
       default: () => []
     }
   },
-
   data() {
     const validateAssignedTo = (rule, value, callback) => {
       if ((!value || value === '') && this.issueForm.status_id >= 2) {
@@ -405,15 +407,11 @@ export default {
           }
         }
       },
-      fileSizeLimit: '5MB',
-      fileTypeLimit: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
-      fileTypeList: {},
       specialSymbols: '\ / : * ? " < > | # { } % ~ &',
       tagsString: '',
       projectName: ''
     }
   },
-
   computed: {
     ...mapGetters([
       'userId',
@@ -423,7 +421,9 @@ export default {
       'issueFilter',
       'strictTracker',
       'tracker',
-      'selectedProject'
+      'selectedProject',
+      'fileSizeLimit',
+      'fileTypeLimit'
     ]),
     getTracker() {
       if (this.trackerList.length > 0) return this.trackerList
@@ -431,7 +431,6 @@ export default {
       else return this.strictTracker
     }
   },
-
   watch: {
     projectId() {
       this.fetchData()
@@ -449,13 +448,11 @@ export default {
       }
     }
   },
-
   mounted() {
     this.fetchProject()
     this.fetchData()
     this.setFilterValue()
   },
-
   methods: {
     async fetchProject() {
       const project = await getProjectInfos(this.projectId)
@@ -485,8 +482,6 @@ export default {
       if (this.issueId > 0) {
         await this.getClosable()
       }
-      this.fileTypeLimit = await getFileTypeLimit()
-      this.fileTypeList = await getFileTypeList()
       this.isLoading = false
     },
     setFilterValue() {
@@ -527,7 +522,6 @@ export default {
       })
       if (this.issueForm.tracker_id) { this.isReplaceTrackerId() }
     },
-
     handleClose() {
       if (this.dialogVisible) {
         this.uploadFileList = []
@@ -619,14 +613,14 @@ export default {
     },
     async handleChange(file, fileList) {
       const { raw, size, name } = file
-      if (!isAllowedFileTypeList(this.fileTypeList, raw.type)) {
+      if (!isAllowedTypes(raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
           type: 'warning'
         })
         this.$refs['upload'].clearFiles()
-      } else if (fileSizeToMB(size) > 5) {
+      } else if (fileSizeToMB(size) > Number(this.fileSizeLimit.replace(/\D/g, ''))) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.FileSizeLimit', { size: this.fileSizeLimit }),

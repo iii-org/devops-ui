@@ -439,8 +439,8 @@ export default {
       const offset = limit * (page - 1)
       this.params.offset = offset
       this.params.limit = limit
+      this.params.page = page
       await this.fetchData()
-      this.initParams()
     },
     initParams() {
       this.params = params()
@@ -501,6 +501,7 @@ export default {
     async setStar(id, star) {
       const message = this.$t('Notify.Updated')
       star ? await postStarProject(id) : await deleteStarProject(id)
+      this.initParams()
       await this.fetchData()
       this.showSuccessMessage(message)
     },
