@@ -103,7 +103,7 @@ const actions = {
   async generateRoutes({ commit }, roles) {
     commit('SET_EXCALIDRAW', false)
     const disabledPluginRoutes = (await getRoutes()).data.map(route => {
-      if(route.name === 'excalidraw') commit('SET_EXCALIDRAW', true)
+      if (route.name === 'excalidraw') commit('SET_EXCALIDRAW', true)
       if (route.disabled) return route.name
     })
     // views Plugin
