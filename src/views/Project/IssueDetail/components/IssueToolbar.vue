@@ -48,6 +48,7 @@
           </el-popover>
         </template>
         <el-link
+          v-if="isExcalidrawEnable"
           class="linkTextColor ml-3"
           :underline="false"
           :disabled="isButtonDisabled"
@@ -285,7 +286,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId'])
+    ...mapGetters(['selectedProjectId', 'isExcalidrawEnable'])
   },
   methods: {
     async handleUploadClose() {
