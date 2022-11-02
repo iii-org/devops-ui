@@ -168,6 +168,7 @@
             </el-col>
             <el-col :span="24">
               <el-tabs
+                ref="IssueNotesDialog"
                 v-model="issueTabs"
                 type="border-card"
               >

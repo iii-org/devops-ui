@@ -10,6 +10,7 @@ const getters = {
   userId: state => state.user.userId,
   userName: state => state.user.userName,
   userRole: state => state.user.userRole,
+  isExcalidrawEnable: state => state.permission.isExcalidrawEnable,
   permission_routes: state => state.permission.routes,
   projectOptions: state => state.projects.options,
   projectList: state => state.projects.list,

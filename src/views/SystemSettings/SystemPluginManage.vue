@@ -206,6 +206,7 @@ export default {
         }
         this.handleClose()
         this.fetchData()
+        reloadRouter()
       } else {
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
@@ -220,10 +221,10 @@ export default {
             await updatePlugin(this.pluginName, sendData)
             this.handleClose()
             this.fetchData()
+            reloadRouter()
           }
         })
       }
-      reloadRouter()
     },
     handleDelete(pluginName) {
       this.isLoading = true

@@ -84,11 +84,15 @@ const appendRouter = (menuItem, result) => {
 }
 
 const state = {
+  isExcalidrawEnable: false,
   addRoutes: [],
   routes: []
 }
 
 const mutations = {
+  SET_EXCALIDRAW: (states, status) => {
+    states.isExcalidrawEnable = status
+  },
   SET_ROUTES: (states, routes) => {
     states.addRoutes = routes
     states.routes = constantRoutes.concat(routes)
@@ -97,7 +101,9 @@ const mutations = {
 
 const actions = {
   async generateRoutes({ commit }, roles) {
+    commit('SET_EXCALIDRAW', false)
     const disabledPluginRoutes = (await getRoutes()).data.map(route => {
+      if (route.name === 'excalidraw') commit('SET_EXCALIDRAW', true)
       if (route.disabled) return route.name
     })
     // views Plugin
