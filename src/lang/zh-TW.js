@@ -169,7 +169,7 @@ export default {
     Confirm: '確認',
     Save: '儲存',
     Cancel: '取消',
-    Restore: '復原',
+    Restore: '還原',
     SearchName: '搜尋名稱',
     SearchBranch: '搜尋分支',
     Description: '描述',
@@ -178,6 +178,7 @@ export default {
     NoIssue: '暫無議題',
     Email: '信箱',
     Creator: '建立者',
+    Updater: '更新者',
     CreateTime: '建立時間',
     StartTime: '開始時間',
     UpdateTime: '更新時間',
@@ -1402,7 +1403,8 @@ export default {
     Name: '白板名稱',
     CreateBoard: '新增白板',
     EditBoard: '編輯白板',
-    RestoreBoard: '版本還原'
+    HistoricalRecord: '歷史記錄',
+    AutoSavedTime: '自動儲存時間'
   },
   IssueMatrix: {
     Relations: '關係',

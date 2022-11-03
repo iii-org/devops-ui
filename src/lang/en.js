@@ -178,6 +178,7 @@ export default {
     NoIssue: 'No Issue',
     Email: 'Email',
     Creator: 'Creator',
+    Updater: 'Updater',
     CreateTime: 'Create Time',
     StartTime: 'Start Time',
     UpdateTime: 'Update Time',
@@ -1411,7 +1412,8 @@ export default {
     Name: 'Whiteboard Name',
     CreateBoard: 'Create Whiteboard',
     EditBoard: 'Edit Whiteboard',
-    RestoreBoard: 'RestoreBoard'
+    HistoricalRecord: 'Historical Record',
+    AutoSavedTime: 'Auto Saved Time'
   },
   IssueMatrix: {
     Relations: 'Relationship',

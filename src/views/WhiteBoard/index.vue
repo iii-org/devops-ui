@@ -116,10 +116,11 @@
           <el-button
             size="mini"
             class="buttonSecondaryReverse"
+            icon="el-icon-time"
             :disabled="isDisabled"
             @click="handleRestore(scope.row)"
           >
-            {{ $t('general.Restore') }}
+            {{ $t('Excalidraw.HistoricalRecord') }}
           </el-button>
         </template>
       </el-table-column>
