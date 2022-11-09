@@ -385,10 +385,11 @@ export default {
       return data
     },
     handleCreateTestData(row) {
-      this.toggleDialogVisible('createTestData')
       this.selectedFileName = row.file_name
+      this.toggleDialogVisible('createTestData')
     },
-    handleHistoryTestData() {
+    handleHistoryTestData(row) {
+      this.selectedFileName = row.file_name
       this.toggleDialogVisible('previewTestData')
     },
     handleRelatedPlan(collection) {
