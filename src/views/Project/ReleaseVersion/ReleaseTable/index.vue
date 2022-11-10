@@ -148,7 +148,7 @@
               </div>
               <div
                 v-for="(tag, idx) in scope.row.image_tags"
-                v-else-if="isExpand"
+                v-else-if="isExpand || scope.row.image_tags.length === 1"
                 :key="idx"
                 placement="top"
                 width="400"
