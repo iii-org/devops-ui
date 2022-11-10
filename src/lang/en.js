@@ -1413,7 +1413,8 @@ export default {
     CreateBoard: 'Create Whiteboard',
     EditBoard: 'Edit Whiteboard',
     HistoricalRecord: 'Historical Record',
-    AutoSavedTime: 'Auto Saved Time'
+    AutoSavedTime: 'Auto Saved Time',
+    Size: 'Size'
   },
   IssueMatrix: {
     Relations: 'Relationship',

@@ -28,6 +28,15 @@
       />
       <el-table-column
         align="center"
+        :label="$t('Excalidraw.Size')"
+        prop="size"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.size + 'k' }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
         :label="$t('general.Actions')"
       >
         <template slot-scope="scope">

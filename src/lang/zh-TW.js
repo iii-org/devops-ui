@@ -1404,7 +1404,8 @@ export default {
     CreateBoard: '新增白板',
     EditBoard: '編輯白板',
     HistoricalRecord: '歷史記錄',
-    AutoSavedTime: '自動儲存時間'
+    AutoSavedTime: '自動儲存時間',
+    Size: '檔案大小'
   },
   IssueMatrix: {
     Relations: '關係',
