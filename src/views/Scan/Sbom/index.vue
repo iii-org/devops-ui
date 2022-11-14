@@ -13,7 +13,7 @@
       </el-button>
       <el-input
         v-model="keyword"
-        :placeholder="$t('Git.searchCommitId')"
+        :placeholder="$t('Git.searchBranchOrCommitId')"
         prefix-icon="el-icon-search"
         style="width: 250px"
       />
@@ -263,6 +263,22 @@ export default {
       this.timeoutId = window.setTimeout(() => this.onSearch(val), 1000)
     }
   },
+  beforeRouteEnter(to, from, next) {
+    if (from.name === 'SbomReport') {
+      next((vm) => {
+        vm.keyword = sessionStorage.getItem('keyword')
+        sessionStorage.removeItem('keyword')
+      })
+    } else {
+      next()
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (to.name === 'SbomReport') {
+      sessionStorage.setItem('keyword', this.keyword)
+    }
+    next()
+  },
   beforeDestroy() {
     window.clearTimeout(this.timeoutId)
   },
@@ -330,7 +346,7 @@ export default {
       return tagMap[status] || 'dark'
     },
     async handleToTestReport(row) {
-      localStorage.setItem('sbomTime', row.created_at)
+      sessionStorage.setItem('sbomTime', row.created_at)
       this.$router.push({
         name: 'SbomReport',
         params: {

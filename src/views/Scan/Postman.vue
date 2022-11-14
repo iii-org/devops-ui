@@ -14,7 +14,7 @@
         </el-button>
         <el-input
           v-model="keyword"
-          :placeholder="$t('Postman.SearchBranch')"
+          :placeholder="$t('Git.searchBranchOrCommitId')"
           style="width: 250px"
           prefix-icon="el-icon-search"
         />
@@ -126,12 +126,28 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      searchKeys: ['branch'],
+      searchKeys: ['branch', 'commit_id'],
       pod: {}
     }
   },
   computed: {
     ...mapGetters(['userRole'])
+  },
+  beforeRouteEnter(to, from, next) {
+    if (from.name === 'PostmanTestCase') {
+      next((vm) => {
+        vm.keyword = sessionStorage.getItem('keyword')
+        sessionStorage.removeItem('keyword')
+      })
+    } else {
+      next()
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (to.name === 'PostmanTestCase') {
+      sessionStorage.setItem('keyword', this.keyword)
+    }
+    next()
   },
   methods: {
     async fetchData() {

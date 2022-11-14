@@ -16,7 +16,7 @@
       </el-button>
       <el-input
         v-model="keyword"
-        :placeholder="$t('CheckMarx.SearchScanId')"
+        :placeholder="$t('Git.searchBranchOrCommitId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
       />
@@ -162,7 +162,7 @@ export default {
   data() {
     return {
       confirmLoading: false,
-      searchKeys: ['id'],
+      searchKeys: ['branch', 'commit_id'],
       pod: {}
     }
   },

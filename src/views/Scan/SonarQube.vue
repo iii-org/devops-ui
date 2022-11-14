@@ -25,7 +25,7 @@
       </el-button>
       <el-input
         v-model="keyword"
-        :placeholder="$t('Git.Branch')"
+        :placeholder="$t('Git.searchBranchOrCommitId')"
         style="width: 250px; float: right"
         prefix-icon="el-icon-search"
       />
@@ -143,7 +143,7 @@ export default {
   mixins: [MixinElTableWithAProject],
   data() {
     return {
-      searchKeys: ['branch'],
+      searchKeys: ['branch', 'commit_id'],
       sqLink: function () {
         return ''
       },

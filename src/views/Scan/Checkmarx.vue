@@ -13,7 +13,7 @@
       </el-button>
       <el-input
         v-model="keyword"
-        :placeholder="$t('CheckMarx.SearchScanId')"
+        :placeholder="$t('Git.searchBranchOrCommitId')"
         prefix-icon="el-icon-search"
         style="width: 250px"
       />
@@ -217,7 +217,7 @@ export default {
   mixins: [MixinElTableWithAProject],
   data() {
     return {
-      searchKeys: ['scan_id'],
+      searchKeys: ['branch', 'commit_id'],
       pod: {},
       error: {}
     }

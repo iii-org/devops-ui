@@ -349,10 +349,10 @@ export default {
         console.error(error)
       } finally {
         this.listLoading = false
-        this.timeNow = localStorage.getItem('sbomTime') !== 'null'
-          ? UTCtoLocalTime(localStorage.getItem('sbomTime')) : '-'
+        this.timeNow = sessionStorage.getItem('sbomTime') !== 'null'
+          ? UTCtoLocalTime(sessionStorage.getItem('sbomTime')) : '-'
         this.$once('hook:beforeDestroy', () => {
-          localStorage.removeItem('sbomTime')
+          sessionStorage.removeItem('sbomTime')
         })
       }
     },

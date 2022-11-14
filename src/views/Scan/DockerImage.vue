@@ -6,7 +6,7 @@
     <ProjectListSelector>
       <el-input
         v-model="keyword"
-        :placeholder="$t('Git.searchCommitId')"
+        :placeholder="$t('Git.searchBranchOrCommitId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
       />
@@ -166,6 +166,22 @@ export default {
       clearTimeout(this.timeoutId)
       this.timeoutId = window.setTimeout(() => this.onSearch(val), 1000)
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    if (from.name === 'DockerReport') {
+      next((vm) => {
+        vm.keyword = sessionStorage.getItem('keyword')
+        sessionStorage.removeItem('keyword')
+      })
+    } else {
+      next()
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (to.name === 'DockerReport') {
+      sessionStorage.setItem('keyword', this.keyword)
+    }
+    next()
   },
   beforeDestroy() {
     window.clearTimeout(this.timeoutId)

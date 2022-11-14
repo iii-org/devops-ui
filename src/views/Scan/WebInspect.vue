@@ -17,7 +17,7 @@
       <el-input
         v-model="keyword"
         class="mr-3"
-        :placeholder="$t('WebInspect.SearchCommitId')"
+        :placeholder="$t('Git.searchBranchOrCommitId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
       />
@@ -181,7 +181,7 @@ export default {
   data() {
     return {
       confirmLoading: false,
-      searchKeys: ['commit_id'],
+      searchKeys: ['branch', 'commit_id'],
       pod: {}
     }
   },

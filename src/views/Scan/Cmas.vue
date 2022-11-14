@@ -13,7 +13,7 @@
       </el-button>
       <el-input
         v-model="keyword"
-        :placeholder="$t('general.SearchBranch')"
+        :placeholder="$t('Git.searchBranchOrCommitId')"
         prefix-icon="el-icon-search"
         style="width: 250px"
       />
@@ -178,7 +178,7 @@ export default {
     this.MOEA = ['L3', 'L2', 'L1']
     this.OWASP = [this.$t('general.High'), this.$t('general.Medium'), this.$t('general.Low')]
     return {
-      searchKeys: ['branch'],
+      searchKeys: ['branch', 'commit_id'],
       pod: {}
     }
   },

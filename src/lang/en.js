@@ -348,7 +348,6 @@ export default {
     InfoSeverity: 'Info Severity',
     RunAt: 'Start Time',
     Report: '@:general.Report',
-    SearchScanId: 'Search Scan ID',
     noScan: 'This project does not have any scan.',
     notCompletedScan: 'The scan is not completed yet. It may take several hours to complete.',
     generatingReportScan: 'Scan done, the system is generating a report. It may take several minutes to complete.',
@@ -368,6 +367,7 @@ export default {
     PostScan: 'Processing',
     Finished: 'Finished',
     Canceled: 'Canceled',
+    Deleted: 'Deleted',
     Failed: 'Failed',
     InProcess: 'In Process'
   },
@@ -399,8 +399,7 @@ export default {
     RunAt: 'Start Time',
     Report: '@:general.Report',
     TestReport: 'Test Report',
-    DownloadReport: 'Download Report',
-    SearchCommitId: 'Search Commit ID'
+    DownloadReport: 'Download Report'
   },
   Cmas: {
     SUCCESS: 'Success',
@@ -955,7 +954,6 @@ export default {
     TestFail: 'Test Fail',
     TestTotal: 'Test total',
     StartTime: 'Start Time',
-    SearchBranch: 'Search Branch',
     DevOps: 'DevOps',
     Postman: 'Postman'
   },
@@ -1017,7 +1015,7 @@ export default {
   Git: {
     Branch: '@:general.Branch',
     Commit: 'Commit',
-    searchCommitId: 'Search Commit ID'
+    searchBranchOrCommitId: 'Search @:general.Branch or Commit ID'
   },
   SonarQube: {
     ViewReport: 'View Report',

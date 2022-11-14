@@ -275,7 +275,6 @@ export default {
   },
   watch: {
     listData(val) {
-      console.log(val)
       if (val && val[0]) this.activeCollection = this.listData[0].name
     },
     keyword(val) {

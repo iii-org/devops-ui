@@ -346,7 +346,6 @@ export default {
     InfoSeverity: '資訊',
     RunAt: '開始時間',
     Report: '@:general.Report',
-    SearchScanId: '搜尋 測試編號',
     noScan: '目前沒有任何掃描。',
     notCompletedScan: '掃描尚未完成，可能需要數小時來完成。',
     generatingReportScan: '掃描已完成，正在產生報告，可能需要數分鐘來完成。',
@@ -365,6 +364,7 @@ export default {
     PostScan: '掃瞄或處理中',
     Finished: '掃描完成',
     Canceled: '已取消',
+    Deleted: '已刪除',
     Failed: '掃描失敗',
     InProcess: '產生中'
   },
@@ -403,8 +403,7 @@ export default {
     RunAt: '開始時間',
     Report: '@:general.Report',
     TestReport: '測試報告',
-    DownloadReport: '下載報告',
-    SearchCommitId: '搜尋 Commit'
+    DownloadReport: '下載報告'
   },
   TestValue: {
     TestValue: '測試資料',
@@ -949,7 +948,6 @@ export default {
     TestFail: '測試失敗',
     TestTotal: '測試總計',
     StartTime: '開始時間',
-    SearchBranch: '搜尋 分支',
     DevOps: 'DevOps',
     Postman: 'Postman'
   },
@@ -1010,7 +1008,7 @@ export default {
   Git: {
     Branch: '@:general.Branch',
     Commit: 'Commit',
-    searchCommitId: '搜尋 Commit'
+    searchBranchOrCommitId: '搜尋@:general.Branch或Commit'
   },
   SonarQube: {
     ViewReport: '檢視報告',
