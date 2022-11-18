@@ -225,7 +225,6 @@ export default {
     openIssueDialog() {
       const com = this.$refs.issueDialog
       com.setData(this.updateData.issues, null)
-      com.adjustTable(5)
       com.visible = true
     }
   }

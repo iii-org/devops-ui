@@ -20,7 +20,7 @@
       <el-table-column :label="$t('Project.Version')" align="center" prop="versionName" />
       <el-table-column :label="$t('general.Type')" align="center" prop="trackerName" />
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
@@ -32,15 +32,20 @@
 </template>
 
 <script>
-import MixinElTableWithCheckbox from '@/mixins/MixinElTableWithCheckbox'
+import { Checkbox } from '@/mixins'
 
 export default {
   name: 'IssueListDialog',
-  mixins: [MixinElTableWithCheckbox],
+  mixins: [Checkbox],
   data() {
     return {
-      searchKey: '',
-      visible: false
+      visible: false,
+      listQuery: {
+        offset: 0,
+        limit: 5,
+        total: 0,
+        page: 1
+      }
     }
   },
   methods: {

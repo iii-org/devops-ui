@@ -1,7 +1,11 @@
 <template>
   <div class="app-container">
     <div class="flex justify-between">
-      <el-button id="btn-add-secret" class="buttonSecondary" @click="dialogVisible = true">
+      <el-button
+        id="btn-add-secret"
+        class="buttonSecondary"
+        @click="dialogVisible = true"
+      >
         <em class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
       </el-button>
       <el-input
@@ -14,22 +18,50 @@
     </div>
     <el-divider />
     <div class="mb-5 text-right">
-      <el-button id="btn-reload" class="buttonPrimaryReverse" icon="el-icon-refresh" size="mini" plain @click="fetchData()">
+      <el-button
+        id="btn-reload"
+        class="buttonPrimaryReverse"
+        icon="el-icon-refresh"
+        size="mini"
+        plain
+        @click="fetchData()"
+      >
         {{ $t('general.Refresh') }}
       </el-button>
     </div>
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" fit height="100%">
+    <el-table
+      v-loading="listLoading"
+      :element-loading-text="$t('Loading')"
+      :data="pagedData"
+      fit
+    >
       <el-table-column-tag
         prop="status"
         :label="$t('general.Status')"
         min-width="85"
-        size="midium"
+        size="medium"
         location="systemSecrets"
       />
-      <el-table-column align="center" :label="$t('Maintenance.SecretName')" prop="name" min-width="150" />
-      <el-table-column label="Keys" prop="keys" min-width="250" />
-      <el-table-column-time prop="created" :label="$t('general.CreateTime')" />
-      <el-table-column align="center" :label="$t('general.Actions')" width="120">
+      <el-table-column
+        align="center"
+        :label="$t('Maintenance.SecretName')"
+        prop="name"
+        min-width="150"
+      />
+      <el-table-column
+        label="Keys"
+        prop="keys"
+        min-width="250"
+      />
+      <el-table-column-time
+        prop="created"
+        :label="$t('general.CreateTime')"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('general.Actions')"
+        width="120"
+      >
         <template slot-scope="scope">
           <el-popconfirm
             confirm-button-text="Delete"
@@ -53,13 +85,11 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
 
@@ -125,9 +155,8 @@
 </template>
 
 <script>
-import Pagination from '@/components/Pagination'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
 import { addSystemSecret, deleteSystemSecret, getSystemSecrets } from '@/api/maintenance'
-import MixinElTable from '@/mixins/MixinElTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 
@@ -139,8 +168,8 @@ const defaultFormData = () => ({
 
 export default {
   name: 'SystemSecrets',
-  components: { ElTableColumnTime, Pagination, ElTableColumnTag },
-  mixins: [MixinElTable],
+  components: { ElTableColumnTime, ElTableColumnTag },
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       formData: defaultFormData(),

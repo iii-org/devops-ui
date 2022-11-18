@@ -181,7 +181,7 @@
             <el-empty :description="$t('general.NoData')" />
           </template>
         </el-table>
-        <pagination
+        <Pagination
           :total="pageInfo.total"
           :page="listQuery.page"
           :limit="listQuery.limit"
@@ -206,7 +206,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { QuickAddIssue, ExpandSection } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, IssueList, ContextMenu } from '@/newMixins'
+import { Table, IssueList, ContextMenu } from '@/mixins'
 import SearchFilter from '@/components/Issue/SearchFilter'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectUserList, getProjectIssueList } from '@/api/projects'

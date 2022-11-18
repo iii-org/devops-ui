@@ -39,7 +39,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination
+      <Pagination
         :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
@@ -53,7 +53,7 @@
 
 <script>
 import { getPostmanReport } from '@/api/postman'
-import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
 
 export default {
   name: 'TestCaseDevOps',

@@ -1,8 +1,5 @@
 <template>
-  <el-row
-    class="app-container"
-    style="overflow: hidden;"
-  >
+  <el-row class="app-container">
     <ProjectListSelector>
       <el-button
         v-if="pod.has_pod"
@@ -36,7 +33,6 @@
       v-loading="listLoading"
       :element-loading-text="$t('Loading')"
       :data="pagedData"
-      height="60vh"
       fit
     >
       <el-table-column
@@ -151,12 +147,11 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
     <PodLog
@@ -170,14 +165,14 @@
 <script>
 import { getWebInspectScans, getWebInspectStats, getWebInspectStatus } from '@/api/webInspect'
 import { getWebInspectPod } from '@/api_v2/webInspect'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanWebInspect',
   components: { ElTableColumnTime, PodLog },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
   data() {
     return {
       confirmLoading: false,

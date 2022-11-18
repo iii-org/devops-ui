@@ -53,7 +53,7 @@
           <el-empty :description="$t('general.NoData')" />
         </template>
       </el-table>
-      <pagination
+      <Pagination
         v-if="inDialog"
         :total="filteredData.length"
         :page="listQuery.page"
@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
 import { getProjectListDetail } from '@/api/dashboard'
 import ProjectStatus from '@/views/Overview/Dashboard/components/widget/ProjectStatus'
 

@@ -63,7 +63,7 @@
 
 <script>
 import { changeProjectAlertSettings, getAlertSettingsByProject, updateAlertSettingsByProject } from '@/api/alert'
-import { BasicData } from '@/newMixins'
+import { BasicData } from '@/mixins'
 
 export default {
   name: 'AlertSettings',

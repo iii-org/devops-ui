@@ -35,7 +35,6 @@
       :element-loading-text="$t('Loading')"
       :data="pagedData"
       fit
-      height="100%"
       :cell-style="{ 'text-align': 'center' }"
       :header-cell-style="{ 'text-align': 'center' }"
     >
@@ -175,12 +174,11 @@
         <el-empty v-else :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
     <PodLog
@@ -202,7 +200,7 @@ import {
   cancelCheckMarxScans
 } from '@/api/checkMarx'
 import { getCheckMarxPod } from '@/api_v2/checkMarx'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
 import { ElTableColumnTime } from '@/components'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 import * as elementTagType from '@/utils/elementTagType'
@@ -214,7 +212,7 @@ export default {
     PodLog,
     Error: () => import('@/views/Error')
   },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
   data() {
     return {
       searchKeys: ['branch', 'commit_id'],

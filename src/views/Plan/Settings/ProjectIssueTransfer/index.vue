@@ -215,7 +215,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination
+      <Pagination
         :total="listQuery.total"
         :page="listQuery.page"
         :limit="listQuery.limit"
@@ -282,7 +282,7 @@ import { mapGetters } from 'vuex'
 import { getUserIssueList } from '@/api/user'
 import { getProjectAssignable } from '@/api/projects'
 import { updateIssue, getCheckIssueClosable, getIssueFamily } from '@/api/issue'
-import { BasicData, Pagination, ContextMenu, SearchBar } from '@/newMixins'
+import { BasicData, Pagination, ContextMenu, SearchBar } from '@/mixins'
 import { Priority, Status, Tracker } from '@/components/Issue'
 import { ExpandSection } from './components'
 

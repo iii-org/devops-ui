@@ -150,12 +150,11 @@
           <el-empty :description="$t('general.NoData')" />
         </template>
       </el-table>
-      <pagination
+      <Pagination
         :total="listQuery.total"
         :page="listQuery.page"
         :limit="listQuery.limit"
-        :page-sizes="[listQuery.limit]"
-        :layout="'total, prev, pager, next'"
+        :layout="'total, sizes, prev, pager, next'"
         @pagination="onPagination"
       />
       <test-detail
@@ -175,7 +174,7 @@ import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
 import PipelineSettingsTable from '@/views/Plan/Settings/components/PipelineSettingsTable'
-import { CancelRequest } from '@/newMixins'
+import { CancelRequest } from '@/mixins'
 // import { triggerReport } from '@/utils/triggerReport'
 
 const listQuery = () => ({

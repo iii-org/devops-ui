@@ -146,12 +146,11 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
   </div>
@@ -160,7 +159,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, BasicData, Pagination, SearchBar } from '@/newMixins'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { UTCtoLocalTime } from '@/filters'
 import { getHookByBranch } from '@/api/dashboard'
@@ -172,7 +171,7 @@ const commitLimit = 10
 export default {
   name: 'ProgressDevBranch',
   components: { ProjectListSelector, ElTableColumnTime, Status },
-  mixins: [Table, BasicData, Pagination, SearchBar],
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       branchList: [],

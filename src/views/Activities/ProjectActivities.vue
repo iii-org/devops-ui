@@ -14,7 +14,6 @@
         v-loading="listLoading"
         :data="pagedData"
         :element-loading-text="$t('Loading')"
-        height="calc(100vh - 300px)"
         fit
       >
         <el-table-column
@@ -41,12 +40,11 @@
           <el-empty :description="$t('general.NoData')" />
         </template>
       </el-table>
-      <pagination
+      <Pagination
         :total="listQuery.total"
         :page.sync="listQuery.current"
         :limit="listQuery.limit"
-        :page-sizes="[listQuery.limit]"
-        :layout="'total, prev, pager, next'"
+        :layout="'total, sizes, prev, pager, next'"
         @pagination="onPagination"
       />
     </el-col>
@@ -55,7 +53,7 @@
 
 <script>
 import { getProjectActivities } from '@/api/activities'
-import { BasicData, Pagination, Table, ProjectSelector } from '@/newMixins'
+import { BasicData, Pagination, ProjectSelector } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const params = () => ({
@@ -66,7 +64,7 @@ const params = () => ({
 export default {
   name: 'ProjectActivities',
   components: { ElTableColumnTime },
-  mixins: [BasicData, Pagination, Table, ProjectSelector],
+  mixins: [BasicData, Pagination, ProjectSelector],
   data() {
     return {
       params: params(),

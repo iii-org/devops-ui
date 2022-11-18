@@ -101,7 +101,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <pagination
+        <Pagination
           :total="filteredData.length"
           :page="listQuery.page"
           :limit="listQuery.limit"
@@ -144,7 +144,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
 import Fuse from 'fuse.js'
 import { getTestFileList } from '@/api/qa'
 

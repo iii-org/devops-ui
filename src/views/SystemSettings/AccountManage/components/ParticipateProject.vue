@@ -1,30 +1,68 @@
 <template>
   <div class="app-container">
-    <div class="text-xl mr-3">
-      <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous" @click="handleBackPage">
-        {{ $t('general.Back') }}
-      </el-button>
-      <span class="ml-2 text-xl">
-        <span> {{ $t('Issue.FilterDimensions.assigned_to') }} </span>
-        :
-        <span>{{ projectMember }}</span>
-      </span>
+    <div class="flex justify-between">
+      <div class="text-xl mr-3">
+        <el-button
+          type="text"
+          size="medium"
+          icon="el-icon-arrow-left"
+          class="previous"
+          @click="handleBackPage"
+        >
+          {{ $t('general.Back') }}
+        </el-button>
+        <span class="ml-2 text-xl">
+          <span>
+            {{ $t('Issue.FilterDimensions.assigned_to') }}
+          </span>
+          :
+          <span>
+            {{ projectMember }}
+          </span>
+        </span>
+      </div>
+      <el-input
+        v-model="keyword"
+        :placeholder="$t('Project.SearchProjectName')"
+        style="width: 250px"
+        prefix-icon="el-icon-search"
+      />
     </div>
     <el-divider />
     <el-table
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      height="100%"
       :cell-style="{ height: rowHeight + 'px' }"
       fit
       highlight-current-row
     >
-      <el-table-column align="center" prop="display" :label="$t('Project.Name')" width="500" />
-      <el-table-column align="center" prop="owner_name" :label="$t('Project.Owner')" />
-      <el-table-column align="center" prop="start_date" :label="$t('Project.StartDate')" />
-      <el-table-column align="center" prop="due_date" :label="$t('general.DueDate')" />
-      <el-table-column align="center" :label="$t('general.Actions')" width="390">
+      <el-table-column
+        align="center"
+        prop="display"
+        :label="$t('Project.Name')"
+        width="500"
+      />
+      <el-table-column
+        align="center"
+        prop="owner_name"
+        :label="$t('Project.Owner')"
+      />
+      <el-table-column
+        align="center"
+        prop="start_date"
+        :label="$t('Project.StartDate')"
+      />
+      <el-table-column
+        align="center"
+        prop="due_date"
+        :label="$t('general.DueDate')"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('general.Actions')"
+        width="390"
+      >
         <template slot-scope="scope">
           <el-button
             v-if="$route.params.user_id !== scope.row.owner_id"
@@ -35,7 +73,13 @@
             <em class="el-icon-edit" />
             {{ $t('general.Participate') }}
           </el-button>
-          <el-button class="buttonPrimaryReverse" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
+          <el-button
+            class="buttonPrimaryReverse"
+            size="mini"
+            @click="handleIssueClick(scope.row)"
+          >
+            {{ $t('Issue.Issue') }}
+          </el-button>
           <el-popconfirm
             :confirm-button-text="$t('general.Remove')"
             :cancel-button-text="$t('general.Cancel')"
@@ -44,20 +88,25 @@
             :title="$t('Member.confirmRemove')"
             @confirm="handleDelete(scope.row.id)"
           >
-            <el-button slot="reference" size="mini" type="danger" icon="el-icon-delete" :disabled="isDisabled">
+            <el-button
+              slot="reference"
+              size="mini"
+              type="danger"
+              icon="el-icon-delete"
+              :disabled="isDisabled"
+            >
               {{ $t('general.Remove') }}
             </el-button>
           </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
-    <pagination
+    <Pagination
       v-if="listData && listData.length > 0"
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
   </div>
@@ -65,13 +114,13 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
 import { getParticipateProject, deleteProjectMember } from '@/api/projects'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { getUserInfo } from '@/api/user'
 
 export default {
   name: 'ParticipateProject',
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       rowHeight: 70,
@@ -92,6 +141,12 @@ export default {
       },
       immediate: true
     }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (to.name !== 'AccountManage') {
+      sessionStorage.removeItem('keyword')
+    }
+    next()
   },
   methods: {
     async fetchData(user_id) {

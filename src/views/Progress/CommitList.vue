@@ -33,7 +33,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
@@ -46,7 +46,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import { BasicData, Pagination } from '@/mixins'
 
 export default {
   filters: {
@@ -59,7 +59,7 @@ export default {
       return statusMap[status]
     }
   },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Pagination],
   computed: {
     ...mapGetters(['commitListByBranch', 'commitListTotalByBranch']),
     rId() {

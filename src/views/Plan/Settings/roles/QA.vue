@@ -53,9 +53,9 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { ProjectMembers } from '../components'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 
 export default {
   name: 'QA',
@@ -65,7 +65,6 @@ export default {
     AlertSettings: () => import('@/views/Plan/Settings/components/AlertSettings')
     // TagSettings: () => import ('@/views/Plan/Settings/components/TagSettings')
   },
-  mixins: [MixinElTableWithAProject],
   data() {
     return {
       activeNames: [],
@@ -74,6 +73,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['selectedProjectId']),
     hasUnsavedChanges() {
       return this.$refs.alertSettings.hasUnsavedChanges
     }

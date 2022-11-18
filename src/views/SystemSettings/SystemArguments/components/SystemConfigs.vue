@@ -1,7 +1,9 @@
 <template>
   <div class="app-container">
     <div class="flex justify-between">
-      <div class="text-2xl">{{ $t('SystemConfigs.SystemConfig') }}</div>
+      <div class="text-2xl">
+        {{ $t('SystemConfigs.SystemConfig') }}
+      </div>
       <el-input
         id="input-search-config"
         v-model="keyword"
@@ -45,7 +47,9 @@
           </span>
           <span v-else>
             <el-tag :type="scope.row.content === true ? 'success' : 'danger'">
-              <span>{{ scope.row.content === true ? $t('general.Enable') : $t('general.Disable') }}</span>
+              <span>
+                {{ scope.row.content === true ? $t('general.Enable') : $t('general.Disable') }}
+              </span>
             </el-tag>
           </span>
         </template>
@@ -88,8 +92,7 @@
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
     <FileTypeDialog
@@ -150,8 +153,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import Pagination from '@/components/Pagination'
-import MixinElTable from '@/mixins/MixinElTable'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
 import FileTypeDialog from './FileTypeDialog'
 import {
   getGitlabStatus,
@@ -161,8 +163,8 @@ import {
 
 export default {
   name: 'SystemConfigs',
-  components: { Pagination, FileTypeDialog },
-  mixins: [MixinElTable],
+  components: { FileTypeDialog },
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       tableData: [

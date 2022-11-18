@@ -105,7 +105,7 @@ import { addIssue, getIssueFamily } from '@/api/issue'
 import AddIssue from '@/components/Issue/AddIssue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail'
 import theme from '@/theme.js'
-import { CancelRequest } from '@/newMixins'
+import { CancelRequest } from '@/mixins'
 
 export default {
   name: 'Gantt',

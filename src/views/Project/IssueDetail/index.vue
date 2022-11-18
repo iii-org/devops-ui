@@ -346,7 +346,7 @@ import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import { atob } from '@/utils/base64'
 import getPageTitle from '@/utils/getPageTitle'
 import IssueMatrix from './components/IssueMatrix'
-import ContextMenu from '@/newMixins/ContextMenu'
+import ContextMenu from '@/mixins/ContextMenu'
 import variables from '@/styles/theme/variables.scss'
 
 const commitLimit = 10

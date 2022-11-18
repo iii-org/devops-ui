@@ -12,7 +12,7 @@
     >
       <el-table-column type="selection" width="55" />
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
@@ -24,11 +24,10 @@
 </template>
 
 <script>
-import MixinElTable from '@/mixins/MixinElTable'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
 
 export default {
-  name: 'MixinElTableWithCheckbox',
-  mixins: [MixinElTable],
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       paged: false,

@@ -7,5 +7,17 @@ import CancelRequest from './CancelRequest.js'
 import ContextMenu from './ContextMenu'
 import IssueList from './IssueList'
 import IssueExpand from './IssueExpand'
+import Checkbox from './Checkbox'
 
-export { BasicData, ProjectSelector, SearchBar, Pagination, Table, CancelRequest, ContextMenu, IssueList, IssueExpand }
+export {
+  BasicData,
+  ProjectSelector,
+  SearchBar,
+  Pagination,
+  Table,
+  CancelRequest,
+  ContextMenu,
+  IssueList,
+  IssueExpand,
+  Checkbox
+}

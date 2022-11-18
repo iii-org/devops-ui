@@ -63,7 +63,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination
+      <Pagination
         :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
@@ -77,7 +77,7 @@
 
 <script>
 import { deleteProjectArtifact, getProjectArtifacts } from '@/api/harbor'
-import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
+import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {

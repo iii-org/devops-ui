@@ -24,7 +24,6 @@
         v-loading="listLoading"
         :element-loading-text="$t('Loading')"
         :data="pagedData"
-        height="calc(100vh - 280px)"
         fit
       >
         <el-table-column
@@ -94,12 +93,11 @@
           <el-empty :description="$t('general.NoData')" />
         </template>
       </el-table>
-      <pagination
+      <Pagination
         :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
-        :page-sizes="[listQuery.limit]"
-        :layout="'total, prev, pager, next'"
+        :layout="'total, sizes, prev, pager, next'"
         @pagination="onPagination"
       />
       <PodLog
@@ -115,14 +113,14 @@
 import { mapGetters } from 'vuex'
 import { getPostmanResult } from '@/api/postman'
 import { getPostmanPod } from '@/api_v2/postman'
-import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
+import { BasicData, SearchBar, Pagination, ProjectSelector } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {
   name: 'Postman',
   components: { ElTableColumnTime, PodLog },
-  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
+  mixins: [BasicData, SearchBar, Pagination, ProjectSelector],
   data() {
     return {
       dialogVisible: false,

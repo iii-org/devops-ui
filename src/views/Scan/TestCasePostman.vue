@@ -241,7 +241,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getPostmanReport } from '@/api/postman'
-import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
 
 export default {
   name: 'TestCasePostman',
@@ -280,6 +280,12 @@ export default {
     keyword(val) {
       if (val && this.filteredData.length !== 0) this.activeCollection = this.filteredData[0].name
     }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (to.name !== 'Postman') {
+      sessionStorage.removeItem('keyword')
+    }
+    next()
   },
   methods: {
     async fetchData() {

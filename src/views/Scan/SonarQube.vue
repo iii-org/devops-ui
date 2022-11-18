@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="app-container"
-    style="overflow: hidden;"
-  >
+  <div class="app-container">
     <ProjectListSelector>
       <el-button
         slot="button"
@@ -37,7 +34,6 @@
       fit
       highlight-current-row
       :data="pagedData"
-      height="100%"
     >
       <el-table-column
         align="center"
@@ -114,12 +110,11 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
     <PodLog
@@ -131,7 +126,7 @@
 </template>
 
 <script>
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
 import { getSonarQubeData } from '@/api/sonarQube'
 import { getSonarQubePod } from '@/api_v2/sonarQube'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
@@ -140,7 +135,7 @@ import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/co
 export default {
   name: 'ScanSonarQube',
   components: { ElTableColumnTime, PodLog },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
   data() {
     return {
       searchKeys: ['branch', 'commit_id'],

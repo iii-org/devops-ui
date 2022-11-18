@@ -196,12 +196,11 @@
           <el-empty :description="$t('general.NoData')" />
         </template>
       </el-table>
-      <pagination
+      <Pagination
         :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
-        :page-sizes="[listQuery.limit]"
-        :layout="'total, prev, pager, next'"
+        :layout="'total, sizes, prev, pager, next'"
         @pagination="onPagination"
       />
     </el-row>
@@ -210,7 +209,7 @@
 
 <script>
 import { getReleaseVersion, deleteReleaseTag } from '@/api_v2/release'
-import { BasicData, Pagination, SearchBar } from '@/newMixins'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
 import { UTCtoLocalTime } from '@/filters'
 import variables from '@/styles/theme/variables.scss'
 import { Viewer } from '@toast-ui/vue-editor'

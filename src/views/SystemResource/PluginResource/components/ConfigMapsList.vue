@@ -55,7 +55,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination
+      <Pagination
         :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
@@ -100,7 +100,7 @@
 
 <script>
 import { deleteConfigmap, getConfigmapList } from '@/api/kubernetes'
-import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
+import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/mixins'
 
 export default {
   name: 'ConfigMapsList',

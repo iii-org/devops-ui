@@ -72,7 +72,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination
+    <Pagination
       :total="listQuery.total"
       :page="listQuery.current"
       :limit="listQuery.limit"
@@ -86,7 +86,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getImageList } from '@/api_v2/release'
-import { Table, Pagination } from '@/newMixins'
+import { Table, Pagination } from '@/mixins'
 
 const initParam = {
   page: 1,

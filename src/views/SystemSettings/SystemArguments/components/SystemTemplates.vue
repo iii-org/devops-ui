@@ -84,7 +84,7 @@ import {
   runSystemParameter,
   getGithubVerifyStatus
 } from '@/api/systemParameter'
-import { BasicData, Table } from '@/newMixins/index'
+import { BasicData, Table } from '@/mixins'
 import { io } from 'socket.io-client'
 
 const formData = () => ({

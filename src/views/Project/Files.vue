@@ -95,12 +95,11 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
     <el-dialog
@@ -210,7 +209,7 @@ import {
   getProjectVersion,
   uploadProjectFile
 } from '@/api/projects'
-import { BasicData, Pagination, SearchBar, Table, ProjectSelector } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {
@@ -222,7 +221,7 @@ const formTemplate = {
 export default {
   name: 'ProjectFiles',
   components: { ElTableColumnTime },
-  mixins: [BasicData, Pagination, SearchBar, Table, ProjectSelector],
+  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
   data() {
     return {
       dialogVisible: false,

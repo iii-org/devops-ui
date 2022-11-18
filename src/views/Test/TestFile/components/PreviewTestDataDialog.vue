@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { BasicData } from '@/newMixins'
+import { BasicData } from '@/mixins'
 import {
   getSideexResult,
   generateSideex,

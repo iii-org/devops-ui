@@ -1,14 +1,12 @@
 <template>
-  <el-row
-    class="app-container"
-    style="overflow: hidden;"
-  >
+  <el-row class="app-container">
     <ProjectListSelector>
       <el-input
         v-model="keyword"
         :placeholder="$t('Git.searchBranchOrCommitId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
+        @input="onSearch"
       />
     </ProjectListSelector>
     <el-divider />
@@ -17,7 +15,6 @@
       :element-loading-text="$t('Loading')"
       fit
       :data="testList"
-      height="100%"
     >
       <el-table-column
         align="center"
@@ -118,32 +115,21 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="listQuery.total"
       :page.sync="listQuery.current"
       :limit="listQuery.per_page"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
   </el-row>
 </template>
 
 <script>
+import { BasicData, Pagination, ProjectSelector } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getHarborScan } from '@/api_v2/harbor'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
-
-const params = () => ({
-  per_page: 10,
-  page: 1
-})
-
-const listQuery = () => ({
-  total: 0,
-  current: 0,
-  per_page: 0
-})
 
 export default {
   name: 'DockerImage',
@@ -151,20 +137,16 @@ export default {
     ElTableColumnTime,
     ElTableColumnTag
   },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Pagination, ProjectSelector],
   data() {
     return {
       keyword: '',
-      params: params(),
-      listQuery: listQuery(),
-      testList: [],
-      timeoutId: -1
-    }
-  },
-  watch: {
-    keyword(val) {
-      clearTimeout(this.timeoutId)
-      this.timeoutId = window.setTimeout(() => this.onSearch(val), 1000)
+      params: {
+        page: 1,
+        per_page: 10,
+        search: sessionStorage.getItem('keyword')
+      },
+      testList: []
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -183,9 +165,6 @@ export default {
     }
     next()
   },
-  beforeDestroy() {
-    window.clearTimeout(this.timeoutId)
-  },
   methods: {
     async fetchData() {
       this.listLoading = true
@@ -203,13 +182,12 @@ export default {
     async onSearch(keyword) {
       this.params.search = keyword
       this.params.page = 1
-      if (keyword === '') delete this.params.search
       await this.fetchData()
     },
     async onPagination(query) {
-      const { page } = query
+      const { page, limit } = query
       this.params.page = page
-      if (this.keyword !== '') this.params.search = this.keyword
+      this.params.per_page = limit
       await this.fetchData()
     },
     async handleToTestReport(row) {
