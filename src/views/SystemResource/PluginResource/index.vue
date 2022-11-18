@@ -100,7 +100,7 @@ export default {
       this.listLoading = false
     },
     hasDetail(target) {
-      const allowList = ['Deployment', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Ingresses', 'Harbor']
+      const allowList = ['Deployment', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Ingresses', 'Harbor', 'Apps']
       return allowList.findIndex((i) => i === target) > -1
     },
     showDetail(target) {
