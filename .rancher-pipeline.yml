@@ -34,6 +34,7 @@ stages:
       - echart
       - develop
       - table
+      - serverpassword
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -81,8 +82,8 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - appslist
       - table
+      - serverpassword
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -105,8 +106,8 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - appslist
       - table
+      - serverpassword
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -125,8 +126,8 @@ stages:
       - master
       - errorcode
       - pluginchart
-      - appslist
       - table
+      - serverpassword
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -161,8 +162,8 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - appslist
       - table
+      - serverpassword
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -190,8 +191,8 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - appslist
       - table
+      - serverpassword
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -217,8 +218,8 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - appslist
       - table
+      - serverpassword
 - name: Test--Anchore SBOM
   iiidevops: anchore
   steps:
