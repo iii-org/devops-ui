@@ -271,9 +271,6 @@ export default {
       }
       this.editBtnLoading = false
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     async handleEdit(idx, row) {
       this.listLoading = true
       this.drawerTitle = 'Edit'

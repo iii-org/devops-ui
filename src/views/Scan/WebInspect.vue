@@ -247,9 +247,6 @@ export default {
       const { scan_id, run_at } = row
       this.$router.push({ name: 'WIEReportViewer', params: { scanId: scan_id, run_at }})
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     mapStatusTagType(status) {
       const mapKey = {
         Complete: 'success',

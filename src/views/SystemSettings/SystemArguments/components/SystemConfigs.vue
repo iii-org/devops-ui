@@ -97,64 +97,20 @@
     />
     <FileTypeDialog
       ref="FileTypeDialog"
-      @reload="fetchData"
+      @update="fetchData"
     />
-    <el-dialog
-      :visible.sync="fileSizeDialogVisible"
-      :title="$t('general.Edit')+$t('SystemConfigs.FileSize')"
-      width="30%"
-      destroy-on-close
-      append-to-body
-    >
-      <el-form
-        ref="form"
-        v-loading="isLoading"
-        :model="form"
-      >
-        <el-form-item
-          prop="fileSize"
-          :rules="[
-            { type: 'number',
-              required: true,
-              min: 0,
-              max: 100,
-              message: 'Please type number from 0 to 100'
-            }
-          ]"
-        >
-          <el-input
-            v-model.number="form.fileSize"
-            :placeholder="$t('RuleMsg.PleaseInput') + $t('SystemConfigs.FileSize')"
-          >
-            <template slot="prepend">{{ $t('SystemConfigs.FileSize') }} :</template>
-            <template slot="append">MB</template>
-          </el-input>
-        </el-form-item>
-        <el-form-item class="text-right">
-          <el-button
-            class="buttonSecondaryReverse"
-            :loading="isLoading"
-            @click="handleEditFileSize"
-          >
-            {{ $t('general.Close') }}
-          </el-button>
-          <el-button
-            type="primary"
-            :loading="isLoading"
-            @click="handleUpdateFileSize"
-          >
-            {{ $t('general.Confirm') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
+    <FileSizeDialog
+      ref="FileSizeDialog"
+      @update="fetchData"
+    />
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import { BasicData, Pagination, SearchBar } from '@/mixins'
 import FileTypeDialog from './FileTypeDialog'
+import FileSizeDialog from './FileSizeDialog'
 import {
   getGitlabStatus,
   editGitlabStatus,
@@ -163,7 +119,7 @@ import {
 
 export default {
   name: 'SystemConfigs',
-  components: { FileTypeDialog },
+  components: { FileTypeDialog, FileSizeDialog },
   mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
@@ -191,19 +147,13 @@ export default {
           method: this.handleGitlabActive
         }
       ],
-      isLoading: false,
-      fileSizeDialogVisible: false,
-      form: {
-        fileSize: ''
-      },
       gitlabDomainIP: false
     }
   },
   computed: {
-    ...mapGetters(['fileSizeLimit', 'fileTypeLimit'])
+    ...mapGetters(['fileTypeLimit', 'fileSizeLimit'])
   },
   methods: {
-    ...mapActions('app', ['updateFileSize']),
     async fetchData() {
       this.gitlabDomainIP = (await isGitlabDomainIP()).is_ip
       this.tableData[0].content = this.fileTypeLimit
@@ -216,28 +166,8 @@ export default {
       this.$refs['FileTypeDialog'].loadData()
     },
     handleEditFileSize() {
-      this.form.fileSize = Number(this.fileSizeLimit.replace(/\D/g, ''))
-      this.fileSizeDialogVisible = !this.fileSizeDialogVisible
-    },
-    handleUpdateFileSize() {
-      this.$refs['form'].validate(async(valid) => {
-        if (!valid) return
-        this.isLoading = true
-        try {
-          await this.updateFileSize({ upload_file_size: this.form.fileSize })
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-          await this.loadData()
-          this.handleEditFileSize()
-        } catch (error) {
-          console.error(error)
-        } finally {
-          this.isLoading = false
-        }
-      })
+      this.$refs['FileSizeDialog'].dialogVisible = true
+      this.$refs['FileSizeDialog'].loadData()
     },
     async handleGitlabActive(active) {
       this.listLoading = true
@@ -254,9 +184,6 @@ export default {
       } finally {
         this.listLoading = false
       }
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     }
   }
 }

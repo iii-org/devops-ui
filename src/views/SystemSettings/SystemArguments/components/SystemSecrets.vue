@@ -237,9 +237,6 @@ export default {
         this.formData.data.splice(index, 1)
       }
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     onDialogClosed() {
       this.$nextTick(() => {
         this.$refs['form'].resetFields()

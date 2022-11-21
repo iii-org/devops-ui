@@ -196,9 +196,6 @@ export default {
         }
       })
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     onDialogClosed() {
       this.$nextTick(() => {
         this.$refs['form'].resetFields()

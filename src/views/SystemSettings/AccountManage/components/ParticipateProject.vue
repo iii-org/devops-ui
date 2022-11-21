@@ -160,9 +160,6 @@ export default {
       const userInfo = await getUserInfo(user_id)
       this.projectMember = userInfo.name
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     async handleDelete(project_id) {
       this.listLoading = true
       try {

@@ -254,9 +254,6 @@ export default {
     formatTime(value) {
       return value.split('.')[0]
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     showClosedIssue(tag_name) {
       this.$router.push({
         name: 'ClosedIssueList',

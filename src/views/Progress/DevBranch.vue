@@ -310,9 +310,6 @@ export default {
       })
       return issueData
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     toIssueDetail(tag) {
       const pound = new RegExp(/#/)
       const issueId = tag.toString().match(pound) ? tag.split('#')[1] : tag

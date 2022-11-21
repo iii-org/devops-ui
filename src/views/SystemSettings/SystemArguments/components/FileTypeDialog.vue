@@ -312,9 +312,6 @@ export default {
     setOriginData(data) {
       this.originData = JSON.parse(JSON.stringify(data))
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     initForm() {
       this.form = defaultFormData()
     },
@@ -460,7 +457,7 @@ export default {
       this.$nextTick(() => {
         this.handleCancel()
       })
-      this.$emit('reload')
+      this.$emit('update')
     }
   }
 }
