@@ -109,8 +109,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { BasicData, Pagination, SearchBar } from '@/mixins'
-import FileTypeDialog from './FileTypeDialog'
-import FileSizeDialog from './FileSizeDialog'
+import { FileTypeDialog, FileSizeDialog } from './components'
 import {
   getGitlabStatus,
   editGitlabStatus,
