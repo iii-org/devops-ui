@@ -92,7 +92,7 @@
         :disabled="isLoading"
         @click="onBack"
       >
-        <i class="el-icon-back" />
+        <em class="el-icon-back" />
         {{ $t('Release.Previous') }}
       </el-button>
       <el-button

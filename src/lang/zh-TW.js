@@ -837,7 +837,10 @@ export default {
     Password: '舊密碼',
     K8SConfigDownload: '下載K8S設定檔',
     PlatformNotice: '訊息推播',
-    MailNotice: '電子郵件'
+    MailNotice: '電子郵件',
+    ServerPassword: '服務密碼',
+    SamePlatformPassword: '同平台密碼',
+    ResetPassword: '重設密碼'
   },
   Project: {
     Project: '專案',
