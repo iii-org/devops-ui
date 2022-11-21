@@ -10,7 +10,7 @@
         <el-button
           v-if="!disableEdit"
           class="buttonPrimary"
-          @click="handleServerPassword()"
+          @click="handleResetPassword()"
         >
           {{ $t('Profile.ResetPassword') }}
         </el-button>
@@ -46,10 +46,6 @@
 export default {
   name: 'ServerPassword',
   props: {
-    fromAd: {
-      type: Boolean,
-      default: false
-    },
     disableEdit: {
       type: Boolean,
       default: false
@@ -60,7 +56,7 @@ export default {
     }
   },
   methods: {
-    handleServerPassword() {
+    handleResetPassword() {
       this.$emit('directToSecurity')
     },
     showPassword(index) {

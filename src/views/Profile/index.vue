@@ -26,7 +26,6 @@
         </el-tab-pane>
         <el-tab-pane :label="$t('Profile.ServerPassword')" name="server">
           <Server
-            :from-ad="fromAd"
             :server-password-form="serverPasswordForm"
             :disable-edit="disableEdit"
             @directToSecurity="tabActive = 'security'"
