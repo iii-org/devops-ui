@@ -74,7 +74,7 @@
         :disabled="isLoading"
         @click="onBack"
       >
-        <i class="el-icon-back" />
+        <em class="el-icon-back" />
         {{ $t('Release.Previous') }}
       </el-button>
       <el-button
@@ -83,7 +83,7 @@
         @click="onNext"
       >
         {{ $t('Release.Next') }}
-        <i class="el-icon-right" />
+        <em class="el-icon-right" />
       </el-button>
       <el-popconfirm
         v-else
@@ -99,7 +99,7 @@
           :disabled="isLoading"
         >
           {{ $t('Release.Next') }}
-          <i class="el-icon-right" />
+          <em class="el-icon-right" />
         </el-button>
       </el-popconfirm>
     </div>

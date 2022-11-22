@@ -842,7 +842,10 @@ export default {
     Password: 'Password',
     K8SConfigDownload: 'Download K8S Config',
     PlatformNotice: 'Platform Notice',
-    MailNotice: 'Email Notice'
+    MailNotice: 'Email Notice',
+    ServerPassword: 'Server Password',
+    SamePlatformPassword: 'Same Platform Password',
+    ResetPassword: 'Reset Password'
   },
   Project: {
     Project: ' Project',

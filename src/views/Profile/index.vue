@@ -21,8 +21,14 @@
           <Message
             v-if="tabActive === 'message'"
             :user-message-form.sync="userMessageForm"
-            :label-position="labelPosition"
             @update="fetchUserMessageInfo"
+          />
+        </el-tab-pane>
+        <el-tab-pane :label="$t('Profile.ServerPassword')" name="server">
+          <Server
+            :server-password-form="serverPasswordForm"
+            :disable-edit="disableEdit"
+            @directToSecurity="tabActive = 'security'"
           />
         </el-tab-pane>
       </el-tabs>
@@ -33,14 +39,18 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getUserInfo } from '@/api/user'
-import { getUserMessageInfo } from '@/api_v2/user'
+import {
+  getUserMessageInfo,
+  getServerPasswordInfo
+} from '@/api_v2/user'
 
 export default {
   name: 'Profile',
   components: {
     Basic: () => import('./components/Basic'),
     Security: () => import('./components/Security'),
-    Message: () => import('./components/Message')
+    Message: () => import('./components/Message'),
+    Server: () => import('./components/Server')
   },
   data() {
     return {
@@ -63,7 +73,8 @@ export default {
       userMessageForm: {
         notification: false,
         mail: false
-      }
+      },
+      serverPasswordForm: []
     }
   },
   computed: {
@@ -75,6 +86,7 @@ export default {
   mounted() {
     this.fetchUserInfo()
     this.fetchUserMessageInfo()
+    this.fetchServerPasswordInfo()
   },
   methods: {
     async fetchUserInfo() {
@@ -94,6 +106,16 @@ export default {
         .then((userMessageInfo) => {
           this.userMessageForm.notification = userMessageInfo.data.notification
           this.userMessageForm.mail = userMessageInfo.data.mail
+        })
+        .catch((error) => console.error(error))
+    },
+    async fetchServerPasswordInfo() {
+      await getServerPasswordInfo(this.userId)
+        .then((serverPasswordInfo) => {
+          this.serverPasswordForm = serverPasswordInfo.data.map((item) => {
+            if (item.status === 0) item.visible = false
+            return item
+          })
         })
         .catch((error) => console.error(error))
     }

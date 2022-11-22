@@ -48,7 +48,7 @@
         @click="onNext"
       >
         {{ $t('Release.Next') }}
-        <i class="el-icon-right" />
+        <em class="el-icon-right" />
       </el-button>
     </div>
   </el-card>
