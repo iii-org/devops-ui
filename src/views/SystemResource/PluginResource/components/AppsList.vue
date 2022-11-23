@@ -72,7 +72,7 @@
 
 <script>
 import { deleteApp, getAppsList } from '@/api/kubernetes'
-import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
+import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/mixins'
 
 export default {
   name: 'AppsList',
