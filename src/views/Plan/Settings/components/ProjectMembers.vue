@@ -1,21 +1,42 @@
 <template>
   <div v-loading="listLoading">
-    <div v-if="isShowTitle" class="text-lg mb-2">{{ $t('Member.Manage') }}</div>
-    <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" :image-size="100" />
+    <div
+      v-if="isShowTitle"
+      class="text-lg mb-2"
+    >
+      {{ $t('Member.Manage') }}
+    </div>
+    <el-empty
+      v-if="selectedProjectId === -1"
+      :description="$t('general.NoData')"
+      :image-size="100"
+    />
     <template v-else>
       <div class="flex justify-between mb-4">
-        <el-button class="buttonSecondary" size="medium" icon="el-icon-plus" @click="showDialog">
+        <el-button
+          class="buttonSecondary"
+          size="medium"
+          icon="el-icon-plus"
+          @click="showDialog"
+        >
           {{ $t('Member.AddMember') }}
         </el-button>
         <div>
-          <span class="font-bold mx-2">{{ $t('Project.Owner') }}</span>
+          <span class="font-bold mx-2">
+            {{ $t('Project.Owner') }}
+          </span>
           <el-select
             v-model="selectedProject.owner_id"
             size="medium"
             :disabled="disabledEditOwner"
             @change="confirmSetProjectOwner"
           >
-            <el-option v-for="user in assignedList" :key="user.id" :value="user.id" :label="user.label">
+            <el-option
+              v-for="user in assignedList"
+              :key="user.id"
+              :value="user.id"
+              :label="user.label"
+            >
               {{ user.label }}
             </el-option>
           </el-select>
@@ -28,23 +49,62 @@
           :placeholder="$t('general.SearchName')"
         />
       </div>
-      <el-table :data="pagedData" fit>
-        <el-table-column align="center" prop="login" :label="$t('Member.Account')" />
-        <el-table-column align="center" prop="name" :label="$t('general.Name')" />
-        <el-table-column align="center" prop="department" :label="$t('general.Department')" width="300" />
-        <el-table-column align="center" prop="phone" :label="$t('Member.Phone')" />
-        <el-table-column align="center" :label="$t('Member.Role')">
+      <el-table
+        :data="pagedData"
+        fit
+      >
+        <el-table-column
+          align="center"
+          prop="login"
+          :label="$t('Member.Account')"
+        />
+        <el-table-column
+          align="center"
+          prop="name"
+          :label="$t('general.Name')"
+        />
+        <el-table-column
+          align="center"
+          prop="department"
+          :label="$t('general.Department')"
+          width="300"
+        />
+        <el-table-column
+          align="center"
+          prop="phone"
+          :label="$t('Member.Phone')"
+        />
+        <el-table-column
+          align="center"
+          :label="$t('Member.Role')"
+        >
           <template slot-scope="scope">
             {{ getRoleName(scope.row.id) }}
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('general.Actions')" width="390">
+        <el-table-column
+          align="center"
+          :label="$t('general.Actions')"
+          width="390"
+        >
           <template slot-scope="scope">
-            <el-button v-permission="['Administrator','QA']" size="mini" class="buttonPrimaryReverse" @click="handleParticipateDialog(scope.row.id)">
+            <el-button
+              v-permission="['Administrator','QA']"
+              size="mini"
+              class="buttonPrimaryReverse"
+              @click="handleParticipateDialog(scope.row.id)"
+            >
               <em class="el-icon-edit" />
               {{ $t('general.Participate') }}
             </el-button>
-            <el-button v-permission="['Administrator','Project Manager', 'QA']" class="buttonSecondaryReverse" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
+            <el-button
+              v-permission="['Administrator','Project Manager', 'QA']"
+              class="buttonSecondaryReverse"
+              size="mini"
+              @click="handleIssueClick(scope.row)"
+            >
+              {{ $t('Issue.Issue') }}
+            </el-button>
             <el-button
               type="danger"
               size="mini"
@@ -59,12 +119,11 @@
           <el-empty :description="$t('general.NoData')" />
         </template>
       </el-table>
-      <pagination
+      <Pagination
         :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
-        :page-sizes="[listQuery.limit]"
-        :layout="'total, prev, pager, next'"
+        :layout="'total, sizes, prev, pager, next'"
         @pagination="onPagination"
       />
       <AddMemberDialog ref="addMemberDialog" @update="loadData" />
@@ -74,7 +133,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BasicData, Pagination, SearchBar } from '@/newMixins'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
 import { getUserIssueList } from '@/api/user'
 import { getProjectUserList, deleteProjectMember, updateProjectInfos } from '@/api/projects'
 import AddMemberDialog from './AddMemberDialog'

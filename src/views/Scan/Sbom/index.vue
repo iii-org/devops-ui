@@ -16,6 +16,7 @@
         :placeholder="$t('Git.searchBranchOrCommitId')"
         prefix-icon="el-icon-search"
         style="width: 250px"
+        @input="onSearch"
       />
     </ProjectListSelector>
     <el-divider />
@@ -36,7 +37,6 @@
       :data="sbomList"
       :cell-style="{ 'text-align': 'center' }"
       :header-cell-style="{ 'text-align': 'center' }"
-      height="100%"
       fit
     >
       <el-table-column
@@ -203,11 +203,11 @@
         <el-empty v-else :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="listQuery.total"
       :page="listQuery.page"
       :limit="listQuery.per_page"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
     <PodLog
@@ -219,23 +219,16 @@
 </template>
 
 <script>
+import { BasicData, Pagination, ProjectSelector } from '@/mixins'
+import { ElTableColumnTime } from '@/components'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
+import * as elementTagType from '@/utils/elementTagType'
 import {
   getSbomList,
   getSbomFile,
   getSbomDownloadFile,
   getSbomPod
 } from '@/api_v2/sbom'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
-import { ElTableColumnTime } from '@/components'
-import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
-import * as elementTagType from '@/utils/elementTagType'
-
-const listQuery = () => ({
-  total: 0,
-  current: 1,
-  per_page: 10,
-  page: 1
-})
 
 export default {
   name: 'Sbom',
@@ -244,23 +237,20 @@ export default {
     PodLog,
     Error: () => import('@/views/Error')
   },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Pagination, ProjectSelector],
   data() {
     return {
       keyword: '',
-      listQuery: listQuery(),
+      params: {
+        page: 1,
+        per_page: 10,
+        search: sessionStorage.getItem('keyword')
+      },
       sbomList: [],
-      timeoutId: -1,
       pod: {},
       error: {},
       downloadLoading: false,
       downloadList: []
-    }
-  },
-  watch: {
-    keyword(val) {
-      clearTimeout(this.timeoutId)
-      this.timeoutId = window.setTimeout(() => this.onSearch(val), 1000)
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -279,9 +269,6 @@ export default {
     }
     next()
   },
-  beforeDestroy() {
-    window.clearTimeout(this.timeoutId)
-  },
   async mounted() {
     this.pod = (await getSbomPod(this.selectedProjectId)).data
   },
@@ -289,7 +276,7 @@ export default {
     async fetchData() {
       if (this.selectedProjectId === -1) return []
       this.listLoading = true
-      const res = await getSbomList(this.selectedProjectId, this.listQuery)
+      const res = await getSbomList(this.selectedProjectId, this.params)
       this.setListData(res)
       this.listLoading = false
     },
@@ -298,15 +285,14 @@ export default {
       this.listQuery = res.data.page
     },
     async onSearch(keyword) {
-      this.listQuery.search = keyword
-      this.listQuery.page = 1
-      if (keyword === '') delete this.listQuery.search
+      this.params.search = keyword
+      this.params.page = 1
       await this.fetchData()
     },
     async onPagination(query) {
-      const { page } = query
-      this.listQuery.page = page
-      if (this.keyword !== '') this.listQuery.search = this.keyword
+      const { page, limit } = query
+      this.params.page = page
+      this.params.per_page = limit
       await this.fetchData()
     },
     fetchDownloadList(row) {

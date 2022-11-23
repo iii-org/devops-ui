@@ -255,7 +255,7 @@
 
 <script>
 import { deleteEnvironmentByBranchName, getEnvironmentList, redeployEnvironmentByBranchName, deletePod } from '@/api/kubernetes'
-import { BasicData, SearchBar, ProjectSelector } from '@/newMixins'
+import { BasicData, SearchBar, ProjectSelector } from '@/mixins'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {

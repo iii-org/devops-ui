@@ -365,7 +365,7 @@ import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
 import { getIssue, addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
-import { CancelRequest } from '@/newMixins'
+import { CancelRequest } from '@/mixins'
 
 export default {
   name: 'WBS',

@@ -36,7 +36,6 @@
       fit
       highlight-current-row
       :data="pagedData"
-      height="100%"
     >
       <el-table-column
         align="center"
@@ -138,12 +137,11 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
     <PodLog
@@ -155,7 +153,7 @@
 </template>
 
 <script>
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
 import {
   getCmasScans,
   getCmasScansStatus,
@@ -172,7 +170,7 @@ export default {
     ElTableColumnTime,
     PodLog
   },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
   data() {
     this.levels = ['High', 'Medium', 'Low']
     this.MOEA = ['L3', 'L2', 'L1']

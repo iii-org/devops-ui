@@ -120,7 +120,7 @@
 
 <script>
 import { getUserRedmineMailProfile, editUserRedmineMailProfile } from '@/api/redmineMail'
-import MixinElTable from '@/mixins/MixinElTable'
+import { BasicData } from '@/mixins'
 import variables from '@/styles/theme/variables.scss'
 
 const defaultFormData = () => ({
@@ -141,7 +141,7 @@ const defaultFormData = () => ({
 
 export default {
   name: 'RedmineMail',
-  mixins: [MixinElTable],
+  mixins: [BasicData],
   data() {
     return {
       deliveryMethodOptions: [{ value: ':smtp', label: ':smtp' }, { value: ':semdmail', label: ':sendmail' }],

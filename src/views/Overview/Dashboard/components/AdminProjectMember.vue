@@ -70,7 +70,7 @@
             sortable
           />
         </el-table>
-        <pagination
+        <Pagination
           :total="filteredData.length"
           :page="listQuery.page"
           :limit="listQuery.limit"
@@ -89,7 +89,7 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart } from 'echarts/charts'
 import { getProjectMembersByProjectID, getProjectMembersDetail } from '@/api/dashboard'
-import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
 import AdminMemberTable from './widget/AdminMemberTable'
 import NoData from './widget/NoData'
 

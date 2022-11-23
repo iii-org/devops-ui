@@ -125,7 +125,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination
+      <Pagination
         :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
@@ -206,7 +206,7 @@
 
 <script>
 import { deleteHarborRepo, editHarborRepo, getHarborRepoList, getHarborRepoStorageSummary } from '@/api/harbor'
-import { BasicData, Pagination, SearchBar, Table, ProjectSelector } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, Table, ProjectSelector } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {

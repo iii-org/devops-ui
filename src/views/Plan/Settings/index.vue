@@ -62,7 +62,6 @@
 import { mapGetters } from 'vuex'
 import { ProjectVersions, ProjectMembers, PipelineSettings } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 
 export default {
   name: 'ProjectSettings',
@@ -75,7 +74,6 @@ export default {
     TagSettings: () => import ('@/views/Plan/Settings/components/TagSettings'),
     TrackerSettings: () => import ('@/views/Plan/Settings/components/TrackerSettings')
   },
-  mixins: [MixinElTableWithAProject],
   data() {
     return {
       activeNames: [],

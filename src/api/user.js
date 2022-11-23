@@ -15,8 +15,8 @@ export const getUserInfo = async (userId) => {
   const res = await request.get(`/user/${userId}`)
   return new User(res.data)
 }
-export const getUser = async (page = 1, per_page = 10, search = '') => {
-  const res = await request.get(`/user/list?page=${page}&per_page=${per_page}&search=${search}`)
+export const getUser = async (params) => {
+  const res = await request.get(`/user/list`, { params })
   const userList = []
   for (const user of res.data.user_list) {
     userList.push(new User(user))

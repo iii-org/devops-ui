@@ -222,12 +222,11 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="projectListTotal"
       :page="params.page"
       :limit="params.limit"
-      :page-sizes="[params.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
   </div>
@@ -235,7 +234,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'
 import { SearchFilter, UpdateButton } from './components'

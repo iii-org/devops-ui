@@ -34,7 +34,7 @@
 
 <script>
 import { getUnclosedIssues } from '@/api/dashboard'
-import { BasicData } from '@/newMixins'
+import { BasicData } from '@/mixins'
 import AdminIssueRankUnclosedIssues from './widget/AdminIssueRankUnclosedIssues'
 
 export default {

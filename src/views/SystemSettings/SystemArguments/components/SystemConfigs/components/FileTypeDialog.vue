@@ -13,9 +13,10 @@
             :disabled="isAdding"
             type="success"
             size="small"
+            icon="el-icon-plus"
             @click="handleShow"
           >
-            + {{ $t('general.Add') }}
+            {{ $t('general.Add') }}
           </el-button>
         </div>
         <div class="mr-5 float-right">
@@ -213,8 +214,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import Pagination from '@/components/Pagination'
-import MixinElTable from '@/mixins/MixinElTable'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
 import {
   getUploadFileTypeList,
   addUploadFileType,
@@ -230,8 +230,7 @@ const defaultFormData = () => ({
 
 export default {
   name: 'FileTypeDialog',
-  components: { Pagination },
-  mixins: [MixinElTable],
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       searchKeys: ['name', 'mimeType', 'fileExtension'],
@@ -312,9 +311,6 @@ export default {
     },
     setOriginData(data) {
       this.originData = JSON.parse(JSON.stringify(data))
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     },
     initForm() {
       this.form = defaultFormData()
@@ -461,7 +457,7 @@ export default {
       this.$nextTick(() => {
         this.handleCancel()
       })
-      this.$emit('reload')
+      this.$emit('update')
     }
   }
 }

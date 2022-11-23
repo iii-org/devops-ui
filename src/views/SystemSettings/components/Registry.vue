@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import { BasicData } from '@/newMixins'
+import { BasicData } from '@/mixins'
 import { getRegistryHostsLists, addRegistryHosts, updateRegistryHostsById } from '@/api/deploy'
 
 const formData = () => ({

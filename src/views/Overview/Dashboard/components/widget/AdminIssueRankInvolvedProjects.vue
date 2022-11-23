@@ -9,7 +9,7 @@
         :label="column"
       />
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
 
 export default {
   name: 'AdminIssueRankDetail',

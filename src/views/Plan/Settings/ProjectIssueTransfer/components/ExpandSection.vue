@@ -90,7 +90,7 @@
 
 <script>
 import { Status, Tracker } from '@/components/Issue'
-import { ContextMenu } from '@/newMixins'
+import { ContextMenu } from '@/mixins'
 import { updateIssue } from '@/api/issue'
 
 export default {

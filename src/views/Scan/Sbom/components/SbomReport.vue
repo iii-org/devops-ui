@@ -319,6 +319,12 @@ export default {
       }
     }
   },
+  beforeRouteLeave(to, from, next) {
+    if (to.name !== 'Sbom') {
+      sessionStorage.removeItem('keyword')
+    }
+    next()
+  },
   mounted() {
     this.fetchProjectInfo()
   },

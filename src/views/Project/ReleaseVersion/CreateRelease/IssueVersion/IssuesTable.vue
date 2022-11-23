@@ -104,12 +104,12 @@
           <el-empty :description="$t('general.NoData')" />
         </template>
       </el-table>
-      <pagination
+      <Pagination
         :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
-        :page-sizes="[listQuery.limit]"
-        :layout="'total, prev, pager, next'"
+        :page-sizes="[5, 10, 20, 50]"
+        :layout="'total, sizes, prev, pager, next'"
         @pagination="handlePagination"
       />
     </p>
@@ -167,7 +167,7 @@
       <ProjectIssueDetail
         v-if="showIssueDetail"
         ref="children"
-        :props-issue-id="edittedIssueId"
+        :props-issue-id="editedIssueId"
         :is-in-dialog="true"
         @update="handleRelationUpdate"
         @delete="handleRelationUpdate"
@@ -177,7 +177,7 @@
 </template>
 
 <script>
-import MixinElTableWithCheckbox from '@/mixins/MixinElTableWithCheckbox'
+import { Checkbox } from '@/mixins'
 import { updateIssue, getCheckIssueClosable } from '@/api/issue'
 import Status from '@/components/Issue/Status'
 import Tracker from '@/components/Issue/Tracker'
@@ -191,7 +191,7 @@ export default {
     Tracker,
     ProjectIssueDetail: () => import('@/views/Project/IssueDetail')
   },
-  mixins: [MixinElTableWithCheckbox],
+  mixins: [Checkbox],
   props: {
     allIssues: {
       type: Array,
@@ -222,7 +222,13 @@ export default {
       closedRow: {},
       notClosedChildrenIssueList: [],
       showClosedChildrenIssueWarning: false,
-      edittedIssueId: ''
+      editedIssueId: '',
+      listQuery: {
+        offset: 0,
+        limit: 5,
+        total: 0,
+        page: 1
+      }
     }
   },
   computed: {
@@ -286,7 +292,6 @@ export default {
       this.closedIssueCount = 0
       this.openIssueCount = 0
       this.listData = this.getListData(partialIssues)
-      this.adjustTable(5)
       this.resizeTable()
     },
     getListData(partialIssues) {
@@ -312,7 +317,7 @@ export default {
     },
     handleEdit(idx, row) {
       this.showIssueDetail = true
-      this.edittedIssueId = row.id
+      this.editedIssueId = row.id
     },
     handleRelationUpdate() {
       this.$emit('onUpdate')

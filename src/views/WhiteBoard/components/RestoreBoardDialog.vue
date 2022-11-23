@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import { BasicData } from '@/newMixins'
+import { BasicData } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { getExcalidrawHistory, restoreExcalidrawHistory } from '@/api_v2/excalidraw'
 

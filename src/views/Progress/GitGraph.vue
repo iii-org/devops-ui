@@ -17,14 +17,14 @@ import { createGitgraph } from '@gitgraph/js'
 import { getGitGraphByRepo } from '@/api/git-graph'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { UTCtoLocalTime } from '@/filters'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import { BasicData } from '@/mixins'
 
 export default {
   name: 'ProgressGitGraph', // ready to refactor
   components: {
     ProjectListSelector
   },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData],
   data() {
     return {
       listLoading: true,

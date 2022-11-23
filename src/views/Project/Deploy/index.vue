@@ -158,12 +158,11 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
     <el-dialog
@@ -202,7 +201,7 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar, Table, ProjectSelector, CancelRequest } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, ProjectSelector, CancelRequest } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import {
   getServices,
@@ -224,7 +223,7 @@ export default {
       return value ? 'el-icon-video-play' : 'el-icon-video-pause'
     }
   },
-  mixins: [BasicData, Pagination, SearchBar, Table, ProjectSelector, CancelRequest],
+  mixins: [BasicData, Pagination, SearchBar, ProjectSelector, CancelRequest],
   data() {
     return {
       dialogVisible: false,

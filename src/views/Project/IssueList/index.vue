@@ -105,7 +105,6 @@
           highlight-current-row
           size="mini"
           row-key="id"
-          :height="tableHeight"
           :tree-props="{ children: 'child' }"
           :row-class-name="getRowClass"
           @cell-click="handleClick"
@@ -326,12 +325,11 @@
             <el-empty :description="$t('general.NoData')" />
           </template>
         </el-table>
-        <pagination
+        <Pagination
           :total="pageInfo.total"
           :page="listQuery.page"
           :limit="listQuery.limit"
-          :page-sizes="[listQuery.limit]"
-          :layout="'total, prev, pager, next'"
+          :layout="'total, sizes, prev, pager, next'"
           @pagination="handleCurrentChange"
         />
       </el-row>
@@ -353,7 +351,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { QuickAddIssue, ExpandSection, SearchFilter, CustomFilter } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, IssueList, ContextMenu } from '@/newMixins'
+import { IssueList, ContextMenu } from '@/mixins'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api_v2/projects'
 import { getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
@@ -373,7 +371,7 @@ export default {
     ExpandSection,
     CustomFilter
   },
-  mixins: [Table, IssueList, ContextMenu],
+  mixins: [IssueList, ContextMenu],
   data() {
     return {
       quickAddTopicDialogVisible: false,

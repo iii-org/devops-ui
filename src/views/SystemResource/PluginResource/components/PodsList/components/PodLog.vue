@@ -27,7 +27,7 @@
 <script>
 import { getPodLog } from '@/api/kubernetes'
 import { mapGetters } from 'vuex'
-import { CancelRequest } from '@/newMixins'
+import { CancelRequest } from '@/mixins'
 
 export default {
   name: 'PodLog',

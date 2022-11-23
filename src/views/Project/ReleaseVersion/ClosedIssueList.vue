@@ -119,7 +119,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination
+      <Pagination
         :total="pageInfo.total"
         :page="listQuery.page"
         :limit="listQuery.limit"
@@ -146,7 +146,7 @@ import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/ap
 import { Status, Priority, Tracker, ExpandSection } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import axios from 'axios'
-import { BasicData, Table, Pagination } from '@/newMixins'
+import { BasicData, Table, Pagination } from '@/mixins'
 import ContextMenu from '@/components/Issue/ContextMenu'
 
 /**
