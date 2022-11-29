@@ -90,7 +90,7 @@ const state = {
 }
 
 const mutations = {
-  SET_EXCALIDRAW: (states, status) => {
+  SET_EXCALIDRAW_STATUS: (states, status) => {
     states.isExcalidrawEnable = status
   },
   SET_ROUTES: (states, routes) => {
@@ -101,9 +101,9 @@ const mutations = {
 
 const actions = {
   async generateRoutes({ commit }, roles) {
-    commit('SET_EXCALIDRAW', false)
+    commit('SET_EXCALIDRAW_STATUS', false)
     const disabledPluginRoutes = (await getRoutes()).data.map(route => {
-      if (route.name === 'excalidraw') commit('SET_EXCALIDRAW', true)
+      if (route.name === 'excalidraw') commit('SET_EXCALIDRAW_STATUS', !route.disabled )
       if (route.disabled) return route.name
     })
     // views Plugin

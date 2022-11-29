@@ -5,7 +5,21 @@ export default {
     return {
       remote: false,
       listLoading: false,
-      listData: []
+      listData: [],
+      notRequiredProject: [
+        'Dashboard',
+        'ProjectList',
+        'Inbox',
+        'MessageConsole',
+        'AccountManage',
+        'SystemActivities',
+        'SystemArguments',
+        'SystemDeploySettings',
+        'SubAdminProjects',
+        'SystemPluginManage',
+        'Profile',
+        'SystemVersion'
+      ]
     }
   },
   computed: {
@@ -33,7 +47,7 @@ export default {
   },
   methods: {
     async loadData() {
-      if (this.selectedProjectId === -1) return
+      if (!this.notRequiredProject.includes(this.$route.name) && this.selectedProjectId === -1) return
       this.listLoading = true
       this.listData = await this.fetchData()
       this.listLoading = false

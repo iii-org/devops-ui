@@ -3,12 +3,12 @@
     <el-col>
       <ProjectListSelector />
       <el-divider />
-      <el-row :gutter="12" class="flex flex-wrap">
-        <el-empty
-          v-if="usageList.length === 0"
-          :description="$t('general.NoData')"
-        />
-        <template v-else>
+      <el-row
+        v-if="usageList.length !== 0"
+        :gutter="12"
+        class="flex flex-wrap"
+      >
+        <template>
           <el-col
             v-for="item in usageList"
             :key="item.title"
@@ -26,12 +26,16 @@
                 class="flex justify-between items-center"
                 style="height: 24px"
               >
-                <strong>{{ item.title }}{{ item.quota }}</strong>
+                <strong>
+                  {{ item.title }}{{ item.quota }}
+                </strong>
               </div>
               <div
                 v-if="selectedProjectId === -1"
                 style="text-align: center;"
-              >{{ $t('general.NoData') }}</div>
+              >
+                {{ $t('general.NoData') }}
+              </div>
               <div v-else>
                 <div>
                   <ResourcePie :chart-data="item.data" />
@@ -47,13 +51,17 @@
           </el-col>
         </template>
       </el-row>
+      <el-empty
+        v-else
+        :description="$t('general.NoData')"
+      />
     </el-col>
   </el-row>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import ProjectListSelector from '@/components/ProjectListSelector'
+import { BasicData, ProjectSelector } from '@/mixins'
 import { getPluginResource } from '@/api/harbor'
 import { getProjectUsage } from '@/api/kubernetes'
 import ResourcePie from './components/ResourcePie'
@@ -63,9 +71,9 @@ import { handleK8sData } from '@/utils/k8sResourceFormatter'
 export default {
   name: 'PluginResource',
   components: {
-    ProjectListSelector,
     ResourcePie
   },
+  mixins: [BasicData, ProjectSelector],
   data() {
     return {
       listLoading: false,
@@ -79,9 +87,6 @@ export default {
     selectedProjectId() {
       this.fetchData()
     }
-  },
-  mounted() {
-    this.fetchData()
   },
   methods: {
     async fetchData() {
