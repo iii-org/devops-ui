@@ -50,43 +50,55 @@
         check-strictly
         @check="checkTreeNode"
       >
-        <el-descriptions
-          slot-scope="{data}"
-          :colon="false"
-          :column="4"
+        <span
+          slot-scope="{data, node}"
+          class="flex items-center justify-between"
+          style=" width: 100%;"
         >
-          <el-descriptions-item
-            content-class-name="truncate"
-            :content-style="checkStatus(data)"
+          <span
+            class="truncate"
+            :style="calcWidth(node)"
           >
-            <span @click.stop="handleEdit(data)">
-              #{{ data.id }} - {{ data.name }}
-            </span>
-          </el-descriptions-item>
-          <el-descriptions-item content-class-name="truncate">
-            <span class="pr-3">{{ data.fixed_version.name }}</span>
             <Tracker
               v-if="data.tracker.name"
-              class="pr-3"
               :name="$t(`Issue.${data.tracker.name}`)"
               :type="data.tracker.name"
+              :hide-name="true"
             />
+            #{{ data.id }} - {{ data.name }}
+          </span>
+          <span
+            class="truncate"
+            style="width: 15rem; display: inline-block;"
+          >
+            <span v-if="data.fixed_version.name" class="pr-3">
+              {{ data.fixed_version.name }}
+            </span>
             <Status
               v-if="data.status.name"
+              class="pr-3"
               :name="$t(`Issue.${data.status.name}`)"
               :type="data.status.name"
               :size="'mini'"
             />
-          </el-descriptions-item>
-          <el-descriptions-item
-            :label="$t('Issue.Assignee')"
-            content-class-name="truncate"
+            <span v-if="data.assigned_to.name">
+              <el-tag
+                type="info"
+                effect="dark"
+                class="rounded-xl font-bold"
+                size="mini"
+              >
+                <em class="el-icon-user" />
+                {{ data.assigned_to.name }}
+              </el-tag>
+            </span>
+          </span>
+          <span
+            class="truncate"
+            style="width: 10rem; display: inline-block;"
           >
-            : {{ data.assigned_to.name }}
-          </el-descriptions-item>
-          <el-descriptions-item>
             <el-button
-              class="primary mr-1 p-0"
+              class="primary mr-1"
               type="text"
               @click.stop="handleEdit(data)"
             >
@@ -95,15 +107,15 @@
             </el-button>
             <el-button
               v-if="!data.has_children && !data.is_closed"
-              class="primary mr-1 p-0"
+              class="primary"
               type="text"
               @click.stop="handleClosedIssueDialogVisible(data)"
             >
               <em class="el-icon-close" />
               {{ $t('general.Close') }}
             </el-button>
-          </el-descriptions-item>
-        </el-descriptions>
+          </span>
+        </span>
       </el-tree>
     </el-card>
     <el-dialog
@@ -373,6 +385,10 @@ export default {
       if (!this.selectedVersions.includes(val.fixed_version.id)) return { color: 'gray' }
       return {}
     },
+    calcWidth(node) {
+      const nodeWidth = 1.125 * (node.level - 1) + 'rem'
+      return { width: `calc(30rem - ${nodeWidth})`, display: 'inline-block' }
+    },
     getFormData(data) {
       const formData = new FormData()
       Object.keys(data).forEach((item) => {
@@ -391,41 +407,6 @@ export default {
 }
 
 >>> .el-tree-node__content {
-  align-items: center;
-  height: 35px;
-}
-
->>> .el-tree-node:focus > .el-tree-node__content {
-  background-color: transparent !important;
-}
-
->>> .el-tree-node:hover > .el-tree-node__content {
-  background-color: transparent !important;
-}
-
->>> .el-descriptions-item__label {
-  margin-right: 3px;
-}
-
->>> .el-descriptions-row {
-  td {
-    font-size: 16px;
-  }
-  td:nth-child(1) {
-    width: 35%;
-    padding: 0;
-  }
-  td:nth-child(2) {
-    width: 25%;
-    padding: 0;
-  }
-  td:nth-child(3) {
-    width: 20%;
-    padding: 0;
-  }
-  td:nth-child(4) {
-    width: 20%;
-    padding: 0;
-  }
+  height: 30px;
 }
 </style>
