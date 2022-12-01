@@ -24,3 +24,5 @@ export const getIssueFieldDisplay = (params) => request.get(`/v2/issue_field_dis
 export const putIssueFieldDisplay = (data) => request.put(`/v2/issue_field_display`, data)
 export const getIssueGitCommitLog = (project_id, issue_id, params) =>
   request.get(`/v2/project/${project_id}/issues_commit/${issue_id}`, { params })
+export const getAllChildrenIssue = (project_id, params) => request.get(`/v2/project/${project_id}/issue/sons`, { params })
+export const closeAllIssueByIssueIds = (data) => request.delete(`/v2/issues/close_all`, { data })

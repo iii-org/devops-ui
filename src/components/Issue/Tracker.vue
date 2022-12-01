@@ -1,7 +1,7 @@
 <template>
   <span>
     <span v-if="name" :class="`point ${mapTagType(type)}`" />
-    <span>{{ name }}</span>
+    <span v-if="!hideName">{{ name }}</span>
   </span>
 </template>
 
@@ -16,6 +16,10 @@ export default {
     type: {
       type: String,
       default: ''
+    },
+    hideName: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
