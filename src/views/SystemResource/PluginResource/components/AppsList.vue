@@ -50,7 +50,6 @@
                 slot="reference"
                 size="mini"
                 type="danger"
-                :disabled="!scope.row.is_iii"
               >
                 <em class="el-icon-delete" />
                 {{ $t('general.Delete') }}
@@ -59,7 +58,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <Pagination
+      <pagination
         :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
@@ -72,21 +71,21 @@
 </template>
 
 <script>
-import { deleteService, getServiceList } from '@/api/kubernetes'
+import { deleteApp, getAppsList } from '@/api/kubernetes'
 import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/mixins'
 
 export default {
-  name: 'ServiceList',
+  name: 'AppsList',
   mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
   methods: {
     async fetchData() {
       this.listLoading = true
-      const res = await getServiceList(this.selectedProjectId)
-      return res.data
+      const res = await getAppsList(this.selectedProjectId)
+      return res.data.map((item) => ({ name: item }))
     },
-    async handleDelete(pId, serviceName) {
+    async handleDelete(pId, appName) {
       try {
-        await deleteService(pId, serviceName)
+        await deleteApp(pId, appName)
         await this.loadData()
       } catch (error) {
         console.error(error)

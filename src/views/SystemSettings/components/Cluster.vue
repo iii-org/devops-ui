@@ -113,7 +113,7 @@
 
 <script>
 import { getDeployedHostsLists, getDeployedHostsByList, addDeployHosts, updateDeployHostsById } from '@/api/deploy'
-import { BasicData } from '@/newMixins'
+import { BasicData } from '@/mixins'
 import { btoa } from '@/utils/base64'
 
 const formData = () => ({

@@ -91,8 +91,8 @@ const formatData = item => {
 }
 
 export const handleK8sData = (data) => {
-  const titleList = ['CPU', 'Memory', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Deployment', 'Ingresses']
-  const keys = ['cpu', 'memory', 'pods', 'services.nodeports', 'secrets', 'configmaps', 'deployments', 'ingresses']
+  const titleList = ['CPU', 'Memory', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Deployment', 'Ingresses', 'Apps']
+  const keys = ['cpu', 'memory', 'pods', 'services.nodeports', 'secrets', 'configmaps', 'deployments', 'ingresses', 'apps']
   const result = titleList.map((title, idx) => {
     const quotaItem = data.quota[keys[idx]]
     const usedItem = data.used[keys[idx]]

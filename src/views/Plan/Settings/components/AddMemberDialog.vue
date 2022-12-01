@@ -49,7 +49,7 @@
           <el-table-column :label="$t('User.Title')" prop="title" />
           <el-table-column :label="$t('User.Account')" prop="login" />
         </el-table>
-        <pagination
+        <Pagination
           :total="filteredData.length"
           :page="listQuery.page"
           :limit="listQuery.limit"
@@ -78,7 +78,7 @@
 <script>
 import { addProjectMember, getNotInProject } from '@/api/projects'
 import { mapGetters } from 'vuex'
-import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
 import Fuse from 'fuse.js'
 
 export default {

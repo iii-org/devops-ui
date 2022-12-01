@@ -1,5 +1,9 @@
 <template>
-  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
+  <el-row
+    v-loading="isLoading"
+    :element-loading-text="$t('Loading')"
+    class="app-container"
+  >
     <el-col>
       <el-row type="flex" justify="end">
         <el-input
@@ -10,27 +14,60 @@
         />
       </el-row>
       <el-divider />
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" fit>
-        <el-table-column :label="$t('general.Name')" align="center" prop="name" />
-        <el-table-column :label="$t('general.Description')" align="center">
+      <el-table
+        v-loading="listLoading"
+        :data="pagedData"
+        :element-loading-text="$t('Loading')"
+        fit
+      >
+        <el-table-column
+          :label="$t('general.Name')"
+          align="center"
+          prop="name"
+        />
+        <el-table-column
+          :label="$t('general.Description')"
+          align="center"
+        >
           <template slot-scope="scope">
             {{ $t(`Plugins.${scope.row.name}.description`) }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('general.Status')" align="center" prop="disabled" width="120">
+        <el-table-column
+          :label="$t('general.Status')"
+          align="center"
+          prop="disabled"
+          width="120"
+        >
           <template slot-scope="scope">
             <el-tag :type="scope.row.disabled ? 'danger' : 'success'">
               {{ scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column-time :label="$t('general.LastUpdateTime')" prop="update_at" width="200" />
-        <el-table-column :label="$t('general.Actions')" align="center">
+        <el-table-column-time
+          :label="$t('general.LastUpdateTime')"
+          prop="update_at"
+          width="200"
+        />
+        <el-table-column
+          :label="$t('general.Actions')"
+          align="center"
+        >
           <template slot-scope="scope">
-            <el-button v-if="!scope.row.disabled" size="mini" class="buttonPrimaryReverse" icon="el-icon-edit" @click="handleEditClick(scope.row.name)">
+            <el-button
+              v-if="!scope.row.disabled"
+              size="mini"
+              class="buttonPrimaryReverse"
+              icon="el-icon-edit"
+              @click="handleEditClick(scope.row.name)"
+            >
               {{ $t('general.Edit') }}
             </el-button>
-            <el-button size="mini" @click="handleActiveClick(scope.row)">
+            <el-button
+              size="mini"
+              @click="handleActiveClick(scope.row)"
+            >
               <div class="flex items-center">
                 <span class="dot" :class="scope.row.disabled ? 'bg-success' : 'bg-danger'" />
                 <span class="ml-2" :class="scope.row.disabled ? 'text-success' : 'text-danger'">
@@ -44,22 +81,30 @@
           <el-empty :description="$t('general.NoData')" />
         </template>
       </el-table>
-      <pagination
+      <Pagination
         :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
-        :page-sizes="[listQuery.limit]"
-        :layout="'total, prev, pager, next'"
+        :layout="'total, sizes, prev, pager, next'"
         @pagination="onPagination"
       />
     </el-col>
 
-    <el-dialog :visible.sync="isDialogVisible" width="50vw" :show-close="false" @close="handleClose">
+    <el-dialog
+      :visible.sync="isDialogVisible"
+      width="50vw"
+      :show-close="false"
+      @close="handleClose"
+    >
       <span slot="title">
         <div class="flex items-center justify-between">
           <div>
-            <div class="text-title capitalize">{{ pluginName }}</div>
-            <div v-if="pluginName">{{ $t(`Plugins.${pluginName}.description`) }}</div>
+            <div class="text-title capitalize">
+              {{ pluginName }}
+            </div>
+            <div v-if="pluginName">
+              {{ $t(`Plugins.${pluginName}.description`) }}
+            </div>
           </div>
           <div>
             <el-popconfirm
@@ -72,26 +117,51 @@
               :title="$t('Member.confirmRemove')"
               @confirm="handleDelete(pluginName)"
             >
-              <el-button slot="reference" size="mini" type="danger">
+              <el-button
+                slot="reference"
+                size="mini"
+                type="danger"
+              >
                 {{ $t('general.Remove') }}
               </el-button>
             </el-popconfirm>
-            <el-button class="buttonSecondaryReverse" size="mini" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
-            <el-button class="buttonPrimary" size="mini" :disabled="!isFormFilled" @click="handleConfirm">
+            <el-button
+              class="buttonSecondaryReverse"
+              size="mini"
+              @click="handleClose"
+            >
+              {{ $t('general.Cancel') }}
+            </el-button>
+            <el-button
+              class="buttonPrimary"
+              size="mini"
+              :disabled="!isFormFilled"
+              @click="handleConfirm"
+            >
               {{ form.disabled ? $t('general.Enable') : $t('general.Save') }}
             </el-button>
           </div>
         </div>
       </span>
 
-      <el-form v-if="hasArguments" ref="form" :model="form" label-position="left" label-width="200px">
+      <el-form
+        v-if="hasArguments"
+        ref="form"
+        :model="form"
+        label-position="left"
+        label-width="200px"
+      >
         <template v-for="(arg, argIdx) in form.arguments">
           <el-form-item
             :key="argIdx"
             :label="$t(`Plugins.${pluginName}.arguments.${arg.key}.title`)"
             :prop="'arguments.' + argIdx + '.value'"
             :rules="[
-              { required: true, message: $t(`Plugins.${pluginName}.arguments.${arg.key}.hint`), trigger: 'blur' }
+              {
+                required: true,
+                message: $t(`Plugins.${pluginName}.arguments.${arg.key}.hint`),
+                trigger: 'blur'
+              }
             ]"
           >
             <el-input
@@ -120,7 +190,9 @@
           </el-form-item>
         </template>
       </el-form>
-      <div v-else>{{ $t('Plugins.NoArguments') }}</div>
+      <div v-else>
+        {{ $t('Plugins.NoArguments') }}
+      </div>
     </el-dialog>
   </el-row>
 </template>
@@ -128,7 +200,7 @@
 <script>
 import { reloadRouter } from '@/router/router'
 import { getPlugins, getPluginDetails, updatePlugin, deletePlugin } from '@/api/systemPlugin'
-import { SearchBar, Pagination } from '@/newMixins'
+import { SearchBar, Pagination } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = () => ({

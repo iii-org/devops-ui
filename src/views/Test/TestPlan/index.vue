@@ -67,7 +67,6 @@
           fit
           highlight-current-row
           row-key="id"
-          :height="tableHeight"
           :tree-props="{ children: 'child' }"
           :row-class-name="getRowClass"
           @row-contextmenu="handleContextMenu"
@@ -184,12 +183,11 @@
             <el-empty :description="$t('general.NoData')" />
           </template>
         </el-table>
-        <pagination
+        <Pagination
           :total="pageInfo.total"
           :page="listQuery.page"
           :limit="listQuery.limit"
-          :page-sizes="[listQuery.limit]"
-          :layout="'total, prev, pager, next'"
+          :layout="'total, sizes, prev, pager, next'"
           @pagination="handleCurrentChange"
         />
       </el-row>
@@ -209,7 +207,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { QuickAddIssue, ExpandSection, SearchFilter } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, IssueList, ContextMenu } from '@/newMixins'
+import { IssueList, ContextMenu } from '@/mixins'
 import { getTestFileByTestPlan } from '@/api/qa'
 import { getIssue, getIssueFamily } from '@/api/issue'
 import { getProjectUserList, getProjectIssueList } from '@/api/projects'
@@ -229,7 +227,7 @@ export default {
     ProjectListSelector,
     SearchFilter
   },
-  mixins: [Table, IssueList, ContextMenu],
+  mixins: [IssueList, ContextMenu],
   data() {
     return {
       quickAddTopicDialogVisible: false,

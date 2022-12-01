@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { BasicData } from '@/newMixins'
+import { BasicData } from '@/mixins'
 import { getTagsByProject, addProjectTags, deleteProjectTags, updateProjectTags } from '@/api/projects'
 
 export default {

@@ -1,8 +1,5 @@
 <template>
-  <el-row
-    class="app-container"
-    style="overflow: hidden;"
-  >
+  <el-row class="app-container">
     <ProjectListSelector>
       <el-button
         v-if="pod.has_pod"
@@ -16,7 +13,7 @@
       </el-button>
       <el-input
         v-model="keyword"
-        :placeholder="$t('CheckMarx.SearchScanId')"
+        :placeholder="$t('Git.searchBranchOrCommitId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
       />
@@ -31,7 +28,6 @@
       fit
       highlight-current-row
       :data="pagedData"
-      height="100%"
     >
       <el-table-column
         align="center"
@@ -127,12 +123,11 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
     <PodLog
@@ -144,7 +139,7 @@
 </template>
 
 <script>
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getSideexScans, getSideexReport } from '@/api/sideex'
@@ -158,11 +153,11 @@ export default {
     ElTableColumnTag,
     PodLog
   },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
   data() {
     return {
       confirmLoading: false,
-      searchKeys: ['id'],
+      searchKeys: ['branch', 'commit_id'],
       pod: {}
     }
   },

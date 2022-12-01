@@ -1,10 +1,24 @@
 <template>
   <div v-loading="listLoading">
-    <div v-if="isShowTitle" class="mb-2 text-lg">{{ $t('Version.ProjectManage') }}</div>
-    <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" :image-size="100" />
+    <div
+      v-if="isShowTitle"
+      class="mb-2 text-lg"
+    >
+      {{ $t('Version.ProjectManage') }}
+    </div>
+    <el-empty
+      v-if="selectedProjectId === -1"
+      :description="$t('general.NoData')"
+      :image-size="100"
+    />
     <template v-else>
       <div class="flex justify-between mb-4">
-        <el-button class="buttonSecondary" size="small" icon="el-icon-plus" @click="handleAdding">
+        <el-button
+          class="buttonSecondary"
+          size="small"
+          icon="el-icon-plus"
+          @click="handleAdding"
+        >
           {{ $t('Version.AddVersion') }}
         </el-button>
         <el-input
@@ -24,9 +38,20 @@
           sortable
           min-width="100"
         />
-        <ElTableColumnTime prop="created_on" :label="$t('general.CreateTime')" />
-        <el-table-column prop="due_date" align="center" :label="$t('general.DueDate')" min-width="120" />
-        <ElTableColumnTime prop="updated_on" :label="$t('general.LastUpdateTime')" />
+        <ElTableColumnTime
+          prop="created_on"
+          :label="$t('general.CreateTime')"
+        />
+        <el-table-column
+          prop="due_date"
+          align="center"
+          :label="$t('general.DueDate')"
+          min-width="120"
+        />
+        <ElTableColumnTime
+          prop="updated_on"
+          :label="$t('general.LastUpdateTime')"
+        />
         <el-table-column-tag
           prop="status"
           i18n-key="Version"
@@ -36,35 +61,55 @@
           size="mini"
           location="projectVersions"
         />
-        <el-table-column :label="$t('general.Actions')" align="center" width="210">
+        <el-table-column
+          :label="$t('general.Actions')"
+          align="center"
+          width="210"
+        >
           <template slot-scope="scope">
-            <el-button size="mini" class="buttonPrimaryReverse" icon="el-icon-edit" @click="handleEdit(scope.row)">
+            <el-button
+              size="mini"
+              class="buttonPrimaryReverse"
+              icon="el-icon-edit"
+              @click="handleEdit(scope.row)"
+            >
               {{ $t('general.Edit') }}
             </el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(scope.row)">
+            <el-button
+              size="mini"
+              type="danger"
+              icon="el-icon-delete"
+              @click="handleDelete(scope.row)"
+            >
               {{ $t('general.Delete') }}
             </el-button>
           </template>
         </el-table-column>
         <template slot="empty">
-          <el-empty :description="$t('general.NoData')" :image-size="100" />
+          <el-empty
+            :description="$t('general.NoData')"
+            :image-size="100"
+          />
         </template>
       </el-table>
-      <pagination
+      <Pagination
         :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
-        :page-sizes="[listQuery.limit]"
-        :layout="'total, prev, pager, next'"
+        :page-sizes="[5, 10, 20, 50]"
+        :layout="'total, sizes, prev, pager, next'"
         @pagination="onPagination"
       />
-      <ModifyVersionDialog ref="modifyVersionDialog" @update="loadData" />
+      <ModifyVersionDialog
+        ref="modifyVersionDialog"
+        @update="loadData"
+      />
     </template>
   </div>
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar } from '@/newMixins'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getProjectVersion, deleteProjectVersion } from '@/api/projects'
@@ -78,6 +123,16 @@ export default {
     isShowTitle: {
       type: Boolean,
       default: false
+    }
+  },
+  data() {
+    return {
+      listQuery: {
+        offset: 0,
+        limit: 5,
+        total: 0,
+        page: 1
+      }
     }
   },
   methods: {

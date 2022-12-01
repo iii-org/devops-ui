@@ -178,6 +178,7 @@ export default {
     NoIssue: 'No Issue',
     Email: 'Email',
     Creator: 'Creator',
+    Updater: 'Updater',
     CreateTime: 'Create Time',
     StartTime: 'Start Time',
     UpdateTime: 'Update Time',
@@ -347,7 +348,6 @@ export default {
     InfoSeverity: 'Info Severity',
     RunAt: 'Start Time',
     Report: '@:general.Report',
-    SearchScanId: 'Search Scan ID',
     noScan: 'This project does not have any scan.',
     notCompletedScan: 'The scan is not completed yet. It may take several hours to complete.',
     generatingReportScan: 'Scan done, the system is generating a report. It may take several minutes to complete.',
@@ -367,6 +367,7 @@ export default {
     PostScan: 'Processing',
     Finished: 'Finished',
     Canceled: 'Canceled',
+    Deleted: 'Deleted',
     Failed: 'Failed',
     InProcess: 'In Process'
   },
@@ -398,8 +399,7 @@ export default {
     RunAt: 'Start Time',
     Report: '@:general.Report',
     TestReport: 'Test Report',
-    DownloadReport: 'Download Report',
-    SearchCommitId: 'Search Commit ID'
+    DownloadReport: 'Download Report'
   },
   Cmas: {
     SUCCESS: 'Success',
@@ -842,7 +842,10 @@ export default {
     Password: 'Password',
     K8SConfigDownload: 'Download K8S Config',
     PlatformNotice: 'Platform Notice',
-    MailNotice: 'Email Notice'
+    MailNotice: 'Email Notice',
+    ServerPassword: 'Server Password',
+    SamePlatformPassword: 'Same Platform Password',
+    ResetPassword: 'Reset Password'
   },
   Project: {
     Project: ' Project',
@@ -954,7 +957,6 @@ export default {
     TestFail: 'Test Fail',
     TestTotal: 'Test total',
     StartTime: 'Start Time',
-    SearchBranch: 'Search Branch',
     DevOps: 'DevOps',
     Postman: 'Postman'
   },
@@ -1016,7 +1018,7 @@ export default {
   Git: {
     Branch: '@:general.Branch',
     Commit: 'Commit',
-    searchCommitId: 'Search Commit ID'
+    searchBranchOrCommitId: 'Search @:general.Branch or Commit ID'
   },
   SonarQube: {
     ViewReport: 'View Report',
@@ -1411,7 +1413,9 @@ export default {
     Name: 'Whiteboard Name',
     CreateBoard: 'Create Whiteboard',
     EditBoard: 'Edit Whiteboard',
-    RestoreBoard: 'RestoreBoard'
+    HistoricalRecord: 'Historical Record',
+    AutoSavedTime: 'Auto Saved Time',
+    Size: 'Size'
   },
   IssueMatrix: {
     Relations: 'Relationship',

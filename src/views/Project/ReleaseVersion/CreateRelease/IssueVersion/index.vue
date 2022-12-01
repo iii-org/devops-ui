@@ -1,7 +1,9 @@
 <template>
   <el-card style="width: 80%; background-color: #dbdbdb;">
     <div class="form_item">
-      <span style="padding-right: 10px;">{{ $t('Project.Version') }}</span>
+      <span style="padding-right: 10px;">
+        {{ $t('Project.Version') }}
+      </span>
       <el-select
         id="release_versions"
         v-model="selectedVersions"
@@ -27,19 +29,24 @@
         </el-button>
       </span>
     </div>
-    <el-skeleton v-if="isLoading" :rows="6" animated class="mt-5" />
-    <el-empty v-else-if="hasNoIssue" :description="$t('Release.NoIssueWarning')" />
-    <IssuesTable
+    <el-skeleton
+      v-if="isLoading"
+      :rows="6"
+      animated
+      class="mt-5"
+    />
+    <el-empty
+      v-else-if="hasNoIssue"
+      :description="$t('Release.NoIssueWarning')"
+    />
+    <IssuesTree
       v-else-if="!isLoading && hasOpenIssue"
-      ref="issueList"
-      :all-issues.sync="allIssues"
+      :selected-versions="selectedVersions"
       :project-version-options="projectVersionOptions"
       @onInit="onInit"
-      @onUpdate="onInit"
     />
     <ClosedIssues
       v-else-if="!isLoading && !hasOpenIssue"
-      ref="closedIssue"
       :all-issues="allIssues"
     />
     <div class="text-right">
@@ -48,7 +55,7 @@
         @click="onNext"
       >
         {{ $t('Release.Next') }}
-        <i class="el-icon-right" />
+        <em class="el-icon-right" />
       </el-button>
     </div>
   </el-card>
@@ -62,7 +69,7 @@ import Issue from '@/data/issue.js'
 export default {
   name: 'IssueVersion',
   components: {
-    IssuesTable: () => import('./IssuesTable'),
+    IssuesTree: () => import('./IssuesTree'),
     ClosedIssues: () => import('./ClosedIssues')
   },
   props: {

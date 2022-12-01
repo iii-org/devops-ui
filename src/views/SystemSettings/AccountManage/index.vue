@@ -1,7 +1,10 @@
 <template>
-  <div class="app-container account-manage-table" style="overflow: hidden;">
+  <div class="app-container account-manage-table">
     <div class="flex justify-between">
-      <el-button class="buttonSecondary" @click="showUserDialog('', 'Add User')">
+      <el-button
+        class="buttonSecondary"
+        @click="showUserDialog('', 'Add User')"
+      >
         <em class="el-icon-plus" />
         {{ $t('User.AddUser') }}
       </el-button>
@@ -10,33 +13,68 @@
         prefix-icon="el-icon-search"
         :placeholder="$t('User.SearchAccount')"
         style="width: 250px; float: right"
+        @input="onSearch"
       />
     </div>
     <el-divider />
     <el-table
       v-loading="listLoading"
-      :data="pagedData"
+      :data="userList"
       :element-loading-text="$t('Loading')"
       fit
       highlight-current-row
-      height="100%"
       @row-click="clickEvent"
     >
-      <el-table-column align="center" :label="$t('User.Account')" min-width="170" prop="login" />
-      <el-table-column align="center" :label="$t('general.Name')" min-width="200" prop="name" />
-      <el-table-column align="center" label="Email" prop="email" min-width="280" />
-      <ElTableColumnTime :label="$t('general.CreateTime')" prop="create_at" />
-      <el-table-column align="center" :label="$t('User.Phone')" width="160" prop="phone" />
+      <el-table-column
+        align="center"
+        :label="$t('User.Account')"
+        min-width="170"
+        prop="login"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('general.Name')"
+        min-width="200"
+        prop="name"
+      />
+      <el-table-column
+        align="center"
+        label="Email"
+        prop="email"
+        min-width="280"
+      />
+      <ElTableColumnTime
+        :label="$t('general.CreateTime')"
+        prop="create_at"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('User.Phone')"
+        width="160"
+        prop="phone"
+      />
       <ElTableColumnTag
         prop="status"
         min-width="120"
         size="small"
         location="accountManage"
       />
-      <ElTableColumnTime align="center" :label="$t('User.LastLogin')" prop="last_login" />
-      <el-table-column align="center" :label="$t('general.Actions')" width="250">
+      <ElTableColumnTime
+        align="center"
+        :label="$t('User.LastLogin')"
+        prop="last_login"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('general.Actions')"
+        width="250"
+      >
         <template slot-scope="scope">
-          <el-button size="mini" class="buttonPrimaryReverse" @click="handleParticipateDialog(scope.row.id)">
+          <el-button
+            size="mini"
+            class="buttonPrimaryReverse"
+            @click="handleParticipateDialog(scope.row.id)"
+          >
             <em class="el-icon-edit" />
             {{ $t('general.Participate') }}
           </el-button>
@@ -58,12 +96,11 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
-      :total="listQuery.total ? listQuery.total : 1"
+    <Pagination
+      :total="listQuery.total"
       :page="listQuery.current"
       :limit="listQuery.per_page"
-      :page-sizes="[listQuery.per_page]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
     <UserDialog
@@ -78,9 +115,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { BasicData, Pagination } from '@/mixins'
 import { deleteUser, getUser, getUserInfo } from '@/api/user'
 import UserDialog from './components/UserDialog'
-import MixinAccountManageTable from '@/mixins/MixinAccountManageTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 
@@ -91,46 +128,68 @@ export default {
     ElTableColumnTime,
     ElTableColumnTag
   },
-  mixins: [MixinAccountManageTable],
+  mixins: [BasicData, Pagination],
   data() {
     return {
       userDialogVisible: false,
       dialogTitle: '',
-      search: '',
-      searchKeys: ['login', 'name'],
       editUserId: 0,
       editUserData: {},
-      perPage: 10
+      keyword: '',
+      params: {
+        page: 1,
+        per_page: 10,
+        search: ''
+      },
+      userList: []
     }
   },
   computed: {
     ...mapGetters(['userId'])
   },
-  mounted() {
-    if (sessionStorage.getItem('AccountManageKeyWord')) {
-      this.keyword = sessionStorage.getItem('AccountManageKeyWord')
+  beforeRouteEnter(to, from, next) {
+    if (from.name === 'ParticipateProject') {
+      next((vm) => {
+        vm.keyword = sessionStorage.getItem('keyword')
+        sessionStorage.removeItem('keyword')
+      })
+    } else {
+      next()
     }
   },
   beforeRouteLeave(to, from, next) {
-    if (to.name !== 'ParticipateProject') {
-      sessionStorage.removeItem('AccountManageKeyWord')
+    if (to.name === 'ParticipateProject') {
+      sessionStorage.setItem('keyword', this.keyword)
     }
     next()
   },
   methods: {
-    async fetchData(page, per_page, search) {
-      this.perPage = per_page
-      const allUser = await getUser(page, per_page, search)
+    async fetchData() {
+      this.listLoading = true
+      const allUser = await getUser(this.params)
       this.listQuery = allUser.page
-      return allUser.user_list.filter(item => item.id !== this.userId)
+      this.userList = allUser.user_list.filter(item => item.id !== this.userId)
+      this.listLoading = false
+    },
+    async onSearch(keyword) {
+      this.params.search = keyword
+      this.params.page = 1
+      await this.fetchData()
+    },
+    async onPagination(query) {
+      const { page, limit } = query
+      this.params.page = page
+      this.params.per_page = limit
+      await this.fetchData()
     },
     emitAddUserDialogVisible(visible, refresh, edit) {
       this.userDialogVisible = visible
       if (refresh === 'refresh') {
         if (edit) {
-          this.loadData(this.listQuery.current, this.perPage, this.keyword)
+          this.fetchData()
         } else {
-          this.loadData(1, this.perPage, this.keyword)
+          this.params.page = 1
+          this.fetchData()
         }
       }
     },
@@ -161,8 +220,7 @@ export default {
           message: this.$t('Notify.Deleted'),
           type: 'success'
         })
-        const currentPage = this.pagedData.length > 1 ? this.listQuery.current : this.listQuery.current - 1
-        await this.loadData(currentPage, this.perPage, this.keyword)
+        this.fetchData()
       } catch (error) {
         console.error(error)
       }
@@ -171,8 +229,10 @@ export default {
       if (column.label !== this.$t('general.Actions')) this.showUserDialog(row, 'Edit User')
     },
     handleParticipateDialog(user_id) {
-      sessionStorage.setItem('AccountManageKeyWord', this.keyword)
-      this.$router.push({ name: 'ParticipateProject', params: { userId: user_id }})
+      this.$router.push({
+        name: 'ParticipateProject',
+        params: { userId: user_id }
+      })
     }
   }
 }

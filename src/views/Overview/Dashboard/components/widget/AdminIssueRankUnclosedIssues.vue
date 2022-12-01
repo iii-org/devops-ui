@@ -27,7 +27,7 @@
         </el-table-column>
         <el-table-column sortable show-overflow-tooltip prop="start_date" :label="$t('Dashboard.ADMIN.IssueRank.start_date')" />
       </el-table>
-      <pagination
+      <Pagination
         :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
 

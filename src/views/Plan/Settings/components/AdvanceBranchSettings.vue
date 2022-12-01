@@ -115,7 +115,7 @@
 
 <script>
 import { getPipelineBranch, editPipelineBranch } from '@/api/projects'
-import { BasicData, SearchBar, Pagination, Table } from '@/newMixins'
+import { BasicData, SearchBar, Pagination, Table } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {

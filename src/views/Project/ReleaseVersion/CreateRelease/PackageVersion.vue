@@ -92,7 +92,7 @@
         :disabled="isLoading"
         @click="onBack"
       >
-        <i class="el-icon-back" />
+        <em class="el-icon-back" />
         {{ $t('Release.Previous') }}
       </el-button>
       <el-button
@@ -225,7 +225,6 @@ export default {
     openIssueDialog() {
       const com = this.$refs.issueDialog
       com.setData(this.updateData.issues, null)
-      com.adjustTable(5)
       com.visible = true
     }
   }

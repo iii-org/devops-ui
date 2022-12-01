@@ -261,7 +261,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { QuickAddIssue } from '@/components/Issue'
-import { IssueList } from '@/newMixins'
+import { IssueList } from '@/mixins'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Gantt from '@/views/Plan/Milestone/components/Gantt'
 import WBS from '@/views/Plan/Milestone/components/WBS'

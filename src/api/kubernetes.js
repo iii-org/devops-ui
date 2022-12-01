@@ -19,7 +19,6 @@ export const deletePod = (project_id, pod_name) => request.delete(`/project/${pr
 
 // service
 export const getServiceList = (project_id) => request.get(`/project/${project_id}/resource/services`)
-
 export const deleteService = (project_id, service_name) => request.delete(`/project/${project_id}/resource/services/${service_name}`)
 
 // deployment
@@ -29,6 +28,10 @@ export const updateDeployment = (project_id, deployment_name) => request.put(`/p
 
 // ingresses
 export const getIngressList = (project_id) => request.get(`/project/${project_id}/resource/ingresses`)
+
+// apps
+export const getAppsList = (project_id) => request.get(`/rancher/${project_id}/app`)
+export const deleteApp = (project_id, app_name) => request.delete(`/project/${project_id}/app/${app_name}`)
 
 // project usage
 export const getProjectUsage = (project_id) => request.get(`/project/${project_id}/resource`)

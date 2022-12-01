@@ -1,6 +1,6 @@
 <script>
 import { Priority, Status, Tracker } from '@/components/Issue'
-import { BasicData, Pagination } from '@/newMixins/index'
+import { BasicData, Pagination } from '@/mixins'
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
 import { getProjectUserList, getProjectVersion, getTagsByProject } from '@/api/projects'
@@ -345,7 +345,7 @@ export default {
       this.listQuery.limit = val.limit
       const offset = this.pageInfo.offset + (val.page - this.listQuery.page) * val.limit
       this.listQuery.offset = this.setPageOffset(val, offset)
-      if (val.page) {
+      if (val.page <= val.totalPage) {
         this.listQuery.page = val.page
       } else {
         const page = (this.listQuery.offset + 1) / this.listQuery.limit
@@ -363,9 +363,9 @@ export default {
         return 0
       }
       if (offset >= this.pageInfo.total || val.page >= val.totalPage) {
-        return this.pageInfo.total - val.limit
+        return (val.totalPage - 1) * val.limit
       }
-      return offset
+      return (val.page - 1) * val.limit
     },
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)

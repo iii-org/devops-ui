@@ -144,16 +144,12 @@
                   v-if="row.licenses"
                   effect="dark"
                   placement="right"
-                  :disabled="row.licenses.length < 3"
+                  :disabled="row.licenses.length < 4"
                 >
                   <ul
-                    v-if="row.licenses.length > 2"
                     slot="content"
                     class="text-left"
-                    style="
-                      margin: 0;
-                      padding-left: 1rem;
-                    "
+                    style="margin: 0; padding-left: 1rem;"
                   >
                     <li
                       v-for="(item, index) in row.licenses"
@@ -164,18 +160,15 @@
                   </ul>
                   <ul
                     class="text-left"
-                    style="
-                      margin: 0;
-                      padding-left: 1rem;
-                    "
+                    style="margin: 0; padding-left: 1rem;"
                   >
                     <li
-                      v-for="(item, index) in row.licenses.slice(0,2)"
+                      v-for="(item, index) in row.licenses.slice(0,row.licenses.length === 3 ? 3 : 2)"
                       :key="index"
                     >
                       {{ item }}
                       <div
-                        v-if="row.licenses.length > 2 && index === 1"
+                        v-if="row.licenses.length > 3 && index === 1"
                         class="font-bold"
                       >
                         more . . .
@@ -206,16 +199,12 @@
                   v-if="row.versions"
                   effect="dark"
                   placement="left"
-                  :disabled="row.versions.length < 3"
+                  :disabled="row.versions.length < 4"
                 >
                   <ul
-                    v-if="row.versions.length > 2"
                     slot="content"
                     class="text-left"
-                    style="
-                      margin: 0;
-                      padding-left: 1rem;
-                    "
+                    style="margin: 0; padding-left: 1rem;"
                   >
                     <li
                       v-for="(item, index) in row.versions"
@@ -226,18 +215,15 @@
                   </ul>
                   <ul
                     class="text-left"
-                    style="
-                      margin: 0;
-                      padding-left: 1rem;
-                    "
+                    style="margin: 0; padding-left: 1rem;"
                   >
                     <li
-                      v-for="(item, index) in row.versions.slice(0,2)"
+                      v-for="(item, index) in row.versions.slice(0,row.licenses.length === 3 ? 3 : 2)"
                       :key="index"
                     >
                       {{ item }}
                       <div
-                        v-if="row.versions.length > 2 && index === 1"
+                        v-if="row.licenses.length > 3 && index === 1"
                         class="font-bold"
                       >
                         more . . .
@@ -333,6 +319,12 @@ export default {
       }
     }
   },
+  beforeRouteLeave(to, from, next) {
+    if (to.name !== 'Sbom') {
+      sessionStorage.removeItem('keyword')
+    }
+    next()
+  },
   mounted() {
     this.fetchProjectInfo()
   },
@@ -363,10 +355,10 @@ export default {
         console.error(error)
       } finally {
         this.listLoading = false
-        this.timeNow = localStorage.getItem('sbomTime') !== 'null'
-          ? UTCtoLocalTime(localStorage.getItem('sbomTime')) : '-'
+        this.timeNow = sessionStorage.getItem('sbomTime') !== 'null'
+          ? UTCtoLocalTime(sessionStorage.getItem('sbomTime')) : '-'
         this.$once('hook:beforeDestroy', () => {
-          localStorage.removeItem('sbomTime')
+          sessionStorage.removeItem('sbomTime')
         })
       }
     },

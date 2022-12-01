@@ -49,7 +49,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <pagination
+        <Pagination
           :total="filteredData.length"
           :page="listQuery.page"
           :limit="listQuery.limit"
@@ -68,7 +68,7 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { ScatterChart } from 'echarts/charts'
 import { getPassingRateDetail } from '@/api/dashboard'
-import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
 import NoData from './widget/NoData'
 
 require('echarts/theme/macarons') // echarts theme

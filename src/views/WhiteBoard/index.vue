@@ -116,10 +116,11 @@
           <el-button
             size="mini"
             class="buttonSecondaryReverse"
+            icon="el-icon-time"
             :disabled="isDisabled"
             @click="handleRestore(scope.row)"
           >
-            {{ $t('general.Restore') }}
+            {{ $t('Excalidraw.HistoricalRecord') }}
           </el-button>
         </template>
       </el-table-column>
@@ -131,8 +132,7 @@
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
     <CreateBoardDialog
@@ -159,7 +159,7 @@
 </template>
 
 <script>
-import { BasicData, Table, Pagination, SearchBar, ProjectSelector } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
 import { getExcalidraw, deleteExcalidraw } from '@/api_v2/excalidraw'
 import { getServerStatus } from '@/api_v2/monitoring'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
@@ -179,7 +179,7 @@ export default {
     EditBoardDialog,
     RestoreBoardDialog
   },
-  mixins: [BasicData, Table, Pagination, SearchBar, ProjectSelector],
+  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
   data() {
     return {
       searchKeys: ['name'],
@@ -208,9 +208,6 @@ export default {
         this.isClosed = true
         return []
       }
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     },
     handleError() {
       this.isClosed = true

@@ -275,12 +275,11 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="projectListTotal"
       :page="params.page"
       :limit="params.limit"
-      :page-sizes="[params.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
 
@@ -313,7 +312,7 @@ import {
   SearchFilter,
   UpdateButton
 } from './components'
-import { BasicData, SearchBar, Pagination, Table } from '@/newMixins'
+import { BasicData, SearchBar, Pagination, Table } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'

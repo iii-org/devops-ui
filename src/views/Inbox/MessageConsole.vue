@@ -155,7 +155,7 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       ref="pagination"
       :total="listQuery.total"
       :page.sync="listQuery.current"
@@ -187,7 +187,7 @@ import { mapGetters } from 'vuex'
 import SearchFilter from './components/SearchFilter.vue'
 import { getMessageListAdmin, deleteMessage, closeMessage } from '@/api_v2/monitoring'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { BasicData, Pagination } from '@/newMixins'
+import { BasicData, Pagination } from '@/mixins'
 
 const params = () => ({
   limit: 10,

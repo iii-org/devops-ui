@@ -1,5 +1,5 @@
 <template>
-  <el-tabs v-model="activeName" tab-position="left" class="h-full" @tab-click="handleClick">
+  <el-tabs v-model="activeName" tab-position="left" class="h-full">
     <el-tab-pane :label="$t('System.Secrets')" name="secrets" class="linkTextColor">
       <SystemSecrets ref="secrets" />
     </el-tab-pane>
@@ -37,11 +37,6 @@ export default {
   data() {
     return {
       activeName: 'secrets'
-    }
-  },
-  methods: {
-    handleClick() {
-      this.$refs[this.activeName].adjustTable()
     }
   }
 }

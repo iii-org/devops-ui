@@ -78,11 +78,11 @@
                     <strong>#<span v-html="highLight(item.id.toString())" /></strong> -
                     <span v-html="highLight(item.name)" />
                   </span>
-                  <span style="float: right; color: #8492a6; font-size: 13px"
-                        v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
-                  />
                 </div>
               </el-popover>
+              <span style="float: right; color: #8492a6; font-size: 13px"
+                    v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
+              />
             </el-option>
           </template>
         </el-option-group>
@@ -133,11 +133,11 @@
                     <strong>#<span v-html="highLight((item.id)? item.id.toString(): '')" /></strong> -
                     <span v-html="highLight(item.name)" />
                   </span>
-                  <span style="float: right; color: #8492a6; font-size: 13px"
-                        v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
-                  />
                 </div>
               </el-popover>
+              <span style="float: right; color: #8492a6; font-size: 13px"
+                    v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
+              />
             </el-option>
           </template>
         </el-option-group>

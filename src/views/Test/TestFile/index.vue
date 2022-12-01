@@ -199,12 +199,11 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
     <el-dialog
@@ -273,7 +272,7 @@
 </template>
 
 <script>
-import { ProjectSelector, BasicData, Pagination, SearchBar, Table, ContextMenu } from '@/newMixins'
+import { ProjectSelector, BasicData, Pagination, SearchBar, ContextMenu } from '@/mixins'
 import { mapActions, mapGetters } from 'vuex'
 import Fuse from 'fuse.js'
 import {
@@ -301,7 +300,7 @@ export default {
     RelatedPlanDialog,
     IssueRow
   },
-  mixins: [ProjectSelector, BasicData, Pagination, SearchBar, Table, ContextMenu],
+  mixins: [ProjectSelector, BasicData, Pagination, SearchBar, ContextMenu],
   data() {
     return {
       filterVisible: false,
@@ -361,7 +360,6 @@ export default {
     }
   },
   mounted() {
-    this.adjustTable()
     if (this.test_filename) {
       this['qa/removeFileName']()
     }
@@ -385,10 +383,11 @@ export default {
       return data
     },
     handleCreateTestData(row) {
-      this.toggleDialogVisible('createTestData')
       this.selectedFileName = row.file_name
+      this.toggleDialogVisible('createTestData')
     },
-    handleHistoryTestData() {
+    handleHistoryTestData(row) {
+      this.selectedFileName = row.file_name
       this.toggleDialogVisible('previewTestData')
     },
     handleRelatedPlan(collection) {

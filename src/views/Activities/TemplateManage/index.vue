@@ -14,7 +14,6 @@
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      height="calc(100vh - 300px)"
       fit
     >
       <el-table-column
@@ -186,12 +185,11 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page.sync="listQuery.current"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
     <TemplateDialog
@@ -205,14 +203,14 @@
 
 <script>
 import { getTemplateFromProject, deleteTemplateFromProject } from '@/api_v2/template'
-import { BasicData, Pagination, Table, SearchBar } from '@/newMixins'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import TemplateDialog from './components/TemplateDialog'
 
 export default {
   name: 'TemplateManage',
   components: { ElTableColumnTime, TemplateDialog },
-  mixins: [BasicData, Table, Pagination, SearchBar],
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       dialogVisible: false,
@@ -228,9 +226,6 @@ export default {
   methods: {
     async fetchData() {
       return (await getTemplateFromProject()).data
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     },
     copyUrl(id) {
       const message = this.$t('Notify.Copied')

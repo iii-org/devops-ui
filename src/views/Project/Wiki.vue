@@ -1,10 +1,5 @@
 <template>
-  <el-row
-    v-loading="isLoading"
-    :element-loading-text="$t('Loading')"
-    class="app-container"
-    style="overflow: hidden;"
-  >
+  <div class="app-container">
     <ProjectListSelector>
       <el-button
         slot="button"
@@ -90,18 +85,16 @@
             </el-button>
           </el-popconfirm>
         </template>
-
       </el-table-column>
       <template slot="empty">
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
 
@@ -199,12 +192,12 @@
         </div>
       </div>
     </el-drawer>
-  </el-row>
+  </div>
 </template>
 
 <script>
 import { deleteWiki, getWikiDetail, getWikiList, putWikiDetail } from '@/api/wiki'
-import { BasicData, Table, Pagination, SearchBar, ProjectSelector } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import 'codemirror/lib/codemirror.css'
 import '@toast-ui/editor/dist/toastui-editor.css'
@@ -216,10 +209,9 @@ export default {
     ElTableColumnTime,
     editor: Editor
   },
-  mixins: [BasicData, Table, Pagination, SearchBar, ProjectSelector],
+  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
   data() {
     return {
-      isLoading: false,
       editBtnLoading: false,
       direction: 'rtl',
       wikiData: {},
@@ -278,9 +270,6 @@ export default {
         console.error(error)
       }
       this.editBtnLoading = false
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     },
     async handleEdit(idx, row) {
       this.listLoading = true

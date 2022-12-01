@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="row.name + ' - ' + $t('Excalidraw.RestoreBoard')"
+    :title="row.name + ' - ' + $t('Excalidraw.HistoricalRecord')"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     :before-close="onDialogClosed"
@@ -19,13 +19,22 @@
       />
       <el-table-column
         align="center"
-        :label="$t('Version.Id')"
-        prop="id"
+        :label="$t('general.Updater')"
+        prop="user_name"
       />
       <el-table-column-time
-        :label="$t('general.CreateTime')"
+        :label="$t('Excalidraw.AutoSavedTime')"
         prop="updated_at"
       />
+      <el-table-column
+        align="center"
+        :label="$t('Excalidraw.Size')"
+        prop="size"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.size + 'k' }}
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         :label="$t('general.Actions')"
@@ -34,6 +43,7 @@
           <el-button
             size="mini"
             class="buttonSecondaryReverse"
+            icon="el-icon-refresh-left"
             @click="handleRestore(scope.row)"
           >
             {{ $t('general.Restore') }}
@@ -48,7 +58,7 @@
 </template>
 
 <script>
-import { BasicData } from '@/newMixins'
+import { BasicData } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { getExcalidrawHistory, restoreExcalidrawHistory } from '@/api_v2/excalidraw'
 

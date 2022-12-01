@@ -3,21 +3,41 @@
     <el-col>
       <div>
         <span class="ml-2 text-xl">
-          <span>{{ $t('route.Monitoring') }}</span>
+          <span>
+            {{ $t('route.Monitoring') }}
+          </span>
         </span>
       </div>
       <el-divider />
       <el-card>
-        <el-table :data="listData" fit>
-          <el-table-column :label="$t('ServiceMonitoring.Services')" align="center" width="200" prop="name" />
-          <el-table-column :label="$t('ServiceMonitoring.Health')" align="center" width="100">
+        <el-table
+          :data="listData"
+          fit
+        >
+          <el-table-column
+            :label="$t('ServiceMonitoring.Services')"
+            align="center"
+            width="200"
+            prop="name"
+          />
+          <el-table-column
+            :label="$t('ServiceMonitoring.Health')"
+            align="center"
+            width="100"
+          >
             <template slot-scope="scope">
-              <el-tag :type="getTagType(scope.row.status)" effect="dark">
+              <el-tag
+                :type="getTagType(scope.row.status)"
+                effect="dark"
+              >
                 {{ $t(`ServiceMonitoring.${scope.row.status}`) }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('ServiceMonitoring.Logs')" align="center">
+          <el-table-column
+            :label="$t('ServiceMonitoring.Logs')"
+            align="center"
+          >
             <template slot-scope="scope">
               <el-skeleton
                 v-if="scope.row.status === 'loading'"
@@ -28,10 +48,19 @@
               <div v-else>{{ scope.row.message }}</div>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('ServiceMonitoring.LastUpdateTime')" align="center" prop="datetime" width="200">
+          <el-table-column
+            :label="$t('ServiceMonitoring.LastUpdateTime')"
+            align="center"
+            prop="datetime"
+            width="200"
+          >
             <template slot-scope="scope">
-              <div v-if="scope.row.status === 'loading'">{{ $t('Loading') }}</div>
-              <div v-else>{{ scope.row.datetime }}</div>
+              <div v-if="scope.row.status === 'loading'">
+                {{ $t('Loading') }}
+              </div>
+              <div v-else>
+                {{ scope.row.datetime }}
+              </div>
             </template>
           </el-table-column>
           <el-table-column

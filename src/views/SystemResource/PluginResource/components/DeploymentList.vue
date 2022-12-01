@@ -106,7 +106,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination
+      <Pagination
         :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
@@ -120,7 +120,7 @@
 
 <script>
 import { deleteDeployment, getDeploymentList, updateDeployment } from '@/api/kubernetes'
-import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
+import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {

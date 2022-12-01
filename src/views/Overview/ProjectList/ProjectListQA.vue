@@ -266,12 +266,11 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <pagination
+    <Pagination
       :total="projectListTotal"
       :page="params.page"
       :limit="params.limit"
-      :page-sizes="[params.limit]"
-      :layout="'total, prev, pager, next'"
+      :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
 
@@ -301,7 +300,7 @@ import {
   EditProjectDialog,
   UpdateButton
 } from './components'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'
 import XLSX from 'xlsx'
@@ -334,7 +333,7 @@ export default {
       return statusMap[status]
     }
   },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       editProject: {},
