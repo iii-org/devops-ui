@@ -1,7 +1,7 @@
 <template>
   <div>
     <span
-      v-if="!isExcalidrawAlive"
+      v-if="!isAlive"
       style="color: red; font-size: 12px;"
     >
       <em class="ri-error-warning-fill ri-lg" />
@@ -44,7 +44,7 @@
 export default {
   name: 'SearchFilter',
   props: {
-    isExcalidrawAlive: {
+    isAlive: {
       type: Boolean,
       default: false
     }
