@@ -350,7 +350,6 @@ export default {
       editProjectObject: {},
       deleteProject: { id: '', name: '' },
       searchKeys: ['display', 'name', 'owner_name'],
-      rowHeight: 74,
       params: params(),
       listData: [],
       forceDelete: false,
@@ -393,6 +392,7 @@ export default {
       this.listLoading = true
       this.forceDelete = false
       if (this.$refs.filter) this.getParams()
+      else this.params.disabled = 0
       await this.getMyProjectList(this.params)
       this.listLoading = false
       this.listData = this.projectList

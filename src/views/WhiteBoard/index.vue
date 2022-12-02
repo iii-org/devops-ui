@@ -20,7 +20,6 @@
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      height="calc(100vh - 300px)"
       fit
     >
       <el-table-column
