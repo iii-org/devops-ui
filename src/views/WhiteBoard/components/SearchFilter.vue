@@ -1,12 +1,5 @@
 <template>
   <div>
-    <span
-      v-if="!isAlive"
-      style="color: red; font-size: 12px;"
-    >
-      <em class="ri-error-warning-fill ri-lg" />
-      {{ $t('Notify.ExcalidrawAliveWarning') }}
-    </span>
     <el-input
       v-if="searchVisible"
       v-model="keyword"

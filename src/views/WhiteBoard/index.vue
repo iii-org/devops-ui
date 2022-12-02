@@ -1,15 +1,23 @@
 <template>
   <div class="app-container">
     <ProjectListSelector>
-      <el-button
-        slot="button"
-        class="buttonSecondary"
-        icon="el-icon-plus"
-        :disabled="isDisabled"
-        @click="handleCreate"
-      >
-        {{ $t('Excalidraw.CreateBoard') }}
-      </el-button>
+      <div slot="button">
+        <el-button
+          class="buttonSecondary"
+          icon="el-icon-plus"
+          :disabled="isDisabled"
+          @click="handleCreate"
+        >
+          {{ $t('Excalidraw.CreateBoard') }}
+        </el-button>
+        <span
+          v-if="!isAlive"
+          style="color: red; font-size: 12px;"
+        >
+          <em class="ri-error-warning-fill ri-lg" />
+          {{ $t('Notify.ExcalidrawAliveWarning') }}
+        </span>
+      </div>
       <SearchFilter
         :is-alive="isAlive"
         :keyword.sync="keyword"
