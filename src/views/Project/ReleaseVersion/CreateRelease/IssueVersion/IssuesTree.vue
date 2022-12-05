@@ -42,12 +42,13 @@
     >
       <el-tree
         ref="tree"
-        :props="{ disabled:'is_closed' }"
-        :data="allIssuesTree"
         node-key="id"
+        :data="allIssuesTree"
+        :props="{ disabled:'is_closed' }"
         :filter-node-method="filterNode"
         show-checkbox
         check-strictly
+        default-expand-all
         @check="checkTreeNode"
       >
         <span
@@ -276,9 +277,6 @@ export default {
         .catch(() => {})
         .finally(() => {
           this.treeLoading = false
-          this.$refs.filter.onChangeFilter()
-          // If all issues are closed, change to create release screen
-          if (this.allIssuesTree.length === 0) this.$emit('onInit')
         })
     },
     checkTreeNode(data) {
@@ -330,7 +328,7 @@ export default {
       this.editedIssueId = row.id
     },
     handleRelationUpdate() {
-      this.getTree()
+      this.$emit('onInit')
     },
     handleClosedIssueDialogVisible(row) {
       this.closedRow = row
@@ -357,7 +355,7 @@ export default {
         }).finally(() => {
           this.dialogLoading = false
           this.closedIssueDialogVisible = false
-          this.getTree()
+          this.$emit('onInit')
         })
     },
     async batchClose() {
@@ -374,7 +372,7 @@ export default {
           console.error(err)
         }).finally(() => {
           this.treeLoading = false
-          this.getTree()
+          this.$emit('onInit')
         })
     },
     async batchMove() {
@@ -385,7 +383,7 @@ export default {
       }
       this.dialogLoading = false
       this.batchMoveDialogVisible = false
-      this.getTree()
+      this.$emit('onInit')
     },
     calcStyle(node, data) {
       const nodeWidth = 1.125 * (node.level - 1) + 'rem'
