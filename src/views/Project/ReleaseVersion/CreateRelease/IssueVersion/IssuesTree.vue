@@ -42,22 +42,23 @@
     >
       <el-tree
         ref="tree"
-        :props="{ disabled:'is_closed' }"
-        :data="allIssuesTree"
         node-key="id"
+        :data="allIssuesTree"
+        :props="{ disabled:'is_closed' }"
         :filter-node-method="filterNode"
         show-checkbox
         check-strictly
+        default-expand-all
         @check="checkTreeNode"
       >
         <span
-          slot-scope="{data, node}"
+          slot-scope="{node, data}"
           class="flex items-center justify-between"
           style=" width: 100%;"
         >
           <span
             class="truncate"
-            :style="calcWidth(node)"
+            :style="calcStyle(node, data)"
           >
             <Tracker
               v-if="data.tracker.name"
@@ -71,16 +72,23 @@
             class="truncate"
             style="width: 15rem; display: inline-block;"
           >
-            <span v-if="data.fixed_version.name" class="pr-3">
-              {{ data.fixed_version.name }}
+            <span v-if="data.fixed_version.name">
+              <el-tag
+                :type="selectedVersions.includes(data.fixed_version.id) ? 'primary' : 'info'"
+                effect="dark"
+                class="rounded-xl font-bold"
+                size="mini"
+              >
+                {{ data.fixed_version.name }}
+              </el-tag>
             </span>
-            <Status
-              v-if="data.status.name"
-              class="pr-3"
-              :name="$t(`Issue.${data.status.name}`)"
-              :type="data.status.name"
-              :size="'mini'"
-            />
+            <span v-if="data.status.name">
+              <Status
+                :name="$t(`Issue.${data.status.name}`)"
+                :type="data.status.name"
+                :size="'mini'"
+              />
+            </span>
             <span v-if="data.assigned_to.name">
               <el-tag
                 type="info"
@@ -269,9 +277,6 @@ export default {
         .catch(() => {})
         .finally(() => {
           this.treeLoading = false
-          this.$refs.filter.onChangeFilter()
-          // If all issues are closed, change to create release screen
-          if (this.allIssuesTree.length === 0) this.$emit('onInit')
         })
     },
     checkTreeNode(data) {
@@ -323,7 +328,7 @@ export default {
       this.editedIssueId = row.id
     },
     handleRelationUpdate() {
-      this.getTree()
+      this.$emit('onInit')
     },
     handleClosedIssueDialogVisible(row) {
       this.closedRow = row
@@ -350,7 +355,7 @@ export default {
         }).finally(() => {
           this.dialogLoading = false
           this.closedIssueDialogVisible = false
-          this.getTree()
+          this.$emit('onInit')
         })
     },
     async batchClose() {
@@ -367,7 +372,7 @@ export default {
           console.error(err)
         }).finally(() => {
           this.treeLoading = false
-          this.getTree()
+          this.$emit('onInit')
         })
     },
     async batchMove() {
@@ -378,16 +383,21 @@ export default {
       }
       this.dialogLoading = false
       this.batchMoveDialogVisible = false
-      this.getTree()
+      this.$emit('onInit')
     },
-    checkStatus(val) {
-      if (val.is_closed) return { color: 'gray', opacity: '0.5' }
-      if (!this.selectedVersions.includes(val.fixed_version.id)) return { color: 'gray' }
-      return {}
-    },
-    calcWidth(node) {
+    calcStyle(node, data) {
       const nodeWidth = 1.125 * (node.level - 1) + 'rem'
-      return { width: `calc(30rem - ${nodeWidth})`, display: 'inline-block' }
+      const style = {
+        color: 'black',
+        display: 'inline-block',
+        width: `calc(40rem - ${nodeWidth})`
+      }
+      if (data.is_closed) {
+        style.color = 'gray'
+        style.opacity = '0.5'
+      }
+      if (!this.selectedVersions.includes(data.fixed_version.id)) delete style.color
+      return style
     },
     getFormData(data) {
       const formData = new FormData()
@@ -404,6 +414,10 @@ export default {
 .el-form-item {
   padding: 10px 10px;
   font-weight: bold;
+}
+
+>>> .el-tree-node {
+  min-width: 70rem;
 }
 
 >>> .el-tree-node__content {

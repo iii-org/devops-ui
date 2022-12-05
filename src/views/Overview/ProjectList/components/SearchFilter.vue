@@ -53,7 +53,7 @@ export default {
       label: this.$t('general.Disable')
     }]
     return {
-      isDisabled: [],
+      isDisabled: [0],
       keyword: '',
       searchVisible: false
     }

@@ -127,23 +127,18 @@
             <div id="release-tag">
               <div v-if="scope.row.image_tags && scope.row.image_tags.length > 1 && !isExpand">
                 <div slot="reference">
-                  <el-tooltip placement="top">
-                    <div slot="content">
-                      {{ getImageTagsTooltip(scope.row.image_tags[0]) }}
-                    </div>
-                    <div class="cursor-pointer">
-                      <el-tag style="font-size:14px;">
-                        {{ getImageTags(scope.row.image_tags[0]) }}
-                      </el-tag>
-                      <span
-                        :style="getStyle('menuActiveText')"
-                        class="small"
-                        @click="isExpand = true"
-                      >
-                        +{{ $t('general.SeeMore') }}
-                      </span>
-                    </div>
-                  </el-tooltip>
+                  <div class="cursor-pointer">
+                    <el-tag style="font-size:14px;">
+                      {{ getImageTags(scope.row.image_tags[0]) }}
+                    </el-tag>
+                    <span
+                      :style="getStyle('menuActiveText')"
+                      class="small"
+                      @click="isExpand = true"
+                    >
+                      +{{ $t('general.SeeMore') }}
+                    </span>
+                  </div>
                 </div>
               </div>
               <div
@@ -157,22 +152,17 @@
                 :close-delay="50"
               >
                 <div slot="reference">
-                  <el-tooltip placement="top">
-                    <div slot="content">
-                      {{ getImageTagsTooltip(tag) }}
-                    </div>
-                    <div class="cursor-pointer">
-                      <el-tag style="font-size:14px;">
-                        {{ getImageTags(tag) }}
-                        <em
-                          v-if="isEditTag"
-                          class="el-icon-error cursor-pointer button"
-                          :style="getStyle('danger')"
-                          @click="deleteTag(scope.row, tag)"
-                        />
-                      </el-tag>
-                    </div>
-                  </el-tooltip>
+                  <div class="cursor-pointer">
+                    <el-tag style="font-size:14px;">
+                      {{ getImageTags(tag) }}
+                      <em
+                        v-if="isEditTag"
+                        class="el-icon-error cursor-pointer button"
+                        :style="getStyle('danger')"
+                        @click="deleteTag(scope.row, tag)"
+                      />
+                    </el-tag>
+                  </div>
                 </div>
               </div>
             </div>
@@ -266,10 +256,6 @@ export default {
     getImageTags(tag) {
       const [key] = Object.keys(tag)
       return key
-    },
-    getImageTagsTooltip(tag) {
-      const [[value]] = Object.values(tag)
-      return value
     },
     getStyle(colorCode) {
       const color = variables[`${colorCode}`]

@@ -136,6 +136,8 @@ export default {
     7010: 'SMTP server回報錯誤, 請確認你的服務, 阜號, 帳號或是密碼是正確的。',
     8001: '{service_name} 回報錯誤：{response}',
     8101: '父議題設定異常，請確認設定之議題非為本議題之子議題或關係議題。',
+    8201: '{tag}已經存在這個Harbor的repository中。',
+    8202: '不能打tag到Harbor的repository中，因為他沒有映象檔。',
     8901: '插件軟體的設定是關閉的狀態。',
     8902: '插件服務目前沒有存活。',
     9001: '內部錯誤：{type}: {exception}',

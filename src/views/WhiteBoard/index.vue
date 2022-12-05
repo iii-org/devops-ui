@@ -1,17 +1,25 @@
 <template>
   <div class="app-container">
     <ProjectListSelector>
-      <el-button
-        slot="button"
-        class="buttonSecondary"
-        icon="el-icon-plus"
-        :disabled="isDisabled"
-        @click="handleCreate"
-      >
-        {{ $t('Excalidraw.CreateBoard') }}
-      </el-button>
+      <div slot="button">
+        <el-button
+          class="buttonSecondary"
+          icon="el-icon-plus"
+          :disabled="isDisabled"
+          @click="handleCreate"
+        >
+          {{ $t('Excalidraw.CreateBoard') }}
+        </el-button>
+        <span
+          v-if="!isAlive"
+          style="color: red; font-size: 12px;"
+        >
+          <em class="ri-error-warning-fill ri-lg" />
+          {{ $t('Notify.ExcalidrawAliveWarning') }}
+        </span>
+      </div>
       <SearchFilter
-        :is-excalidraw-alive="isExcalidrawAlive"
+        :is-alive="isAlive"
         :keyword.sync="keyword"
       />
     </ProjectListSelector>
@@ -20,19 +28,18 @@
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      height="calc(100vh - 300px)"
       fit
     >
       <el-table-column
+        :label="$t('general.Index')"
         type="index"
         align="center"
-        :label="$t('general.Index')"
-        width="100"
+        width="70"
       />
       <el-table-column
-        align="center"
         :label="$t('general.Name')"
         prop="name"
+        align="center"
       >
         <template slot-scope="scope">
           <el-link
@@ -57,17 +64,19 @@
       <el-table-column-time
         :label="$t('general.CreateTime')"
         prop="created_at"
+        width="130"
       />
       <el-table-column
-        align="center"
         :label="$t('general.Creator')"
         prop="operator.name"
+        width="150"
+        align="center"
       />
       <el-table-column
-        align="center"
         :label="$t('Issue.Issue')"
-        show-overflow-tooltip
         prop="issue_ids"
+        align="center"
+        show-overflow-tooltip
       >
         <template slot-scope="scope">
           <el-tag
@@ -82,46 +91,64 @@
         </template>
       </el-table-column>
       <el-table-column
-        align="center"
         :label="$t('general.Actions')"
+        align="center"
+        width="150"
       >
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            class="buttonPrimaryReverse"
-            icon="el-icon-edit"
-            :disabled="isDisabled"
-            @click="handleEdit(scope.row,false)"
+          <el-tooltip
+            :content="$t('general.Edit')"
+            effect="dark"
+            placement="bottom"
           >
-            {{ $t('general.Edit') }}
-          </el-button>
+            <el-button
+              circle
+              size="mini"
+              class="buttonPrimaryReverse"
+              type="primary"
+              icon="el-icon-edit"
+              :disabled="isDisabled"
+              @click="handleEdit(scope.row,false)"
+            />
+          </el-tooltip>
           <el-popconfirm
             :title="$t('Notify.confirmDelete')"
             :confirm-button-text="$t('general.Delete')"
             :cancel-button-text="$t('general.Cancel')"
-            icon="el-icon-info"
             icon-color="red"
+            icon="el-icon-info"
             @confirm="handleDelete(scope.row)"
           >
-            <el-button
+            <el-tooltip
               slot="reference"
-              size="mini"
-              type="danger"
-              :disabled="isDisabled"
+              :content="$t('general.Delete')"
+              effect="dark"
+              placement="bottom"
             >
-              <em class="el-icon-delete" />
-              {{ $t('general.Delete') }}
-            </el-button>
+              <el-button
+                circle
+                size="mini"
+                type="danger"
+                icon="el-icon-delete"
+                :disabled="isDisabled"
+              />
+            </el-tooltip>
           </el-popconfirm>
-          <el-button
-            size="mini"
-            class="buttonSecondaryReverse"
-            icon="el-icon-time"
-            :disabled="isDisabled"
-            @click="handleRestore(scope.row)"
+          <el-tooltip
+            :content="$t('Excalidraw.HistoricalRecord')"
+            effect="dark"
+            placement="bottom"
           >
-            {{ $t('Excalidraw.HistoricalRecord') }}
-          </el-button>
+            <el-button
+              size="mini"
+              circle
+              class="buttonSecondaryReverse"
+              type="success"
+              icon="el-icon-time"
+              :disabled="isDisabled"
+              @click="handleRestore(scope.row)"
+            />
+          </el-tooltip>
         </template>
       </el-table-column>
       <template slot="empty">
@@ -184,7 +211,7 @@ export default {
     return {
       searchKeys: ['name'],
       isClosed: false,
-      isExcalidrawAlive: false,
+      isAlive: true,
       CreateBoardDialogVisible: false,
       EditBoardDialogVisible: false,
       RestoreBoardDialogVisible: false,
@@ -193,20 +220,17 @@ export default {
   },
   computed: {
     isDisabled() {
-      return this.isClosed || !this.isExcalidrawAlive
+      return this.isClosed || !this.isAlive
     }
-  },
-  async mounted() {
-    this.isExcalidrawAlive = (await getServerStatus('excalidraw')).status
   },
   methods: {
     async fetchData() {
+      this.isAlive = (await getServerStatus('excalidraw')).status
       try {
         return (await getExcalidraw({ project_id: this.selectedProjectId })).data
       } catch (error) {
         console.error(error)
-        this.isClosed = true
-        return []
+        this.handleError()
       }
     },
     handleError() {

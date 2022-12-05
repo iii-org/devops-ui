@@ -329,7 +329,7 @@
           :total="pageInfo.total"
           :page="listQuery.page"
           :limit="listQuery.limit"
-          :layout="'total, sizes, prev, pager, next'"
+          :layout="'total, prev, pager, next'"
           @pagination="handleCurrentChange"
         />
       </el-row>
@@ -351,7 +351,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { QuickAddIssue, ExpandSection, SearchFilter, CustomFilter } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { IssueList, ContextMenu } from '@/mixins'
+import { Table, IssueList, ContextMenu } from '@/mixins'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api_v2/projects'
 import { getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
@@ -371,7 +371,7 @@ export default {
     ExpandSection,
     CustomFilter
   },
-  mixins: [IssueList, ContextMenu],
+  mixins: [Table, IssueList, ContextMenu],
   data() {
     return {
       quickAddTopicDialogVisible: false,
@@ -510,6 +510,18 @@ export default {
         result['search'] = this.keyword
       }
       return result
+    },
+    adjustTableRemote() {
+      // for replace mixins/Table.js adjustTableRemote()
+      this.$nextTick(() => {
+        this.listQuery.limit = 10
+        const nowPage = Math.ceil((this.listQuery.offset + 1) / this.listQuery.limit)
+        if (nowPage <= 0) {
+          this.listQuery.page = 1
+        } else {
+          this.listQuery.page = nowPage
+        }
+      })
     },
     async onChangeFilter() {
       const key = 'list'
