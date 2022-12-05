@@ -136,6 +136,8 @@ export default {
     7010: 'SMTP System responses error, please make sure your system, port, account and password are correct.',
     8001: '{service_name} error: {response}',
     8101: 'Parent issue setting error! Please confirm that the setting issue is not a sub-issue or related issue of this issue.',
+    8201: 'Harbor repository: {repository} already have tag: $tag.',
+    8202: 'Can not add tag on harbor repository: {repository} because it does not has image.',
     8901: 'Plugin Software is disabled',
     8902: 'Plugin Server is not alive',
     9001: 'Internal exception: {type}: {exception}',

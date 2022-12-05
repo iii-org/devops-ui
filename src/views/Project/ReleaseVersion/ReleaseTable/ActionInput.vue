@@ -3,6 +3,7 @@
     <div v-if="!isShowInput">
       <el-tooltip :content="$t('Release.Tags')" placement="top">
         <em
+          v-show="scope.row.docker.length !== 0"
           class="el-icon-price-tag cursor-pointer mr-2"
           @click="showInput('IS_EDIT_TAG')"
         />
@@ -10,7 +11,7 @@
       <el-tooltip :content="$t('general.Report')" placement="top">
         <em
           v-show="scope.row.commit"
-          class="el-icon-tickets cursor-pointer mr-2"
+          class="el-icon-tickets cursor-pointer"
           @click="handleToTestReport(scope)"
         />
       </el-tooltip>
