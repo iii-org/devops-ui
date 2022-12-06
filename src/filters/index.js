@@ -8,7 +8,7 @@ dayjs.extend(utc)
 dayjs.extend(duration)
 
 /**
- * Before using this filter, you need to know:
+ *! Before using this filter, you need to know:
  * 1. utc time vs Taiwan local time
  *  utc time(世界協調時間) is UTC +00:00, while Taiwan local time is UTC +08:00
  *    ex:
@@ -18,6 +18,11 @@ dayjs.extend(duration)
  * 2. Vue filters
  *  check https://v2.vuejs.org/v2/guide/filters.html to see more details
  *  ElTableColumnTime.vue (@/components/ElTableColumnTime) is a good example
+ *
+ * 3. multiple arguments
+ *  like the function UTCtoLocalTime(),
+ *  if there are two arguments A and B
+ *  you can use it like `{{ A | UTCtoLocalTime(B) }}` in template
  */
 
 /**
@@ -32,7 +37,7 @@ export function UTCtoLocalTime(utcTime, format = 'YYYY-MM-DD HH:mm:ss') {
     .utc(utcTime)
     .local()
     .format(format)
-  if (utcTime === 'Invalid date') {
+  if (utcTime.toLowerCase() === 'invalid date') {
     return '-'
   }
   return localTime
@@ -63,7 +68,7 @@ export function formatTime(dateTime, format = 'YYYY-MM-DD HH:mm:ss') {
   const localTime = dayjs
     .utc(dateTime)
     .format(format)
-  if (dateTime === 'Invalid date') {
+  if (dateTime.toLowerCase() === 'invalid date') {
     return '-'
   }
   return localTime
