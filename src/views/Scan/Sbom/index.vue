@@ -244,7 +244,7 @@ export default {
       params: {
         page: 1,
         per_page: 10,
-        search: sessionStorage.getItem('keyword')
+        search: sessionStorage.getItem('sbomKeyword')
       },
       sbomList: [],
       pod: {},
@@ -256,8 +256,8 @@ export default {
   beforeRouteEnter(to, from, next) {
     if (from.name === 'SbomReport') {
       next((vm) => {
-        vm.keyword = sessionStorage.getItem('keyword')
-        sessionStorage.removeItem('keyword')
+        vm.keyword = sessionStorage.getItem('sbomKeyword')
+        sessionStorage.removeItem('sbomKeyword')
       })
     } else {
       next()
@@ -265,7 +265,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (to.name === 'SbomReport') {
-      sessionStorage.setItem('keyword', this.keyword)
+      sessionStorage.setItem('sbomKeyword', this.keyword)
     }
     next()
   },

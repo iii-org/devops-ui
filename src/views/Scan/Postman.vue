@@ -134,8 +134,8 @@ export default {
   beforeRouteEnter(to, from, next) {
     if (from.name === 'PostmanTestCase') {
       next((vm) => {
-        vm.keyword = sessionStorage.getItem('keyword')
-        sessionStorage.removeItem('keyword')
+        vm.keyword = sessionStorage.getItem('postmanKeyword')
+        sessionStorage.removeItem('postmanKeyword')
       })
     } else {
       next()
@@ -143,7 +143,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (to.name === 'PostmanTestCase') {
-      sessionStorage.setItem('keyword', this.keyword)
+      sessionStorage.setItem('postmanKeyword', this.keyword)
     }
     next()
   },

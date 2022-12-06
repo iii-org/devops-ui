@@ -321,7 +321,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (to.name !== 'Sbom') {
-      sessionStorage.removeItem('keyword')
+      sessionStorage.removeItem('sbomKeyword')
     }
     next()
   },

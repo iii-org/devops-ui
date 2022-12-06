@@ -283,7 +283,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (to.name !== 'Postman') {
-      sessionStorage.removeItem('keyword')
+      sessionStorage.removeItem('postmanKeyword')
     }
     next()
   },
