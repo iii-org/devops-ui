@@ -2,7 +2,12 @@
 <template>
   <el-table-column align="center" v-bind="$props">
     <template slot-scope="scope">
-      <el-tooltip placement="top" :disabled="!scope.row[prop]" :open-delay="200" :content="scope.row[prop] | UTCtoLocalTime">
+      <el-tooltip
+        placement="top"
+        :disabled="!scope.row[prop]"
+        :open-delay="200"
+        :content="scope.row[prop] | UTCtoLocalTime"
+      >
         <span>{{ scope.row[prop] | relativeTime }}</span>
       </el-tooltip>
     </template>
@@ -11,7 +16,6 @@
 
 <script>
 import i18n from '@/lang'
-import { UTCtoLocalTime, relativeTime } from '@/filters'
 
 export default {
   name: 'ElTableColumnTime',
@@ -35,14 +39,6 @@ export default {
     sortable: {
       type: Boolean,
       default: false
-    }
-  },
-  methods: {
-    UTCtoLocalTime(value) {
-      return UTCtoLocalTime(value)
-    },
-    relativeTime(value) {
-      return relativeTime(value)
     }
   }
 }

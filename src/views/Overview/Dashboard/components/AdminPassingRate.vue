@@ -45,7 +45,7 @@
           <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.count')" prop="count" sortable />
           <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.run_at')" prop="run_at" sortable>
             <template slot-scope="scope">
-              {{ formatTime(scope.row.run_at) }}
+              {{ scope.row.run_at | relativeTime }}
             </template>
           </el-table-column>
         </el-table>
@@ -199,9 +199,6 @@ export default {
     },
     closeHandler() {
       this.keyword = ''
-    },
-    formatTime(value) {
-      return this.$dayjs(value).fromNow()
     },
     getSizeRate() {
       const caseCount = this.chartData.map(row => row.value[2])

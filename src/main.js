@@ -53,7 +53,8 @@ Vue.use(VueGtag, {
   config: { id: process.env.VUE_APP_GTM_TAG }
 })
 
-// Filters
+// Vue Filters
+// check https://v2.vuejs.org/v2/guide/filters.html to see more details
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
