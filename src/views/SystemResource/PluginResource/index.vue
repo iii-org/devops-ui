@@ -27,7 +27,7 @@
                 style="height: 24px"
               >
                 <strong>
-                  {{ item.title }}{{ item.quota }}
+                  {{ item.title + item.quota }}
                 </strong>
               </div>
               <div

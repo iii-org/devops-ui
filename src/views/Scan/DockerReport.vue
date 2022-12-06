@@ -248,7 +248,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (to.name !== 'DockerImage') {
-      sessionStorage.removeItem('keyword')
+      sessionStorage.removeItem('clairKeyword')
     }
     next()
   },

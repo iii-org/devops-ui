@@ -144,7 +144,7 @@ export default {
       params: {
         page: 1,
         per_page: 10,
-        search: sessionStorage.getItem('keyword')
+        search: sessionStorage.getItem('clairKeyword')
       },
       testList: []
     }
@@ -152,8 +152,8 @@ export default {
   beforeRouteEnter(to, from, next) {
     if (from.name === 'DockerReport') {
       next((vm) => {
-        vm.keyword = sessionStorage.getItem('keyword')
-        sessionStorage.removeItem('keyword')
+        vm.keyword = sessionStorage.getItem('clairKeyword')
+        sessionStorage.removeItem('clairKeyword')
       })
     } else {
       next()
@@ -161,7 +161,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (to.name === 'DockerReport') {
-      sessionStorage.setItem('keyword', this.keyword)
+      sessionStorage.setItem('clairKeyword', this.keyword)
     }
     next()
   },

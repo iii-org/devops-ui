@@ -18,7 +18,7 @@
     </div>
     <el-tooltip v-else placement="top">
       <template slot="content">
-        <span>{{ $t('general.Edit') }}{{ $t('general.Tag') }}</span>
+        <span>{{ $t('general.Edit') + $t('general.Tag') }}</span>
       </template>
       <el-input
         v-model="inputValue"
