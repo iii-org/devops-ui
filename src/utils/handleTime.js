@@ -65,5 +65,5 @@ export const formatTime = (dateTime, format = 'YYYY-MM-DD HH:mm:ss') => {
  * @returns {boolean}
  */
 export const isValid = (time) => {
-  return dayjs(time).isValid
+  return dayjs(time).isValid()
 }
