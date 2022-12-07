@@ -14,17 +14,6 @@ dayjs.extend(duration)
  *    ex:
  *      utc time: 2022-11-02 09:17:19
  *      Taiwan local time: 2022-11-02 17:17:19
- *
- * 2. Vue filters
- *  the declaration has already been moved to main.js,
- *  so you can use it directly in html of every component
- *  ElTableColumnTime.vue (@/components/ElTableColumnTime) is a good example
- *  check https://v2.vuejs.org/v2/guide/filters.html to see more details
- *
- * 3. multiple arguments
- *  for example like the function UTCtoLocalTime(),
- *  if there are two arguments called A and B
- *  you can use it like `{{ A | UTCtoLocalTime(B) }}` in template
  */
 
 /**
@@ -39,10 +28,7 @@ export function UTCtoLocalTime(utcTime, format = 'YYYY-MM-DD HH:mm:ss') {
     .utc(utcTime)
     .local()
     .format(format)
-  if (utcTime.toLowerCase() === 'invalid date') {
-    return '-'
-  }
-  return localTime
+  return isValid(utcTime) ? localTime : '-'
 }
 
 /**
@@ -70,8 +56,14 @@ export function formatTime(dateTime, format = 'YYYY-MM-DD HH:mm:ss') {
   const localTime = dayjs
     .utc(dateTime)
     .format(format)
-  if (dateTime.toLowerCase() === 'invalid date') {
-    return '-'
-  }
-  return localTime
+  return isValid(dateTime) ? localTime : '-'
+}
+
+/**
+ * check if time is valid
+ * @param {string} time
+ * @returns {boolean}
+ */
+export function isValid (time) {
+  return dayjs(time).isValid
 }
