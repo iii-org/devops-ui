@@ -23,7 +23,7 @@ dayjs.extend(duration)
  *  For example: To get the localTime like '05:06 PM', you should use 'hh:mm A' as the format
  * @returns {string} localTime
  */
-export function UTCtoLocalTime(utcTime, format = 'YYYY-MM-DD HH:mm:ss') {
+export const UTCtoLocalTime = (utcTime, format = 'YYYY-MM-DD HH:mm:ss') => {
   const localTime = dayjs
     .utc(utcTime)
     .local()
@@ -36,7 +36,7 @@ export function UTCtoLocalTime(utcTime, format = 'YYYY-MM-DD HH:mm:ss') {
  * @param {string} utcTime - utc time
  * @returns {string} relativeTime
  */
-export function relativeTime(utcTime) {
+export const relativeTime = (utcTime) => {
   return utcTime
     ? dayjs
       .utc(utcTime)
@@ -52,7 +52,7 @@ export function relativeTime(utcTime) {
  * @param {string} format - default value would be 'YYYY-MM-DD HH:mm:ss'
  * @returns {string} localTime
  */
-export function formatTime(dateTime, format = 'YYYY-MM-DD HH:mm:ss') {
+export const formatTime = (dateTime, format = 'YYYY-MM-DD HH:mm:ss') => {
   const localTime = dayjs
     .utc(dateTime)
     .format(format)
@@ -64,6 +64,6 @@ export function formatTime(dateTime, format = 'YYYY-MM-DD HH:mm:ss') {
  * @param {string} time
  * @returns {boolean}
  */
-export function isValid (time) {
+export const isValid = (time) => {
   return dayjs(time).isValid
 }
