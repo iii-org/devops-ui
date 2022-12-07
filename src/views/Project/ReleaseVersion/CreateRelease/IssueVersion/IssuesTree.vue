@@ -276,6 +276,7 @@ export default {
         })
         .catch(() => {})
         .finally(() => {
+          this.$refs.filter.onChangeFilter()
           this.treeLoading = false
         })
     },
