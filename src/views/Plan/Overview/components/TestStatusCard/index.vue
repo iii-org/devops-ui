@@ -48,11 +48,11 @@
           <el-tooltip
             placement="right"
             :open-delay="200"
-            :content="result.runAt | UTCtoLocalTime"
+            :content="UTCtoLocalTime(result.runAt)"
           >
             <span class="text-sm">
               <em class="mr-1 ri-time-line" />
-              <span>{{ result.runAt | relativeTime }}</span>
+              <span>{{ relativeTime(result.runAt) }}</span>
             </span>
           </el-tooltip>
           <div class="mt-3">
@@ -88,6 +88,7 @@ import {
   cmasFormatter,
   clairFormatter
 } from './formatter'
+import { UTCtoLocalTime, relativeTime } from '@/utils/handleTime'
 
 export default {
   name: 'TestStatusCard',
@@ -138,6 +139,12 @@ export default {
     },
     updateProjectTestList() {
       this.$emit('update')
+    },
+    UTCtoLocalTime(time) {
+      return UTCtoLocalTime(time)
+    },
+    relativeTime(time) {
+      return relativeTime(time)
     }
   }
 }

@@ -366,6 +366,7 @@ import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRe
 import { getIssue, addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
 import { CancelRequest } from '@/mixins'
+import { isValid, UTCtoLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'WBS',
@@ -418,11 +419,6 @@ export default {
     displayClosed: {
       type: Boolean,
       default: false
-    }
-  },
-  filter: {
-    relativeTime(dateTime) {
-      return dateTime ? this.$dayjs(dateTime).utc().local().fromNow() : '-'
     }
   },
   data() {
@@ -486,11 +482,11 @@ export default {
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
           if (item === 'due_date_start' || item === 'due_date_end') {
-            result['due_date_start'] = this.$dayjs(this.filterValue['due_date_start']).isValid()
-              ? this.$dayjs(this.filterValue['due_date_start']).format('YYYY-MM-DD')
+            result['due_date_start'] = isValid(this.filterValue['due_date_start'])
+              ? UTCtoLocalTime(this.filterValue['due_date_start'], 'YYYY-MM-DD')
               : null
-            result['due_date_end'] = this.$dayjs(this.filterValue['due_date_end']).isValid()
-              ? this.$dayjs(this.filterValue['due_date_end']).format('YYYY-MM-DD')
+            result['due_date_end'] = isValid(this.filterValue['due_date_end'])
+              ? UTCtoLocalTime(this.filterValue['due_date_end'], 'YYYY-MM-DD')
               : null
           } else if (item === 'tags' && this.filterValue[item].length > 0) {
             result[item] = this.filterValue[item].join()
@@ -793,7 +789,6 @@ export default {
     },
     async handleUpdateIssue({ value, row }) {
       let checkUpdate = false
-      const originDate = this.$dayjs(row.originColumn)
       if (value['tags']) {
         const tags = row['tags'].map((item) => item.id)
         const findTags = tags.findIndex((item) => item === value['tags'])
@@ -805,8 +800,8 @@ export default {
         value = { tags: tags.join(',') }
         checkUpdate = true
       } else if (typeof row.originColumn === 'object' && row.originColumn instanceof Date) {
-        if (originDate.isValid()) {
-          checkUpdate = value[row.editColumn] !== originDate.format('YYYY-MM-DD')
+        if (isValid(row.originColumn)) {
+          checkUpdate = value[row.editColumn] !== UTCtoLocalTime(row.originColumn, 'YYYY-MM-DD')
         } else {
           checkUpdate = value[`${row.editColumn}_id`] !== row.originColumn.id
         }

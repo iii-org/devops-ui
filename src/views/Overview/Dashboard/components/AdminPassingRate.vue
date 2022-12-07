@@ -45,7 +45,7 @@
           <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.count')" prop="count" sortable />
           <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.run_at')" prop="run_at" sortable>
             <template slot-scope="scope">
-              {{ scope.row.run_at | relativeTime }}
+              {{ relativeTime(scope.row.run_at) }}
             </template>
           </el-table-column>
         </el-table>
@@ -69,6 +69,7 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { ScatterChart } from 'echarts/charts'
 import { getPassingRateDetail } from '@/api/dashboard'
 import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
+import { relativeTime } from '@/utils/handleTime'
 import NoData from './widget/NoData'
 
 require('echarts/theme/macarons') // echarts theme
@@ -204,6 +205,9 @@ export default {
       const caseCount = this.chartData.map(row => row.value[2])
       const maxCount = Math.max(...caseCount)
       return this.maxCircleWidth / maxCount
+    },
+    relativeTime(time) {
+      return relativeTime(time)
     }
   }
 }

@@ -165,7 +165,7 @@
                           <div class="mb-2">
                             <em class="mr-1 text-xs ri-time-line" />
                             <span class="text-xs mr-1">{{ $t('general.StartTime') }}</span>
-                            <div class="font-bold ml-5">{{ container.start_time | relativeTime }}</div>
+                            <div class="font-bold ml-5">{{ relativeTime(container.start_time) }}</div>
                           </div>
 
                           <div
@@ -257,6 +257,7 @@
 import { deleteEnvironmentByBranchName, getEnvironmentList, redeployEnvironmentByBranchName, deletePod } from '@/api/kubernetes'
 import { BasicData, SearchBar, ProjectSelector } from '@/mixins'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
+import { UTCtoLocalTime, relativeTime } from '@/utils/handleTime'
 
 export default {
   name: 'ProgressDevEnvironment',
@@ -279,7 +280,7 @@ export default {
     async fetchData() {
       const res = await getEnvironmentList(this.selectedProjectId)
       const result = this.formatEnvironments(res.data)
-      this.lastUpdateTime = this.$dayjs().utc(res.datetime).format('YYYY-MM-DD HH:mm:ss')
+      this.lastUpdateTime = UTCtoLocalTime(res.datetime)
       result.forEach((item, idx) => {
         const items = { ...item }
         this.$set(this.listData, idx, items)
@@ -415,6 +416,9 @@ export default {
           this.loadData()
         })
       this.listLoading = false
+    },
+    relativeTime(time) {
+      return relativeTime(time)
     }
   }
 }

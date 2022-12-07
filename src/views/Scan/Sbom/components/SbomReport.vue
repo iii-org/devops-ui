@@ -253,7 +253,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { UTCtoLocalTime } from '@/filters/index'
+import { UTCtoLocalTime } from '@/utils/handleTime'
 import { getProjectInfos } from '@/api/projects'
 import {
   getSbomRiskOverview,

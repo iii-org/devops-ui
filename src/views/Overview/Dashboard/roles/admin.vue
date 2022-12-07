@@ -193,7 +193,7 @@ import {
   AdminOverview,
   AdminCommitLog
 } from '../components'
-import { UTCtoLocalTime } from '@/filters'
+import { UTCtoLocalTime } from '@/utils/handleTime'
 import { mapGetters } from 'vuex'
 import { CreateProjectDialog } from '@/views/Overview/ProjectList/components'
 

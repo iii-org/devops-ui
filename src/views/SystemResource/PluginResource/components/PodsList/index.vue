@@ -28,9 +28,11 @@
               <em class="el-icon-time" />
               <el-tooltip
                 placement="bottom"
-                :content="scope.row.created_time | UTCtoLocalTime"
+                :content="UTCtoLocalTime(scope.row.created_time)"
               >
-                <span>{{ scope.row.created_time | relativeTime }}</span>
+                <span>
+                  {{ relativeTime(scope.row.created_time) }}
+                </span>
               </el-tooltip>
             </div>
           </template>
@@ -61,9 +63,9 @@
                 <em class="el-icon-time" />
                 <el-tooltip
                   placement="top"
-                  :content="container.time | UTCtoLocalTime"
+                  :content="UTCtoLocalTime(container.time)"
                 >
-                  <span class="text-sm">{{ container.time | relativeTime }}</span>
+                  <span class="text-sm">{{ relativeTime(container.time) }}</span>
                 </el-tooltip>
                 <div class="ml-3 my-1">
                   <em class="el-icon-box" /> <span class="text-title"> {{ container.name }}</span>
@@ -147,6 +149,7 @@
 import { deletePod, getPodList } from '@/api/kubernetes'
 import PodLog from './components/PodLog'
 import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/mixins'
+import { UTCtoLocalTime, relativeTime } from '@/utils/handleTime'
 
 export default {
   name: 'PodsList',
@@ -196,6 +199,12 @@ export default {
         unknown: 'warning'
       }
       return mapStateType[state] || 'slow'
+    },
+    UTCtoLocalTime(time) {
+      return UTCtoLocalTime(time)
+    },
+    relativeTime(time) {
+      return relativeTime(time)
     }
   }
 }

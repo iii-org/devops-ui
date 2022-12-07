@@ -61,7 +61,7 @@
                 </el-button>
               </el-form-item>
               <div v-if="!downloadLock.is_lock">
-                {{ $t('general.LastUpdateTime') }}: {{ momentTime(downloadInfo.create_at) }}
+                {{ $t('general.LastUpdateTime') + ': ' + UTCtoLocalTime(downloadInfo.create_at) }}
               </div>
             </template>
           </el-form>
@@ -262,6 +262,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { QuickAddIssue } from '@/components/Issue'
 import { IssueList } from '@/mixins'
+import { UTCtoLocalTime } from '@/utils/handleTime'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Gantt from '@/views/Plan/Milestone/components/Gantt'
 import WBS from '@/views/Plan/Milestone/components/WBS'
@@ -629,10 +630,8 @@ export default {
       const worksheet = XLSX.utils.json_to_sheet(result)
       this.$excel(worksheet, 'WBS')
     },
-    momentTime(time) {
-      const timezoneOffset = this.$dayjs().utcOffset()
-      return time === 'None' ? '-'
-        : this.$dayjs(time).utc().add(timezoneOffset, 'minute').local().fromNow()
+    UTCtoLocalTime(time) {
+      return UTCtoLocalTime(time)
     },
     onChangeFixedVersionStatus() {
       this.$emit('change-fixed-version', this.fixed_version_closed)

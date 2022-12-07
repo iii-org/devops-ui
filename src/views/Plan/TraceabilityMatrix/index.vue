@@ -456,6 +456,7 @@ import {
 import { camelCase, cloneDeep } from 'lodash'
 import OrderListDialog from './components/OrderListDialog'
 import { dragscroll } from 'vue-dragscroll'
+import { UTCtoLocalTime } from '@/utils/handleTime'
 import axios from 'axios'
 import theme from '@/theme.js'
 
@@ -1085,7 +1086,7 @@ export default {
         const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(source)
         const downloadLink = document.createElement('a')
         downloadLink.href = url
-        downloadLink.download = `TraceabilityMatrix_${this.$dayjs().format('YYYY-MM-DD_HH:mm:ss')}`
+        downloadLink.download = `TraceabilityMatrix_${UTCtoLocalTime(Date.now(), 'YYYY-MM-DD_HH:mm:ss')}`
         document.body.appendChild(downloadLink)
         downloadLink.click()
         document.body.removeChild(downloadLink)

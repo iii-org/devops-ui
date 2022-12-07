@@ -161,10 +161,11 @@ import { mapActions, mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { BasicData, Pagination, SearchBar } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { UTCtoLocalTime } from '@/filters'
+import { UTCtoLocalTime } from '@/utils/handleTime'
 import { getHookByBranch } from '@/api/dashboard'
 import { getIssue } from '@/api/issue'
 import { Status } from '@/components/Issue'
+import { relativeTime } from '@/utils/handleTime'
 
 const commitLimit = 10
 
@@ -183,13 +184,8 @@ export default {
   computed: {
     ...mapGetters(['branchesByProject']),
     relativeTime() {
-      return function (dateTime) {
-        return dateTime
-          ? this.$dayjs(dateTime)
-            .utc()
-            .local()
-            .fromNow()
-          : '-'
+      return function (time) {
+        return relativeTime(time)
       }
     },
     isAbled() {

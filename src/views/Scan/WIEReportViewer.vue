@@ -80,6 +80,7 @@
 import xml2js from 'xml2js'
 import { mapGetters } from 'vuex'
 import { getWebInspectReport } from '@/api/webInspect'
+import { UTCtoLocalTime } from '@/utils/handleTime'
 const parser = new xml2js.Parser({ explicitArray: false, mergeAttrs: true })
 
 export default {
@@ -165,12 +166,8 @@ export default {
       }
       return mapping[status][key]
     },
-    UTCtoLocalTime(dateTime) {
-      if (!dateTime) return '-'
-      return this.$dayjs
-        .utc(dateTime)
-        .local()
-        .format('YYYY-MM-DD HH:mm:ss')
+    UTCtoLocalTime(time) {
+      return UTCtoLocalTime(time)
     }
   }
 }

@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { relativeTime } from '@/filters'
+import { relativeTime } from '@/utils/handleTime'
 
 export default {
   name: 'AbnormalChecker',
