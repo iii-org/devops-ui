@@ -8,19 +8,22 @@ dayjs.extend(utc)
 dayjs.extend(duration)
 
 /**
- *! Before using this filter, you need to know:
+ *! Before using this module, you need to know:
  * 1. utc time vs Taiwan local time
  *  utc time(世界協調時間) is UTC +00:00, while Taiwan local time is UTC +08:00
  *    ex:
  *      utc time: 2022-11-02 09:17:19
  *      Taiwan local time: 2022-11-02 17:17:19
+ *
+ * 2. dayjs time format
+ *  check https://day.js.org/docs/en/display/format to define the format
+ *  for example: to get the localTime like '05:06 PM', you should use 'hh:mm A' as the format
  */
 
 /**
- * Get local time from utc, check https://day.js.org/docs/en/display/format to define the format
+ * Get local time from utc
  * @param {string} utcTime - utc time
  * @param {string} format - default value would be 'YYYY-MM-DD HH:mm:ss'
- *  For example: To get the localTime like '05:06 PM', you should use 'hh:mm A' as the format
  * @returns {string} localTime
  */
 export const UTCtoLocalTime = (utcTime, format = 'YYYY-MM-DD HH:mm:ss') => {
