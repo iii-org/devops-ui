@@ -49,8 +49,7 @@ export const relativeTime = (utcTime) => {
 }
 
 /**
- * Get the time with format
- * If you give utc time as the dateTime, then you will get utc time
+ * Get the utc time with format
  * @param {string} dateTime - date time
  * @param {string} format - default value would be 'YYYY-MM-DD HH:mm:ss'
  * @returns {string} localTime
