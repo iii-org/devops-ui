@@ -16,15 +16,16 @@ import router from './router/router'
 
 import '@/icons'
 import '@/permission'
+import '@/utils/downloadPdf'
+import '@/utils/downloadCsvOrExcel'
 
 import * as filters from './filters'
+
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
 import duration from 'dayjs/plugin/duration'
 import 'dayjs/locale/zh-tw'
-import './utils/downloadPdf'
-import './utils/downloadCsvOrExcel'
 
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
