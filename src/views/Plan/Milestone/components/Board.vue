@@ -277,7 +277,7 @@ import { updateIssue, getIssueFamily } from '@/api/issue'
 import { Kanban } from '@/views/Project/IssueBoards/components'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 import { io } from 'socket.io-client'
-import { isValid, UTCtoLocalTime } from '@/utils/handleTime'
+import { isTimeValid, UTCtoLocalTime } from '@/utils/handleTime'
 
 const contextMenu = {
   row: {
@@ -489,10 +489,10 @@ export default {
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
           if (item === 'due_date_start' || item === 'due_date_end') {
-            result['due_date_start'] = isValid(this.filterValue['due_date_start'])
+            result['due_date_start'] = isTimeValid(this.filterValue['due_date_start'])
               ? UTCtoLocalTime(this.filterValue['due_date_start'], 'YYYY-MM-DD')
               : null
-            result['due_date_end'] = isValid(this.filterValue['due_date_end'])
+            result['due_date_end'] = isTimeValid(this.filterValue['due_date_end'])
               ? UTCtoLocalTime(this.filterValue['due_date_end'], 'YYYY-MM-DD')
               : null
           } else if (item === 'tags' && this.filterValue[item].length > 0) {

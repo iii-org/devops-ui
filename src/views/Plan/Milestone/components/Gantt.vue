@@ -106,7 +106,7 @@ import AddIssue from '@/components/Issue/AddIssue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail'
 import theme from '@/theme.js'
 import { CancelRequest } from '@/mixins'
-import { isValid, UTCtoLocalTime } from '@/utils/handleTime'
+import { isTimeValid, UTCtoLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'Gantt',
@@ -281,13 +281,13 @@ export default {
             {
               id: 4,
               label: this.$t('Issue.StartDate'),
-              value: (task) => isValid(task.start) ? UTCtoLocalTime(task.start, 'YYYY-MM-DD') : null,
+              value: (task) => isTimeValid(task.start) ? UTCtoLocalTime(task.start, 'YYYY-MM-DD') : null,
               width: 78
             },
             {
               id: 5,
               label: this.$t('Issue.EndDate'),
-              value: (task) => isValid(task.end) ? UTCtoLocalTime(task.end, 'YYYY-MM-DD') : null,
+              value: (task) => isTimeValid(task.end) ? UTCtoLocalTime(task.end, 'YYYY-MM-DD') : null,
               width: 78
             }
             // {
@@ -367,10 +367,10 @@ export default {
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
           if (item === 'due_date_start' || item === 'due_date_end') {
-            result['due_date_start'] = isValid(result['due_date_start'])
+            result['due_date_start'] = isTimeValid(result['due_date_start'])
               ? UTCtoLocalTime(result['due_date_start'], 'YYYY-MM-DD')
               : null
-            result['due_date_end'] = isValid(result['due_date_end'])
+            result['due_date_end'] = isTimeValid(result['due_date_end'])
               ? UTCtoLocalTime(result['due_date_end'], 'YYYY-MM-DD')
               : null
           } else if (item === 'tags' && this.filterValue[item].length > 0) {

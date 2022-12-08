@@ -31,7 +31,7 @@ export const UTCtoLocalTime = (utcTime, format = 'YYYY-MM-DD HH:mm:ss') => {
     .utc(utcTime)
     .local()
     .format(format)
-  return isValid(utcTime) ? localTime : '-'
+  return isTimeValid(utcTime) ? localTime : '-'
 }
 
 /**
@@ -40,12 +40,11 @@ export const UTCtoLocalTime = (utcTime, format = 'YYYY-MM-DD HH:mm:ss') => {
  * @returns {string} relativeTime
  */
 export const relativeTime = (utcTime) => {
-  return utcTime
-    ? dayjs
-      .utc(utcTime)
-      .local()
-      .fromNow()
-    : '-'
+  const time = dayjs
+    .utc(utcTime)
+    .local()
+    .fromNow()
+  return isTimeValid(time) ? time : '-'
 }
 
 /**
@@ -59,14 +58,29 @@ export const formatTime = (dateTime, format = 'YYYY-MM-DD HH:mm:ss') => {
   const localTime = dayjs
     .utc(dateTime)
     .format(format)
-  return isValid(dateTime) ? localTime : '-'
+  return isTimeValid(dateTime) ? localTime : '-'
 }
 
 /**
- * check if time is valid
+ * Check if time is valid
  * @param {string} time
- * @returns {boolean}
+ * @returns {boolean} - true or false
  */
-export const isValid = (time) => {
+export const isTimeValid = (time) => {
   return dayjs(time).isValid()
+}
+
+/**
+ * Get the duration time by two point-in-time
+ * @param {string} startTime
+ * @param {string} endTime
+ * @returns {string} durationTime - ex: 1分鐘、幾秒
+ */
+export const durationTime = (startTime, endTime) => {
+  if (endTime === null || endTime === undefined) {
+    return '-'
+  }
+  const s = dayjs.utc(startTime).unix()
+  const e = dayjs.utc(endTime).unix()
+  return dayjs.duration(e - s, 'seconds').humanize()
 }

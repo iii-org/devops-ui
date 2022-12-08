@@ -48,7 +48,7 @@ export function UTCtoLocalTime(utcTime, format = 'YYYY-MM-DD HH:mm:ss') {
     .utc(utcTime)
     .local()
     .format(format)
-  return isValid(utcTime) ? localTime : '-'
+  return isTimeValid(utcTime) ? localTime : '-'
 }
 
 /**
@@ -76,7 +76,7 @@ export function formatTime(dateTime, format = 'YYYY-MM-DD HH:mm:ss') {
   const localTime = dayjs
     .utc(dateTime)
     .format(format)
-  return isValid(dateTime) ? localTime : '-'
+  return isTimeValid(dateTime) ? localTime : '-'
 }
 
 /**
@@ -84,6 +84,6 @@ export function formatTime(dateTime, format = 'YYYY-MM-DD HH:mm:ss') {
  * @param {string} time
  * @returns {boolean}
  */
-export function isValid(time) {
+export function isTimeValid(time) {
   return dayjs(time).isValid()
 }
