@@ -1,12 +1,3 @@
-import dayjs from 'dayjs'
-import dayjsRelativeTime from 'dayjs/plugin/relativeTime'
-import utc from 'dayjs/plugin/utc'
-import duration from 'dayjs/plugin/duration'
-import 'dayjs/locale/zh-tw'
-dayjs.extend(dayjsRelativeTime)
-dayjs.extend(utc)
-dayjs.extend(duration)
-
 /**
  *! Before using this module, you need to know:
  * 1. utc time vs Taiwan local time
@@ -19,6 +10,16 @@ dayjs.extend(duration)
  *  check https://day.js.org/docs/en/display/format to define the format
  *  for example: to get the localTime like '05:06 PM', you should use 'hh:mm A' as the format
  */
+
+import dayjs from 'dayjs'
+import dayjsRelativeTime from 'dayjs/plugin/relativeTime'
+import utc from 'dayjs/plugin/utc'
+import duration from 'dayjs/plugin/duration'
+import 'dayjs/locale/zh-tw'
+
+dayjs.extend(dayjsRelativeTime)
+dayjs.extend(utc)
+dayjs.extend(duration)
 
 /**
  * Get local time from utc
