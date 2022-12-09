@@ -4,8 +4,16 @@
       <em class="el-icon-pie-chart mx-1" />
       {{ $t('Dashboard.IssueTrackingStatus') }}
     </div>
-    <el-empty v-if="Object.keys(dataCollection).length === 0" :description="$t('general.NoData')" :image-size="100" />
-    <doughnut v-else :chart-data="dataCollection" />
+    <el-empty
+      v-if="Object.keys(dataCollection).length === 0"
+      style="height: 400px"
+      :image-size="200"
+      :description="$t('general.NoData')"
+    />
+    <Doughnut
+      v-else
+      :chart-data="dataCollection"
+    />
   </el-card>
 </template>
 
@@ -44,7 +52,7 @@ export default {
       if (hasProgress) {
         this.fillData(progress)
       } else {
-        this.datCollection = {}
+        this.dataCollection = {}
       }
     },
     fillData(chartData) {
