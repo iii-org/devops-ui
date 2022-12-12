@@ -126,18 +126,22 @@
 </template>
 
 <script>
-import { BasicData, Pagination, ProjectSelector } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getHarborScan } from '@/api_v2/harbor'
+import { BasicData, Pagination } from '@/mixins'
+import {
+  ProjectListSelector,
+  ElTableColumnTime,
+  ElTableColumnTag
+} from '@/components'
 
 export default {
   name: 'DockerImage',
   components: {
+    ProjectListSelector,
     ElTableColumnTime,
     ElTableColumnTag
   },
-  mixins: [BasicData, Pagination, ProjectSelector],
+  mixins: [BasicData, Pagination],
   data() {
     return {
       keyword: '',

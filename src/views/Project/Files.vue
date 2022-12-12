@@ -209,8 +209,8 @@ import {
   getProjectVersion,
   uploadProjectFile
 } from '@/api/projects'
-import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
 
 const formTemplate = {
   name: '',
@@ -220,8 +220,8 @@ const formTemplate = {
 
 export default {
   name: 'ProjectFiles',
-  components: { ElTableColumnTime },
-  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
+  components: { ProjectListSelector, ElTableColumnTime },
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       dialogVisible: false,

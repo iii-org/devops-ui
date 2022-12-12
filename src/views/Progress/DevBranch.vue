@@ -158,19 +158,22 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import { BasicData, Pagination, SearchBar } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { UTCtoLocalTime } from '@/filters'
 import { getHookByBranch } from '@/api/dashboard'
 import { getIssue } from '@/api/issue'
+import { UTCtoLocalTime } from '@/filters'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
 import { Status } from '@/components/Issue'
 
 const commitLimit = 10
 
 export default {
   name: 'ProgressDevBranch',
-  components: { ProjectListSelector, ElTableColumnTime, Status },
+  components: {
+    ProjectListSelector,
+    ElTableColumnTime,
+    Status
+  },
   mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {

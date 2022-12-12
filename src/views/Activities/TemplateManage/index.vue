@@ -204,7 +204,7 @@
 <script>
 import { getTemplateFromProject, deleteTemplateFromProject } from '@/api_v2/template'
 import { BasicData, Pagination, SearchBar } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { ElTableColumnTime } from '@/components'
 import TemplateDialog from './components/TemplateDialog'
 
 export default {

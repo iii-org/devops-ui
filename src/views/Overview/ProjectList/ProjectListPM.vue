@@ -305,18 +305,17 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'
+import { syncProject, getHasSon, getProjectRelation } from '@/api_v2/projects'
+import { BasicData, SearchBar, Pagination, Table } from '@/mixins'
+import { ElTableColumnTime, ElTableColumnTag } from '@/components'
 import {
   CreateProjectDialog,
-  DeleteProjectDialog,
   EditProjectDialog,
+  DeleteProjectDialog,
   SearchFilter,
   UpdateButton
 } from './components'
-import { BasicData, SearchBar, Pagination, Table } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
-import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'
-import { syncProject, getHasSon, getProjectRelation } from '@/api_v2/projects'
 
 const params = () => ({
   limit: 10,
@@ -327,10 +326,10 @@ export default {
   name: 'ProjectListPM',
   components: {
     ElTableColumnTime,
+    ElTableColumnTag,
     CreateProjectDialog,
     EditProjectDialog,
     DeleteProjectDialog,
-    ElTableColumnTag,
     SearchFilter,
     UpdateButton
   },

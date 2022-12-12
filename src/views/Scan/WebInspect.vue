@@ -165,14 +165,18 @@
 <script>
 import { getWebInspectScans, getWebInspectStats, getWebInspectStatus } from '@/api/webInspect'
 import { getWebInspectPod } from '@/api_v2/webInspect'
-import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanWebInspect',
-  components: { ElTableColumnTime, PodLog },
-  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
+  components: {
+    ProjectListSelector,
+    ElTableColumnTime,
+    PodLog
+  },
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       confirmLoading: false,

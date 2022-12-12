@@ -201,8 +201,6 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar, ProjectSelector, CancelRequest } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
 import {
   getServices,
   getService,
@@ -212,18 +210,25 @@ import {
   patchService,
   patchServiceRedeploy
 } from '@/api/deploy'
+import { BasicData, Pagination, SearchBar, CancelRequest } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
 import ApplicationSetting from '@/views/Project/Deploy/components/ApplicationSetting'
 import Status from './components/Status'
 
 export default {
   name: 'Deploy',
-  components: { ApplicationSetting, ElTableColumnTime, Status },
+  components: {
+    ProjectListSelector,
+    ElTableColumnTime,
+    ApplicationSetting,
+    Status
+  },
   filters: {
     getActionIcon(value) {
       return value ? 'el-icon-video-play' : 'el-icon-video-pause'
     }
   },
-  mixins: [BasicData, Pagination, SearchBar, ProjectSelector, CancelRequest],
+  mixins: [BasicData, Pagination, SearchBar, CancelRequest],
   data() {
     return {
       dialogVisible: false,

@@ -73,11 +73,11 @@
 
 <script>
 import { deleteService, getServiceList } from '@/api/kubernetes'
-import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/mixins'
+import { BasicData, SearchBar, Pagination, Table } from '@/mixins'
 
 export default {
   name: 'ServiceList',
-  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
+  mixins: [BasicData, SearchBar, Pagination, Table],
   methods: {
     async fetchData() {
       this.listLoading = true

@@ -219,25 +219,26 @@
 </template>
 
 <script>
-import { BasicData, Pagination, ProjectSelector } from '@/mixins'
-import { ElTableColumnTime } from '@/components'
-import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
-import * as elementTagType from '@/utils/elementTagType'
 import {
   getSbomList,
   getSbomFile,
   getSbomDownloadFile,
   getSbomPod
 } from '@/api_v2/sbom'
+import { BasicData, Pagination } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
+import * as elementTagType from '@/utils/elementTagType'
 
 export default {
   name: 'Sbom',
   components: {
+    ProjectListSelector,
     ElTableColumnTime,
     PodLog,
     Error: () => import('@/views/Error')
   },
-  mixins: [BasicData, Pagination, ProjectSelector],
+  mixins: [BasicData, Pagination],
   data() {
     return {
       keyword: '',

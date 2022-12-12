@@ -67,7 +67,7 @@
               >
                 #{{ scope.row.id }}
               </div>
-              <div class="ellipsis">
+              <div class="truncate">
                 <template v-if="scope.row.tags.length > 0">
                   <el-tag
                     v-for="item in scope.row.tags"
@@ -448,11 +448,5 @@ export default {
 
 >>> .context-menu {
   cursor: context-menu;
-}
-
-.ellipsis {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
 }
 </style>

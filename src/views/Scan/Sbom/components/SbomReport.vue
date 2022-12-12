@@ -253,14 +253,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { UTCtoLocalTime } from '@/filters/index'
 import { getProjectInfos } from '@/api/projects'
-import {
-  getSbomRiskOverview,
-  getSbomRiskDetail
-} from '@/api_v2/sbom'
-import Pagination from '@/components/Pagination'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
+import { getSbomRiskOverview, getSbomRiskDetail } from '@/api_v2/sbom'
+import { UTCtoLocalTime } from '@/filters'
+import { Pagination, ElTableColumnTag } from '@/components'
 
 const listQuery = () => ({
   per_page: 100,
@@ -271,7 +267,7 @@ const listQuery = () => ({
 
 export default {
   name: 'SbomReport',
-  components: { ElTableColumnTag, Pagination },
+  components: { Pagination, ElTableColumnTag },
   data() {
     return {
       listQuery: listQuery(),

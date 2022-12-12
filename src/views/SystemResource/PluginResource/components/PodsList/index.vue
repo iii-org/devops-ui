@@ -145,13 +145,14 @@
 
 <script>
 import { deletePod, getPodList } from '@/api/kubernetes'
+import { BasicData, SearchBar, Pagination, Table } from '@/mixins'
+import { ProjectListSelector } from '@/components'
 import PodLog from './components/PodLog'
-import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/mixins'
 
 export default {
   name: 'PodsList',
-  components: { PodLog },
-  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
+  components: { ProjectListSelector, PodLog },
+  mixins: [BasicData, SearchBar, Pagination, Table],
   data() {
     return {
       focusPodName: '',

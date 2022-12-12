@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
+import { ToolBar } from './'
 
 export default {
   name: 'Clair',

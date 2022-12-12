@@ -109,15 +109,18 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getProjectVersion, deleteProjectVersion } from '@/api/projects'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
+import { ElTableColumnTime, ElTableColumnTag } from '@/components'
 import ModifyVersionDialog from './ModifyVersionDialog'
 
 export default {
   name: 'ProjectVersions',
-  components: { ElTableColumnTime, ModifyVersionDialog, ElTableColumnTag },
+  components: {
+    ElTableColumnTime,
+    ElTableColumnTag,
+    ModifyVersionDialog
+  },
   mixins: [BasicData, Pagination, SearchBar],
   props: {
     isShowTitle: {

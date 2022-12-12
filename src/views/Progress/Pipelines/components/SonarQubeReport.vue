@@ -53,7 +53,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
+import { ToolBar } from './'
 
 export default {
   name: 'Sonarqube',

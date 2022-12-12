@@ -115,18 +115,17 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BasicData, Pagination } from '@/mixins'
 import { deleteUser, getUser, getUserInfo } from '@/api/user'
+import { BasicData, Pagination } from '@/mixins'
+import { ElTableColumnTime, ElTableColumnTag } from '@/components'
 import UserDialog from './components/UserDialog'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
 
 export default {
   name: 'AccountManage',
   components: {
-    UserDialog,
     ElTableColumnTime,
-    ElTableColumnTag
+    ElTableColumnTag,
+    UserDialog
   },
   mixins: [BasicData, Pagination],
   data() {

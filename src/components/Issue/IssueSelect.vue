@@ -39,7 +39,8 @@
             </el-card>
             <div slot="reference">
               <span
-                style="float: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                class="truncate"
+                style="float: left;"
               >
                 <strong>#<span v-html="highLight(item.id.toString())" /></strong> -
                 <span v-html="highLight(item.name)" />

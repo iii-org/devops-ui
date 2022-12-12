@@ -1,10 +1,21 @@
+import AddIssue from './AddIssue'
+import ContextMenu from './ContextMenu'
+import CustomFilter from './CustomFilter'
+import ExpandSection from './ExpandSection'
 import Priority from './Priority'
+import QuickAddIssue from './QuickAddIssue'
+import SearchFilter from './SearchFilter'
 import Status from './Status'
 import Tracker from './Tracker'
-import ContextMenu from './ContextMenu'
-import AddIssue from './AddIssue'
-import QuickAddIssue from './QuickAddIssue'
-import ExpandSection from './ExpandSection'
-import SearchFilter from './SearchFilter'
-import CustomFilter from './CustomFilter'
-export { Priority, Status, Tracker, ContextMenu, AddIssue, QuickAddIssue, ExpandSection, SearchFilter, CustomFilter }
+
+export {
+  AddIssue,
+  ContextMenu,
+  CustomFilter,
+  ExpandSection,
+  Priority,
+  QuickAddIssue,
+  SearchFilter,
+  Status,
+  Tracker
+}

@@ -191,10 +191,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { UTCtoLocalTime } from '@/filters/index'
 import { getHarborScanReport } from '@/api_v2/harbor'
 import { getProjectInfos } from '@/api/projects'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
+import { UTCtoLocalTime } from '@/filters'
+import { ElTableColumnTag } from '@/components'
 
 const downloadFileName = 'Docker_Image_Vulnerability_Scan_Report'
 

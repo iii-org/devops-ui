@@ -40,8 +40,8 @@
 </template>
 
 <script>
-import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
 import { getCmasReport } from '@/api/cmas'
+import { ToolBar } from './'
 
 export default {
   name: 'Cmas',

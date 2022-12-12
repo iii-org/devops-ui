@@ -184,10 +184,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import SearchFilter from './components/SearchFilter.vue'
 import { getMessageListAdmin, deleteMessage, closeMessage } from '@/api_v2/monitoring'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { BasicData, Pagination } from '@/mixins'
+import { ElTableColumnTime } from '@/components'
+import SearchFilter from './components/SearchFilter.vue'
+import CreateMessage from './components/CreateMessage.vue'
 
 const params = () => ({
   limit: 10,
@@ -197,9 +198,9 @@ const params = () => ({
 export default {
   name: 'Inbox',
   components: {
-    SearchFilter,
     ElTableColumnTime,
-    CreateMessage: () => import('./components/CreateMessage.vue')
+    SearchFilter,
+    CreateMessage
   },
   mixins: [BasicData, Pagination],
   data() {

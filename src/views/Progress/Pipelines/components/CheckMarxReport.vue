@@ -52,8 +52,8 @@
 </template>
 
 <script>
-import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
 import { getCheckMarxReport, registerCheckMarxReport } from '@/api/checkMarx'
+import { ToolBar } from './'
 
 export default {
   name: 'Checkmarx',

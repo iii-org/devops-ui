@@ -254,14 +254,20 @@
 </template>
 
 <script>
-import { deleteEnvironmentByBranchName, getEnvironmentList, redeployEnvironmentByBranchName, deletePod } from '@/api/kubernetes'
-import { BasicData, SearchBar, ProjectSelector } from '@/mixins'
+import {
+  getEnvironmentList,
+  redeployEnvironmentByBranchName,
+  deleteEnvironmentByBranchName,
+  deletePod
+} from '@/api/kubernetes'
+import { BasicData, SearchBar } from '@/mixins'
+import ProjectListSelector from '@/components/ProjectListSelector'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {
   name: 'ProgressDevEnvironment',
-  components: { PodLog },
-  mixins: [BasicData, SearchBar, ProjectSelector],
+  components: { ProjectListSelector, PodLog },
+  mixins: [BasicData, SearchBar],
   data() {
     return {
       searchKeys: ['branch'],

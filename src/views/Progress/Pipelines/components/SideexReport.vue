@@ -43,8 +43,8 @@
 </template>
 
 <script>
-import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
 import { getSideexReport } from '@/api/sideex'
+import { ToolBar } from './'
 
 export default {
   name: 'Sideex',
