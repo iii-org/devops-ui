@@ -260,13 +260,12 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { QuickAddIssue } from '@/components/Issue'
 import { IssueList } from '@/mixins'
-import ProjectListSelector from '@/components/ProjectListSelector'
+import { ProjectListSelector, ElSelectAll } from '@/components'
+import { QuickAddIssue, SearchFilter } from '@/components/Issue'
+import Board from '@/views/Plan/Milestone/components/Board'
 import Gantt from '@/views/Plan/Milestone/components/Gantt'
 import WBS from '@/views/Plan/Milestone/components/WBS'
-import Board from '@/views/Plan/Milestone/components/Board'
-import SearchFilter from '@/components/Issue/SearchFilter'
 import {
   getIssueListDownload,
   getIssueListLockStatus,
@@ -278,18 +277,17 @@ import {
 } from '@/api/projects'
 import { addIssue, getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
 import XLSX from 'xlsx'
-import ElSelectAll from '@/components/ElSelectAll'
 
 export default {
   name: 'ProjectMilestone',
   components: {
-    SearchFilter,
-    WBS,
-    Board,
-    Gantt,
     ProjectListSelector,
     ElSelectAll,
-    QuickAddIssue
+    QuickAddIssue,
+    SearchFilter,
+    Board,
+    Gantt,
+    WBS
   },
   mixins: [IssueList],
   data() {

@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import Tracker from '@/components/Issue/Tracker'
+import Tracker from './Tracker'
 
 export default {
   name: 'IssueSelect',

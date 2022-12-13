@@ -261,7 +261,7 @@ import {
   deletePod
 } from '@/api/kubernetes'
 import { BasicData, SearchBar } from '@/mixins'
-import ProjectListSelector from '@/components/ProjectListSelector'
+import { ProjectListSelector } from '@/components'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {

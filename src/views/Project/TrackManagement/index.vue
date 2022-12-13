@@ -185,12 +185,12 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { QuickAddIssue, ExpandSection, SearchFilter } from '@/components/Issue'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, IssueList, ContextMenu } from '@/mixins'
-import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectUserList, getProjectIssueList } from '@/api/projects'
 import { getIssueFamily } from '@/api/issue'
+import { excelTranslate } from '@/utils/excelTableTranslate'
+import { Table, IssueList, ContextMenu } from '@/mixins'
+import { ProjectListSelector } from '@/components'
+import { QuickAddIssue, ExpandSection, SearchFilter } from '@/components/Issue'
 import XLSX from 'xlsx'
 
 /**

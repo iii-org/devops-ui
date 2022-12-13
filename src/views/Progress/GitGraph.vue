@@ -15,9 +15,9 @@
 import { mapGetters } from 'vuex'
 import { createGitgraph } from '@gitgraph/js'
 import { getGitGraphByRepo } from '@/api/git-graph'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import { UTCtoLocalTime } from '@/filters'
 import { BasicData } from '@/mixins'
+import { UTCtoLocalTime } from '@/filters'
+import { ProjectListSelector } from '@/components'
 
 export default {
   name: 'ProgressGitGraph', // ready to refactor

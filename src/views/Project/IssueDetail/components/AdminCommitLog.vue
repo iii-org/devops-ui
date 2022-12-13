@@ -165,7 +165,7 @@ import {
   getIssueGitCommitLog
 } from '@/api/issue'
 import { UTCtoLocalTime } from '@/filters'
-import IssueSelect from '@/components/Issue/IssueSelect'
+import { IssueSelect } from '@/components/Issue'
 import NoData from './widget/NoData'
 
 class CommitLogItem {

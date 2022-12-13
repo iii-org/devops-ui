@@ -160,16 +160,15 @@
       </div>
     </el-alert>
   </el-form>
-
 </template>
 
 <script>
-import { getIssue, getIssueFamily } from '@/api/issue'
-import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
+import { getProjectIssueList } from '@/api/projects'
+import { getIssue, getIssueFamily } from '@/api/issue'
+import axios from 'axios'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
-import axios from 'axios'
 
 export default {
   name: 'SettingRelationIssue',

@@ -258,15 +258,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getCheckIssueClosable } from '@/api/issue'
 import { getProjectAssignable, getProjectIssueList, getProjectVersion } from '@/api/projects'
-import Priority from '@/components/Issue/Priority'
-import Tracker from '@/components/Issue/Tracker'
-import Status from '@/components/Issue/Status'
+import { getAllRelation, getHasRelation } from '@/api_v2/projects'
+import { getCheckIssueClosable } from '@/api/issue'
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
-import Tags from '@/components/Issue/Tags'
-import { getAllRelation, getHasRelation } from '@/api_v2/projects'
+import { Priority, Tracker, Status, Tags } from '@/components/Issue'
 
 const relationIssueFilter = { Feature: 'Test Plan', 'Test Plan': 'Feature', 'Fail Management': 'Test Plan' }
 

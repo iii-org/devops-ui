@@ -274,10 +274,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { CancelRequest } from '@/mixins'
 import { getProjectIssueList } from '@/api_v2/projects'
-import { Tracker, Priority, Status, ContextMenu } from '@/components/Issue'
 import { updateIssue, getIssueFamily } from '@/api/issue'
+import { CancelRequest } from '@/mixins'
+import { Tracker, Priority, Status, ContextMenu } from '@/components/Issue'
 import { Kanban } from '@/views/Project/IssueBoards/components'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 import { io } from 'socket.io-client'

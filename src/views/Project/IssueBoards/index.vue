@@ -230,9 +230,6 @@
 //TODO: move dimension filter into SearchFilter.vue
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import Fuse from 'fuse.js'
-import Boards from '@/views/Project/IssueBoards/components/Boards'
-import ProjectListSelector from '@/components/ProjectListSelector'
 import {
   getProjectIssueList,
   getProjectIssueListByTree,
@@ -240,12 +237,14 @@ import {
   getProjectVersion,
   getTagsByProject
 } from '@/api/projects'
-import ElSelectAll from '@/components/ElSelectAll'
-import { Status, Tracker, Priority, CustomFilter } from '@/components/Issue'
-import axios from 'axios'
-import SaveFilterButton from '@/components/Issue/components/SaveFilterButton'
-import { io } from 'socket.io-client'
 import { getHasSon, getProjectRelation } from '@/api_v2/projects'
+import axios from 'axios'
+import Fuse from 'fuse.js'
+import { io } from 'socket.io-client'
+import { ProjectListSelector, ElSelectAll } from '@/components'
+import { Status, Tracker, Priority, CustomFilter } from '@/components/Issue'
+import SaveFilterButton from '@/components/Issue/components/SaveFilterButton'
+import Boards from '@/views/Project/IssueBoards/components/Boards'
 
 export default {
   name: 'IssueBoards',

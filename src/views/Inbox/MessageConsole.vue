@@ -188,7 +188,6 @@ import { getMessageListAdmin, deleteMessage, closeMessage } from '@/api_v2/monit
 import { BasicData, Pagination } from '@/mixins'
 import { ElTableColumnTime } from '@/components'
 import SearchFilter from './components/SearchFilter.vue'
-import CreateMessage from './components/CreateMessage.vue'
 
 const params = () => ({
   limit: 10,
@@ -200,7 +199,7 @@ export default {
   components: {
     ElTableColumnTime,
     SearchFilter,
-    CreateMessage
+    CreateMessage: () => import('./components/CreateMessage.vue')
   },
   mixins: [BasicData, Pagination],
   data() {

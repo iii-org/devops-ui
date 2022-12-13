@@ -61,13 +61,29 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { getProjectVersion, getProjectIssueProgress, getProjectIssueStatistics, getProjectTest } from '@/api/projects'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import { IssueTrackingStatusCard, WorkloadCard, ProjectUsersCard, TestStatusCard } from './components'
+import {
+  getProjectVersion,
+  getProjectIssueProgress,
+  getProjectIssueStatistics,
+  getProjectTest
+} from '@/api/projects'
+import { ProjectListSelector } from '@/components'
+import {
+  IssueTrackingStatusCard,
+  WorkloadCard,
+  ProjectUsersCard,
+  TestStatusCard
+} from './components'
 
 export default {
   name: 'ProjectOverview',
-  components: { ProjectListSelector, IssueTrackingStatusCard, WorkloadCard, ProjectUsersCard, TestStatusCard },
+  components: {
+    ProjectListSelector,
+    IssueTrackingStatusCard,
+    WorkloadCard,
+    ProjectUsersCard,
+    TestStatusCard
+  },
   data() {
     return {
       versionList: [],

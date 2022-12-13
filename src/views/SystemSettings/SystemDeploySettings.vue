@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import ProjectListSelector from '@/components/ProjectListSelector'
+import { ProjectListSelector } from '@/components'
 import Cluster from '@/views/SystemSettings/components/Cluster'
 import Registry from '@/views/SystemSettings/components/Registry'
 

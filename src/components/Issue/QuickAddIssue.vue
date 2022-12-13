@@ -89,8 +89,8 @@
 </template>
 
 <script>
-import Tracker from '@/components/Issue/Tracker'
 import { mapGetters } from 'vuex'
+import Tracker from './Tracker'
 import AddIssue from './AddIssue'
 
 export default {

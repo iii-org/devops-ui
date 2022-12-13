@@ -205,14 +205,14 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { QuickAddIssue, ExpandSection, SearchFilter } from '@/components/Issue'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import { IssueList, ContextMenu } from '@/mixins'
-import { getTestFileByTestPlan } from '@/api/qa'
-import { getIssue, getIssueFamily } from '@/api/issue'
 import { getProjectUserList, getProjectIssueList } from '@/api/projects'
-import XLSX from 'xlsx'
+import { getIssue, getIssueFamily } from '@/api/issue'
+import { getTestFileByTestPlan } from '@/api/qa'
+import { IssueList, ContextMenu } from '@/mixins'
+import { ProjectListSelector } from '@/components'
+import { QuickAddIssue, ExpandSection, SearchFilter } from '@/components/Issue'
 import Result from '@/components/Test/Result'
+import XLSX from 'xlsx'
 /**
  * @param row.relations  row maybe have parent or children issue
  * @param data.issue_list get paged data from api

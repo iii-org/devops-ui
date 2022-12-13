@@ -141,13 +141,12 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { addIssue, getIssueFamily, getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
-import { Status, Priority, Tracker, ExpandSection } from '@/components/Issue'
-import ProjectListSelector from '@/components/ProjectListSelector'
+import { addIssue, getIssueFamily, getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import axios from 'axios'
 import { BasicData, Table, Pagination } from '@/mixins'
-import ContextMenu from '@/components/Issue/ContextMenu'
+import { ProjectListSelector } from '@/components'
+import { Status, Priority, Tracker, ExpandSection, ContextMenu } from '@/components/Issue'
 
 /**
  * @param row.relations  row maybe have parent or children issue

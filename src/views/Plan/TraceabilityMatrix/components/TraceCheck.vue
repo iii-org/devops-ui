@@ -100,10 +100,10 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash'
-import Status from '@/components/Issue/Status'
-import { getTraceOrderResult } from '@/api/qa'
 import { mapGetters } from 'vuex'
+import { getTraceOrderResult } from '@/api/qa'
+import { cloneDeep } from 'lodash'
+import { Status } from '@/components/Issue'
 
 export default {
   name: 'TraceCheck',

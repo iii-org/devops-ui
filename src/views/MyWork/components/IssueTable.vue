@@ -179,9 +179,9 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { ContextMenu, Pagination, CancelRequest } from '@/mixins'
 import { getUserIssueList } from '@/api/user'
 import { getIssueFamily } from '@/api/issue'
+import { ContextMenu, Pagination, CancelRequest } from '@/mixins'
 import { Status, Tracker, Priority, ExpandSection } from '@/components/Issue'
 
 export default {

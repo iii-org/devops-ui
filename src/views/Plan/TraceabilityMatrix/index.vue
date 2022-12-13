@@ -441,12 +441,9 @@
 </template>
 
 <script>
-import VueMermaid from './components/VueMermaid'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import { getIssue, getIssueFamily } from '@/api/issue'
-import Tracker from '@/components/Issue/Tracker'
-import { getProjectIssueList, getProjectVersion } from '@/api/projects'
 import { mapGetters } from 'vuex'
+import { getProjectIssueList, getProjectVersion } from '@/api/projects'
+import { getIssue, getIssueFamily } from '@/api/issue'
 import {
   getTestFileByTestPlan,
   getTraceabilityMatrixReport,
@@ -454,10 +451,13 @@ import {
   getTraceOrderList,
   patchTraceOrder
 } from '@/api/qa'
-import { camelCase, cloneDeep } from 'lodash'
-import OrderListDialog from './components/OrderListDialog'
-import { dragscroll } from 'vue-dragscroll'
 import axios from 'axios'
+import { dragscroll } from 'vue-dragscroll'
+import { camelCase, cloneDeep } from 'lodash'
+import { ProjectListSelector } from '@/components'
+import { Tracker } from '@/components/Issue'
+import VueMermaid from './components/VueMermaid'
+import OrderListDialog from './components/OrderListDialog'
 import theme from '@/theme.js'
 
 const Form = () => ({

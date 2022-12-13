@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import ProjectListSelector from '@/components/ProjectListSelector'
+import { ProjectListSelector } from '@/components'
 
 const STATE_INIT = 0
 const STATE_CREATE_RELEASE = 1
