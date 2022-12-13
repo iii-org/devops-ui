@@ -150,8 +150,8 @@ export default {
   beforeRouteEnter(to, from, next) {
     if (from.name === 'ParticipateProject') {
       next((vm) => {
-        vm.keyword = sessionStorage.getItem('accountKeyword')
-        sessionStorage.removeItem('accountKeyword')
+        vm.keyword = sessionStorage.getItem('keyword')
+        sessionStorage.removeItem('keyword')
       })
     } else {
       next()
@@ -159,7 +159,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (to.name === 'ParticipateProject') {
-      sessionStorage.setItem('accountKeyword', this.keyword)
+      sessionStorage.setItem('keyword', this.keyword)
     }
     next()
   },

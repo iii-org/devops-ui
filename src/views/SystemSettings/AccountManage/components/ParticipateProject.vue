@@ -144,7 +144,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (to.name !== 'AccountManage') {
-      sessionStorage.removeItem('accountKeyword')
+      sessionStorage.removeItem('keyword')
     }
     next()
   },
