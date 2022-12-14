@@ -262,7 +262,11 @@ export default {
     Child: '子',
     CopyUrl: '複製網址',
     TemporarySave: '暫存',
-    Modify: '修改'
+    Modify: '修改',
+    ExpiredStatus: '逾期狀態',
+    UnassignedDate: '未指定日期',
+    Expired: '已逾期',
+    Unexpired: '未逾期'
   },
   Notify: {
     Updated: '已更新',

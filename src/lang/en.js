@@ -262,7 +262,11 @@ export default {
     Child: 'C',
     CopyUrl: 'Copy URL',
     TemporarySave: 'Temporary Save',
-    Modify: 'Modify'
+    Modify: 'Modify',
+    ExpiredStatus: 'Expired Status',
+    UnassignedDate: 'Unassigned Date',
+    Expired: 'Expired',
+    Unexpired: 'Unexpired'
   },
   Notify: {
     Updated: 'update successful',
