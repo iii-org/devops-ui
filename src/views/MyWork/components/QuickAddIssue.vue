@@ -183,10 +183,12 @@ export default {
       this.isLoading = value
     },
     async handleIssueSave(data) {
+      const form = this.getFormData(data)
       const assignedToId = data instanceof FormData
-        ? Number(data.get('assigned_to_id')) : data.assigned_to_id
+        ? Number(data.get('assigned_to_id'))
+        : data.assigned_to_id
       this.isLoading = true
-      await addIssue(data)
+      await addIssue(form)
         .then(() => {
           // this.$message({
           //   title: this.$t('general.Success'),
@@ -200,7 +202,15 @@ export default {
           return error
         })
       this.isLoading = false
+    },
+    getFormData(data) {
+      const formData = new FormData()
+      Object.keys(data).forEach((item) => {
+        formData.append(item, data[item])
+      })
+      return formData
     }
+
   }
 }
 </script>

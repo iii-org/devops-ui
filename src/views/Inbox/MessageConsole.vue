@@ -184,10 +184,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import SearchFilter from './components/SearchFilter.vue'
 import { getMessageListAdmin, deleteMessage, closeMessage } from '@/api_v2/monitoring'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { BasicData, Pagination } from '@/mixins'
+import { ElTableColumnTime } from '@/components'
+import SearchFilter from './components/SearchFilter'
 
 const params = () => ({
   limit: 10,
