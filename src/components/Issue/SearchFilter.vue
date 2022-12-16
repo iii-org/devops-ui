@@ -284,7 +284,7 @@ export default {
       const comparedKey = this.getComparedKey(key)
       for (const item of Object.keys(this[key])) {
         const checkFilterValue = this[key]
-        if (checkFilterValue[item] === '') delete checkFilterValue[item]
+        if (checkFilterValue[item] === '' || checkFilterValue[item].length === 0) delete checkFilterValue[item]
         if (this[comparedKey][item] !== checkFilterValue[item]) return true
       }
     },
