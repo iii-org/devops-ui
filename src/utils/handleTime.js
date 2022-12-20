@@ -1,7 +1,7 @@
 /**
  *! Before using this module, you need to know:
  * 1. utc time vs Taiwan local time
- *  utc time(世界協調時間) is UTC +00:00, while Taiwan local time is UTC +08:00
+ *  utc time(世界協調時間) is UTC +00:00, while Taiwan's local time is UTC +08:00
  *    ex:
  *      utc time: 2022-11-02 09:17:19
  *      Taiwan local time: 2022-11-02 17:17:19
