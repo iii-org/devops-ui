@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="table_postman">
     <table class="test-report">
       <caption>
         <div class="caption">

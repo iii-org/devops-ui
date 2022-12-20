@@ -97,7 +97,7 @@
           <el-divider content-position="center">{{ $t('TestReport.ISOWeaknessTesting') }}</el-divider>
           <ClairReport
             v-show="harbor"
-            ref="clair"
+            ref="harbor"
             class="mb-5"
             :clair="harbor"
             :list-loading="listLoading"
@@ -182,7 +182,7 @@ const downloadFileName = 'DevOps_test_report'
 const dataName = [
   'sonarqube',
   'checkmarx',
-  'harbor',
+  'harbor', // clair
   // 'anchore',
   'zap',
   'webinspect',
@@ -254,7 +254,7 @@ export default {
       // table dom
       dataName.forEach(name => {
         if (this[name]) {
-          dom = this.$refs[name].$refs[`table_${name}`].$el.cloneNode(true)
+          dom = this.$refs[name].$refs[`table_${name}`].cloneNode(true)
           newDiv.appendChild(dom)
         }
       })

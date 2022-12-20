@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="table_checkmarx">
     <table class="test-report">
       <caption>
         <div class="caption">
