@@ -1,43 +1,51 @@
 <template>
   <div>
-    <ToolBar>
-      <span slot="toolName">Postman</span>
-      <el-button slot="link" type="text" icon="el-icon-tickets" :class="!disabled ? 'linkTextColor' : ''" :disabled="disabled" @click="openPostman">
-        {{ $t('TestReport.DetailReport') }}
-      </el-button>
-    </ToolBar>
-    <el-table
-      ref="table_postman"
-      v-loading="listLoading"
-      class="mb-10"
-      :element-loading-text="$t('Loading')"
-      :data="postman"
-      border
-      fit
-    >
-      <el-table-column align="center" :label="$t('DevOps.Tools')">Postman</el-table-column>
-      <el-table-column align="center" :label="$t('Postman.TestPass')" prop="success" min-width="100">
-        <template slot-scope="scope">
-          <span v-if="scope.row && typeof(scope.row.failure) === 'number'">{{ scope.row.success }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('Postman.TestFail')" prop="failure" min-width="100">
-        <template slot-scope="scope">
-          <span v-if="scope.row && typeof(scope.row.failure) === 'number'">{{ scope.row.failure }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-    </el-table>
+    <table class="test-report">
+      <caption>
+        <div class="caption">
+          <div />
+          <el-button
+            slot="link"
+            type="text"
+            icon="el-icon-tickets"
+            :class="hasPostmanData ? 'linkTextColor' : ''"
+            :disabled="!hasPostmanData"
+            @click="openPostman"
+          >
+            {{ $t('TestReport.DetailReport') }}
+          </el-button>
+        </div>
+      </caption>
+      <tbody>
+        <tr>
+          <th id="">{{ $t('DevOps.Tools') }}</th>
+          <th id="">{{ $t('Postman.TestPass') }}</th>
+          <th id="">{{ $t('Postman.TestFail') }}</th>
+        </tr>
+        <tr>
+          <td>Postman</td>
+          <template v-if="hasPostmanData">
+            <td>
+              <span v-if="hasEachItemData('success')">{{ postman[0].success }}</span>
+              <span v-else>-</span>
+            </td>
+            <td>
+              <span v-if="hasEachItemData('failure')">{{ postman[0].failure }}</span>
+              <span v-else>-</span>
+            </td>
+          </template>
+          <template v-else>
+            <td colspan="2">{{ $t('general.NoData') }}</td>
+          </template>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script>
-import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
-
 export default {
   name: 'Postman',
-  components: { ToolBar },
   props: {
     postman: {
       type: Array,
@@ -49,8 +57,15 @@ export default {
     }
   },
   computed: {
-    disabled() {
-      return this.postman[0] ? Object.keys(this.postman[0]).length === 0 : true
+    hasPostmanData() {
+      return !!(
+        this.postman &&
+        this.postman[0] &&
+        (this.hasEachItemData('success') || this.hasEachItemData('failure'))
+      )
+    },
+    hasEachItemData() {
+      return key => !!(this.postman[0].hasOwnProperty(key))
     }
   },
   methods: {
