@@ -166,6 +166,7 @@ import { mapGetters } from 'vuex'
 import { camelCase } from 'lodash'
 import { dragscroll } from 'vue-dragscroll'
 import { getTestFileByTestPlan } from '@/api/qa'
+import { UTCtoLocalTime } from '@/utils/handleTime'
 import theme from '@/theme.js'
 
 const Form = () => ({
@@ -581,7 +582,7 @@ export default {
         const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(source)
         const downloadLink = document.createElement('a')
         downloadLink.href = url
-        downloadLink.download = `TraceabilityMatrix_${this.$dayjs().format('YYYY-MM-DD_HH:mm:ss')}`
+        downloadLink.download = `TraceabilityMatrix_${UTCtoLocalTime(Date.now())}`
         document.body.appendChild(downloadLink)
         downloadLink.click()
         document.body.removeChild(downloadLink)

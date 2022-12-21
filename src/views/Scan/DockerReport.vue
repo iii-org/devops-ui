@@ -191,7 +191,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { UTCtoLocalTime } from '@/filters/index'
+import { UTCtoLocalTime } from '@/utils/handleTime'
 import { getHarborScanReport } from '@/api_v2/harbor'
 import { getProjectInfos } from '@/api/projects'
 import ElTableColumnTag from '@/components/ElTableColumnTag'

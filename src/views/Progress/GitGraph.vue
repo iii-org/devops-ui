@@ -16,7 +16,7 @@ import { mapGetters } from 'vuex'
 import { createGitgraph } from '@gitgraph/js'
 import { getGitGraphByRepo } from '@/api/git-graph'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { UTCtoLocalTime } from '@/filters'
+import { UTCtoLocalTime } from '@/utils/handleTime'
 import { BasicData } from '@/mixins'
 
 export default {

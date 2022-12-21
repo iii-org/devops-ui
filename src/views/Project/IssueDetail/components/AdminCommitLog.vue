@@ -164,7 +164,7 @@ import {
   getIssue,
   getIssueGitCommitLog
 } from '@/api/issue'
-import { UTCtoLocalTime } from '@/filters'
+import { UTCtoLocalTime } from '@/utils/handleTime'
 import IssueSelect from '@/components/Issue/IssueSelect'
 import NoData from './widget/NoData'
 

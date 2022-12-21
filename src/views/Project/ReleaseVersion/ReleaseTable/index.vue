@@ -200,7 +200,7 @@
 <script>
 import { getReleaseVersion, deleteReleaseTag } from '@/api_v2/release'
 import { BasicData, Pagination, SearchBar } from '@/mixins'
-import { UTCtoLocalTime } from '@/filters'
+import { UTCtoLocalTime } from '@/utils/handleTime'
 import variables from '@/styles/theme/variables.scss'
 import { Viewer } from '@toast-ui/vue-editor'
 
@@ -240,9 +240,6 @@ export default {
     async fetchData() {
       const res = await getReleaseVersion(this.selectedProject.id)
       return res.data.releases
-    },
-    formatTime(value) {
-      return value.split('.')[0]
     },
     showClosedIssue(tag_name) {
       this.$router.push({

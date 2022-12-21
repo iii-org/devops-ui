@@ -153,7 +153,7 @@
 </template>
 
 <script>
-import { UTCtoLocalTime, formatTime } from '@/filters/index'
+import { UTCtoLocalTime, formatTime } from '@/utils/handleTime'
 import { getProjectCommitTestSummary, getProjectInfos } from '@/api/projects'
 import XLSX from 'xlsx'
 import SonarQubeReport from '@/views/Progress/Pipelines/components/SonarQubeReport'
