@@ -1,0 +1,69 @@
+$border-color: #cad9ea;
+$color: #666666;
+$th-background-color: #cce8eb;
+$tr-backrgound: #f5fafa;
+
+// for test report page and print
+table.test-report {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto;
+  text-align: center;
+  line-height: 50px;
+  .caption {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  td, th {
+    border: 1px solid $border-color;
+    color: $color;
+    height: 30px;
+  }
+  td:first-child {
+    font-weight: bold;
+  }
+  th {
+    background-color: $th-background-color;
+    width: 100px;
+  }
+  tr {
+    background: $tr-backrgound;
+  }
+}
+
+@media print {
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .print-display-none {
+    display: none;
+  }
+  table.test-report {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 25px;
+    page-break-inside: avoid;
+    .caption {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      display: none;
+    }
+    td, th {
+      border: 1px solid $border-color;
+      color: $color;
+      height: 30px;
+    }
+    th {
+      background-color: $th-background-color;
+      width: 100px;
+    }
+    tr {
+      background: $tr-backrgound;
+    }
+  }
+}

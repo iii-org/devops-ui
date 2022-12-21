@@ -1,74 +1,83 @@
 <template>
-  <div>
-    <ToolBar>
-      <span slot="toolName">WebInspect</span>
-      <el-button
-        slot="link"
-        type="text"
-        icon="el-icon-tickets"
-        :class="!disabled ? 'linkTextColor' : ''"
-        :disabled="disabled"
-        @click="openWebInspect"
-      >
-        {{ $t('TestReport.DetailReport') }}
-      </el-button>
-    </ToolBar>
-    <el-table
-      ref="table_webinspect"
-      v-loading="listLoading"
-      class="mb-10"
-      :element-loading-text="$t('Loading')"
-      :data="webinspect"
-      border
-      fit
-    >
-      <el-table-column align="center" :label="$t('DevOps.Tools')">WebInspect</el-table-column>
-      <el-table-column align="center" :label="$t('WebInspect.Critical')" prop="stats.criticalCount">
-        <template slot-scope="scope">
-          <span v-if="showColumn(scope.row)">{{ scope.row.stats.criticalCount }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('WebInspect.HighSeverity')" prop="stats.highCount">
-        <template slot-scope="scope">
-          <span v-if="showColumn(scope.row)">{{ scope.row.stats.highCount }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('WebInspect.MediumSeverity')" prop="stats.mediumCount">
-        <template slot-scope="scope">
-          <span v-if="showColumn(scope.row)">{{ scope.row.stats.mediumCount }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('WebInspect.LowSeverity')" prop="stats.lowCount">
-        <template slot-scope="scope">
-          <span v-if="showColumn(scope.row)">{{ scope.row.stats.lowCount }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('WebInspect.InfoSeverity')" prop="stats.infoCount">
-        <template slot-scope="scope">
-          <span v-if="showColumn(scope.row)">{{ scope.row.stats.infoCount }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('WebInspect.BpSeverity')" prop="stats.bpCount">
-        <template slot-scope="scope">
-          <span v-if="showColumn(scope.row)">{{ scope.row.stats.bpCount }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-    </el-table>
+  <div ref="table_webinspect">
+    <table class="test-report">
+      <caption>
+        <div class="caption">
+          <div />
+          <el-button
+            slot="link"
+            type="text"
+            icon="el-icon-tickets"
+            :class="hasWebInspectData ? 'linkTextColor' : ''"
+            :disabled="!hasWebInspectData"
+            @click="openWebInspect"
+          >
+            {{ $t('TestReport.DetailReport') }}
+          </el-button>
+        </div>
+      </caption>
+      <tbody>
+        <tr>
+          <th id="">{{ $t('DevOps.Tools') }}</th>
+          <th id="">{{ $t('WebInspect.Critical') }}</th>
+          <th id="">{{ $t('WebInspect.HighSeverity') }}</th>
+          <th id="">{{ $t('WebInspect.MediumSeverity') }}</th>
+          <th id="">{{ $t('WebInspect.LowSeverity') }}</th>
+          <th id="">{{ $t('WebInspect.InfoSeverity') }}</th>
+          <th id="">{{ $t('WebInspect.BpSeverity') }}</th>
+        </tr>
+        <tr>
+          <td>WebInspect</td>
+          <template v-if="hasWebInspectData">
+            <td>
+              <span v-if="hasEachItemData('criticalCount')">
+                {{ webInspect[0].stats.criticalCount }}
+              </span>
+              <span v-else>-</span>
+            </td>
+            <td>
+              <span v-if="hasEachItemData('highCount')">
+                {{ webInspect[0].stats.highCount }}
+              </span>
+              <span v-else>-</span>
+            </td>
+            <td>
+              <span v-if="hasEachItemData('mediumCount')">
+                {{ webInspect[0].stats.mediumCount }}
+              </span>
+              <span v-else>-</span>
+            </td>
+            <td>
+              <span v-if="hasEachItemData('lowCount')">
+                {{ webInspect[0].stats.lowCount }}
+              </span>
+              <span v-else>-</span>
+            </td>
+            <td>
+              <span v-if="hasEachItemData('infoCount')">
+                {{ webInspect[0].stats.infoCount }}
+              </span>
+              <span v-else>-</span>
+            </td>
+            <td>
+              <span v-if="hasEachItemData('bpCount')">
+                {{ webInspect[0].stats.bpCount }}
+              </span>
+              <span v-else>-</span>
+            </td>
+          </template>
+          <template v-else>
+            <td colspan="6">{{ $t('general.NoData') }}</td>
+          </template>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script>
-import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
-
 export default {
   name: 'Webinspect',
-  components: { ToolBar },
   props: {
     webinspect: {
       type: Array,
@@ -80,13 +89,11 @@ export default {
     }
   },
   computed: {
-    disabled() {
-      return this.webinspect[0] ? Object.keys(this.webinspect[0]).length === 0 : true
+    hasWebInspectData() {
+      return !!(this.webinspect && this.webinspect[0] && this.webinspect[0].hasOwnProperty('stats'))
     },
-    showColumn() {
-      return function(row) {
-        return row.hasOwnProperty('stats') && row.stats !== 'None'
-      }
+    hasEachItemData() {
+      return key => !!(this.webinspect[0].stats.hasOwnProperty(key))
     }
   },
   methods: {
