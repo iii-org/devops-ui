@@ -93,13 +93,13 @@
           />
         </div>
         <!-- ISO weakness test -->
-        <div v-show="harbor || anchore">
+        <div v-show="clair || anchore">
           <el-divider content-position="center">{{ $t('TestReport.ISOWeaknessTesting') }}</el-divider>
           <ClairReport
-            v-show="harbor"
-            ref="harbor"
+            v-show="clair"
+            ref="clair"
             class="mb-5"
-            :clair="harbor"
+            :clair="clair"
             :list-loading="listLoading"
           />
           <!-- <AnchoreReport
@@ -182,7 +182,7 @@ const downloadFileName = 'DevOps_test_report'
 const dataName = [
   'sonarqube',
   'checkmarx',
-  'harbor', // clair
+  'clair', // clair
   // 'anchore',
   'zap',
   'webinspect',
@@ -211,7 +211,7 @@ export default {
       listLoading: false,
       sonarqube: [],
       checkmarx: [],
-      harbor: [],
+      clair: [],
       anchore: [],
       zap: [],
       webinspect: [],
@@ -290,6 +290,8 @@ export default {
       const data = resData[name]
       if (name === 'sonarqube') {
         this.setSonarQubeData(resData)
+      } else if (name === 'clair') {
+        this.clair.push(resData.harbor)
       } else if (data) {
         this[name].push(data)
       } else {

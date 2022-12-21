@@ -1,5 +1,5 @@
 <template>
-  <div ref="table_harbor">
+  <div ref="table_clair">
     <table class="test-report">
       <caption>
         <div class="caption">
