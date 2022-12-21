@@ -7,7 +7,11 @@
     append-to-body
     :before-close="onDialogClosed"
   >
-    <el-collapse v-if="dialogVisible" v-model="isCollapse">
+    <el-collapse
+      v-if="dialogVisible"
+      v-model="isCollapse"
+      v-loading="loading"
+    >
       <el-collapse-item name="1">
         <div slot="title" style="margin-left: auto;">
           <div class="text-title">
@@ -79,7 +83,8 @@ export default {
       excalidrawHeight: 0,
       isLoading: false,
       isCollapse: [],
-      form: formTemplate()
+      form: formTemplate(),
+      loading: false
     }
   },
   computed: {
@@ -96,7 +101,13 @@ export default {
       }
     },
     async dialogVisible(value) {
+      if (value) {
+        this.loading = true
+      }
       await createExcalidrawHistory(this.row.id)
+        .then(() => {
+          this.loading = false
+        })
       if (!value) this.$emit('update:row', {})
     },
     isCollapse: {
