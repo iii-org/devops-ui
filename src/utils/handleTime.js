@@ -45,7 +45,7 @@ export const relativeTime = (utcTime) => {
     .utc(utcTime)
     .local()
     .fromNow()
-  return isTimeValid(time) ? time : '-'
+  return isTimeValid(utcTime) ? time : '-'
 }
 
 /**
