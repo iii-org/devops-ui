@@ -80,7 +80,7 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - overview
+      - issuelist
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -103,7 +103,7 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - overview
+      - issuelist
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -122,7 +122,7 @@ stages:
       - master
       - errorcode
       - pluginchart
-      - overview
+      - issuelist
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -157,7 +157,7 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - overview
+      - issuelist
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -185,7 +185,7 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - overview
+      - issuelist
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -211,7 +211,7 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - overview
+      - issuelist
 - name: Test--Anchore SBOM
   iiidevops: anchore
   steps:
