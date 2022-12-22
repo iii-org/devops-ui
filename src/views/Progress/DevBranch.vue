@@ -191,22 +191,16 @@ export default {
   computed: {
     ...mapGetters(['branchesByProject']),
     relativeTime() {
-      return function (time) {
-        return relativeTime(time)
-      }
+      return (time) => relativeTime(time)
     },
     UTCtoLocalTime() {
-      return function(time) {
-        return UTCtoLocalTime(time)
-      }
+      return (time) => UTCtoLocalTime(time)
     },
     isAbled() {
-      return function (commitIssues) {
-        return commitIssues && commitIssues.length > 0
-      }
+      return (commitIssues) => commitIssues && commitIssues.length > 0
     },
     getIssueId() {
-      return function (branch) {
+      return (branch) => {
         let issue_id = []
         if (branch) {
           issue_id = Object.keys(branch).map((id) => `#${id}`)
