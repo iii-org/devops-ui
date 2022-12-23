@@ -10,12 +10,11 @@
  *  check https://day.js.org/docs/en/display/format to define the format
  *  for example: to get the localTime like '05:06 PM', you should use 'hh:mm A' as the format
  *
- * 3. dayjs handles ISO-8601 format
- *  --> https://day.js.org/docs/en/parse/string
+ * 3. dayjs handles ISO-8601 format --> https://day.js.org/docs/en/parse/string
  *  according to the above link,
  *  whether the date time string is with a "T" or space, dayjs can handle the ISO-8601 format correctly
- *  but we reach a consensus with backend that the date time string should always be the same
- *  so the date time format from backend should be <YYYY-MM-DDTHH:mm:ss> and must be UTC time
+ *  but we reach a consensus with backend that the date time string should be always the same
+ *  so the date time format from backend is <YYYY-MM-DDTHH:mm:ss> and must be a UTC time
  *  there should be a "T" between date and time without using a space
  *   ex:
  *     <YYYY-MM-DDTHH:mm:ss> ✔
