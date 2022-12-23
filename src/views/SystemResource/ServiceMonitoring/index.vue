@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { UTCtoLocalTime } from '@/utils/handleTime'
+import { getLocalTime } from '@/utils/handleTime'
 import {
   getSystemServerList,
   getServerStatus,
@@ -140,7 +140,7 @@ export default {
     },
     handleData(res) {
       if (res.name === 'Harbor nfs folder storage remain.') res.name = 'Harbor'
-      const datetime = UTCtoLocalTime(res.datetime)
+      const datetime = getLocalTime(res.datetime)
       res.datetime = datetime
       return res
     },

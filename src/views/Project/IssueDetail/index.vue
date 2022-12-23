@@ -42,7 +42,7 @@
                 v-if="!isLoading && issueId"
                 class="text-base mr-3"
               >
-                {{ $t('Issue.AddBy', { user: author, created_date: relativeTime(created_date)}) }}
+                {{ $t('Issue.AddBy', { user: author, created_date: getRelativeTime(created_date)}) }}
               </span>
               <el-tooltip class="item" :content="$t('general.CopyUrl')" placement="bottom">
                 <el-button
@@ -333,7 +333,7 @@ import {
   AdminCommitLog,
   WhiteBoardTable
 } from './components'
-import { UTCtoLocalTime, relativeTime } from '@/utils/handleTime'
+import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
 import {
   addProjectTags,
   getRootProjectId
@@ -723,7 +723,7 @@ export default {
       const res = await getIssueGitCommitLog(this.rootProjectId, this.issueId, params)
       res.data.forEach((item, index) => {
         item['id'] = index
-        item['commit_time'] = UTCtoLocalTime(item['commit_time'])
+        item['commit_time'] = getLocalTime(item['commit_time'])
       })
       return Promise.resolve(res.data)
     },
@@ -1236,11 +1236,11 @@ export default {
     sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms))
     },
-    UTCtoLocalTime(value) {
-      return UTCtoLocalTime(value)
+    getLocalTime(value) {
+      return getLocalTime(value)
     },
-    relativeTime(value) {
-      return relativeTime(value)
+    getRelativeTime(value) {
+      return getRelativeTime(value)
     },
     onResetPId(pId) {
       this.form.project_id = pId

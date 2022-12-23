@@ -70,9 +70,9 @@
                         <el-tooltip
                           placement="bottom"
                           effect="light"
-                          :content="UTCtoLocalTime(commit.commit_time)"
+                          :content="getLocalTime(commit.commit_time)"
                         >
-                          <span>{{ relativeTime(commit.commit_time) }}</span>
+                          <span>{{ getRelativeTime(commit.commit_time) }}</span>
                         </el-tooltip>
                       </div>
                     </div>
@@ -169,7 +169,7 @@ import { mapActions, mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { BasicData, Pagination, SearchBar } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { UTCtoLocalTime, relativeTime } from '@/utils/handleTime'
+import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
 import { getHookByBranch } from '@/api/dashboard'
 import { getIssue } from '@/api/issue'
 import { Status } from '@/components/Issue'
@@ -190,11 +190,13 @@ export default {
   },
   computed: {
     ...mapGetters(['branchesByProject']),
-    relativeTime() {
-      return (time) => relativeTime(time)
+    getRelativeTime() {
+      return (time) => getRelativeTime(time)
     },
-    UTCtoLocalTime() {
-      return (time) => UTCtoLocalTime(time)
+    getLocalTime() {
+      return (time) => {
+        return getLocalTime(time)
+      }
     },
     isAbled() {
       return (commitIssues) => commitIssues && commitIssues.length > 0
@@ -297,7 +299,7 @@ export default {
         item['id'] = index
         item['issue_id'] = this.getIssueId(item['issue_hook'])
         item['issues'] = await this.getIssue(item['issue_id'], item['issue_hook'])
-        item['commit_time'] = UTCtoLocalTime(item['commit_time'])
+        item['commit_time'] = getLocalTime(item['commit_time'])
       })
       return res.data
     },

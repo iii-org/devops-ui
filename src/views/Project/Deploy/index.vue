@@ -214,7 +214,7 @@ import {
 } from '@/api/deploy'
 import ApplicationSetting from '@/views/Project/Deploy/components/ApplicationSetting'
 import Status from './components/Status'
-import { UTCtoLocalTime } from '@/utils/handleTime'
+import { getLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'Deploy',
@@ -289,7 +289,7 @@ export default {
         { project_id: this.selectedProjectId },
         { cancelToken: this.cancelToken }
       )
-      this.lastUpdateTime = UTCtoLocalTime(res.datetime)
+      this.lastUpdateTime = getLocalTime(res.datetime)
       return res.data.applications
     },
     async fetchData() {

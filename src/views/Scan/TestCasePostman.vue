@@ -50,7 +50,7 @@
             size="small"
             type="warning"
           >
-            {{ $t('general.ScanAt') + '：' + UTCtoLocalTime(testCaseInfos.start_time) }}
+            {{ $t('general.ScanAt') + '：' + getLocalTime(testCaseInfos.start_time) }}
           </el-tag>
           <div>
             <el-tag
@@ -264,7 +264,7 @@
 import { mapGetters } from 'vuex'
 import { getPostmanReport } from '@/api/postman'
 import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
-import { UTCtoLocalTime } from '@/utils/handleTime'
+import { getLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'TestCasePostman',
@@ -381,8 +381,8 @@ export default {
     getTestResult(result) {
       return result.hasOwnProperty('error_message') ? 'Fail' : 'Pass'
     },
-    UTCtoLocalTime(time) {
-      return UTCtoLocalTime(time)
+    getLocalTime(time) {
+      return getLocalTime(time)
     }
   }
 }

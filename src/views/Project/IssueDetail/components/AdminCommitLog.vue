@@ -164,7 +164,7 @@ import {
   getIssue,
   getIssueGitCommitLog
 } from '@/api/issue'
-import { UTCtoLocalTime } from '@/utils/handleTime'
+import { getLocalTime } from '@/utils/handleTime'
 import IssueSelect from '@/components/Issue/IssueSelect'
 import NoData from './widget/NoData'
 
@@ -340,7 +340,7 @@ export default {
         item['parent'] = parent
         const issueList = await this.getMultiUnderList(parent)
         item['issue_list'] = issueList
-        item['commit_time'] = UTCtoLocalTime(item['commit_time'])
+        item['commit_time'] = getLocalTime(item['commit_time'])
         item['issue_loading'] = false
       })
       return commitLogs

@@ -30,7 +30,7 @@
     </el-alert>
     <div class="text-right">
       <span v-if="traceCheck.start_time">{{ $t('Track.Run_at') }}:
-        {{ relativeTime(traceCheck.start_time) }}</span>
+        {{ getRelativeTime(traceCheck.start_time) }}</span>
       <span v-if="traceCheck.finish_time">{{ $t('Track.Running_time') }}:
         {{ $dayjs(traceCheck.finish_time).from($dayjs(traceCheck.start_time), true) }}</span>
     </div>
@@ -104,7 +104,7 @@ import { cloneDeep } from 'lodash'
 import Status from '@/components/Issue/Status'
 import { getTraceOrderResult } from '@/api/qa'
 import { mapGetters } from 'vuex'
-import { relativeTime } from '@/utils/handleTime'
+import { getRelativeTime } from '@/utils/handleTime'
 
 export default {
   name: 'TraceCheck',
@@ -183,8 +183,8 @@ export default {
     onRelationIssueDialog(id) {
       this.$emit('show-issue', id)
     },
-    relativeTime(time) {
-      return relativeTime(time)
+    getRelativeTime(time) {
+      return getRelativeTime(time)
     }
   }
 }

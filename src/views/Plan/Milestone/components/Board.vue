@@ -159,7 +159,7 @@
             align="center"
           >
             <template slot-scope="scope">
-              {{ UTCtoLocalTime(scope.row.due_date,'YYYY-MM-DD') }}
+              {{ getLocalTime(scope.row.due_date,'YYYY-MM-DD') }}
             </template>
           </el-table-column>
           <el-table-column width="50px">
@@ -277,7 +277,7 @@ import { updateIssue, getIssueFamily } from '@/api/issue'
 import { Kanban } from '@/views/Project/IssueBoards/components'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 import { io } from 'socket.io-client'
-import { isTimeValid, UTCtoLocalTime } from '@/utils/handleTime'
+import { isTimeValid, getLocalTime } from '@/utils/handleTime'
 
 const contextMenu = {
   row: {
@@ -474,8 +474,8 @@ export default {
     window.clearInterval(this.intervalTimer)
   },
   methods: {
-    UTCtoLocalTime(time, format) {
-      return UTCtoLocalTime(time, format)
+    getLocalTime(time, format) {
+      return getLocalTime(time, format)
     },
     getParams() {
       const result = {
@@ -490,10 +490,10 @@ export default {
         if (this.filterValue[item]) {
           if (item === 'due_date_start' || item === 'due_date_end') {
             result['due_date_start'] = isTimeValid(this.filterValue['due_date_start'])
-              ? UTCtoLocalTime(this.filterValue['due_date_start'], 'YYYY-MM-DD')
+              ? getLocalTime(this.filterValue['due_date_start'], 'YYYY-MM-DD')
               : null
             result['due_date_end'] = isTimeValid(this.filterValue['due_date_end'])
-              ? UTCtoLocalTime(this.filterValue['due_date_end'], 'YYYY-MM-DD')
+              ? getLocalTime(this.filterValue['due_date_end'], 'YYYY-MM-DD')
               : null
           } else if (item === 'tags' && this.filterValue[item].length > 0) {
             result[item] = this.filterValue[item].join()

@@ -38,7 +38,7 @@
           width="120"
         >
           <template slot-scope="scope">
-            {{ UTCtoLocalTime(scope.row.create_at) }}
+            {{ getLocalTime(scope.row.create_at) }}
           </template>
         </el-table-column>
         <el-table-column
@@ -200,7 +200,7 @@
 <script>
 import { getReleaseVersion, deleteReleaseTag } from '@/api_v2/release'
 import { BasicData, Pagination, SearchBar } from '@/mixins'
-import { UTCtoLocalTime } from '@/utils/handleTime'
+import { getLocalTime } from '@/utils/handleTime'
 import variables from '@/styles/theme/variables.scss'
 import { Viewer } from '@toast-ui/vue-editor'
 
@@ -247,8 +247,8 @@ export default {
         params: { issueTag: tag_name, projectName: this.selectedProject.name }
       })
     },
-    UTCtoLocalTime(time) {
-      return UTCtoLocalTime(time)
+    getLocalTime(time) {
+      return getLocalTime(time)
     },
     getImageTags(tag) {
       const [key] = Object.keys(tag)

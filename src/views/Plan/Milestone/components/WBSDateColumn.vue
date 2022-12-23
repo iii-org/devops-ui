@@ -27,7 +27,7 @@
         />
       </template>
       <template v-else>
-        {{ UTCtoLocalTime(row[prop] ,'YYYY-MM-DD') }}
+        {{ getLocalTime(row[prop] ,'YYYY-MM-DD') }}
       </template>
     </template>
   </el-table-column>
@@ -35,7 +35,7 @@
 
 <script>
 import i18n from '@/lang'
-import { UTCtoLocalTime } from '@/utils/handleTime'
+import { getLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'WBSInputNumberColumn',
@@ -111,8 +111,8 @@ export default {
         return !row['has_children']
       }
     },
-    UTCtoLocalTime(time, format) {
-      return UTCtoLocalTime(time, format)
+    getLocalTime(time, format) {
+      return getLocalTime(time, format)
     },
     handlerEdit(row, index, treeNode) {
       this.$emit('edit', { value: { [this.prop]: row[this.prop] }, row: row, index: index, treeNode: treeNode })

@@ -118,7 +118,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { cloneDeep } from 'lodash'
-import { UTCtoLocalTime } from '@/utils/handleTime'
+import { getLocalTime } from '@/utils/handleTime'
 import { getHasSon, getProjectRelation } from '@/api_v2/projects'
 
 export default {
@@ -235,7 +235,7 @@ export default {
   methods: {
     getSelectedLabel(item) {
       const visibleStatus = ['closed', 'locked']
-      let result = this.getTranslateHeader(item.name || UTCtoLocalTime(item, 'YYYY-MM-DD'))
+      let result = this.getTranslateHeader(item.name || getLocalTime(item, 'YYYY-MM-DD'))
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
         result += ` (${this.getTranslateHeader(item.status)})`
       }

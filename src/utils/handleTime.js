@@ -9,6 +9,18 @@
  * 2. dayjs time format
  *  check https://day.js.org/docs/en/display/format to define the format
  *  for example: to get the localTime like '05:06 PM', you should use 'hh:mm A' as the format
+ *
+ * 3. dayjs handles ISO-8601 format
+ *  --> https://day.js.org/docs/en/parse/string
+ *  according to the above link,
+ *  whether the date time string is with a "T" or space, dayjs can handle the ISO-8601 format correctly
+ *  but we reach a consensus with backend that the date time string should always be the same
+ *  so the date time format from backend should be <YYYY-MM-DDTHH:mm:ss> and must be UTC time
+ *  there should be a "T" between date and time without using a space
+ *   ex:
+ *     <YYYY-MM-DDTHH:mm:ss> ✔
+ *     <YYYY-MM-DD HH:mm:ss> ✘
+ *  check https://stackoverflow.com/questions/9531524/in-an-iso-8601-date-is-the-t-character-mandatory for more informantion
  */
 
 import dayjs from 'dayjs'
@@ -27,7 +39,7 @@ dayjs.extend(duration)
  * @param {string} format - default value would be 'YYYY-MM-DD HH:mm:ss'
  * @returns {string} localTime
  */
-export const UTCtoLocalTime = (utcTime, format = 'YYYY-MM-DD HH:mm:ss') => {
+export const getLocalTime = (utcTime, format = 'YYYY-MM-DD HH:mm:ss') => {
   const localTime = dayjs
     .utc(utcTime)
     .local()
@@ -40,25 +52,25 @@ export const UTCtoLocalTime = (utcTime, format = 'YYYY-MM-DD HH:mm:ss') => {
  * @param {string} utcTime - utc time
  * @returns {string} relativeTime
  */
-export const relativeTime = (utcTime) => {
-  const time = dayjs
+export const getRelativeTime = (utcTime) => {
+  const relativeTime = dayjs
     .utc(utcTime)
     .local()
     .fromNow()
-  return isTimeValid(utcTime) ? time : '-'
+  return isTimeValid(utcTime) ? relativeTime : '-'
 }
 
 /**
  * Get the utc time with format
  * @param {string} dateTime - date time
  * @param {string} format - default value would be 'YYYY-MM-DD HH:mm:ss'
- * @returns {string} localTime
+ * @returns {string} formatTime
  */
-export const formatTime = (dateTime, format = 'YYYY-MM-DD HH:mm:ss') => {
-  const localTime = dayjs
+export const getFormatTime = (dateTime, format = 'YYYY-MM-DD HH:mm:ss') => {
+  const formatTime = dayjs
     .utc(dateTime)
     .format(format)
-  return isTimeValid(dateTime) ? localTime : '-'
+  return isTimeValid(dateTime) ? formatTime : '-'
 }
 
 /**
@@ -76,7 +88,7 @@ export const isTimeValid = (time) => {
  * @param {string} endTime
  * @returns {string} durationTime - ex: 1分鐘、幾秒
  */
-export const durationTime = (startTime, endTime) => {
+export const getDurationTime = (startTime, endTime) => {
   if (endTime === null || endTime === undefined) {
     return '-'
   }

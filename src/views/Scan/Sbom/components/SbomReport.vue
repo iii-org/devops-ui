@@ -253,7 +253,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { UTCtoLocalTime } from '@/utils/handleTime'
+import { getLocalTime } from '@/utils/handleTime'
 import { getProjectInfos } from '@/api/projects'
 import {
   getSbomRiskOverview,
@@ -356,7 +356,7 @@ export default {
       } finally {
         this.listLoading = false
         this.timeNow = sessionStorage.getItem('sbomTime') !== 'null'
-          ? UTCtoLocalTime(sessionStorage.getItem('sbomTime')) : '-'
+          ? getLocalTime(sessionStorage.getItem('sbomTime')) : '-'
         this.$once('hook:beforeDestroy', () => {
           sessionStorage.removeItem('sbomTime')
         })

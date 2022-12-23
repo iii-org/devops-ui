@@ -6,9 +6,9 @@
         placement="top"
         :disabled="!scope.row[prop]"
         :open-delay="200"
-        :content="UTCtoLocalTime(scope.row[prop])"
+        :content="getLocalTime(scope.row[prop])"
       >
-        <span>{{ relativeTime(scope.row[prop]) }}</span>
+        <span>{{ getRelativeTime(scope.row[prop]) }}</span>
       </el-tooltip>
     </template>
   </el-table-column>
@@ -16,7 +16,7 @@
 
 <script>
 import i18n from '@/lang'
-import { UTCtoLocalTime, relativeTime } from '@/utils/handleTime'
+import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
 
 export default {
   name: 'ElTableColumnTime',
@@ -43,11 +43,11 @@ export default {
     }
   },
   methods: {
-    UTCtoLocalTime(time) {
-      return UTCtoLocalTime(time)
+    getLocalTime(time) {
+      return getLocalTime(time)
     },
-    relativeTime(time) {
-      return relativeTime(time)
+    getRelativeTime(time) {
+      return getRelativeTime(time)
     }
   }
 }

@@ -145,7 +145,7 @@ import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getSideexScans, getSideexReport } from '@/api/sideex'
 import { getSideexPod } from '@/api_v2/sideex'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
-import { durationTime } from '@/utils/handleTime'
+import { getDurationTime } from '@/utils/handleTime'
 
 export default {
   name: 'ScanSideex',
@@ -177,7 +177,7 @@ export default {
       return sortedScans
     },
     durationText(start, end) {
-      return durationTime(start, end)
+      return getDurationTime(start, end)
     },
     async fetchReportData(selectedSideexId) {
       const res = await getSideexReport(selectedSideexId)

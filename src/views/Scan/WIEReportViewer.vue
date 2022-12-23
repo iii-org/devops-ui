@@ -80,7 +80,7 @@
 import xml2js from 'xml2js'
 import { mapGetters } from 'vuex'
 import { getWebInspectReport } from '@/api/webInspect'
-import { UTCtoLocalTime } from '@/utils/handleTime'
+import { getLocalTime } from '@/utils/handleTime'
 const parser = new xml2js.Parser({ explicitArray: false, mergeAttrs: true })
 
 export default {
@@ -116,7 +116,7 @@ export default {
   methods: {
     fetchData() {
       this.isLoading = true
-      this.runAt = this.UTCtoLocalTime(this.$route.params.run_at)
+      this.runAt = this.getLocalTime(this.$route.params.run_at)
       getWebInspectReport(this.$route.params.scanId).then(res => {
         this.xmlData = res
         this.$nextTick(() => this.parseXml())
@@ -166,8 +166,8 @@ export default {
       }
       return mapping[status][key]
     },
-    UTCtoLocalTime(time) {
-      return UTCtoLocalTime(time)
+    getLocalTime(time) {
+      return getLocalTime(time)
     }
   }
 }

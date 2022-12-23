@@ -15,7 +15,7 @@
           placement="bottom"
         >
           <div slot="content">
-            {{ file.filename + `(${UTCtoLocalTime(file.created_on)})` }}
+            {{ file.filename + `(${getLocalTime(file.created_on)})` }}
           </div>
           <a
             class="el-upload-list__item-name"
@@ -23,7 +23,7 @@
             @click="handlePreview(file)"
           >
             <em class="el-icon-document" />
-            {{ file.filename + `(${UTCtoLocalTime(file.created_on)})` }}
+            {{ file.filename + `(${getLocalTime(file.created_on)})` }}
           </a>
         </el-tooltip>
       </el-col>
@@ -108,7 +108,7 @@ import { mapGetters } from 'vuex'
 import { deleteIssueFile } from '@/api/issue'
 import { downloadProjectFile } from '@/api/projects'
 import { btoa } from '@/utils/base64'
-import { UTCtoLocalTime } from '@/utils/handleTime'
+import { getLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'IssueFiles',
@@ -265,8 +265,8 @@ export default {
         type: 'error'
       })
     },
-    UTCtoLocalTime(time, format) {
-      return UTCtoLocalTime(time, format)
+    getLocalTime(time, format) {
+      return getLocalTime(time, format)
     }
   }
 }

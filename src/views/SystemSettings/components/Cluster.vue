@@ -41,7 +41,7 @@
         <el-table-column align="center" :label="$t('SystemDeploySettings.Account')" prop="cluster_user" width="100" />
         <el-table-column align="center" :label="$t('SystemDeploySettings.LastUpdateTime')" width="200">
           <template slot-scope="scope">
-            {{ UTCtoLocalTime(scope.row.update_at) }}
+            {{ getLocalTime(scope.row.update_at) }}
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('SystemDeploySettings.Status')">
@@ -115,7 +115,7 @@
 import { getDeployedHostsLists, getDeployedHostsByList, addDeployHosts, updateDeployHostsById } from '@/api/deploy'
 import { BasicData } from '@/mixins'
 import { btoa } from '@/utils/base64'
-import { UTCtoLocalTime } from '@/utils/handleTime'
+import { getLocalTime } from '@/utils/handleTime'
 
 const formData = () => ({
   clusterName: '',
@@ -311,8 +311,8 @@ export default {
           return 'danger'
       }
     },
-    UTCtoLocalTime(time) {
-      return UTCtoLocalTime(time)
+    getLocalTime(time) {
+      return getLocalTime(time)
     }
   }
 }

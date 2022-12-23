@@ -191,7 +191,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { UTCtoLocalTime } from '@/utils/handleTime'
+import { getLocalTime } from '@/utils/handleTime'
 import { getHarborScanReport } from '@/api_v2/harbor'
 import { getProjectInfos } from '@/api/projects'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
@@ -271,7 +271,7 @@ export default {
         const res = await getHarborScanReport(this.project.name, { branch: this.branch, commit_id: this.commitId })
         this.summaryData = this.setSummaryData(res.data.overview)
         this.listData = this.sortVulnerabilityData(res.data.vulnerabilities)
-        this.timeNow = UTCtoLocalTime(res.data.generated_at)
+        this.timeNow = getLocalTime(res.data.generated_at)
         this.scanner = res.data.scanner
       } catch (error) {
         console.error(error)

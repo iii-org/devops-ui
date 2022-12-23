@@ -11,7 +11,7 @@
         v-if="right"
         class="time"
       >
-        {{ relativeTime(note.created_on) }}
+        {{ getRelativeTime(note.created_on) }}
       </el-col>
       <el-col
         class="dialog"
@@ -33,7 +33,7 @@
         v-if="!right"
         class="time"
       >
-        {{ relativeTime(note.created_on) }}
+        {{ getRelativeTime(note.created_on) }}
       </el-col>
     </el-row>
     <template v-if="note.hasOwnProperty('details')">
@@ -66,7 +66,7 @@
                 {{ ($te('Issue.detail.' + detail.name)) ? $t('Issue.detail.' + detail.name) : $t('Issue.detail.' + detail.property) }}
               </strong>
             </span>
-            <span slot="time">{{ relativeTime(note.created_on) }}</span>
+            <span slot="time">{{ getRelativeTime(note.created_on) }}</span>
             <el-button
               slot="detail"
               size="mini"
@@ -158,7 +158,7 @@
 
 <script>
 import i18n from '@/lang'
-import { relativeTime } from '@/utils/handleTime'
+import { getRelativeTime } from '@/utils/handleTime'
 import '@toast-ui/editor/dist/toastui-editor-viewer.css'
 import { Viewer } from '@toast-ui/vue-editor'
 
@@ -244,8 +244,8 @@ export default {
         return false
       }
     },
-    relativeTime(time) {
-      return relativeTime(time)
+    getRelativeTime(time) {
+      return getRelativeTime(time)
     }
   }
 }

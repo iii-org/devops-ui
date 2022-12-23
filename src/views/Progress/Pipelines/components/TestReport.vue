@@ -165,7 +165,7 @@
 </template>
 
 <script>
-import { UTCtoLocalTime, formatTime } from '@/utils/handleTime'
+import { getLocalTime, getFormatTime } from '@/utils/handleTime'
 import { getProjectCommitTestSummary, getProjectInfos } from '@/api/projects'
 import XLSX from 'xlsx'
 import SonarQubeReport from '@/views/Progress/Pipelines/components/SonarQubeReport'
@@ -241,8 +241,8 @@ export default {
         if (!this[name]) return
         if (this[name][0] && this[name][0].run_at) {
           name === 'sonarqube'
-            ? dataTimeArr.push(formatTime(this[name][0].run_at))
-            : dataTimeArr.push(UTCtoLocalTime(this[name][0].run_at))
+            ? dataTimeArr.push(getFormatTime(this[name][0].run_at))
+            : dataTimeArr.push(getLocalTime(this[name][0].run_at))
         }
       })
       return dataTimeArr.sort((a, b) => Date.parse(b) - Date.parse(a))

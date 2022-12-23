@@ -366,7 +366,7 @@ import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRe
 import { getIssue, addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
 import { CancelRequest } from '@/mixins'
-import { isTimeValid, UTCtoLocalTime } from '@/utils/handleTime'
+import { isTimeValid, getLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'WBS',
@@ -483,10 +483,10 @@ export default {
         if (this.filterValue[item]) {
           if (item === 'due_date_start' || item === 'due_date_end') {
             result['due_date_start'] = isTimeValid(this.filterValue['due_date_start'])
-              ? UTCtoLocalTime(this.filterValue['due_date_start'], 'YYYY-MM-DD')
+              ? getLocalTime(this.filterValue['due_date_start'], 'YYYY-MM-DD')
               : null
             result['due_date_end'] = isTimeValid(this.filterValue['due_date_end'])
-              ? UTCtoLocalTime(this.filterValue['due_date_end'], 'YYYY-MM-DD')
+              ? getLocalTime(this.filterValue['due_date_end'], 'YYYY-MM-DD')
               : null
           } else if (item === 'tags' && this.filterValue[item].length > 0) {
             result[item] = this.filterValue[item].join()
@@ -801,7 +801,7 @@ export default {
         checkUpdate = true
       } else if (typeof row.originColumn === 'object' && row.originColumn instanceof Date) {
         if (isTimeValid(row.originColumn)) {
-          checkUpdate = value[row.editColumn] !== UTCtoLocalTime(row.originColumn, 'YYYY-MM-DD')
+          checkUpdate = value[row.editColumn] !== getLocalTime(row.originColumn, 'YYYY-MM-DD')
         } else {
           checkUpdate = value[`${row.editColumn}_id`] !== row.originColumn.id
         }
