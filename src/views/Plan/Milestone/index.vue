@@ -24,7 +24,13 @@
         :filter-options="filterOptions"
         :list-loading="listLoading"
         :selection-options="contextOptions"
-        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed,originFilterValue:originFilterValue }"
+        :prefill="{
+          filterValue: filterValue,
+          keyword: keyword,
+          displayClosed: displayClosed,
+          fixed_version_closed: fixed_version_closed,
+          originFilterValue: originFilterValue
+        }"
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
       >
@@ -100,7 +106,7 @@
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-select-all
+              <ElSelectAll
                 ref="groupByValue"
                 :value="groupBy.value"
                 filterable
@@ -118,12 +124,17 @@
                   type="info"
                   class="flex-1"
                 >
-                  <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
+                  <el-checkbox v-model="fixed_version_closed">
+                    {{ $t('Issue.DisplayClosedVersion') }}
+                  </el-checkbox>
                 </el-tag>
               </div>
             </el-form-item>
-            <el-form-item v-if="groupBy.dimension === 'status'" :label="$t('Issue.Issue')">
-              <el-select-all
+            <el-form-item
+              v-if="groupBy.dimension === 'status'"
+              :label="$t('Issue.Issue')"
+            >
+              <ElSelectAll
                 ref="groupByRow"
                 :value="groupBy.list"
                 filterable
@@ -144,7 +155,9 @@
             type="text"
           >
             <i18n path="Issue.GroupBy">
-              <strong slot="filter">{{ showSelectedGroupByName }}</strong>
+              <strong slot="filter">
+                {{ showSelectedGroupByName }}
+              </strong>
             </i18n>
             ({{ showSelectedGroupByLength }})
             <em class="el-icon-arrow-down el-icon--right" />
@@ -259,23 +272,24 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import { IssueList } from '@/mixins'
-import { ProjectListSelector, ElSelectAll } from '@/components'
-import { QuickAddIssue, SearchFilter } from '@/components/Issue'
-import Board from '@/views/Plan/Milestone/components/Board'
-import Gantt from '@/views/Plan/Milestone/components/Gantt'
-import WBS from '@/views/Plan/Milestone/components/WBS'
+import { mapGetters } from 'vuex'
 import {
   getIssueListDownload,
   getIssueListLockStatus,
-  getProjectAssignable,
-  getProjectVersion,
-  getTagsByProject,
   patchIssueListDownload,
   postIssueListDownload
 } from '@/api/projects'
-import { addIssue, getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
+import {
+  addIssue,
+  getIssueFieldDisplay,
+  putIssueFieldDisplay
+} from '@/api/issue'
+import { SearchFilter } from '@/mixins'
+import { ProjectListSelector, ElSelectAll } from '@/components'
+import { QuickAddIssue } from '@/components/Issue'
+import Board from '@/views/Plan/Milestone/components/Board'
+import Gantt from '@/views/Plan/Milestone/components/Gantt'
+import WBS from '@/views/Plan/Milestone/components/WBS'
 import XLSX from 'xlsx'
 
 export default {
@@ -284,12 +298,11 @@ export default {
     ProjectListSelector,
     ElSelectAll,
     QuickAddIssue,
-    SearchFilter,
     Board,
     Gantt,
     WBS
   },
-  mixins: [IssueList],
+  mixins: [SearchFilter],
   data() {
     return {
       quickAddTopicDialogVisible: false,
@@ -297,15 +310,9 @@ export default {
       contentLoading: false,
       updateLoading: false,
       lastUpdated: null,
-      assigned_to: [],
-      fixed_version: [],
-      tags: [],
       activeNames: '',
-      searchVisible: false,
-      displayClosed: false,
       tableHeight: 0,
       relationIssue: false,
-      fixed_version_closed: false,
       form: {},
       groupBy: {
         dimension: 'status',
@@ -383,11 +390,9 @@ export default {
         { display: this.$t('Issue.DoneRatio'), field: 'DoneRatio' },
         { display: this.$t('Issue.points'), field: 'points' }
       ]),
-      filterValue: {},
-      originFilterValue: {},
       displayFields: [],
-      keyword: null,
-      listData: [],
+      key: 'milestone',
+      parentId: 0,
       activeTab: 'WBS',
       groupByRow: [],
       addTopicDialog: {
@@ -409,7 +414,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'selectedProjectId', 'status', 'tracker', 'fixedVersionShowClosed']),
+    ...mapGetters([
+      // 'userId',
+      'selectedProjectId',
+      'status',
+      'tracker'
+      // 'fixedVersionShowClosed'
+    ]),
     contextOptions() {
       const result = {}
       const getOptions = ['assigned_to', 'fixed_version', 'tags']
@@ -472,44 +483,10 @@ export default {
         return this.$t('general.All')
       }
       return this.groupBy.value.length
-    },
-    projectId() {
-      return this.filterValue.project || this.selectedProjectId
     }
-  },
-  watch: {
-    selectedProjectId: {
-      async handler() {
-        this.keyword = ''
-        await this.onChangeFilter()
-        await this.loadSelectionList()
-        await this.$refs['searchFilter'].cleanFilter()
-      }
-    },
-    fixed_version_closed(value) {
-      this.loadVersionList(value)
-    }
-  },
-  async created() {
-    this.loadSelectionList()
-    const tracker = this.tracker.find((item) => item.name === 'Epic')
-    const storeFilterValue = await this.getIssueFilter()
-    this.filterValue = storeFilterValue['milestone']
-      ? storeFilterValue['milestone'] : { tracker: tracker.id }
-    this.originalFillterValue = { tracker: tracker.id }
-    const storeKeyword = await this.getKeyword()
-    if (storeKeyword['milestone']) {
-      this.keyword = storeKeyword['milestone']
-    }
-    const storeDisplayClosed = await this.getDisplayClosed()
-    if (storeDisplayClosed['milestone']) {
-      this.displayClosed = storeDisplayClosed['milestone']
-    }
-    this.onChangeFilter()
   },
   async mounted() {
-    this.loadReportStatus()
-    this.onChangeFilter()
+    this.fetchInitData()
     this.$nextTick(() => {
       this.tableHeight = this.$refs['wrapper'].clientHeight
     })
@@ -520,23 +497,13 @@ export default {
     }
   },
   methods: {
-    ...mapActions('projects', [
-      'getIssueFilter',
-      'getKeyword',
-      'getDisplayClosed',
-      'setIssueFilter',
-      'setKeyword',
-      'setDisplayClosed'
-    ]),
+    async fetchInitData() {
+      await this.loadDisplayColumns()
+      await this.loadReportStatus()
+      await this.loadData()
+    },
     onRelationIssue(value) {
       this.relationIssue = value
-    },
-    loadSelectionList() {
-      this.loadVersionList(this.fixedVersionShowClosed)
-      this.loadAssignedToList()
-      this.loadDisplayColumns()
-      this.loadTagsList()
-      this.loadReportStatus()
     },
     async loadDisplayColumns() {
       const res = await getIssueFieldDisplay({
@@ -545,56 +512,11 @@ export default {
       })
       this.displayFields = res.data
     },
-    async loadAssignedToList() {
-      const res = await getProjectAssignable(this.filterValue.project || this.selectedProjectId)
-      this.assigned_to = [
-        { id: 'null', name: this.$t('Issue.Unassigned') },
-        {
-          name: this.$t('Issue.me'),
-          login: '-Me-',
-          id: this.userId,
-          class: 'bg-yellow-100'
-        },
-        ...res.data.user_list
-      ]
-    },
-    async loadVersionList(status) {
-      let params = { status: 'open,locked' }
-      if (status) {
-        params = { status: 'open,locked,closed' }
-      }
-      const versionList = await getProjectVersion(this.filterValue.project || this.selectedProjectId, params)
-      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
-    },
-    async loadTagsList() {
-      const res = await getTagsByProject(this.filterValue.project || this.selectedProjectId)
-      this.tags = res.data.tags
-    },
     handleUpdateLoading(value) {
       this.updateLoading = value
     },
     handleUpdateStatus(value) {
       this.lastUpdated = value
-    },
-    async onChangeFilterForm(value) {
-      this.fixed_version_closed = false
-      this.loadSelectionList()
-      Object.keys(value).forEach((item) => {
-        this[item] = value[item]
-      })
-      const storeFilterValue = await this.getIssueFilter()
-      if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
-        this.$delete(this.filterValue, 'tags')
-      }
-      storeFilterValue['milestone'] = this.filterValue
-      const storeKeyword = await this.getKeyword()
-      storeKeyword['milestone'] = this.keyword
-      const storeDisplayClosed = await this.getDisplayClosed()
-      storeDisplayClosed['milestone'] = this.displayClosed
-      await this.setIssueFilter(storeFilterValue)
-      await this.setKeyword(storeKeyword)
-      await this.setDisplayClosed(storeDisplayClosed)
-      await this.onChangeFilter()
     },
     getCheckColumnValue(value) {
       if (this.displayFields.length <= 0) return true
@@ -618,6 +540,20 @@ export default {
       this.displayFields = res.data
     },
     async onChangeFilter() {
+      if (this.key) {
+        const key = this.key
+        const storedData = await this.fetchStoredData()
+        const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+        storedFilterValue[key] = this.filterValue
+        storedKeyword[key] = this.keyword
+        storedDisplayClosed[key] = this.displayClosed
+        await this.setIssueFilter(storedFilterValue)
+        await this.setKeyword(storedKeyword)
+        await this.setDisplayClosed(storedDisplayClosed)
+      }
+      this.loadData()
+    },
+    async loadData() {
       if (this.$refs['WBS']) await this.$refs['WBS'].loadData()
       if (this.$refs['Gantt']) await this.$refs['Gantt'].loadData()
       if (this.$refs['Board']) await this.$refs['Board'].loadData()
@@ -727,6 +663,25 @@ export default {
           this.showAddIssue = false
           this.loadingSave = false
         })
+    },
+    handleQuickAddClose() {
+      this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
+      if (this.tableHeight) {
+        if (this.quickAddTopicDialogVisible) {
+          this.tableHeight = this.tableHeight - 62
+        } else {
+          this.tableHeight = this.tableHeight + 62
+        }
+      }
+    },
+    advancedAddIssue(form) {
+      this.addTopicDialogVisible = true
+      this.parentId = 0
+      this.form = form
+    },
+    filterClosedStatus(statusList) {
+      if (this.displayClosed) return statusList
+      return statusList.filter((item) => item.is_closed === false)
     }
   }
 }

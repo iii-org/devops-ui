@@ -1,3 +1,3 @@
-import ExpandSection from './ExpandSection'
+import IssueExpand from './IssueExpand'
 
-export { ExpandSection }
+export { IssueExpand }

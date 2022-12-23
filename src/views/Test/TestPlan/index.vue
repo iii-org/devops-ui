@@ -16,7 +16,12 @@
         :filter-options="filterOptions"
         :list-loading="listLoading"
         :selection-options="contextOptions"
-        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
+        :prefill="{
+          filterValue: filterValue,
+          keyword: keyword,
+          displayClosed: displayClosed,
+          fixed_version_closed: fixed_version_closed
+        }"
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
       >
@@ -31,17 +36,26 @@
                 :disabled="selectedProjectId === -1 || allDataLoading"
                 @click="downloadExcel(allDownloadData)"
               >
-                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
+                <em class="el-icon-download" />
+                {{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
               <el-menu-item
                 v-show="hasSelectedTestPlan"
                 :disabled="selectedProjectId === -1"
                 @click="downloadExcel(selectedTestPlan)"
               >
-                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
+                <em class="el-icon-download" />
+                {{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
               </el-menu-item>
             </el-menu>
-            <el-button slot="reference" class="buttonPrimaryReverse" icon="el-icon-download">{{ $t('File.Download') }}</el-button>
+            <el-button
+              slot="reference"
+              class="buttonPrimaryReverse"
+              icon="el-icon-download"
+              size="mini"
+            >
+              {{ $t('File.Download') }}
+            </el-button>
           </el-popover>
         </span>
       </SearchFilter>
@@ -56,9 +70,14 @@
       tracker-name="Test Plan"
       @add-issue="advancedAddIssue"
     />
-    <div ref="wrapper" class="wrapper" :class="{'show-quick':quickAddTopicDialogVisible}">
-      <el-row v-loading="listLoading"
-              :element-loading-text="$t('Loading')"
+    <div
+      ref="wrapper"
+      class="wrapper"
+      :class="{'show-quick':quickAddTopicDialogVisible}"
+    >
+      <el-row
+        v-loading="listLoading"
+        :element-loading-text="$t('Loading')"
       >
         <!-- tree-props 取消第二個子議題箭頭-->
         <el-table
@@ -66,6 +85,7 @@
           :data="listData"
           fit
           highlight-current-row
+          size="mini"
           row-key="id"
           :tree-props="{ children: 'child' }"
           :row-class-name="getRowClass"
@@ -75,21 +95,33 @@
           @selection-change="handleSelectionChange"
           @sort-change="handleSortChange"
         >
-          <el-table-column type="selection" reserve-selection width="55" />
-          <el-table-column type="expand" class-name="informationExpand">
+          <el-table-column
+            type="selection"
+            reserve-selection width="55"
+          />
+          <el-table-column
+            type="expand"
+            class-name="informationExpand"
+          >
             <template slot-scope="{row}">
-              <ExpandSection
+              <IssueExpand
                 :issue="row"
                 @on-context-menu="onContextMenu"
                 @update-list="loadData"
-                @collapse-expend-row="collapseExpendRow"
+                @handle-expand-row="handleExpandRow"
               />
               <ul class="family">
                 <li v-if="row.hasOwnProperty('test_files') && row.test_files.length>0">
-                  <span class="title">{{ $t('Issue.TestFile') }}:</span>
+                  <span class="title">
+                    {{ $t('Issue.TestFile') }}:
+                  </span>
                   <ol class="issue-list">
                     <template v-for="child in row.test_files">
-                      <li v-if="Object.keys(child).length > 0" :key="child.id" class="issue-item">
+                      <li
+                        v-if="Object.keys(child).length > 0"
+                        :key="child.id"
+                        class="issue-item"
+                      >
                         {{ child.software_name }} - {{ child.file_name }}
                         <template v-if="child.the_last_test_result">
                           ({{ child.the_last_test_result.branch }} -
@@ -120,7 +152,11 @@
             sortable="custom"
           >
             <template slot-scope="{row}">
-              <Tracker v-if="row.tracker.name" :name="$t(`Issue.${row.tracker.name}`)" :type="row.tracker.name" />
+              <Tracker
+                v-if="row.tracker.name"
+                :name="$t(`Issue.${row.tracker.name}`)"
+                :type="row.tracker.name"
+              />
             </template>
           </el-table-column>
           <el-table-column
@@ -131,13 +167,17 @@
             sortable="custom"
           >
             <template slot-scope="scope">
-              <span class="text-success mr-2">#{{ scope.row.id }}</span>
+              <span class="text-success mr-2">
+                #{{ scope.row.id }}
+              </span>
               <el-tag
                 v-for="item in scope.row.tags"
                 :key="item.id"
                 size="mini"
                 class="mr-1"
-              >[{{ item.name }}]</el-tag>
+              >
+                [{{ item.name }}]
+              </el-tag>
               {{ scope.row.name }}
             </template>
           </el-table-column>
@@ -149,7 +189,11 @@
             sortable="custom"
           >
             <template slot-scope="{row}">
-              <Priority v-if="row.priority.name" :name="$t(`Issue.${row.priority.name}`)" :type="row.priority.name" />
+              <Priority
+                v-if="row.priority.name"
+                :name="$t(`Issue.${row.priority.name}`)"
+                :type="row.priority.name"
+              />
             </template>
           </el-table-column>
           <el-table-column
@@ -162,7 +206,8 @@
             <template slot-scope="{row}">
               <Status
                 v-if="row.status.name"
-                :name="$t(`Issue.${row.status.name}`)" :type="row.status.name"
+                :name="$t(`Issue.${row.status.name}`)"
+                :type="row.status.name"
               />
             </template>
           </el-table-column>
@@ -174,9 +219,16 @@
             sortable="custom"
             show-overflow-tooltip
           >
-            <template v-if="scope.row.assigned_to" slot-scope="scope">
-              <span>{{ scope.row.assigned_to.name }}</span>
-              <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
+            <template
+              v-if="scope.row.assigned_to"
+              slot-scope="scope"
+            >
+              <span>
+                {{ scope.row.assigned_to.name }}
+              </span>
+              <span v-if="scope.row.assigned_to.login">
+                ({{ scope.row.assigned_to.login }})
+              </span>
             </template>
           </el-table-column>
           <template slot="empty">
@@ -184,7 +236,7 @@
           </template>
         </el-table>
         <Pagination
-          :total="pageInfo.total"
+          :total="listQuery.total"
           :page="listQuery.page"
           :limit="listQuery.limit"
           :layout="'total, sizes, prev, pager, next'"
@@ -204,15 +256,27 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import { getProjectUserList, getProjectIssueList } from '@/api/projects'
-import { getIssue, getIssueFamily } from '@/api/issue'
+import { mapGetters, mapActions } from 'vuex'
+import { getProjectIssueList } from '@/api_v2/projects'
+import { getIssue, addIssue } from '@/api/issue'
 import { getTestFileByTestPlan } from '@/api/qa'
-import { IssueList, ContextMenu } from '@/mixins'
+import {
+  BasicData,
+  IssueExpand,
+  SearchFilter,
+  Pagination,
+  ContextMenu
+} from '@/mixins'
 import { ProjectListSelector } from '@/components'
-import { QuickAddIssue, ExpandSection, SearchFilter } from '@/components/Issue'
+import {
+  QuickAddIssue,
+  Priority,
+  Status,
+  Tracker
+} from '@/components/Issue'
 import Result from '@/components/Test/Result'
 import XLSX from 'xlsx'
+import axios from 'axios'
 /**
  * @param row.relations  row maybe have parent or children issue
  * @param data.issue_list get paged data from api
@@ -221,25 +285,38 @@ import XLSX from 'xlsx'
 export default {
   name: 'TestPlan',
   components: {
-    ExpandSection,
-    Result,
-    QuickAddIssue,
     ProjectListSelector,
-    SearchFilter
+    QuickAddIssue,
+    Priority,
+    Status,
+    Tracker,
+    Result
   },
-  mixins: [IssueList, ContextMenu],
+  mixins: [
+    BasicData,
+    IssueExpand,
+    SearchFilter,
+    Pagination,
+    ContextMenu
+  ],
   data() {
     return {
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
-      searchVisible: false,
-      tracker_id: null,
-      assigned_to: [],
-      fixed_version: [],
       form: {},
       filterOptions: Object.freeze([
-        { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
-        { id: 2, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
+        {
+          id: 1,
+          label: this.$t('Issue.FilterDimensions.status'),
+          value: 'status',
+          placeholder: 'Status',
+          tag: true
+        },
+        { id: 2,
+          label: this.$t('Issue.FilterDimensions.assigned_to'),
+          value: 'assigned_to',
+          placeholder: 'Member'
+        },
         {
           id: 3,
           label: this.$t('Issue.FilterDimensions.fixed_version'),
@@ -256,14 +333,16 @@ export default {
       ]),
       allDownloadData: [],
       allDataLoading: false,
-      selectedTestPlan: []
+      selectedTestPlan: [],
+      key: 'testPlan',
+      parentId: 0,
+      sort: '',
+      tracker_id: 8,
+      lastIssueListCancelToken: null
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed', 'forceTracker']),
-    refTable() {
-      return this.$refs['issueList']
-    },
+    ...mapGetters(['tracker', 'forceTracker']),
     hasSelectedTestPlan() {
       return this.selectedTestPlan.length > 0
     },
@@ -271,39 +350,143 @@ export default {
       return this.tracker.filter(item => item.name === 'Test Plan')
     },
     disableAddIssue () {
-      const foundTracker = this.forceTracker.find((tracker) => tracker.id === 8 && tracker.name === 'Test Plan')
+      const foundTracker = this.forceTracker.find((tracker) =>
+        tracker.id === 8 && tracker.name === 'Test Plan')
       return !!foundTracker
     }
   },
-  watch: {
-    fixed_version_closed(value) {
-      this.setFixedVersionShowClosed(value)
-      this.loadVersionList(value)
-    },
-    trackerList(value) {
-      this.tracker_id = value[0].id
-    },
-    tracker_id() {
-      this.loadData()
-    },
-    listData() {
-      this.fetchAllDownloadData()
-    }
-  },
-  async created() {
-    this.fixed_version_closed = this.fixedVersionShowClosed
-    this.tracker_id = this.trackerList[0].id
-    await this.loadSelectionList()
-  },
   mounted() {
-    this.fetchAllDownloadData()
-    this.getInitPage()
+    this.fetchInitData()
   },
   methods: {
-    ...mapActions('projects', ['setFixedVersionShowClosed']),
+    ...mapActions('projects', ['getListQuery', 'setListQuery']),
+    async fetchInitData() {
+      await this.fetchAllDownloadData()
+      await this.getStoredListQuery()
+      await this.loadData()
+    },
+    async getStoredListQuery() {
+      const storeListQuery = await this.getListQuery()
+      const storedTabQuery = storeListQuery['testPlan']
+      if (storedTabQuery !== undefined) {
+        this.listQuery = storedTabQuery
+      }
+      return Promise.resolve()
+    },
+    async fetchData() {
+      let listData
+      try {
+        await this.checkLastRequest()
+        const cancelTokenSource = axios.CancelToken.source()
+        this.lastIssueListCancelToken = cancelTokenSource
+        const res = await getProjectIssueList(
+          this.mainSelectedProjectId,
+          this.getParams(), {
+            cancelToken: cancelTokenSource.token
+          })
+        listData = res.data.issue_list
+        this.setNewListQuery(res.data.page)
+      } catch (e) {
+        // null
+      }
+      this.lastIssueListCancelToken = null
+      return listData
+    },
+    checkLastRequest() {
+      if (this.lastIssueListCancelToken && this.listLoading) {
+        this.lastIssueListCancelToken.cancel()
+      }
+    },
+    setNewListQuery(pageInfo) {
+      const { offset, limit, current, total, pages } = pageInfo
+      if (pages !== 0 && current > pages) {
+        this.resetListQuery()
+      } else {
+        this.listQuery = { offset, limit, total, page: current }
+      }
+    },
+    async resetListQuery() {
+      this.listQuery.offset = 0
+      this.listQuery.page = 1
+      const storeListQuery = await this.getListQuery()
+      storeListQuery['testPlan'] = this.listQuery
+      await this.setListQuery(storeListQuery)
+      await this.fetchData()
+    },
+    handleQuickAddClose() {
+      this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
+      if (this.tableHeight) {
+        if (this.quickAddTopicDialogVisible) {
+          this.tableHeight = this.tableHeight - 62
+        } else {
+          this.tableHeight = this.tableHeight + 62
+        }
+      }
+    },
+    async saveIssue(data) {
+      const res = await addIssue(data)
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Added'),
+        type: 'success'
+      })
+      this.backToFirstPage()
+      this.loadData()
+      this.addTopicDialogVisible = false
+      this.$refs['quickAddIssue'].form.name = ''
+      return res
+    },
+    advancedAddIssue(form) {
+      this.addTopicDialogVisible = true
+      this.parentId = 0
+      this.form = form
+    },
+    handleClick(row, column) {
+      if (column.type === 'action') {
+        return false
+      }
+      if (column.type === 'expand' && row.family) {
+        return this.$refs.issueList.toggleRowExpansion(row)
+      }
+      this.$router.push({ name: 'IssueDetail', params: { issueId: row.id, project: row.project }})
+    },
+    handleSortChange({ prop, order }) {
+      const orderBy = this.checkOrder(order)
+      if (orderBy) {
+        this.sort = prop + ':' + orderBy
+      } else {
+        this.sort = orderBy
+      }
+      this.loadData()
+    },
+    checkOrder(order) {
+      if (order === 'descending') {
+        return 'desc'
+      }
+      if (order === 'ascending') {
+        return 'asc'
+      }
+      return false
+    },
+    async handleCurrentChange(val) {
+      this.listQuery.offset = val.limit * val.page - val.limit
+      this.listQuery.limit = val.limit
+      this.listQuery.page = val.page
+      await this.loadData()
+      const storeListQuery = await this.getListQuery()
+      storeListQuery['testPlan'] = this.listQuery
+      await this.setListQuery(storeListQuery)
+    },
+    backToFirstPage() {
+      this.listQuery.page = 1
+      this.listQuery.offset = 0
+    },
     async fetchAllDownloadData() {
       this.allDataLoading = true
-      const res = await getProjectIssueList(this.selectedProjectId, this.getParams(this.totalData))
+      const res = await getProjectIssueList(
+        this.selectedProjectId,
+        this.getParams(this.listQuery.total)
+      )
       this.allDownloadData = res.data.issue_list
       this.allDataLoading = false
     },
@@ -314,60 +497,10 @@ export default {
       this.listData = await this.getAllTestFiles(listData)
       this.listLoading = false
     },
-    onChangeFilter() {
-      this.backToFirstPage()
-      this.loadData()
-    },
+    // TODO
     getOptionsData(option_name) {
       if (option_name === 'tracker') return this.trackerList
       return this[option_name]
-    },
-    getParams(limit) {
-      const result = {
-        offset: this.listQuery.offset,
-        limit: limit || this.listQuery.limit,
-        tracker_id: this.tracker_id
-      }
-      if (this.sort) {
-        result['sort'] = this.sort
-      }
-      if (!this.displayClosed) {
-        result['status_id'] = 'open'
-      }
-      Object.keys(this.filterValue).forEach((item) => {
-        if (this.filterValue[item]) {
-          result[item + '_id'] = this.filterValue[item]
-        }
-      })
-      if (this.keyword) {
-        result['search'] = this.keyword
-      }
-      return result
-    },
-    async loadSelectionList() {
-      if (this.selectedProjectId === -1) return
-      await Promise.all([
-        getProjectUserList(this.selectedProjectId)
-      ]).then(res => {
-        const [assigneeList] = res.map(
-          item => item.data
-        )
-        this.assigned_to = [
-          { name: this.$t('Issue.Unassigned'), id: 'null' },
-          {
-            name: this.$t('Issue.me'),
-            login: '-Me-',
-            id: this.userId,
-            class: 'bg-yellow-100'
-          },
-          ...assigneeList.user_list
-        ]
-        if (this.userRole === 'Engineer') {
-          this.$set(this.filterValue, 'assigned_to', this.userId)
-          this.$set(this.originFilterValue, 'assigned_to', this.userId)
-        }
-      })
-      await this.loadVersionList(this.fixed_version_closed)
     },
     handleSelectionChange(list) {
       this.selectedTestPlan = list
@@ -383,30 +516,6 @@ export default {
         issue['test_files'] = result[index].data
       }
       return Promise.resolve(issueList)
-    },
-    async getIssueFamilyData(row, expandedRows) {
-      this.expandedRow = expandedRows
-      if (expandedRows.find((item) => (item.id === row.id))) {
-        try {
-          await this.$set(row, 'isLoadingFamily', true)
-          const family = await getIssueFamily(row.id)
-          const data = family.data
-          if (data.hasOwnProperty('parent')) {
-            await this.$set(row, 'parent', data.parent)
-          }
-          if (data.hasOwnProperty('children')) {
-            await this.$set(row, 'children', data.children)
-          }
-          if (data.hasOwnProperty('relations')) {
-            await this.$set(row, 'relations', data.relations)
-          }
-          this.$set(row, 'isLoadingFamily', false)
-        } catch (e) {
-          //   null
-          return Promise.resolve()
-        }
-      }
-      return Promise.resolve()
     },
     async fetchDataExcel(selectedTestPlan) {
       const apiRequest = []
@@ -569,10 +678,6 @@ export default {
     },
     onContextMenu({ row, column, event }) {
       this.handleContextMenu(row, column, event)
-    },
-    collapseExpendRow(issueId) {
-      const row = this.listData.find((item) => item.id === issueId)
-      this.$refs.issueList.toggleRowExpansion(row, false)
     }
   }
 }
@@ -581,6 +686,11 @@ export default {
 >>> .row-expand-cover .el-table__expand-icon {
   display: none
 }
+
+.download {
+  @apply border-none;
+}
+
 .family {
   @apply space-y-3;
   .title {

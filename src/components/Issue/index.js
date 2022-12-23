@@ -4,7 +4,7 @@ import AddIssue from './AddIssue'
 import QuickAddIssue from './QuickAddIssue'
 import SearchFilter from './SearchFilter'
 import CustomFilter from './CustomFilter'
-import ExpandSection from './ExpandSection'
+import IssueExpand from './IssueExpand'
 import IssueSelect from './IssueSelect'
 import ContextMenu from './ContextMenu'
 import Priority from './Priority'
@@ -17,7 +17,7 @@ export {
   QuickAddIssue,
   SearchFilter,
   CustomFilter,
-  ExpandSection,
+  IssueExpand,
   IssueSelect,
   ContextMenu,
   Priority,

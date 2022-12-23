@@ -82,7 +82,7 @@
       >
         <el-table-column type="expand" class-name="informationExpand">
           <template slot-scope="{row}">
-            <ExpandSection
+            <IssueExpand
               :issue="row"
             />
           </template>
@@ -146,7 +146,7 @@ import { addIssue, getIssueFamily, getIssuePriority, getIssueStatus, getIssueTra
 import axios from 'axios'
 import { BasicData, Table, Pagination } from '@/mixins'
 import { ProjectListSelector } from '@/components'
-import { Status, Priority, Tracker, ExpandSection, ContextMenu } from '@/components/Issue'
+import { Status, Priority, Tracker, IssueExpand, ContextMenu } from '@/components/Issue'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -161,7 +161,7 @@ export default {
     Status,
     Tracker,
     ProjectListSelector,
-    ExpandSection
+    IssueExpand
   },
   mixins: [BasicData, Table, Pagination],
   data() {
@@ -492,7 +492,7 @@ export default {
     getRowClass({ row }) {
       const result = []
       if (this.isRelationIssueLoading(row)) {
-        result.push('row-expend-loading')
+        result.push('row-expand-loading')
       } else if (this.hasRelationIssue(row) === false) {
         result.push('row-expand-cover')
       }
@@ -594,7 +594,7 @@ export default {
   padding-bottom: 10px;
 }
 
->>> .row-expend-loading .el-table__expand-column .cell {
+>>> .row-expand-loading .el-table__expand-column .cell {
   padding: 0;
 
   .el-table__expand-icon {

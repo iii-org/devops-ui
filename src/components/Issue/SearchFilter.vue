@@ -17,7 +17,9 @@
                 type="info"
                 class="flex-1"
               >
-                <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
+                <el-checkbox v-model="fixed_version_closed">
+                  {{ $t('Issue.DisplayClosedVersion') }}
+                </el-checkbox>
               </el-tag>
             </div>
             <component
@@ -39,8 +41,9 @@
               @change="onChangeFilter"
             >
               <el-option
-                v-for="item in (dimension.value === 'status') ?
-                  filterClosedStatus(getOptionsData(dimension.value)) : getOptionsData(dimension.value)"
+                v-for="item in (dimension.value === 'status')
+                  ? filterClosedStatus(getOptionsData(dimension.value))
+                  : getOptionsData(dimension.value)"
                 :key="(dimension.value === 'assigned_to') ? item.login : item.id"
                 :label="getSelectedLabel(item)"
                 :class="{[item.class]:item.class}"
@@ -75,7 +78,8 @@
         icon="el-icon-s-operation"
         type="text"
         class="headerTextColor"
-      > {{ displayFilterValue }}
+      >
+        {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" />
       </el-button>
     </el-popover>

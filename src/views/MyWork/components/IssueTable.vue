@@ -19,11 +19,11 @@
       >
         <el-table-column type="expand">
           <template slot-scope="{row}">
-            <ExpandSection
+            <IssueExpand
               :issue="row"
               @update-list="fetchData"
               @on-context-menu="onContextMenu"
-              @collapse-expend-row="collapseExpendRow"
+              @handle-expand-row="handleExpandRow"
             />
           </template>
         </el-table-column>
@@ -182,11 +182,11 @@ import { mapGetters, mapActions } from 'vuex'
 import { getUserIssueList } from '@/api/user'
 import { getIssueFamily } from '@/api/issue'
 import { ContextMenu, Pagination, CancelRequest } from '@/mixins'
-import { Status, Tracker, Priority, ExpandSection } from '@/components/Issue'
+import { Status, Tracker, Priority, IssueExpand } from '@/components/Issue'
 
 export default {
   name: 'MyWorkIssueTable',
-  components: { Status, Tracker, Priority, ExpandSection },
+  components: { Status, Tracker, Priority, IssueExpand },
   mixins: [ContextMenu, Pagination, CancelRequest],
   props: {
     from: {
@@ -396,7 +396,7 @@ export default {
     hasRelationIssue(row) {
       return row.family
     },
-    collapseExpendRow(issueId) {
+    collapseExpandRow(issueId) {
       const row = this.listData.find((item) => item.id === issueId)
       this.$refs.issueList.toggleRowExpansion(row, false)
     }
@@ -431,7 +431,7 @@ export default {
   padding-bottom: 10px;
 }
 
->>> .row-expend-loading .el-table__expand-column .cell {
+>>> .row-expand-loading .el-table__expand-column .cell {
   padding: 0;
 
   .el-table__expand-icon {

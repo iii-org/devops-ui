@@ -378,9 +378,8 @@ export default {
     ContextmenuSubmenu,
     ProjectIssueDetail,
     SettingRelationIssue,
-    IssueMatrix: () => import('@/views/Project/IssueDetail/components/IssueMatrix'),
+    IssueMatrix: () => import('@/views/Project/IssueDetail/components/IssueMatrix')
     // eslint-disable-next-line vue/no-unused-components
-    Tracker
   },
   directives: {
     contextmenu: directive

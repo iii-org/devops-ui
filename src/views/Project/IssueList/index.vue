@@ -20,7 +20,7 @@
           filterValue: filterValue,
           keyword: keyword,
           displayClosed: displayClosed,
-          fixed_version_closed:fixed_version_closed
+          fixed_version_closed: fixed_version_closed
         }"
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
@@ -63,6 +63,7 @@
               slot="reference"
               class="buttonPrimaryReverse"
               icon="el-icon-download"
+              size="mini"
             >
               {{ $t('File.Download') }}
             </el-button>
@@ -143,11 +144,11 @@
             class-name="informationExpand"
           >
             <template slot-scope="{row}">
-              <ExpandSection
+              <IssueExpand
                 :issue="row"
                 @on-context-menu="onContextMenu"
                 @update-list="loadData"
-                @collapse-expend-row="collapseExpendRow"
+                @handle-expand-row="handleExpandRow"
               />
             </template>
           </el-table-column>
@@ -379,27 +380,24 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import {
-  getProjectUserList,
-  getProjectVersion,
-  getTagsByProject
-} from '@/api/projects'
+import { mapActions } from 'vuex'
 import { getProjectIssueList } from '@/api_v2/projects'
 import {
   addIssue,
-  getIssueFamily,
   getIssueFieldDisplay,
   putIssueFieldDisplay
 } from '@/api/issue'
 import { excelTranslate } from '@/utils/excelTableTranslate'
-import { BasicData, Pagination, ContextMenu } from '@/mixins'
+import {
+  BasicData,
+  IssueExpand,
+  SearchFilter,
+  Pagination,
+  ContextMenu
+} from '@/mixins'
 import { ProjectListSelector } from '@/components'
 import {
   QuickAddIssue,
-  ExpandSection,
-  SearchFilter,
-  CustomFilter,
   Priority,
   Status,
   Tracker
@@ -417,21 +415,21 @@ export default {
   components: {
     ProjectListSelector,
     QuickAddIssue,
-    ExpandSection,
-    SearchFilter,
-    CustomFilter,
     Priority,
     Status,
     Tracker
   },
-  mixins: [BasicData, Pagination, ContextMenu],
+  mixins: [
+    BasicData,
+    IssueExpand,
+    SearchFilter,
+    Pagination,
+    ContextMenu
+  ],
   data() {
     return {
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
-      assigned_to: [],
-      fixed_version: [],
-      tags: [],
       form: {},
       selectedIssueList: [],
       allDataLoading: false,
@@ -451,38 +449,52 @@ export default {
       displayFields: [],
       filterOptions: Object.freeze([
         {
-          id: 1, value: 'status', placeholder: 'Status', tag: true,
-          label: this.$t('Issue.FilterDimensions.status')
+          id: 1,
+          label: this.$t('Issue.FilterDimensions.tracker'),
+          value: 'tracker',
+          placeholder: 'Type',
+          tag: true
         },
         {
-          id: 2, value: 'tags', placeholder: 'Tag',
-          label: this.$t('Issue.FilterDimensions.tags')
+          id: 2,
+          label: this.$t('Issue.FilterDimensions.status'),
+          value: 'status',
+          placeholder: 'Status',
+          tag: true
         },
         {
-          id: 3, value: 'tracker', placeholder: 'Type', tag: true,
-          label: this.$t('Issue.FilterDimensions.tracker')
+          id: 3,
+          label: this.$t('Issue.FilterDimensions.tags'),
+          value: 'tags',
+          placeholder: 'Tag'
         },
         {
-          id: 4, value: 'assigned_to', placeholder: 'Member',
-          label: this.$t('Issue.FilterDimensions.assigned_to')
+          id: 4,
+          label: this.$t('Issue.FilterDimensions.assigned_to'),
+          value: 'assigned_to',
+          placeholder: 'Member'
         },
         {
-          id: 5, value: 'fixed_version', placeholder: 'Version',
-          label: this.$t('Issue.FilterDimensions.fixed_version')
+          id: 5,
+          label: this.$t('Issue.FilterDimensions.fixed_version'),
+          value: 'fixed_version',
+          placeholder: 'Version'
         },
         {
-          id: 6, value: 'priority', placeholder: 'Priority', tag: true,
-          label: this.$t('Issue.FilterDimensions.priority')
+          id: 6,
+          label: this.$t('Issue.FilterDimensions.priority'),
+          value: 'priority',
+          placeholder: 'Priority',
+          tag: true
         }
       ]),
-      filterValue: {},
-      keyword: null,
-      fixed_version_closed: false,
-      displayClosed: false
+      key: 'issueList',
+      parentId: 0,
+      sort: '',
+      lastIssueListCancelToken: null
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'fixedVersionShowClosed']),
     hasSelectedIssue() {
       return this.selectedIssueList.length > 0
     },
@@ -491,43 +503,15 @@ export default {
         return this.columnsOptions.map(item => item.field)
       }
       return this.displayFields
-    },
-    isDisabled() {
-      return this.mainSelectedProjectId === -1
-    },
-    mainSelectedProjectId() {
-      return this.filterValue.project || this.selectedProjectId
     }
   },
-  watch: {
-    selectedProjectId: {
-      async handler() {
-        this.keyword = ''
-        await this.onChangeFilter()
-        await this.fetchInitData()
-      }
-    }
-  },
-  async mounted() {
+  mounted() {
     this.fetchInitData()
   },
   methods: {
-    ...mapActions('projects', [
-      'getListQuery',
-      'setListQuery',
-      'getIssueFilter',
-      'setIssueFilter',
-      'getKeyword',
-      'setKeyword',
-      'getDisplayClosed',
-      'setDisplayClosed',
-      'getFixedVersionShowClosed',
-      'setFixedVersionShowClosed'
-    ]),
+    ...mapActions('projects', ['getListQuery', 'setListQuery']),
     async fetchInitData() {
       await this.getStoredListQuery()
-      await this.getInitStoredData()
-      await this.loadSelectionList()
       await this.loadDisplayColumns()
       await this.loadData() // TODO: loadData should be called after getInitStoredData, will solve this problem on vuetify ui
     },
@@ -540,84 +524,8 @@ export default {
       this.allDataLoading = false
       return res.data.issue_list
     },
-    async getInitStoredData() {
-      const key = 'issueList'
-      const storedData = await this.fetchStoredData()
-      const { storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed } = storedData
-      this.filterValue = storedFilterValue[key] ? storedFilterValue[key] : {}
-      this.keyword = storedKeyword[key] ? storedKeyword[key] : null
-      this.displayClosed = storedDisplayClosed[key] ? storedDisplayClosed[key] : false
-      this.fixed_version_closed = storedVersionClosed[key] ? storedVersionClosed[key] : false
-    },
-    async fetchStoredData() {
-      let storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed
-      await Promise.all([
-        this.getIssueFilter(),
-        this.getKeyword(),
-        this.getDisplayClosed(),
-        this.getFixedVersionShowClosed()
-      ]).then((res) => {
-        const [filterValue, keyword, displayClosed, fixedVersionClosed] = res.map((item) => item)
-        storedFilterValue = filterValue
-        storedKeyword = keyword
-        storedDisplayClosed = displayClosed
-        storedVersionClosed = fixedVersionClosed
-      })
-      return { storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed }
-    },
-    getParams(limit) {
-      const result = {
-        offset: this.listQuery.offset,
-        limit: limit || this.listQuery.limit,
-        only_superproject_issues: !!this.filterValue.project
-      }
-      if (this.sort) {
-        result['sort'] = this.sort
-      }
-      if (!this.displayClosed) {
-        result['status_id'] = 'open'
-      }
-      Object.keys(this.filterValue).forEach((item) => {
-        if (this.filterValue[item]) {
-          if (item === 'tags' && this.filterValue[item].length > 0) {
-            result[item] = this.filterValue[item].join()
-          } else {
-            (result[item + '_id'] = this.filterValue[item])
-          }
-        }
-      })
-      if (this.keyword) {
-        result['search'] = this.keyword
-      }
-      return result
-    },
-    async onChangeFilter() {
-      const key = 'list'
-      const storedData = await this.fetchStoredData()
-      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
-      storedFilterValue[key] = this.filterValue
-      storedKeyword[key] = this.keyword
-      storedDisplayClosed[key] = this.displayClosed
-      await this.setIssueFilter(storedFilterValue)
-      await this.setKeyword(storedKeyword)
-      await this.setDisplayClosed(storedDisplayClosed)
-      await this.backToFirstPage()
-      await this.loadData()
-    },
     handleSelectionChange(list) {
       this.selectedIssueList = list
-    },
-    async onChangeFilterForm(value) {
-      Object.keys(value).forEach((item) => {
-        this[item] = value[item]
-      })
-      if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
-        this.$delete(this.filterValue, 'tags')
-      }
-      if (value.isReloadFilterList) {
-        await this.loadSelectionList()
-      }
-      await this.onChangeFilter()
     },
     async fetchData() {
       let listData
@@ -626,13 +534,12 @@ export default {
         const cancelTokenSource = axios.CancelToken.source()
         this.lastIssueListCancelToken = cancelTokenSource
         const res = await getProjectIssueList(
-          this.filterValue.project || this.selectedProjectId,
+          this.mainSelectedProjectId,
           this.getParams(), {
             cancelToken: cancelTokenSource.token
           })
         listData = res.data.issue_list
         this.setNewListQuery(res.data.page)
-        await this.checkExpandedRowWhenFetchData(listData)
       } catch (e) {
         // null
       }
@@ -658,73 +565,7 @@ export default {
       const storeListQuery = await this.getListQuery()
       storeListQuery['issueList'] = this.listQuery
       await this.setListQuery(storeListQuery)
-      await this.fetchData()
-    },
-    async checkExpandedRowWhenFetchData(listData) {
-      if (this.expandedRow.length > 0) {
-        for (const row of this.expandedRow) {
-          const getIssue = listData.find((item) => item.id === row.id)
-          await this.getIssueFamilyData(getIssue, this.expandedRow)
-        }
-      }
-    },
-    async getIssueFamilyData(row, expandedRows) {
-      this.expandedRow = expandedRows
-      if (expandedRows.find((item) => item.id === row.id)) {
-        try {
-          await this.$set(row, 'isLoadingFamily', true)
-          const family = await getIssueFamily(row.id)
-          const data = family.data
-          this.formatIssueFamilyData(row, data)
-          this.$set(row, 'isLoadingFamily', false)
-        } catch (e) {
-          //   null
-          return Promise.resolve()
-        }
-      }
-      return Promise.resolve()
-    },
-    formatIssueFamilyData(row, data) {
-      if (data.hasOwnProperty('parent')) {
-        this.$set(row, 'parent', data.parent)
-      }
-      if (data.hasOwnProperty('children')) {
-        this.$set(row, 'children', data.children)
-      }
-      if (data.hasOwnProperty('relations')) {
-        this.$set(row, 'relations', data.relations)
-      }
-    },
-    async loadVersionList(status) {
-      let params = { status: 'open,locked' }
-      if (status) {
-        params = { status: 'open,locked,closed' }
-      }
-      const versionList = await getProjectVersion(this.filterValue.project || this.selectedProjectId, params)
-      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
-    },
-    async loadSelectionList() {
-      if (this.selectedProjectId === -1) return
-      await Promise.all([
-        getProjectUserList(this.filterValue.project || this.selectedProjectId),
-        getTagsByProject(this.filterValue.project || this.selectedProjectId)
-      ]).then(
-        (res) => {
-          const [assigneeList, tagsList] = res.map((item) => item.data)
-          this.tags = tagsList.tags
-          this.assigned_to = [
-            { name: this.$t('Issue.Unassigned'), id: 'null' },
-            {
-              name: this.$t('Issue.me'),
-              login: '-Me-',
-              id: this.userId,
-              class: 'bg-yellow-100'
-            },
-            ...assigneeList.user_list
-          ]
-        }
-      )
-      await this.loadVersionList(this.fixed_version_closed)
+      await this.loadData()
     },
     handleClick(row, column) {
       if (column.type === 'action') {
@@ -786,9 +627,6 @@ export default {
       const storedTabQuery = storeListQuery['issueList']
       if (storedTabQuery !== undefined) {
         this.listQuery = storedTabQuery
-        this.fetchData()
-      } else {
-        this.fetchData()
       }
       return Promise.resolve()
     },
@@ -804,9 +642,6 @@ export default {
     backToFirstPage() {
       this.listQuery.page = 1
       this.listQuery.offset = 0
-    },
-    onChangeFixedVersionStatus(value) {
-      this.fixed_version_closed = value
     },
     async downloadExcel(selectedIssueList) {
       if (selectedIssueList === 'allDownloadData') {
@@ -947,22 +782,6 @@ export default {
       })
       this.displayFields = res.data
       this.$nextTick(() => { this.$refs['issueList'].doLayout() })
-    },
-    updateCustomFilter() {
-      this.$refs.customFilter.fetchCustomFilter()
-    },
-    cleanFilter() {
-      this.$refs.customFilter.resetApplyFilter()
-    },
-    applyCustomFilter(filters) {
-      const { result, displayClosed, fixed_version_closed } = filters
-      this.onChangeFilterForm({ filterValue: result })
-      this.displayClosed = displayClosed
-      this.fixed_version_closed = fixed_version_closed
-    },
-    collapseExpendRow(issueId) {
-      const row = this.listData.find((item) => item.id === issueId)
-      this.$refs['issueList'].toggleRowExpansion(row, false)
     }
   }
 }
@@ -971,6 +790,10 @@ export default {
 <style lang="scss" scoped>
 >>> .row-expand-cover .el-table__expand-icon {
   display: none
+}
+
+.download {
+  @apply border-none;
 }
 
 .el-table .el-button {
@@ -982,4 +805,50 @@ export default {
     margin: 0;
   }
 }
+
+// TODO
+// .wrapper {
+//   height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
+// }
+
+// >>> .el-table__body-wrapper {
+//   overflow-y: auto;
+// }
+
+// >>> .el-table {
+//   .hide-expand-icon {
+//     .el-table__expand-column .cell {
+//       display: none;
+//     }
+//   }
+
+//   .action {
+//     @apply border-0;
+//   }
+// }
+
+// >>> .el-table__expanded-cell {
+//   font-size: 0.875em;
+//   padding-top: 10px;
+//   padding-bottom: 10px;
+// }
+
+// >>> .row-expand-loading .el-table__expand-column .cell {
+//   padding: 0;
+
+//   .el-table__expand-icon {
+//     .el-icon-arrow-right {
+//       animation: rotating 2s linear infinite;
+//     }
+
+//     .el-icon-arrow-right:before {
+//       content: '\e6cf';
+//       font-size: 1.25em;
+//     }
+//   }
+// }
+
+// >>> .context-menu {
+//   cursor: context-menu;
+// }
 </style>

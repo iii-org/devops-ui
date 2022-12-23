@@ -146,7 +146,7 @@
                       {{ $t('Issue.TraceabilityMatrix') }}
                     </el-button>
                   </div>
-                  <ExpandSection
+                  <IssueExpand
                     :issue="$data"
                     :family="countRelationIssue > 0"
                     :popup="true"
@@ -332,7 +332,7 @@ import { UTCtoLocalTime } from '@/filters'
 import { atob } from '@/utils/base64'
 import getPageTitle from '@/utils/getPageTitle'
 import { ContextMenu } from '@/mixins'
-import { Status, Tracker, ExpandSection } from '@/components/Issue'
+import { Status, Tracker, IssueExpand } from '@/components/Issue'
 import {
   IssueForm,
   IssueNotesDialog,
@@ -367,7 +367,7 @@ export default {
     IssueFiles,
     IssueMatrix,
     RelatedCollectionDialog,
-    ExpandSection,
+    IssueExpand,
     AdminCommitLog,
     WhiteBoardTable
   },
