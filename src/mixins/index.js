@@ -1,4 +1,5 @@
 import BasicData from './BasicData.js'
+import Columns from './Columns'
 import SearchFilter from './SearchFilter'
 import SearchBar from './SearchBar.js'
 import Pagination from './Pagination.js'
@@ -13,6 +14,7 @@ import IssueList from './IssueList'
 
 export {
   BasicData,
+  Columns,
   SearchFilter,
   SearchBar,
   Pagination,

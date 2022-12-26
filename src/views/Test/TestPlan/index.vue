@@ -256,7 +256,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import { getProjectIssueList } from '@/api_v2/projects'
 import { getIssue, addIssue } from '@/api/issue'
 import { getTestFileByTestPlan } from '@/api/qa'
@@ -359,19 +359,9 @@ export default {
     this.fetchInitData()
   },
   methods: {
-    ...mapActions('projects', ['getListQuery', 'setListQuery']),
     async fetchInitData() {
       await this.fetchAllDownloadData()
-      await this.getStoredListQuery()
       await this.loadData()
-    },
-    async getStoredListQuery() {
-      const storeListQuery = await this.getListQuery()
-      const storedTabQuery = storeListQuery['testPlan']
-      if (storedTabQuery !== undefined) {
-        this.listQuery = storedTabQuery
-      }
-      return Promise.resolve()
     },
     async fetchData() {
       let listData
@@ -396,22 +386,6 @@ export default {
       if (this.lastIssueListCancelToken && this.listLoading) {
         this.lastIssueListCancelToken.cancel()
       }
-    },
-    setNewListQuery(pageInfo) {
-      const { offset, limit, current, total, pages } = pageInfo
-      if (pages !== 0 && current > pages) {
-        this.resetListQuery()
-      } else {
-        this.listQuery = { offset, limit, total, page: current }
-      }
-    },
-    async resetListQuery() {
-      this.listQuery.offset = 0
-      this.listQuery.page = 1
-      const storeListQuery = await this.getListQuery()
-      storeListQuery['testPlan'] = this.listQuery
-      await this.setListQuery(storeListQuery)
-      await this.fetchData()
     },
     handleQuickAddClose() {
       this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
@@ -467,15 +441,6 @@ export default {
         return 'asc'
       }
       return false
-    },
-    async handleCurrentChange(val) {
-      this.listQuery.offset = val.limit * val.page - val.limit
-      this.listQuery.limit = val.limit
-      this.listQuery.page = val.page
-      await this.loadData()
-      const storeListQuery = await this.getListQuery()
-      storeListQuery['testPlan'] = this.listQuery
-      await this.setListQuery(storeListQuery)
     },
     backToFirstPage() {
       this.listQuery.page = 1

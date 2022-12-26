@@ -16,7 +16,6 @@
         :placeholder="$t('Git.searchBranchOrCommitId')"
         prefix-icon="el-icon-search"
         style="width: 250px"
-        @input="onSearch"
       />
     </ProjectListSelector>
     <el-divider />
@@ -254,6 +253,13 @@ export default {
       downloadList: []
     }
   },
+  watch: {
+    async keyword(value) {
+      this.params.search = value
+      this.params.page = 1
+      await this.fetchData()
+    }
+  },
   beforeRouteEnter(to, from, next) {
     if (from.name === 'SbomReport') {
       next((vm) => {
@@ -284,11 +290,6 @@ export default {
     setListData(res) {
       this.sbomList = res.data.Sbom_list
       this.listQuery = res.data.page
-    },
-    async onSearch(keyword) {
-      this.params.search = keyword
-      this.params.page = 1
-      await this.fetchData()
     },
     async onPagination(query) {
       const { page, limit } = query

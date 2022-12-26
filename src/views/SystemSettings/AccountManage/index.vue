@@ -13,7 +13,6 @@
         prefix-icon="el-icon-search"
         :placeholder="$t('User.SearchAccount')"
         style="width: 250px; float: right"
-        @input="onSearch"
       />
     </div>
     <el-divider />
@@ -146,6 +145,13 @@ export default {
   computed: {
     ...mapGetters(['userId'])
   },
+  watch: {
+    async keyword(value) {
+      this.params.search = value
+      this.params.page = 1
+      await this.fetchData()
+    }
+  },
   beforeRouteEnter(to, from, next) {
     if (from.name === 'ParticipateProject') {
       next((vm) => {
@@ -169,11 +175,6 @@ export default {
       this.listQuery = allUser.page
       this.userList = allUser.user_list.filter(item => item.id !== this.userId)
       this.listLoading = false
-    },
-    async onSearch(keyword) {
-      this.params.search = keyword
-      this.params.page = 1
-      await this.fetchData()
     },
     async onPagination(query) {
       const { page, limit } = query

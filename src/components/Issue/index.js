@@ -7,6 +7,7 @@ import CustomFilter from './CustomFilter'
 import IssueExpand from './IssueExpand'
 import IssueSelect from './IssueSelect'
 import ContextMenu from './ContextMenu'
+import Columns from './Columns'
 import Priority from './Priority'
 import Tracker from './Tracker'
 import Status from './Status'
@@ -20,6 +21,7 @@ export {
   IssueExpand,
   IssueSelect,
   ContextMenu,
+  Columns,
   Priority,
   Tracker,
   Status,

@@ -6,7 +6,6 @@
         :placeholder="$t('Git.searchBranchOrCommitId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
-        @input="onSearch"
       />
     </ProjectListSelector>
     <el-divider />
@@ -153,6 +152,13 @@ export default {
       testList: []
     }
   },
+  watch: {
+    async keyword(value) {
+      this.params.search = value
+      this.params.page = 1
+      await this.fetchData()
+    }
+  },
   beforeRouteEnter(to, from, next) {
     if (from.name === 'DockerReport') {
       next((vm) => {
@@ -182,11 +188,6 @@ export default {
     },
     durationText(duration) {
       return duration ? this.$dayjs.duration(duration, 'seconds').humanize() : '-'
-    },
-    async onSearch(keyword) {
-      this.params.search = keyword
-      this.params.page = 1
-      await this.fetchData()
     },
     async onPagination(query) {
       const { page, limit } = query

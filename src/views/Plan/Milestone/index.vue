@@ -164,36 +164,13 @@
           </el-button>
         </el-popover>
         <el-divider v-if="activeTab === 'WBS'" direction="vertical" />
-        <el-popover
-          v-if="activeTab === 'WBS'"
-          placement="bottom"
-          trigger="click"
-        >
-          <el-form class="display-column">
-            <el-form-item
-              v-for="item in columnsOptions"
-              :key="item.field"
-            >
-              <el-checkbox
-                :value="getCheckColumnValue(item.field)"
-                :label="item.display"
-                @change="onCheckColumnChange(item.field)"
-              >
-                {{ item.display }}
-              </el-checkbox>
-            </el-form-item>
-          </el-form>
-          <el-button
-            v-if="activeTab === 'WBS'"
-            slot="reference"
-            icon="el-icon-s-operation"
-            type="text"
-            class="headerTextColor"
-          >
-            {{ $t('Milestone.Display') }}
-            <em class="el-icon-arrow-down el-icon--right" />
-          </el-button>
-        </el-popover>
+        <Columns
+          v-if="activeTab==='WBS'"
+          :columns-options="columnsOptions"
+          :display-fields.sync="displayFields"
+          :filter-value="filterValue"
+          :type="'wbs_cache'"
+        />
         <el-divider direction="vertical" />
       </SearchFilter>
     </ProjectListSelector>
@@ -279,12 +256,8 @@ import {
   patchIssueListDownload,
   postIssueListDownload
 } from '@/api/projects'
-import {
-  addIssue,
-  getIssueFieldDisplay,
-  putIssueFieldDisplay
-} from '@/api/issue'
-import { SearchFilter } from '@/mixins'
+import { addIssue } from '@/api/issue'
+import { Columns, SearchFilter } from '@/mixins'
 import { ProjectListSelector, ElSelectAll } from '@/components'
 import { QuickAddIssue } from '@/components/Issue'
 import Board from '@/views/Plan/Milestone/components/Board'
@@ -302,7 +275,7 @@ export default {
     Gantt,
     WBS
   },
-  mixins: [SearchFilter],
+  mixins: [Columns, SearchFilter],
   data() {
     return {
       quickAddTopicDialogVisible: false,
@@ -390,7 +363,6 @@ export default {
         { display: this.$t('Issue.DoneRatio'), field: 'DoneRatio' },
         { display: this.$t('Issue.points'), field: 'points' }
       ]),
-      displayFields: [],
       key: 'milestone',
       parentId: 0,
       activeTab: 'WBS',
@@ -428,15 +400,6 @@ export default {
         result[item] = this[item]
       })
       return result
-    },
-    columns() {
-      if (this.displayFields.length <= 0) {
-        return this.columnsOptions.map((item) => item.field)
-      }
-      return this.displayFields
-    },
-    deploy_column() {
-      return this.columnsOptions.filter((item) => this.columns.includes(item.field))
     },
     groupByOptions() {
       return [{
@@ -498,46 +461,17 @@ export default {
   },
   methods: {
     async fetchInitData() {
-      await this.loadDisplayColumns()
       await this.loadReportStatus()
       await this.loadData()
     },
     onRelationIssue(value) {
       this.relationIssue = value
     },
-    async loadDisplayColumns() {
-      const res = await getIssueFieldDisplay({
-        project_id: this.selectedProjectId,
-        type: 'wbs_cache'
-      })
-      this.displayFields = res.data
-    },
     handleUpdateLoading(value) {
       this.updateLoading = value
     },
     handleUpdateStatus(value) {
       this.lastUpdated = value
-    },
-    getCheckColumnValue(value) {
-      if (this.displayFields.length <= 0) return true
-      return this.displayFields.includes(value)
-    },
-    async onCheckColumnChange(value) {
-      if (this.displayFields.includes(value)) {
-        const columnIndex = this.displayFields.findIndex((item) => item === value)
-        this.displayFields.splice(columnIndex, 1)
-      } else {
-        this.displayFields.push(value)
-      }
-      if (this.displayFields.length <= 0) {
-        this.displayFields = this.columnsOptions.map((item) => item.field)
-      }
-      const res = await putIssueFieldDisplay({
-        project_id: this.selectedProjectId,
-        type: 'wbs_cache',
-        display_fields: this.displayFields
-      })
-      this.displayFields = res.data
     },
     async onChangeFilter() {
       if (this.key) {
@@ -694,12 +628,6 @@ export default {
   &.is-panel {
     width: calc(100% - 750px);
     transition: width 1s;
-  }
-}
-
-.display-column {
-  .el-form-item {
-    margin: 0;
   }
 }
 </style>

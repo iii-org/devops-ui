@@ -69,34 +69,12 @@
             </el-button>
           </el-popover>
         </span>
-        <el-popover
-          placement="bottom"
-          trigger="click"
-        >
-          <el-form class="display-column">
-            <el-form-item
-              v-for="item in columnsOptions"
-              :key="item.field"
-            >
-              <el-checkbox
-                :value="getCheckColumnValue(item.field)"
-                :label="item.display"
-                @change="onCheckColumnChange(item.field)"
-              >
-                {{ item.display }}
-              </el-checkbox>
-            </el-form-item>
-          </el-form>
-          <el-button
-            slot="reference"
-            icon="el-icon-s-operation"
-            type="text"
-            class="headerTextColor"
-          >
-            {{ $t('Milestone.Display') }}
-            <em class="el-icon-arrow-down el-icon--right" />
-          </el-button>
-        </el-popover>
+        <Columns
+          :columns-options="columnsOptions"
+          :display-fields.sync="displayFields"
+          :filter-value="filterValue"
+          :type="'issue_list'"
+        />
         <el-divider direction="vertical" />
       </SearchFilter>
     </ProjectListSelector>
@@ -380,16 +358,12 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
 import { getProjectIssueList } from '@/api_v2/projects'
-import {
-  addIssue,
-  getIssueFieldDisplay,
-  putIssueFieldDisplay
-} from '@/api/issue'
+import { addIssue } from '@/api/issue'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import {
   BasicData,
+  Columns,
   IssueExpand,
   SearchFilter,
   Pagination,
@@ -421,6 +395,7 @@ export default {
   },
   mixins: [
     BasicData,
+    Columns,
     IssueExpand,
     SearchFilter,
     Pagination,
@@ -446,7 +421,6 @@ export default {
         { display: this.$t('Issue.assigned_to'), field: 'assigned_to' },
         { display: this.$t('Issue.DoneRatio'), field: 'DoneRatio' }
       ]),
-      displayFields: [],
       filterOptions: Object.freeze([
         {
           id: 1,
@@ -497,22 +471,13 @@ export default {
   computed: {
     hasSelectedIssue() {
       return this.selectedIssueList.length > 0
-    },
-    columns() {
-      if (this.displayFields.length <= 0) {
-        return this.columnsOptions.map(item => item.field)
-      }
-      return this.displayFields
     }
   },
   mounted() {
     this.fetchInitData()
   },
   methods: {
-    ...mapActions('projects', ['getListQuery', 'setListQuery']),
     async fetchInitData() {
-      await this.getStoredListQuery()
-      await this.loadDisplayColumns()
       await this.loadData() // TODO: loadData should be called after getInitStoredData, will solve this problem on vuetify ui
     },
     async fetchAllDownloadData() {
@@ -550,22 +515,6 @@ export default {
       if (this.lastIssueListCancelToken && this.listLoading) {
         this.lastIssueListCancelToken.cancel()
       }
-    },
-    setNewListQuery(pageInfo) {
-      const { offset, limit, current, total, pages } = pageInfo
-      if (pages !== 0 && current > pages) {
-        this.resetListQuery()
-      } else {
-        this.listQuery = { offset, limit, total, page: current }
-      }
-    },
-    async resetListQuery() {
-      this.listQuery.offset = 0
-      this.listQuery.page = 1
-      const storeListQuery = await this.getListQuery()
-      storeListQuery['issueList'] = this.listQuery
-      await this.setListQuery(storeListQuery)
-      await this.loadData()
     },
     handleClick(row, column) {
       if (column.type === 'action') {
@@ -621,23 +570,6 @@ export default {
       this.addTopicDialogVisible = true
       this.parentId = 0
       this.form = form
-    },
-    async getStoredListQuery() {
-      const storeListQuery = await this.getListQuery()
-      const storedTabQuery = storeListQuery['issueList']
-      if (storedTabQuery !== undefined) {
-        this.listQuery = storedTabQuery
-      }
-      return Promise.resolve()
-    },
-    async handleCurrentChange(val) {
-      this.listQuery.offset = val.limit * val.page - val.limit
-      this.listQuery.limit = val.limit
-      this.listQuery.page = val.page
-      await this.loadData()
-      const storeListQuery = await this.getListQuery()
-      storeListQuery['issueList'] = this.listQuery
-      await this.setListQuery(storeListQuery)
     },
     backToFirstPage() {
       this.listQuery.page = 1
@@ -751,37 +683,8 @@ export default {
           return '異常管理'
       }
     },
-    async loadDisplayColumns() {
-      const res = await getIssueFieldDisplay({
-        project_id: this.mainSelectedProjectId,
-        type: 'issue_list'
-      })
-      this.displayFields = res.data
-    },
     getRowClass({ row }) {
       return row.family ? '' : 'row-expand-cover'
-    },
-    getCheckColumnValue(value) {
-      if (this.displayFields.length <= 0) return true
-      return this.displayFields.includes(value)
-    },
-    async onCheckColumnChange(value) {
-      if (this.displayFields.includes(value)) {
-        const columnIndex = this.displayFields.findIndex(item => item === value)
-        this.displayFields.splice(columnIndex, 1)
-      } else {
-        this.displayFields.push(value)
-      }
-      if (this.displayFields.length <= 0) {
-        this.displayFields = this.columnsOptions.map(item => item.field)
-      }
-      const res = await putIssueFieldDisplay({
-        project_id: this.mainSelectedProjectId,
-        type: 'issue_list',
-        display_fields: this.displayFields
-      })
-      this.displayFields = res.data
-      this.$nextTick(() => { this.$refs['issueList'].doLayout() })
     }
   }
 }
@@ -798,12 +701,6 @@ export default {
 
 .el-table .el-button {
   border: none
-}
-
-.display-column {
-  .el-form-item {
-    margin: 0;
-  }
 }
 
 // TODO
