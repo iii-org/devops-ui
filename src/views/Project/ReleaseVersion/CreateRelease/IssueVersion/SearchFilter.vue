@@ -52,12 +52,11 @@ export default {
   },
   computed: {
     displayFilterValue() {
-      const filterWord =
-      (this.isClosed ? this.$t('Issue.DisplayClosedIssue') : '') +
-      (this.keyword ? ', ' + this.keyword : '')
-      return filterWord.length > 0
-        ? `${this.$t('general.Filter')}: ${filterWord}`
-        : `${this.$t('general.Filter')}`
+      const filterWord = []
+      if (this.isClosed) filterWord.push(this.$t('Issue.DisplayClosedIssue'))
+      if (this.keyword) filterWord.push(this.keyword)
+      return filterWord.length === 0 ? this.$t('general.Filter')
+        : this.$t('general.Filter') + `: ${filterWord.concat()}`
     },
     isFilterChanged() {
       return this.isClosed || !!this.keyword

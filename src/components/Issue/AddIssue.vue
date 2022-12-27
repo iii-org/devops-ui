@@ -308,7 +308,7 @@
 </template>
 
 <script>
-import dayjs from 'dayjs'
+import { getLocalTime } from '@/utils/handleTime'
 import {
   getProjectAssignable,
   getProjectVersion,
@@ -334,7 +334,7 @@ const getFormTemplate = () => ({
   status_id: 1,
   fixed_version_id: '',
   assigned_to_id: '',
-  start_date: dayjs().format('YYYY-MM-DD'),
+  start_date: getLocalTime(Date.now(), 'YYYY-MM-DD'),
   due_date: '',
   done_ratio: '',
   estimated_hours: '',

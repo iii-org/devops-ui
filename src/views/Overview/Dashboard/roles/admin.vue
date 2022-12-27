@@ -9,7 +9,7 @@
         >
           <el-col class="text-right">
             <span class="text-sm ml-3">
-              *本表每小時更新一次 {{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(status.sync_date)]) }}</span>
+              *本表每小時更新一次 {{ $t('Dashboard.ADMIN.sync_date', [getLocalTime(status.sync_date)]) }}</span>
             <el-button
               size="small"
               icon="el-icon-refresh"
@@ -143,7 +143,7 @@
                     {{ $t('Dashboard.ADMIN.ProjectList.NAME') }}
                     <em class="ri-external-link-line" />
                   </span>
-                  <span class="text-right">{{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(lastUpdate)]) }} </span>
+                  <span class="text-right">{{ $t('Dashboard.ADMIN.sync_date', [getLocalTime(lastUpdate)]) }} </span>
                 </div>
               </div>
               <AdminProjectList
@@ -193,7 +193,7 @@ import {
   AdminOverview,
   AdminCommitLog
 } from '../components'
-import { UTCtoLocalTime } from '@/filters'
+import { getLocalTime } from '@/utils/handleTime'
 import { mapGetters } from 'vuex'
 import { CreateProjectDialog } from '@/views/Overview/ProjectList/components'
 
@@ -308,7 +308,7 @@ export default {
       const res = await getGitCommitLog(params)
       res.data.forEach((item, index) => {
         item['id'] = index
-        item['commit_time'] = UTCtoLocalTime(item['commit_time'])
+        item['commit_time'] = getLocalTime(item['commit_time'])
       })
       return Promise.resolve(res.data)
     },
@@ -334,8 +334,8 @@ export default {
     sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms))
     },
-    UTCtoLocalTime(value) {
-      return UTCtoLocalTime(value)
+    getLocalTime(value) {
+      return getLocalTime(value)
     },
     handleAdding() {
       this.$refs.createProjectDialog.showDialog = true

@@ -130,6 +130,7 @@ import { BasicData, Pagination, ProjectSelector } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getHarborScan } from '@/api_v2/harbor'
+import { getDurationTime } from '@/utils/handleTime'
 
 export default {
   name: 'DockerImage',
@@ -177,7 +178,7 @@ export default {
       this.listQuery = res.data.page
     },
     durationText(duration) {
-      return duration ? this.$dayjs.duration(duration, 'seconds').humanize() : '-'
+      return getDurationTime(0, duration)
     },
     async onSearch(keyword) {
       this.params.search = keyword

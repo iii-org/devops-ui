@@ -15,16 +15,15 @@
           placement="bottom"
         >
           <div slot="content">
-            {{ file.filename }} ({{ $dayjs(file.created_on).format('YYYY-MM-DD hh:mm:ss') }})
+            {{ file.filename + `(${getLocalTime(file.created_on)})` }}
           </div>
           <a
             class="el-upload-list__item-name"
             @mouseover="checkWidth"
             @click="handlePreview(file)"
           >
-            <em class="el-icon-document" />{{ file.filename }} ({{
-              $dayjs(file.created_on).format('YYYY-MM-DD hh:mm:ss')
-            }})
+            <em class="el-icon-document" />
+            {{ file.filename + `(${getLocalTime(file.created_on)})` }}
           </a>
         </el-tooltip>
       </el-col>
@@ -109,6 +108,7 @@ import { mapGetters } from 'vuex'
 import { deleteIssueFile } from '@/api/issue'
 import { downloadProjectFile } from '@/api/projects'
 import { btoa } from '@/utils/base64'
+import { getLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'IssueFiles',
@@ -264,6 +264,9 @@ export default {
         message: err,
         type: 'error'
       })
+    },
+    getLocalTime(time, format) {
+      return getLocalTime(time, format)
     }
   }
 }

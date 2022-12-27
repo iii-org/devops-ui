@@ -175,6 +175,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
 import PipelineSettingsTable from '@/views/Plan/Settings/components/PipelineSettingsTable'
 import { CancelRequest } from '@/mixins'
+import { getLocalTime } from '@/utils/handleTime'
 // import { triggerReport } from '@/utils/triggerReport'
 
 const listQuery = () => ({
@@ -275,7 +276,7 @@ export default {
       this.isUpdating = true
       getPipelines(this.selectedRepositoryId, { limit, start: startId }, { cancelToken: this.cancelToken })
         .then((res) => {
-          this.lastUpdateTime = this.$dayjs().utc(res.datetime).format('YYYY-MM-DD HH:mm:ss')
+          this.lastUpdateTime = getLocalTime(res.datetime)
           this.updatePipeExecs(res.data)
           this.listQuery = res.data.pagination
           this.listQuery.page = 1

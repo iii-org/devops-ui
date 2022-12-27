@@ -1,68 +1,66 @@
 <template>
-  <div>
-    <ToolBar>
-      <span slot="toolName">Clair</span>
-      <el-button
-        slot="link"
-        type="text"
-        icon="el-icon-position"
-        :class="!disabled ? 'linkTextColor' : ''"
-        :disabled="disabled"
-        @click="openClair"
-      >
-        {{ $t('TestReport.DetailReport') }}
-      </el-button>
-    </ToolBar>
-    <el-table
-      ref="table_clair"
-      v-loading="listLoading"
-      :element-loading-text="$t('Loading')"
-      class="mb-10"
-      :data="clair"
-      border
-      fit
-    >
-      <el-table-column align="center" :label="$t('DevOps.Tools')">Clair</el-table-column>
-      <el-table-column align="center" :label="$t('Clair.size')">
-        <template slot-scope="scope">
-          <span v-if="scope.row.size">{{ scope.row.size }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('Clair.high')">
-        <template slot-scope="scope">
-          <span v-if="scope.row.High">{{ scope.row.High }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('Clair.medium')">
-        <template slot-scope="scope">
-          <span v-if="scope.row.Medium">{{ scope.row.Medium }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('Clair.low')">
-        <template slot-scope="scope">
-          <span v-if="scope.row.Low">{{ scope.row.Low }}</span>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('Docker.Fixable')">
-        <template slot-scope="scope">
-          <span v-if="hasData(scope.row.fixable)">{{ scope.row.fixable }}</span>
-          <span v-else>0</span>
-        </template>
-      </el-table-column>
-    </el-table>
+  <div ref="table_clair">
+    <table class="test-report">
+      <caption>
+        <div class="caption">
+          <div />
+          <el-button
+            slot="link"
+            type="text"
+            icon="el-icon-position"
+            :class="hasClairData ? 'linkTextColor' : ''"
+            :disabled="!hasClairData"
+            @click="openClair"
+          >
+            {{ $t('TestReport.DetailReport') }}
+          </el-button>
+        </div>
+      </caption>
+      <tbody>
+        <tr>
+          <th id="">{{ $t('DevOps.Tools') }}</th>
+          <th id="">{{ $t('Clair.size') }}</th>
+          <th id="">{{ $t('Clair.high') }}</th>
+          <th id="">{{ $t('Clair.medium') }}</th>
+          <th id="">{{ $t('Clair.low') }}</th>
+          <th id="">{{ $t('Docker.Fixable') }}</th>
+        </tr>
+        <tr>
+          <td>Clair</td>
+          <template v-if="hasClairData">
+            <td>
+              <span v-if="hasEachItemData('size')">{{ clair[0].size }}</span>
+              <span v-else>-</span>
+            </td>
+            <td>
+              <span v-if="hasEachItemData('High')">{{ clair[0].High }}</span>
+              <span v-else>-</span>
+            </td>
+            <td>
+              <span v-if="hasEachItemData('Medium')">{{ clair[0].Medium }}</span>
+              <span v-else>-</span>
+            </td>
+            <td>
+              <span v-if="hasEachItemData('Low')">{{ clair[0].Low }}</span>
+              <span v-else>-</span>
+            </td>
+            <td>
+              <span v-if="hasEachItemData('fixable')">{{ clair[0].fixable }}</span>
+              <span v-else>0</span>
+            </td>
+          </template>
+          <template v-else>
+            <td colspan="5">{{ $t('general.NoData') }}</td>
+          </template>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script>
-import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
-
 export default {
   name: 'Clair',
-  components: { ToolBar },
   props: {
     clair: {
       type: Array,
@@ -74,14 +72,11 @@ export default {
     }
   },
   computed: {
-    disabled() {
-      return this.clair[0] ? Object.keys(this.clair[0]).length === 0 : true
+    hasClairData() {
+      return !!(this.clair && this.clair[0] && this.clair[0].status !== 'failed')
     },
-    hasData() {
-      return function (result) {
-        if (!result) return false
-        return result !== 'None' && Object.keys(result).length > 0
-      }
+    hasEachItemData() {
+      return key => !!(this.clair[0].hasOwnProperty(key))
     }
   },
   methods: {

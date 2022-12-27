@@ -161,9 +161,9 @@
           <el-tooltip
             v-else
             placement="bottom"
-            :content="scope.row.last_test_time | UTCtoLocalTime"
+            :content="getLocalTime(scope.row.last_test_time)"
           >
-            <span>{{ scope.row.last_test_time | relativeTime }}</span>
+            <span>{{ getRelativeTime(scope.row.last_test_time) }}</span>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -236,6 +236,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
 import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'
 import { SearchFilter, UpdateButton } from './components'
 
@@ -380,6 +381,12 @@ export default {
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
       this.$router.push({ name: 'IssueBoards', params: { projectName: selectedProject.name }})
+    },
+    getLocalTime(time) {
+      return getLocalTime(time)
+    },
+    getRelativeTime(time) {
+      return getRelativeTime(time)
     }
   }
 }

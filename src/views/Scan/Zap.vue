@@ -152,6 +152,7 @@ import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getZapScans } from '@/api/zap'
 import { getZapPod } from '@/api_v2/zap'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
+import { getDurationTime } from '@/utils/handleTime'
 
 export default {
   name: 'ScanZap',
@@ -183,12 +184,7 @@ export default {
       return sortedScans
     },
     durationText(start, end) {
-      if (end == null) {
-        return ''
-      }
-      const s = this.$dayjs.utc(start).unix()
-      const e = this.$dayjs.utc(end).unix()
-      return this.$dayjs.duration(e - s, 'seconds').humanize()
+      return getDurationTime(start, end)
     },
     showFullLog(log) {
       const wnd = window.open(' ')

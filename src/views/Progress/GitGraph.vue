@@ -16,7 +16,7 @@ import { mapGetters } from 'vuex'
 import { createGitgraph } from '@gitgraph/js'
 import { getGitGraphByRepo } from '@/api/git-graph'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { UTCtoLocalTime } from '@/filters'
+import { getLocalTime } from '@/utils/handleTime'
 import { BasicData } from '@/mixins'
 
 export default {
@@ -106,7 +106,7 @@ export default {
               // Check if new branch begins
               const commit_opts = {
                 subject: commit.message,
-                author: `${commit.author_name} <${UTCtoLocalTime(commit.committed_date)}>`,
+                author: `${commit.author_name} <${getLocalTime(commit.committed_date)}>`,
                 hash: commit.id
               }
               this.graph.commit(commit_opts)

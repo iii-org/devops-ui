@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import dayjs from 'dayjs'
+import { getLocalTime } from '@/utils/handleTime'
 import { mapActions, mapGetters } from 'vuex'
 import { refreshRancherCatalogs } from '@/api/rancher'
 import { getUserListByFilter } from '@/api/user'
@@ -182,7 +182,7 @@ const formTemplate = () => ({
   display: '',
   disabled: false,
   template_id: '',
-  start_date: dayjs().format('YYYY-MM-DD'),
+  start_date: getLocalTime(Date.now(), 'YYYY-MM-DD'),
   due_date: '',
   tag_name: '',
   argumentsForm: [],

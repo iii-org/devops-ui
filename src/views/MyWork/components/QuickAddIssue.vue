@@ -162,7 +162,8 @@ export default {
         const sendData = Object.assign({}, this.formData, {
           project_id: this.projectId
         })
-        this.handleIssueSave(sendData)
+        const formData = this.getFormData(sendData)
+        this.handleIssueSave(formData)
       })
     },
     onAdvancedSettingsClick() {
@@ -184,7 +185,8 @@ export default {
     },
     async handleIssueSave(data) {
       const assignedToId = data instanceof FormData
-        ? Number(data.get('assigned_to_id')) : data.assigned_to_id
+        ? Number(data.get('assigned_to_id'))
+        : data.assigned_to_id
       this.isLoading = true
       await addIssue(data)
         .then(() => {
@@ -200,6 +202,13 @@ export default {
           return error
         })
       this.isLoading = false
+    },
+    getFormData(data) {
+      const formData = new FormData()
+      Object.keys(data).forEach((item) => {
+        formData.append(item, data[item])
+      })
+      return formData
     }
   }
 }

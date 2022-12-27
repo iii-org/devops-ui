@@ -35,39 +35,47 @@
               >
                 <el-collapse-item :name="commit.id">
                   <template slot="title">
-                    <el-tooltip
-                      class="item"
-                      effect="light"
-                      :content="commit.commit_title"
-                      placement="bottom"
+                    <div
+                      :class="isAbled(commit.issues) ? 'cursor-pointer' : 'initial'"
+                      class="flex justify-between text-base"
+                      style="width: 95%"
                     >
-                      <div
-                        :class="isAbled(commit.issues) ? 'cursor-pointer' : 'initial'"
-                        class="flex justify-between text-base"
-                        style="width: 95%"
-                      >
-                        <div class="ellipsis">
-                          <span
-                            class="linkTextColor hover-underline cursor-pointer"
-                            @click.stop="toGitlab(commit.gitlab_url)"
-                          >
-                            <svg-icon icon-class="ion-git-commit-outline" />
-                            {{ commit.commit_short_id }}
-                          </span>
-                          <span>@ {{ commit.author_name }} -</span>
-                          <span
-                            v-for="id in commit.issue_id"
-                            :key="id"
-                            :class="commit.issue_hook[id.split('#')[1]] ? 'text-success hover-underline' : 'text-info'"
-                            @click.stop="toIssueDetail(id)"
-                          >
-                            {{ id }}
-                          </span>
+                      <div class="ellipsis">
+                        <span
+                          class="linkTextColor hover-underline cursor-pointer"
+                          @click.stop="toGitlab(commit.gitlab_url)"
+                        >
+                          <svg-icon icon-class="ion-git-commit-outline" />
+                          {{ commit.commit_short_id }}
+                        </span>
+                        <span>@ {{ commit.author_name }} -</span>
+                        <span
+                          v-for="id in commit.issue_id"
+                          :key="id"
+                          :class="commit.issue_hook[id.split('#')[1]] ? 'text-success hover-underline' : 'text-info'"
+                          @click.stop="toIssueDetail(id)"
+                        >
+                          {{ id }}
+                        </span>
+                        <el-tooltip
+                          class="item"
+                          placement="bottom"
+                          effect="light"
+                          :content="commit.commit_title"
+                        >
                           <span>&nbsp;{{ commit.commit_title }}</span>
-                        </div>
-                        <div>{{ relativeTime(commit.commit_time) }}</div>
+                        </el-tooltip>
                       </div>
-                    </el-tooltip>
+                      <div>
+                        <el-tooltip
+                          placement="bottom"
+                          effect="light"
+                          :content="getLocalTime(commit.commit_time)"
+                        >
+                          <span>{{ getRelativeTime(commit.commit_time) }}</span>
+                        </el-tooltip>
+                      </div>
+                    </div>
                   </template>
                   <section>
                     <ul
@@ -161,7 +169,7 @@ import { mapActions, mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { BasicData, Pagination, SearchBar } from '@/mixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { UTCtoLocalTime } from '@/filters'
+import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
 import { getHookByBranch } from '@/api/dashboard'
 import { getIssue } from '@/api/issue'
 import { Status } from '@/components/Issue'
@@ -182,23 +190,19 @@ export default {
   },
   computed: {
     ...mapGetters(['branchesByProject']),
-    relativeTime() {
-      return function (dateTime) {
-        return dateTime
-          ? this.$dayjs(dateTime)
-            .utc()
-            .local()
-            .fromNow()
-          : '-'
+    getRelativeTime() {
+      return (time) => getRelativeTime(time)
+    },
+    getLocalTime() {
+      return (time) => {
+        return getLocalTime(time)
       }
     },
     isAbled() {
-      return function (commitIssues) {
-        return commitIssues && commitIssues.length > 0
-      }
+      return (commitIssues) => commitIssues && commitIssues.length > 0
     },
     getIssueId() {
-      return function (branch) {
+      return (branch) => {
         let issue_id = []
         if (branch) {
           issue_id = Object.keys(branch).map((id) => `#${id}`)
@@ -295,7 +299,7 @@ export default {
         item['id'] = index
         item['issue_id'] = this.getIssueId(item['issue_hook'])
         item['issues'] = await this.getIssue(item['issue_id'], item['issue_hook'])
-        item['commit_time'] = UTCtoLocalTime(item['commit_time'])
+        item['commit_time'] = getLocalTime(item['commit_time'])
       })
       return res.data
     },

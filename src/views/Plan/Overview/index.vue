@@ -1,35 +1,26 @@
 <template>
-  <el-row id="project-overview" v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container" :gutter="10">
+  <el-row
+    id="project-overview"
+    v-loading="isLoading"
+    :element-loading-text="$t('Loading')"
+    class="app-container"
+    :gutter="10"
+  >
     <el-backtop target="#project-overview" />
     <ProjectListSelector>
-      <el-select
-        v-show="filterVisible"
-        ref="selectVersion"
-        v-model="selectedVersion"
-        :loading="isLoadingVersion"
-        :disabled="isLoading"
-        :placeholder="$t('Version.SelectVersion')"
-        clearable
-        filterable
-        @clear="clearSelectedVersion"
-        @change="onBlurSelectedVersion"
-      >
-        <el-option v-for="item in versionList" :key="item.id" :label="getSelectionLabel(item)" :value="item.id" />
-      </el-select>
-      <el-button v-show="!filterVisible" icon="el-icon-s-operation" type="text" class="headerTextColor" @click="onFilterSelection"> {{ displayFilterValue }}
-        <em class="el-icon-arrow-down el-icon--right" />
-      </el-button>
-      <template v-if="selectedVersion!==null">
-        <el-divider direction="vertical" />
-        <el-button class="buttonSecondaryReverse" size="small" icon="el-icon-close" @click="clearSelectedVersion">
-          {{ $t('Issue.CleanFilter') }}
-        </el-button>
-      </template>
+      <SearchFilter
+        :version-list="versionList"
+        :is-loading="isLoading"
+        :search-data.sync="searchData"
+      />
     </ProjectListSelector>
     <el-divider />
     <el-row :gutter="10">
       <el-col :xs="24" :md="12">
-        <IssueTrackingStatusCard ref="issueStatus" :progress-obj="progressObj" />
+        <IssueTrackingStatusCard
+          ref="issueStatus"
+          :progress-obj="progressObj"
+        />
       </el-col>
       <el-col :xs="24" :md="12">
         <WorkloadCard
@@ -42,7 +33,10 @@
     </el-row>
     <el-row :gutter="10">
       <el-col :xs="24" :md="12">
-        <ProjectUsersCard ref="projectUserList" :user-list="userList" />
+        <ProjectUsersCard
+          ref="projectUserList"
+          :user-list="userList"
+        />
       </el-col>
       <el-col :xs="24" :md="12">
         <TestStatusCard
@@ -53,28 +47,54 @@
         />
       </el-col>
     </el-row>
-    <el-dialog :visible.sync="fullIssuePriority" top="5vh" width="90%">
-      <WorkloadCard :statistics-obj="statisticsObj" :save-selected-item="saveSelectedItem" />
+    <el-dialog
+      :visible.sync="fullIssuePriority"
+      top="5vh"
+      width="90%"
+    >
+      <WorkloadCard
+        :statistics-obj="statisticsObj"
+        :save-selected-item="saveSelectedItem"
+      />
     </el-dialog>
   </el-row>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { getProjectVersion, getProjectIssueProgress, getProjectIssueStatistics, getProjectTest } from '@/api/projects'
+import {
+  getProjectVersion,
+  getProjectIssueProgress,
+  getProjectIssueStatistics,
+  getProjectTest
+} from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { IssueTrackingStatusCard, WorkloadCard, ProjectUsersCard, TestStatusCard } from './components'
+import {
+  IssueTrackingStatusCard,
+  WorkloadCard,
+  ProjectUsersCard,
+  TestStatusCard,
+  SearchFilter
+} from './components'
 
 export default {
   name: 'ProjectOverview',
-  components: { ProjectListSelector, IssueTrackingStatusCard, WorkloadCard, ProjectUsersCard, TestStatusCard },
+  components: {
+    ProjectListSelector,
+    IssueTrackingStatusCard,
+    WorkloadCard,
+    ProjectUsersCard,
+    TestStatusCard,
+    SearchFilter
+  },
   data() {
     return {
       versionList: [],
-      filterVisible: false,
-      selectedVersion: null,
+      searchData: {
+        selectedVersion: '',
+        selectedExpiredStatus: ''
+      },
       isLoading: false,
-      isLoadingVersion: false,
       progressObj: {},
       statisticsObj: {},
       userList: [],
@@ -88,10 +108,6 @@ export default {
     ...mapGetters(['userProjectList', 'selectedProject']),
     selectedProjectId() {
       return this.selectedProject.id
-    },
-    displayFilterValue() {
-      if (!this.selectedVersion || this.selectedVersion === '') return this.$t('general.Filter')
-      return this.$t('general.Filter') + ':' + this.getSelectionLabel(this.versionList.find((item) => (item.id === this.selectedVersion)))
     }
   },
   watch: {
@@ -99,21 +115,23 @@ export default {
       this.fetchVersionList()
       this.fetchAllData()
     },
-    selectedVersion() {
+    searchData() {
       this.fetchAllData()
     }
   },
   mounted() {
     this.fetchVersionList()
-    // this.fetchAllData()
   },
   methods: {
     ...mapActions('projects', ['getProjectUserList']),
     async fetchAllData() {
       if (this.selectedProjectId < 0) return
-      let param = {}
-      if (this.projectVersion !== null) {
-        param = { fixed_version_id: this.selectedVersion }
+      const param = {}
+      if (this.searchData.selectedVersion) {
+        param.fixed_version_id = this.searchData.selectedVersion
+      }
+      if (this.searchData.selectedExpiredStatus) {
+        param.due_date_status = this.searchData.selectedExpiredStatus
       }
       this.isLoading = true
       const res = await Promise.all([
@@ -131,9 +149,7 @@ export default {
     },
     async fetchVersionList() {
       if (this.selectedProjectId < 0) return
-      this.isLoadingVersion = true
       const res = await getProjectVersion(this.selectedProjectId)
-      this.isLoadingVersion = false
       const hasVersion = res.data.versions.length > 0
       if (hasVersion) {
         this.versionList = res.data.versions
@@ -141,29 +157,14 @@ export default {
           const nowDate = Date.parse(new Date(Date.now()))
           const dueDate = Date.parse(new Date(item.due_date))
           if (dueDate >= nowDate && item.status === 'open') {
-            this.selectedVersion = item.id
+            this.searchData.selectedVersion = item.id
             break
           }
         }
-        if (!this.selectedVersion) this.fetchAllData()
       } else {
-        this.clearSelectedVersion()
         this.versionList = []
-        this.fetchAllData()
       }
-    },
-    onFilterSelection() {
-      this.filterVisible = true
-      this.$nextTick(() => {
-        this.$refs['selectVersion'].$refs['reference'].$el.children[0].focus()
-        this.$refs['selectVersion'].toggleMenu()
-      })
-    },
-    onBlurSelectedVersion() {
-      this.filterVisible = false
-    },
-    clearSelectedVersion() {
-      this.selectedVersion = null
+      this.fetchAllData()
     },
     async updateProjectTestList() {
       this.isProjectTestList = true
@@ -177,14 +178,6 @@ export default {
     },
     handleSelectedItem(val) {
       this.saveSelectedItem = val
-    },
-    getSelectionLabel(item) {
-      const visibleStatus = ['closed', 'locked']
-      let result = this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name
-      if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
-        result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
-      }
-      return result
     }
   }
 }

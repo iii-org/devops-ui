@@ -6,7 +6,7 @@
   >
     <template slot="title">
       <h2 style="margin-bottom: 12px">{{ message.title ? message.title : 'No Title' }}</h2>
-      <div style="color: #45474b">{{ UTCtoLocalTime(message.created_at) }}</div>
+      <div style="color: #45474b">{{ getLocalTime(message.created_at) }}</div>
     </template>
     <div class="border">
       <Viewer :key="componentKey" :initial-value="message.message" />
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { UTCtoLocalTime } from '@/filters'
+import { getLocalTime } from '@/utils/handleTime'
 import '@toast-ui/editor/dist/toastui-editor-viewer.css'
 import { Viewer } from '@toast-ui/vue-editor'
 
@@ -43,8 +43,8 @@ export default {
     }
   },
   methods: {
-    UTCtoLocalTime(value) {
-      return UTCtoLocalTime(value)
+    getLocalTime(value) {
+      return getLocalTime(value)
     }
   }
 }

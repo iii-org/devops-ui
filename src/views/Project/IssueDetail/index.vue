@@ -42,7 +42,7 @@
                 v-if="!isLoading && issueId"
                 class="text-base mr-3"
               >
-                {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
+                {{ $t('Issue.AddBy', { user: author, created_date: getRelativeTime(created_date)}) }}
               </span>
               <el-tooltip class="item" :content="$t('general.CopyUrl')" placement="bottom">
                 <el-button
@@ -333,13 +333,12 @@ import {
   AdminCommitLog,
   WhiteBoardTable
 } from './components'
-import { UTCtoLocalTime } from '@/filters'
+import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
 import {
   addProjectTags,
   getRootProjectId
 } from '@/api/projects'
 import { getHasSon, getProjectRelation } from '@/api_v2/projects'
-import dayjs from 'dayjs'
 import { Status, Tracker, ExpandSection } from '@/components/Issue'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
 import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
@@ -724,7 +723,7 @@ export default {
       const res = await getIssueGitCommitLog(this.rootProjectId, this.issueId, params)
       res.data.forEach((item, index) => {
         item['id'] = index
-        item['commit_time'] = UTCtoLocalTime(item['commit_time'])
+        item['commit_time'] = getLocalTime(item['commit_time'])
       })
       return Promise.resolve(res.data)
     },
@@ -1148,9 +1147,6 @@ export default {
       this.$set(this.relationIssue, 'visible', false)
       this.$set(this.relationIssue, 'id', null)
     },
-    formatTime(value) {
-      return dayjs(value).fromNow()
-    },
     onScrollIssue() {
       this.$nextTick(() => {
         const editorHeight =
@@ -1240,8 +1236,11 @@ export default {
     sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms))
     },
-    UTCtoLocalTime(value) {
-      return UTCtoLocalTime(value)
+    getLocalTime(value) {
+      return getLocalTime(value)
+    },
+    getRelativeTime(value) {
+      return getRelativeTime(value)
     },
     onResetPId(pId) {
       this.form.project_id = pId

@@ -27,7 +27,7 @@
         />
       </template>
       <template v-else>
-        {{ (row[prop])?$dayjs(row[prop]).format('YYYY-MM-DD'):null }}
+        {{ getLocalTime(row[prop] ,'YYYY-MM-DD') }}
       </template>
     </template>
   </el-table-column>
@@ -35,6 +35,7 @@
 
 <script>
 import i18n from '@/lang'
+import { getLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'WBSInputNumberColumn',
@@ -109,6 +110,9 @@ export default {
       } else {
         return !row['has_children']
       }
+    },
+    getLocalTime(time, format) {
+      return getLocalTime(time, format)
     },
     handlerEdit(row, index, treeNode) {
       this.$emit('edit', { value: { [this.prop]: row[this.prop] }, row: row, index: index, treeNode: treeNode })

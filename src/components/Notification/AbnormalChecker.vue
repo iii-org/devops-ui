@@ -32,7 +32,7 @@
             />
             <span>
               <div class="msg-text">{{ msg.title ? msg.title : 'No Title' }}</div>
-              <div style="color: #909399; line-height: 25px"> {{ relativeTime(msg.created_at) }} </div>
+              <div style="color: #909399; line-height: 25px"> {{ getRelativeTime(msg.created_at) }} </div>
             </span>
           </div>
           <el-divider class="divider" />
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { relativeTime } from '@/filters'
+import { getRelativeTime } from '@/utils/handleTime'
 
 export default {
   name: 'AbnormalChecker',
@@ -71,8 +71,8 @@ export default {
       else if (alert_level === 3) return '#e6a23c'
       else return '#f56c6c'
     },
-    relativeTime(value) {
-      return relativeTime(value)
+    getRelativeTime(value) {
+      return getRelativeTime(value)
     }
   }
 }

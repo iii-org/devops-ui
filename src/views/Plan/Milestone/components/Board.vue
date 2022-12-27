@@ -159,11 +159,7 @@
             align="center"
           >
             <template slot-scope="scope">
-              {{
-                (scope.row.due_date) ?
-                  $dayjs(scope.row.due_date).format('YYYY-MM-DD') :
-                  '-'
-              }}
+              {{ getLocalTime(scope.row.due_date,'YYYY-MM-DD') }}
             </template>
           </el-table-column>
           <el-table-column width="50px">
@@ -281,6 +277,7 @@ import { updateIssue, getIssueFamily } from '@/api/issue'
 import { Kanban } from '@/views/Project/IssueBoards/components'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 import { io } from 'socket.io-client'
+import { isTimeValid, getLocalTime } from '@/utils/handleTime'
 
 const contextMenu = {
   row: {
@@ -477,6 +474,9 @@ export default {
     window.clearInterval(this.intervalTimer)
   },
   methods: {
+    getLocalTime(time, format) {
+      return getLocalTime(time, format)
+    },
     getParams() {
       const result = {
         parent_id: 'null',
@@ -489,11 +489,11 @@ export default {
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
           if (item === 'due_date_start' || item === 'due_date_end') {
-            result['due_date_start'] = this.$dayjs(this.filterValue['due_date_start']).isValid()
-              ? this.$dayjs(this.filterValue['due_date_start']).format('YYYY-MM-DD')
+            result['due_date_start'] = isTimeValid(this.filterValue['due_date_start'])
+              ? getLocalTime(this.filterValue['due_date_start'], 'YYYY-MM-DD')
               : null
-            result['due_date_end'] = this.$dayjs(this.filterValue['due_date_end']).isValid()
-              ? this.$dayjs(this.filterValue['due_date_end']).format('YYYY-MM-DD')
+            result['due_date_end'] = isTimeValid(this.filterValue['due_date_end'])
+              ? getLocalTime(this.filterValue['due_date_end'], 'YYYY-MM-DD')
               : null
           } else if (item === 'tags' && this.filterValue[item].length > 0) {
             result[item] = this.filterValue[item].join()

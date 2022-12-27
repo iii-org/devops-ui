@@ -87,6 +87,7 @@
 import { mapGetters } from 'vuex'
 import { getImageList } from '@/api_v2/release'
 import { Table, Pagination } from '@/mixins'
+import { getLocalTime } from '@/utils/handleTime'
 
 const initParam = {
   page: 1,
@@ -159,10 +160,7 @@ export default {
       return image ? image.substr(0, 15) : '-'
     },
     getPushTime(time) {
-      return this.$dayjs
-        .utc(time)
-        .local()
-        .format('YYYY-MM-DD HH:mm:ss')
+      return getLocalTime(time)
     },
     async onPagination(listQuery) {
       const { page, limit } = listQuery

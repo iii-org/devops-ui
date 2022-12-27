@@ -4,14 +4,35 @@
       <div>
         <em class="el-icon-data-analysis mx-1" />
         <span>{{ $t('Dashboard.Workload') }}</span>
-        <em v-if="!saveSelectedItem" class="el-icon-zoom-in cursor-pointer mx-2" @click="showFullIssuePriority" />
+        <em
+          v-if="!saveSelectedItem"
+          class="el-icon-zoom-in cursor-pointer mx-2"
+          @click="showFullIssuePriority"
+        />
       </div>
-      <el-select v-model="selectedItem" size="small" @change="fillData">
-        <el-option v-for="item in selectList" :key="item.id" :label="$t('Issue.' + item.label)" :value="item.id" />
+      <el-select
+        v-model="selectedItem"
+        size="small"
+        @change="fillData"
+      >
+        <el-option
+          v-for="item in selectList"
+          :key="item.id"
+          :label="$t('Issue.' + item.label)"
+          :value="item.id"
+        />
       </el-select>
     </div>
-    <el-empty v-if="Object.keys(dataCollection).length === 0" :description="$t('general.NoData')" :image-size="100" />
-    <HorizontalBar v-else :chart-data="dataCollection" />
+    <el-empty
+      v-if="Object.keys(selectedData).length === 0"
+      style="height: 400px"
+      :image-size="200"
+      :description="$t('general.NoData')"
+    />
+    <HorizontalBar
+      v-else
+      :chart-data="dataCollection"
+    />
   </el-card>
 </template>
 
@@ -42,7 +63,8 @@ export default {
   computed: {
     ...mapGetters(['selectedProjectId']),
     selectedData() {
-      return this.selectList.find(item => item.label === this.selectedItem).data
+      const selectedItem = this.selectList.find(item => item.label === this.selectedItem)
+      return selectedItem ? selectedItem.data : {}
     },
     chartData() {
       const rowData = this.selectedData

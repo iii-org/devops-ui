@@ -18,14 +18,17 @@
           {{ $t('general.Back') }}
         </el-button>
         <div class="mx-5">
-          <div class="text-title mb-2">{{ selectedProject.display }}</div>
+          <div class="text-title mb-2">
+            {{ selectedProject.display }}
+          </div>
           <div>
             <el-tag
               size="mini"
               type="primary"
               class="mr-2"
             >
-              <em class="ri-git-branch-line mr-1" />{{ testCaseInfos.branch }}
+              <em class="ri-git-branch-line mr-1" />
+              {{ testCaseInfos.branch }}
             </el-tag>
             <el-link
               class="mr-3 linkTextColor"
@@ -36,7 +39,8 @@
               <svg-icon
                 class="mr-1"
                 icon-class="ion-git-commit-outline"
-              />{{ testCaseInfos.commit_id }}
+              />
+              {{ testCaseInfos.commit_id }}
             </el-link>
           </div>
         </div>
@@ -45,21 +49,37 @@
             class="mb-2"
             size="small"
             type="warning"
-          >{{ $t('general.ScanAt') }}：{{ testCaseInfos.start_time | UTCtoLocalTime }}</el-tag>
+          >
+            {{ $t('general.ScanAt') + '：' + getLocalTime(testCaseInfos.start_time) }}
+          </el-tag>
           <div>
             <el-tag
               size="small"
               type="primary"
-            >{{ $t('Postman.TestTotal')
-            }}<span class="font-semibold ml-2">{{ countPassedTotal + countFailedTotal }}</span></el-tag>
+            >
+              {{ $t('Postman.TestTotal') }}
+              <span class="font-semibold ml-2">
+                {{ countPassedTotal + countFailedTotal }}
+              </span>
+            </el-tag>
             <el-tag
               size="small"
               type="success"
-            >{{ $t('TestCase.Pass') }}<span class="font-semibold ml-2">{{ countPassedTotal }}</span></el-tag>
+            >
+              {{ $t('TestCase.Pass') }}
+              <span class="font-semibold ml-2">
+                {{ countPassedTotal }}
+              </span>
+            </el-tag>
             <el-tag
               size="small"
               type="danger"
-            >{{ $t('TestCase.Fail') }}<span class="font-semibold ml-2">{{ countFailedTotal }}</span></el-tag>
+            >
+              {{ $t('TestCase.Fail') }}
+              <span class="font-semibold ml-2">
+                {{ countFailedTotal }}
+              </span>
+            </el-tag>
           </div>
         </div>
       </div>
@@ -152,7 +172,9 @@
                   <div
                     class="font-medium mx-5"
                     :class="mapMethodType(execution.method)"
-                  >{{ execution.method }}</div>
+                  >
+                    {{ execution.method }}
+                  </div>
                 </el-col>
                 <el-col :span="21">
                   <div class="my-3">
@@ -242,6 +264,7 @@
 import { mapGetters } from 'vuex'
 import { getPostmanReport } from '@/api/postman'
 import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
+import { getLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'TestCasePostman',
@@ -357,6 +380,9 @@ export default {
     },
     getTestResult(result) {
       return result.hasOwnProperty('error_message') ? 'Fail' : 'Pass'
+    },
+    getLocalTime(time) {
+      return getLocalTime(time)
     }
   }
 }
