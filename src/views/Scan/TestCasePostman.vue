@@ -281,12 +281,6 @@ export default {
       if (val && this.filteredData.length !== 0) this.activeCollection = this.filteredData[0].name
     }
   },
-  beforeRouteLeave(to, from, next) {
-    if (to.name !== 'Postman') {
-      sessionStorage.removeItem('postmanKeyword')
-    }
-    next()
-  },
   methods: {
     async fetchData() {
       return getPostmanReport(this.$route.params.id)

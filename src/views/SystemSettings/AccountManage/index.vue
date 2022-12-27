@@ -115,7 +115,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { deleteUser, getUser, getUserInfo } from '@/api/user'
-import { BasicData, Pagination } from '@/mixins'
+import { BasicData, SearchBar, Pagination } from '@/mixins'
 import { ElTableColumnTime, ElTableColumnTag } from '@/components'
 import UserDialog from './components/UserDialog'
 
@@ -126,18 +126,19 @@ export default {
     ElTableColumnTag,
     UserDialog
   },
-  mixins: [BasicData, Pagination],
+  mixins: [BasicData, SearchBar, Pagination],
   data() {
     return {
+      storageName: 'participate',
+      storageType: ['SearchBar'],
       userDialogVisible: false,
       dialogTitle: '',
       editUserId: 0,
       editUserData: {},
-      keyword: '',
       params: {
         page: 1,
         per_page: 10,
-        search: ''
+        search: this.keyword
       },
       userList: []
     }
@@ -149,48 +150,30 @@ export default {
     async keyword(value) {
       this.params.search = value
       this.params.page = 1
-      await this.fetchData()
+      this.storeKeyword()
+      await this.loadData()
     }
-  },
-  beforeRouteEnter(to, from, next) {
-    if (from.name === 'ParticipateProject') {
-      next((vm) => {
-        vm.keyword = sessionStorage.getItem('accountKeyword')
-        sessionStorage.removeItem('accountKeyword')
-      })
-    } else {
-      next()
-    }
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.name === 'ParticipateProject') {
-      sessionStorage.setItem('accountKeyword', this.keyword)
-    }
-    next()
   },
   methods: {
     async fetchData() {
-      this.listLoading = true
       const allUser = await getUser(this.params)
       this.listQuery = allUser.page
       this.userList = allUser.user_list.filter(item => item.id !== this.userId)
-      this.listLoading = false
     },
     async onPagination(query) {
       const { page, limit } = query
       this.params.page = page
       this.params.per_page = limit
-      await this.fetchData()
+      await this.loadData()
     },
     emitAddUserDialogVisible(visible, refresh, edit) {
       this.userDialogVisible = visible
       if (refresh === 'refresh') {
-        if (edit) {
-          this.fetchData()
-        } else {
+        if (!edit) {
           this.params.page = 1
-          this.fetchData()
+          this.clearKeyword()
         }
+        this.loadData()
       }
     },
     async showUserDialog(user, title) {
@@ -220,7 +203,7 @@ export default {
           message: this.$t('Notify.Deleted'),
           type: 'success'
         })
-        this.fetchData()
+        this.loadData()
       } catch (error) {
         console.error(error)
       }

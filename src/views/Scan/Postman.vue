@@ -127,6 +127,8 @@ export default {
   mixins: [BasicData, SearchBar, Pagination],
   data() {
     return {
+      storageName: 'postman',
+      storageType: ['SearchBar'],
       dialogVisible: false,
       searchKeys: ['branch', 'commit_id'],
       pod: {}
@@ -134,22 +136,6 @@ export default {
   },
   computed: {
     ...mapGetters(['userRole'])
-  },
-  beforeRouteEnter(to, from, next) {
-    if (from.name === 'PostmanTestCase') {
-      next((vm) => {
-        vm.keyword = sessionStorage.getItem('postmanKeyword')
-        sessionStorage.removeItem('postmanKeyword')
-      })
-    } else {
-      next()
-    }
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.name === 'PostmanTestCase') {
-      sessionStorage.setItem('postmanKeyword', this.keyword)
-    }
-    next()
   },
   methods: {
     async fetchData() {

@@ -126,7 +126,7 @@
 
 <script>
 import { getHarborScan } from '@/api_v2/harbor'
-import { BasicData, Pagination } from '@/mixins'
+import { BasicData, SearchBar, Pagination } from '@/mixins'
 import {
   ProjectListSelector,
   ElTableColumnTime,
@@ -140,14 +140,15 @@ export default {
     ElTableColumnTime,
     ElTableColumnTag
   },
-  mixins: [BasicData, Pagination],
+  mixins: [BasicData, SearchBar, Pagination],
   data() {
     return {
-      keyword: '',
+      storageName: 'clair',
+      storageType: ['SearchBar'],
       params: {
         page: 1,
         per_page: 10,
-        search: sessionStorage.getItem('clairKeyword')
+        search: this.keyword
       },
       testList: []
     }
@@ -156,31 +157,14 @@ export default {
     async keyword(value) {
       this.params.search = value
       this.params.page = 1
-      await this.fetchData()
+      this.storeKeyword()
+      await this.loadData()
     }
-  },
-  beforeRouteEnter(to, from, next) {
-    if (from.name === 'DockerReport') {
-      next((vm) => {
-        vm.keyword = sessionStorage.getItem('clairKeyword')
-        sessionStorage.removeItem('clairKeyword')
-      })
-    } else {
-      next()
-    }
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.name === 'DockerReport') {
-      sessionStorage.setItem('clairKeyword', this.keyword)
-    }
-    next()
   },
   methods: {
     async fetchData() {
-      this.listLoading = true
       const res = await getHarborScan(this.selectedProjectId, this.params)
       this.setListData(res)
-      this.listLoading = false
     },
     setListData(res) {
       this.testList = res.data.scan_list
@@ -193,7 +177,7 @@ export default {
       const { page, limit } = query
       this.params.page = page
       this.params.per_page = limit
-      await this.fetchData()
+      await this.loadData()
     },
     async handleToTestReport(row) {
       this.$router.push({

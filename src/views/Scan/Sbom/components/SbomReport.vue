@@ -315,12 +315,6 @@ export default {
       }
     }
   },
-  beforeRouteLeave(to, from, next) {
-    if (to.name !== 'Sbom') {
-      sessionStorage.removeItem('sbomKeyword')
-    }
-    next()
-  },
   mounted() {
     this.fetchProjectInfo()
   },

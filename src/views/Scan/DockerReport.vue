@@ -246,12 +246,6 @@ export default {
       immediate: true
     }
   },
-  beforeRouteLeave(to, from, next) {
-    if (to.name !== 'DockerImage') {
-      sessionStorage.removeItem('clairKeyword')
-    }
-    next()
-  },
   mounted() {
     this.fetchProjectInfo()
   },

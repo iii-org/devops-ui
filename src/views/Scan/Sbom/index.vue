@@ -224,7 +224,7 @@ import {
   getSbomDownloadFile,
   getSbomPod
 } from '@/api_v2/sbom'
-import { BasicData, Pagination } from '@/mixins'
+import { BasicData, SearchBar, Pagination } from '@/mixins'
 import { ProjectListSelector, ElTableColumnTime } from '@/components'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 import * as elementTagType from '@/utils/elementTagType'
@@ -237,14 +237,15 @@ export default {
     PodLog,
     Error: () => import('@/views/Error')
   },
-  mixins: [BasicData, Pagination],
+  mixins: [BasicData, SearchBar, Pagination],
   data() {
     return {
-      keyword: '',
+      storageName: 'sbom',
+      storageType: ['SearchBar'],
       params: {
         page: 1,
         per_page: 10,
-        search: sessionStorage.getItem('sbomKeyword')
+        search: this.keyword
       },
       sbomList: [],
       pod: {},
@@ -257,35 +258,17 @@ export default {
     async keyword(value) {
       this.params.search = value
       this.params.page = 1
-      await this.fetchData()
+      this.storeKeyword()
+      await this.loadData()
     }
-  },
-  beforeRouteEnter(to, from, next) {
-    if (from.name === 'SbomReport') {
-      next((vm) => {
-        vm.keyword = sessionStorage.getItem('sbomKeyword')
-        sessionStorage.removeItem('sbomKeyword')
-      })
-    } else {
-      next()
-    }
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.name === 'SbomReport') {
-      sessionStorage.setItem('sbomKeyword', this.keyword)
-    }
-    next()
   },
   async mounted() {
     this.pod = (await getSbomPod(this.selectedProjectId)).data
   },
   methods: {
     async fetchData() {
-      if (this.selectedProjectId === -1) return []
-      this.listLoading = true
       const res = await getSbomList(this.selectedProjectId, this.params)
       this.setListData(res)
-      this.listLoading = false
     },
     setListData(res) {
       this.sbomList = res.data.Sbom_list
@@ -295,7 +278,7 @@ export default {
       const { page, limit } = query
       this.params.page = page
       this.params.per_page = limit
-      await this.fetchData()
+      await this.loadData()
     },
     fetchDownloadList(row) {
       this.downloadLoading = true
