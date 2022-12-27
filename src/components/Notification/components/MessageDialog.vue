@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { getLocalTime } from '@/filters'
+import { getLocalTime } from '@/utils/handleTime'
 import '@toast-ui/editor/dist/toastui-editor-viewer.css'
 import { Viewer } from '@toast-ui/vue-editor'
 

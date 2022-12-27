@@ -162,7 +162,8 @@ export default {
         const sendData = Object.assign({}, this.formData, {
           project_id: this.projectId
         })
-        this.handleIssueSave(sendData)
+        const formData = this.getFormData(sendData)
+        this.handleIssueSave(formData)
       })
     },
     onAdvancedSettingsClick() {
@@ -183,12 +184,11 @@ export default {
       this.isLoading = value
     },
     async handleIssueSave(data) {
-      const form = this.getFormData(data)
       const assignedToId = data instanceof FormData
         ? Number(data.get('assigned_to_id'))
         : data.assigned_to_id
       this.isLoading = true
-      await addIssue(form)
+      await addIssue(data)
         .then(() => {
           // this.$message({
           //   title: this.$t('general.Success'),
