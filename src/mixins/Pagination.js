@@ -27,6 +27,13 @@ export default {
   watch: {
     selectedProject() {
       this.listQuery.page = 1
+    },
+    filterValue: {
+      handler() {
+        this.listQuery.page = 1
+        this.listQuery.offset = 0
+      },
+      deep: true
     }
   },
   async mounted() {
@@ -44,9 +51,6 @@ export default {
       const storedTabQuery = storeListQuery[key]
       if (storedTabQuery !== undefined) {
         this.listQuery = storedTabQuery
-      //   this.fetchData()
-      // } else {
-      //   this.fetchData()
       }
       return Promise.resolve()
     },

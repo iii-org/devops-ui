@@ -362,6 +362,11 @@ import { getProjectIssueList } from '@/api_v2/projects'
 import { addIssue } from '@/api/issue'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import {
+  getStatusTagType,
+  getPriorityTagType,
+  getCategoryTagType
+} from '@/utils/getElementType'
+import {
   BasicData,
   Columns,
   IssueExpand,
@@ -480,16 +485,7 @@ export default {
       return this.mainSelectedProjectId === -1
     }
   },
-  // mounted() {
-  //   this.fetchInitData()
-  // },
   methods: {
-    // async fetchInitData() {
-    //   await this.getStoredListQuery()
-    //   await this.getInitStoredData()
-    //   await this.loadSelectionList()
-    //   await this.loadData() // TODO: loadData should be called after getInitStoredData, will solve this problem on vuetify ui
-    // },
     async fetchAllDownloadData() {
       this.allDataLoading = true
       const res = await getProjectIssueList(
@@ -498,9 +494,6 @@ export default {
       )
       this.allDataLoading = false
       return res.data.issue_list
-    },
-    handleSelectionChange(list) {
-      this.selectedIssueList = list
     },
     async fetchData() {
       let listData
@@ -526,6 +519,9 @@ export default {
         this.lastIssueListCancelToken.cancel()
       }
     },
+    handleSelectionChange(list) {
+      this.selectedIssueList = list
+    },
     handleClick(row, column) {
       if (column.type === 'action') {
         return false
@@ -548,15 +544,12 @@ export default {
       this.$refs['quickAddIssue'].form.name = ''
       return res
     },
+    backToFirstPage() {
+      this.listQuery.page = 1
+      this.listQuery.offset = 0
+    },
     handleQuickAddClose() {
       this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
-      if (this.tableHeight) {
-        if (this.quickAddTopicDialogVisible) {
-          this.tableHeight = this.tableHeight - 62
-        } else {
-          this.tableHeight = this.tableHeight + 62
-        }
-      }
     },
     handleSortChange({ prop, order }) {
       const orderBy = this.checkOrder(order)
@@ -581,10 +574,6 @@ export default {
       this.parentId = 0
       this.form = form
     },
-    backToFirstPage() {
-      this.listQuery.page = 1
-      this.listQuery.offset = 0
-    },
     async downloadExcel(selectedIssueList) {
       if (selectedIssueList === 'allDownloadData') {
         this.$notify({ type: 'warning', title: this.$t('Loading').toString() })
@@ -605,13 +594,13 @@ export default {
         this.excelColumnSelected.forEach((itemSelected) => {
           switch (itemSelected) {
             case 'status':
-              this.$set(targetObject, itemSelected, this.getStatusTagType(item.status.name))
+              this.$set(targetObject, itemSelected, getStatusTagType(item.status.name))
               break
             case 'priority':
-              this.$set(targetObject, itemSelected, this.getPriorityTagType(item.priority.name))
+              this.$set(targetObject, itemSelected, getPriorityTagType(item.priority.name))
               break
             case 'tracker':
-              this.$set(targetObject, itemSelected, this.getCategoryTagType(item.tracker.name))
+              this.$set(targetObject, itemSelected, getCategoryTagType(item.tracker.name))
               break
             case 'assigned_to':
               this.$set(
@@ -642,56 +631,6 @@ export default {
         translateTable.push(chineseExcel)
       })
       return translateTable
-    },
-    getStatusTagType(status) {
-      switch (status) {
-        case 'Active':
-          return '已開立'
-        case 'Assigned':
-          return '已分派'
-        case 'Closed':
-          return '已關閉'
-        case 'Solved':
-          return '已解決'
-        case 'Responded':
-          return '已回應'
-        case 'Finished':
-          return '已完成'
-      }
-    },
-    getPriorityTagType(priority) {
-      switch (priority) {
-        case 'Immediate':
-          return '緊急'
-        case 'High':
-          return '高'
-        case 'Normal':
-          return '一般'
-        case 'Low':
-          return '低'
-      }
-    },
-    getCategoryTagType(category) {
-      switch (category) {
-        case 'Epic':
-          return '需求規格'
-        case 'Audit':
-          return '合規需求'
-        case 'Feature':
-          return '功能設計'
-        case 'Bug':
-          return '程式錯誤'
-        case 'Issue':
-          return '議題'
-        case 'Change Request':
-          return '變更請求'
-        case 'Risk':
-          return '風險管理'
-        case 'Test Plan':
-          return '測試計畫'
-        case 'Fail Management':
-          return '異常管理'
-      }
     },
     getRowClass({ row }) {
       const result = []

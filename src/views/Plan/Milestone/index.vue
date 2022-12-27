@@ -257,7 +257,7 @@ import {
   postIssueListDownload
 } from '@/api/projects'
 import { addIssue } from '@/api/issue'
-import { Columns, SearchFilter } from '@/mixins'
+import { BasicData, Columns, SearchFilter } from '@/mixins'
 import { ProjectListSelector, ElSelectAll } from '@/components'
 import { QuickAddIssue } from '@/components/Issue'
 import Board from '@/views/Plan/Milestone/components/Board'
@@ -275,7 +275,7 @@ export default {
     Gantt,
     WBS
   },
-  mixins: [Columns, SearchFilter],
+  mixins: [BasicData, Columns, SearchFilter],
   data() {
     return {
       quickAddTopicDialogVisible: false,
@@ -387,13 +387,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      // 'userId',
-      'selectedProjectId',
-      'status',
-      'tracker'
-      // 'fixedVersionShowClosed'
-    ]),
+    ...mapGetters(['selectedProjectId']),
     contextOptions() {
       const result = {}
       const getOptions = ['assigned_to', 'fixed_version', 'tags']
@@ -461,10 +455,6 @@ export default {
     }
   },
   methods: {
-    // async fetchInitData() {
-    //   await this.loadReportStatus()
-    //   await this.loadData()
-    // },
     onRelationIssue(value) {
       this.relationIssue = value
     },
@@ -473,20 +463,6 @@ export default {
     },
     handleUpdateStatus(value) {
       this.lastUpdated = value
-    },
-    async onChangeFilter() {
-      if (this.storageName) {
-        const key = this.storageName
-        const storedData = await this.fetchStoredData()
-        const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
-        storedFilterValue[key] = this.filterValue
-        storedKeyword[key] = this.keyword
-        storedDisplayClosed[key] = this.displayClosed
-        await this.setIssueFilter(storedFilterValue)
-        await this.setKeyword(storedKeyword)
-        await this.setDisplayClosed(storedDisplayClosed)
-      }
-      this.loadData()
     },
     async loadData() {
       if (this.$refs['WBS']) await this.$refs['WBS'].loadData()

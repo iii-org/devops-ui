@@ -240,7 +240,6 @@ export default {
         await this.setKeyword(storedKeyword)
         await this.setDisplayClosed(storedDisplayClosed)
       }
-      this.backToFirstPage()
       await this.loadData()
     },
     onChangeFixedVersionStatus(value) {
@@ -263,10 +262,6 @@ export default {
       this.onChangeFilterForm({ filterValue: result })
       this.displayClosed = displayClosed
       this.fixed_version_closed = fixed_version_closed
-    },
-    backToFirstPage() {
-      this.listQuery.page = 1
-      this.listQuery.offset = 0
     }
   }
 }

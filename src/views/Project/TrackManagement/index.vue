@@ -198,10 +198,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import { getProjectIssueList } from '@/api_v2/projects'
 import { addIssue, getIssueFamily } from '@/api/issue'
 import { excelTranslate } from '@/utils/excelTableTranslate'
+import { getStatusTagType } from '@/utils/getElementType'
 import {
   BasicData,
   IssueExpand,
@@ -285,25 +285,29 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['tracker']),
     hasSelectedTrack() {
       return this.selectedTrackList.length > 0
-    },
-    trackerList() {
-      return this.tracker.filter((item) => item.name === 'Change Request')
     }
   },
   async mounted() {
     this.fetchAllDownloadData()
   },
   methods: {
-    // async fetchInitData() {
-    //   await this.getStoredListQuery()
-    //   await this.getInitStoredData()
-    //   // await this.loadSelectionList()
-    //   await this.fetchAllDownloadData()
-    //   await this.loadData()
-    // },
+    async fetchAllDownloadData() {
+      this.allDataLoading = true
+      try {
+        const res = await getProjectIssueList(
+          this.selectedProjectId,
+          this.getParams(this.listQuery.total)
+        )
+        this.allDownloadData = res.data.issue_list
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.fetchRelativeData(this.allDownloadData)
+        this.allDataLoading = false
+      }
+    },
     async fetchData() {
       let listData
       try {
@@ -329,15 +333,24 @@ export default {
         this.lastIssueListCancelToken.cancel()
       }
     },
+    /**
+     * parent_description is for "變更內容(議題描述)" column
+     */
+    fetchRelativeData(data) {
+      data.forEach(async (item) => {
+        try {
+          const res = await getIssueFamily(item.id)
+          const listData = res.data
+          if (listData.hasOwnProperty('parent')) {
+            this.$set(item, 'parent_description', listData.parent.description)
+          }
+        } catch (err) {
+          console.error(err)
+        }
+      })
+    },
     handleQuickAddClose() {
       this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
-      if (this.tableHeight) {
-        if (this.quickAddTopicDialogVisible) {
-          this.tableHeight = this.tableHeight - 62
-        } else {
-          this.tableHeight = this.tableHeight + 62
-        }
-      }
     },
     async saveIssue(data) {
       const res = await addIssue(data)
@@ -351,6 +364,10 @@ export default {
       this.addTopicDialogVisible = false
       this.$refs['quickAddIssue'].form.name = ''
       return res
+    },
+    backToFirstPage() {
+      this.listQuery.page = 1
+      this.listQuery.offset = 0
     },
     advancedAddIssue(form) {
       this.addTopicDialogVisible = true
@@ -384,41 +401,6 @@ export default {
       }
       return false
     },
-    backToFirstPage() {
-      this.listQuery.page = 1
-      this.listQuery.offset = 0
-    },
-    async fetchAllDownloadData() {
-      this.allDataLoading = true
-      try {
-        const res = await getProjectIssueList(
-          this.selectedProjectId,
-          this.getParams(this.listQuery.total)
-        )
-        this.allDownloadData = res.data.issue_list
-      } catch (err) {
-        console.error(err)
-      } finally {
-        this.fetchRelativeData(this.allDownloadData)
-        this.allDataLoading = false
-      }
-    },
-    /**
-     * parent_description is for "變更內容(議題描述)" column
-     */
-    fetchRelativeData(data) {
-      data.forEach(async (item) => {
-        try {
-          const res = await getIssueFamily(item.id)
-          const listData = res.data
-          if (listData.hasOwnProperty('parent')) {
-            this.$set(item, 'parent_description', listData.parent.description)
-          }
-        } catch (err) {
-          console.error(err)
-        }
-      })
-    },
     handleSelectionChange(list) {
       this.selectedTrackList = list
     },
@@ -440,7 +422,7 @@ export default {
     setTargetObjectData(targetObject, item) {
       this.csvColumnSelected.forEach((itemSelected) => {
         if (itemSelected === 'status') {
-          this.$set(targetObject, itemSelected, this.getStatusTagType(item.status.name))
+          this.$set(targetObject, itemSelected, getStatusTagType(item.status.name))
         } else if (itemSelected === 'assigned_to') {
           this.$set(
             targetObject,
@@ -471,22 +453,6 @@ export default {
       }
       this.contextMenu ? result.push('context-menu') : result.push('cursor-pointer')
       return result.join(' ')
-    },
-    getStatusTagType(status) {
-      switch (status) {
-        case 'Active':
-          return '已開立'
-        case 'Assigned':
-          return '已分派'
-        case 'Closed':
-          return '已關閉'
-        case 'Solved':
-          return '已解決'
-        case 'Responded':
-          return '已回應'
-        case 'Finished':
-          return '已完成'
-      }
     }
   }
 }

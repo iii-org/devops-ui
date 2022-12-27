@@ -223,10 +223,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import { getProjectIssueList } from '@/api_v2/projects'
 import { addIssue } from '@/api/issue'
 import { excelTranslate } from '@/utils/excelTableTranslate'
+import {
+  getStatusTagType,
+  getPriorityTagType,
+  getCategoryTagType
+} from '@/utils/getElementType'
 import {
   BasicData,
   IssueExpand,
@@ -317,25 +321,23 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['tracker']),
     hasSelectedFail() {
       return this.selectedFailList.length > 0
-    },
-    trackerList() {
-      return this.tracker.filter((item) => item.name === 'Fail Management')
     }
   },
   async mounted() {
     await this.fetchAllDownloadData()
   },
   methods: {
-    // async fetchInitData() {
-    //   await this.getStoredListQuery()
-    //   await this.getInitStoredData()
-    //   // await this.loadSelectionList()
-    //   await this.fetchAllDownloadData()
-    //   await this.loadData()
-    // },
+    async fetchAllDownloadData() {
+      this.allDataLoading = true
+      const res = await getProjectIssueList(
+        this.selectedProjectId,
+        this.getParams(this.listQuery.total)
+      )
+      this.allDownloadData = res.data.issue_list
+      this.allDataLoading = false
+    },
     async fetchData() {
       let listData
       try {
@@ -349,7 +351,6 @@ export default {
           })
         listData = res.data.issue_list
         this.setNewListQuery(res.data.page)
-        await this.fetchRelativeData(listData)
       } catch (e) {
         // null
       }
@@ -363,13 +364,6 @@ export default {
     },
     handleQuickAddClose() {
       this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
-      if (this.tableHeight) {
-        if (this.quickAddTopicDialogVisible) {
-          this.tableHeight = this.tableHeight - 62
-        } else {
-          this.tableHeight = this.tableHeight + 62
-        }
-      }
     },
     async saveIssue(data) {
       const res = await addIssue(data)
@@ -383,6 +377,10 @@ export default {
       this.addTopicDialogVisible = false
       this.$refs['quickAddIssue'].form.name = ''
       return res
+    },
+    backToFirstPage() {
+      this.listQuery.page = 1
+      this.listQuery.offset = 0
     },
     advancedAddIssue(form) {
       this.addTopicDialogVisible = true
@@ -416,19 +414,6 @@ export default {
       }
       return false
     },
-    backToFirstPage() {
-      this.listQuery.page = 1
-      this.listQuery.offset = 0
-    },
-    async fetchAllDownloadData() {
-      this.allDataLoading = true
-      const res = await getProjectIssueList(
-        this.selectedProjectId,
-        this.getParams(this.listQuery.total)
-      )
-      this.allDownloadData = res.data.issue_list
-      this.allDataLoading = false
-    },
     handleSelectionChange(list) {
       this.selectedFailList = list
     },
@@ -444,11 +429,11 @@ export default {
         const targetObject = {}
         this.csvColumnSelected.map((itemSelected) => {
           if (itemSelected === 'status') {
-            this.$set(targetObject, itemSelected, this.getStatusTagType(item.status.name))
+            this.$set(targetObject, itemSelected, getStatusTagType(item.status.name))
           } else if (itemSelected === 'priority') {
-            this.$set(targetObject, itemSelected, this.getPriorityTagType(item.priority.name))
+            this.$set(targetObject, itemSelected, getPriorityTagType(item.priority.name))
           } else if (itemSelected === 'tracker') {
-            this.$set(targetObject, itemSelected, this.getCategoryTagType(item.tracker.name))
+            this.$set(targetObject, itemSelected, getCategoryTagType(item.tracker.name))
           } else if (itemSelected === 'assigned_to') {
             this.$set(
               targetObject,
@@ -477,37 +462,6 @@ export default {
         translateTable.push(chineseExcel)
       })
       return translateTable
-    },
-    getStatusTagType(status) {
-      switch (status) {
-        case 'Active':
-          return '已開立'
-        case 'Assigned':
-          return '已分派'
-        case 'Closed':
-          return '已關閉'
-        case 'Solved':
-          return '已解決'
-        case 'Responded':
-          return '已回應'
-        case 'Finished':
-          return '已完成'
-      }
-    },
-    getPriorityTagType(priority) {
-      switch (priority) {
-        case 'Immediate':
-          return '緊急'
-        case 'High':
-          return '高'
-        case 'Normal':
-          return '一般'
-        case 'Low':
-          return '低'
-      }
-    },
-    getCategoryTagType(category) {
-      if (category === 'Fail Management') return '異常管理'
     },
     getRowClass({ row }) {
       const result = []

@@ -343,12 +343,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['tracker', 'forceTracker']),
+    ...mapGetters(['forceTracker']),
     hasSelectedTestPlan() {
       return this.selectedTestPlan.length > 0
-    },
-    trackerList() {
-      return this.tracker.filter(item => item.name === 'Test Plan')
     },
     disableAddIssue () {
       const foundTracker = this.forceTracker.find((tracker) =>
@@ -360,13 +357,22 @@ export default {
     this.fetchAllDownloadData()
   },
   methods: {
-    // async fetchInitData() {
-    //   await this.getStoredListQuery()
-    //   await this.getInitStoredData()
-    //   // await this.loadSelectionList()
-    //   await this.fetchAllDownloadData()
-    //   await this.loadData()
-    // },
+    async loadData() {
+      if (this.selectedProjectId === -1) return
+      this.listLoading = true
+      const listData = await this.fetchData()
+      this.listData = await this.getAllTestFiles(listData)
+      this.listLoading = false
+    },
+    async fetchAllDownloadData() {
+      this.allDataLoading = true
+      const res = await getProjectIssueList(
+        this.selectedProjectId,
+        this.getParams(this.listQuery.total)
+      )
+      this.allDownloadData = res.data.issue_list
+      this.allDataLoading = false
+    },
     async fetchData() {
       let listData
       try {
@@ -391,15 +397,20 @@ export default {
         this.lastIssueListCancelToken.cancel()
       }
     },
+    async getAllTestFiles(issueList) {
+      if (!issueList) return Promise.resolve(issueList)
+      const apiTestFile = []
+      for (const issue of issueList) {
+        apiTestFile.push(getTestFileByTestPlan(this.selectedProjectId, issue.id))
+      }
+      const result = await Promise.all(apiTestFile)
+      for (const [index, issue] of issueList.entries()) {
+        issue['test_files'] = result[index].data
+      }
+      return Promise.resolve(issueList)
+    },
     handleQuickAddClose() {
       this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
-      if (this.tableHeight) {
-        if (this.quickAddTopicDialogVisible) {
-          this.tableHeight = this.tableHeight - 62
-        } else {
-          this.tableHeight = this.tableHeight + 62
-        }
-      }
     },
     async saveIssue(data) {
       const res = await addIssue(data)
@@ -413,6 +424,10 @@ export default {
       this.addTopicDialogVisible = false
       this.$refs['quickAddIssue'].form.name = ''
       return res
+    },
+    backToFirstPage() {
+      this.listQuery.page = 1
+      this.listQuery.offset = 0
     },
     advancedAddIssue(form) {
       this.addTopicDialogVisible = true
@@ -446,40 +461,8 @@ export default {
       }
       return false
     },
-    backToFirstPage() {
-      this.listQuery.page = 1
-      this.listQuery.offset = 0
-    },
-    async fetchAllDownloadData() {
-      this.allDataLoading = true
-      const res = await getProjectIssueList(
-        this.selectedProjectId,
-        this.getParams(this.listQuery.total)
-      )
-      this.allDownloadData = res.data.issue_list
-      this.allDataLoading = false
-    },
-    async loadData() {
-      if (this.selectedProjectId === -1) return
-      this.listLoading = true
-      const listData = await this.fetchData()
-      this.listData = await this.getAllTestFiles(listData)
-      this.listLoading = false
-    },
     handleSelectionChange(list) {
       this.selectedTestPlan = list
-    },
-    async getAllTestFiles(issueList) {
-      if (!issueList) return Promise.resolve(issueList)
-      const apiTestFile = []
-      for (const issue of issueList) {
-        apiTestFile.push(getTestFileByTestPlan(this.selectedProjectId, issue.id))
-      }
-      const result = await Promise.all(apiTestFile)
-      for (const [index, issue] of issueList.entries()) {
-        issue['test_files'] = result[index].data
-      }
-      return Promise.resolve(issueList)
     },
     async fetchDataExcel(selectedTestPlan) {
       const apiRequest = []
@@ -596,14 +579,6 @@ export default {
       if (!checkNull) return null
       return columnResult.join(joinStr)
     },
-    getRowClass({ row }) {
-      const result = []
-      if (!row.family) {
-        result.push('hide-expand-icon')
-      }
-      this.contextMenu ? result.push('context-menu') : result.push('cursor-pointer')
-      return result.join(' ')
-    },
     getBranch(data) {
       const result = []
       data.forEach((item) => {
@@ -647,6 +622,14 @@ export default {
     },
     onContextMenu({ row, column, event }) {
       this.handleContextMenu(row, column, event)
+    },
+    getRowClass({ row }) {
+      const result = []
+      if (!row.family) {
+        result.push('hide-expand-icon')
+      }
+      this.contextMenu ? result.push('context-menu') : result.push('cursor-pointer')
+      return result.join(' ')
     }
   }
 }

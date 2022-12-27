@@ -43,8 +43,8 @@ export default {
   },
   async created() {
     if (!this.remote) {
-      if (this.storageType.includes('SearchFilter')) await this.getStoredListQuery()
-      if (this.storageType.includes('Pagination')) await this.getInitStoredData()
+      if (this.storageType.includes('SearchFilter')) await this.getInitStoredData()
+      if (this.storageType.includes('Pagination')) await this.getStoredListQuery()
       await this.loadData()
     }
   },
