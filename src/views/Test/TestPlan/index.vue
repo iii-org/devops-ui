@@ -334,7 +334,8 @@ export default {
       allDownloadData: [],
       allDataLoading: false,
       selectedTestPlan: [],
-      key: 'testPlan',
+      storageName: 'testPlan',
+      storageType: ['SearchFilter', 'Pagination'],
       parentId: 0,
       sort: '',
       tracker_id: 8,
@@ -355,14 +356,17 @@ export default {
       return !!foundTracker
     }
   },
-  mounted() {
-    this.fetchInitData()
+  async mounted() {
+    this.fetchAllDownloadData()
   },
   methods: {
-    async fetchInitData() {
-      await this.fetchAllDownloadData()
-      await this.loadData()
-    },
+    // async fetchInitData() {
+    //   await this.getStoredListQuery()
+    //   await this.getInitStoredData()
+    //   // await this.loadSelectionList()
+    //   await this.fetchAllDownloadData()
+    //   await this.loadData()
+    // },
     async fetchData() {
       let listData
       try {
@@ -370,7 +374,7 @@ export default {
         const cancelTokenSource = axios.CancelToken.source()
         this.lastIssueListCancelToken = cancelTokenSource
         const res = await getProjectIssueList(
-          this.mainSelectedProjectId,
+          this.filterValue.project || this.selectedProjectId,
           this.getParams(), {
             cancelToken: cancelTokenSource.token
           })
@@ -461,11 +465,6 @@ export default {
       const listData = await this.fetchData()
       this.listData = await this.getAllTestFiles(listData)
       this.listLoading = false
-    },
-    // TODO
-    getOptionsData(option_name) {
-      if (option_name === 'tracker') return this.trackerList
-      return this[option_name]
     },
     handleSelectionChange(list) {
       this.selectedTestPlan = list
@@ -598,7 +597,12 @@ export default {
       return columnResult.join(joinStr)
     },
     getRowClass({ row }) {
-      return row.family ? '' : 'row-expand-cover'
+      const result = []
+      if (!row.family) {
+        result.push('hide-expand-icon')
+      }
+      this.contextMenu ? result.push('context-menu') : result.push('cursor-pointer')
+      return result.join(' ')
     },
     getBranch(data) {
       const result = []
@@ -648,12 +652,53 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
->>> .row-expand-cover .el-table__expand-icon {
-  display: none
+.wrapper {
+  height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
 }
 
 .download {
   @apply border-none;
+}
+
+>>> .el-table__body-wrapper {
+  overflow-y: auto;
+}
+
+>>> .el-table {
+  .hide-expand-icon {
+    .el-table__expand-column .cell {
+      display: none;
+    }
+  }
+
+  .action {
+    @apply border-0;
+  }
+}
+
+>>> .el-table__expanded-cell {
+  font-size: 0.875em;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+>>> .row-expand-loading .el-table__expand-column .cell {
+  padding: 0;
+
+  .el-table__expand-icon {
+    .el-icon-arrow-right {
+      animation: rotating 2s linear infinite;
+    }
+
+    .el-icon-arrow-right:before {
+      content: '\e6cf';
+      font-size: 1.25em;
+    }
+  }
+}
+
+>>> .context-menu {
+  cursor: context-menu;
 }
 
 .family {

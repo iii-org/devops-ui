@@ -23,7 +23,7 @@
               :issue="row"
               @update-list="fetchData"
               @on-context-menu="onContextMenu"
-              @handle-expand-row="handleExpandRow"
+              @handle-expand-row="collapseExpandRow"
             />
           </template>
         </el-table-column>

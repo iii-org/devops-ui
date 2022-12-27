@@ -6,7 +6,7 @@ export default {
   components: { Pagination },
   data() {
     return {
-      key: '',
+      storageName: '',
       listQuery: {
         offset: 0,
         limit: 10,
@@ -30,7 +30,7 @@ export default {
     }
   },
   async mounted() {
-    await this.getStoredListQuery()
+    // await this.getStoredListQuery()
   },
   methods: {
     ...mapActions('projects', ['getListQuery', 'setListQuery']),
@@ -38,15 +38,15 @@ export default {
       this.listQuery = listQuery
     },
     async getStoredListQuery() {
-      if (!this.key) return
-      const key = this.key
+      if (!this.storageName) return
+      const key = this.storageName
       const storeListQuery = await this.getListQuery()
       const storedTabQuery = storeListQuery[key]
       if (storedTabQuery !== undefined) {
         this.listQuery = storedTabQuery
-        this.fetchData()
-      } else {
-        this.fetchData()
+      //   this.fetchData()
+      // } else {
+      //   this.fetchData()
       }
       return Promise.resolve()
     },
@@ -54,9 +54,9 @@ export default {
       this.listQuery.offset = val.limit * val.page - val.limit
       this.listQuery.limit = val.limit
       this.listQuery.page = val.page
-      await this.fetchData()
-      if (this.key) {
-        const key = this.key
+      await this.loadData()
+      if (this.storageName) {
+        const key = this.storageName
         const storeListQuery = await this.getListQuery()
         storeListQuery[key] = this.listQuery
         await this.setListQuery(storeListQuery)
@@ -73,13 +73,13 @@ export default {
     async resetListQuery() {
       this.listQuery.offset = 0
       this.listQuery.page = 1
-      if (this.key) {
-        const key = this.key
+      if (this.storageName) {
+        const key = this.storageName
         const storeListQuery = await this.getListQuery()
         storeListQuery[key] = this.listQuery
         await this.setListQuery(storeListQuery)
       }
-      await this.fetchData()
+      await this.loadData()
     }
   }
 }

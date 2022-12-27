@@ -363,7 +363,8 @@ export default {
         { display: this.$t('Issue.DoneRatio'), field: 'DoneRatio' },
         { display: this.$t('Issue.points'), field: 'points' }
       ]),
-      key: 'milestone',
+      storageName: 'milestone',
+      storageType: ['SearchFilter'],
       parentId: 0,
       activeTab: 'WBS',
       groupByRow: [],
@@ -449,7 +450,7 @@ export default {
     }
   },
   async mounted() {
-    this.fetchInitData()
+    await this.loadReportStatus()
     this.$nextTick(() => {
       this.tableHeight = this.$refs['wrapper'].clientHeight
     })
@@ -460,10 +461,10 @@ export default {
     }
   },
   methods: {
-    async fetchInitData() {
-      await this.loadReportStatus()
-      await this.loadData()
-    },
+    // async fetchInitData() {
+    //   await this.loadReportStatus()
+    //   await this.loadData()
+    // },
     onRelationIssue(value) {
       this.relationIssue = value
     },
@@ -474,8 +475,8 @@ export default {
       this.lastUpdated = value
     },
     async onChangeFilter() {
-      if (this.key) {
-        const key = this.key
+      if (this.storageName) {
+        const key = this.storageName
         const storedData = await this.fetchStoredData()
         const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
         storedFilterValue[key] = this.filterValue

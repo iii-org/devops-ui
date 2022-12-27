@@ -77,7 +77,6 @@ export default {
         type: this.type
       })
       this.$emit('update:displayFields', res.data)
-      // this.displayFields = res.data
       // this.$nextTick(() => { this.$refs['issueList'].doLayout() })
     }
   }

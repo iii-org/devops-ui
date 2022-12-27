@@ -462,7 +462,8 @@ export default {
           tag: true
         }
       ]),
-      key: 'issueList',
+      storageName: 'issueList',
+      storageType: ['SearchFilter', 'Pagination'],
       parentId: 0,
       sort: '',
       lastIssueListCancelToken: null
@@ -471,15 +472,24 @@ export default {
   computed: {
     hasSelectedIssue() {
       return this.selectedIssueList.length > 0
+    },
+    mainSelectedProjectId() {
+      return this.filterValue.project || this.selectedProjectId
+    },
+    isDisabled() {
+      return this.mainSelectedProjectId === -1
     }
   },
-  mounted() {
-    this.fetchInitData()
-  },
+  // mounted() {
+  //   this.fetchInitData()
+  // },
   methods: {
-    async fetchInitData() {
-      await this.loadData() // TODO: loadData should be called after getInitStoredData, will solve this problem on vuetify ui
-    },
+    // async fetchInitData() {
+    //   await this.getStoredListQuery()
+    //   await this.getInitStoredData()
+    //   await this.loadSelectionList()
+    //   await this.loadData() // TODO: loadData should be called after getInitStoredData, will solve this problem on vuetify ui
+    // },
     async fetchAllDownloadData() {
       this.allDataLoading = true
       const res = await getProjectIssueList(
@@ -684,68 +694,64 @@ export default {
       }
     },
     getRowClass({ row }) {
-      return row.family ? '' : 'row-expand-cover'
+      const result = []
+      if (!row.family) {
+        result.push('hide-expand-icon')
+      }
+      this.contextMenu ? result.push('context-menu') : result.push('cursor-pointer')
+      return result.join(' ')
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
->>> .row-expand-cover .el-table__expand-icon {
-  display: none
+.wrapper {
+  height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
 }
 
 .download {
   @apply border-none;
 }
 
-.el-table .el-button {
-  border: none
+>>> .el-table__body-wrapper {
+  overflow-y: auto;
 }
 
-// TODO
-// .wrapper {
-//   height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
-// }
+>>> .el-table {
+  .hide-expand-icon {
+    .el-table__expand-column .cell {
+      display: none;
+    }
+  }
 
-// >>> .el-table__body-wrapper {
-//   overflow-y: auto;
-// }
+  .action {
+    @apply border-0;
+  }
+}
 
-// >>> .el-table {
-//   .hide-expand-icon {
-//     .el-table__expand-column .cell {
-//       display: none;
-//     }
-//   }
+>>> .el-table__expanded-cell {
+  font-size: 0.875em;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
 
-//   .action {
-//     @apply border-0;
-//   }
-// }
+>>> .row-expand-loading .el-table__expand-column .cell {
+  padding: 0;
 
-// >>> .el-table__expanded-cell {
-//   font-size: 0.875em;
-//   padding-top: 10px;
-//   padding-bottom: 10px;
-// }
+  .el-table__expand-icon {
+    .el-icon-arrow-right {
+      animation: rotating 2s linear infinite;
+    }
 
-// >>> .row-expand-loading .el-table__expand-column .cell {
-//   padding: 0;
+    .el-icon-arrow-right:before {
+      content: '\e6cf';
+      font-size: 1.25em;
+    }
+  }
+}
 
-//   .el-table__expand-icon {
-//     .el-icon-arrow-right {
-//       animation: rotating 2s linear infinite;
-//     }
-
-//     .el-icon-arrow-right:before {
-//       content: '\e6cf';
-//       font-size: 1.25em;
-//     }
-//   }
-// }
-
-// >>> .context-menu {
-//   cursor: context-menu;
-// }
+>>> .context-menu {
+  cursor: context-menu;
+}
 </style>

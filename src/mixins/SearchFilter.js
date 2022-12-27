@@ -69,7 +69,7 @@ export default {
           tag: true
         }
       ]),
-      key: '',
+      storageName: '',
       sort: '',
       filterValue: {},
       originFilterValue: {},
@@ -103,12 +103,12 @@ export default {
       }
     },
     fixed_version_closed(value) {
-      this.setFixedVersionShowClosed({ [this.key]: value })
+      this.setFixedVersionShowClosed({ [this.storageName]: value })
       this.loadVersionList(value)
     }
   },
   async mounted() {
-    await this.getInitStoredData()
+    // await this.getInitStoredData()
     await this.loadSelectionList()
   },
   methods: {
@@ -144,8 +144,8 @@ export default {
       return result
     },
     async getInitStoredData() {
-      if (!this.key) return
-      const key = this.key
+      if (!this.storageName) return
+      const key = this.storageName
       const storedData = await this.fetchStoredData()
       const {
         storedFilterValue,
@@ -225,8 +225,8 @@ export default {
       await this.onChangeFilter()
     },
     async onChangeFilter() {
-      if (this.key) {
-        const key = this.key
+      if (this.storageName) {
+        const key = this.storageName
         const storedData = await this.fetchStoredData()
         const {
           storedFilterValue,
@@ -250,7 +250,13 @@ export default {
       this.$refs.customFilter.fetchCustomFilter()
     },
     cleanFilter() {
-      this.$refs.customFilter.resetApplyFilter()
+      if (this.$refs.customFilter) {
+        this.$refs.customFilter.resetApplyFilter()
+      } else {
+        this.filterValue = Object.assign({}, this.originFilterValue)
+        this.keyword = ''
+        this.displayClosed = false
+      }
     },
     applyCustomFilter(filters) {
       const { result, displayClosed, fixed_version_closed } = filters
