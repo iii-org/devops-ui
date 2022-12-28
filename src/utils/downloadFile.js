@@ -14,7 +14,9 @@
  * @param {string} contentType - content type, optional
  */
 export const downloadFileFromBinary = (binary, fileName, contentType) => {
-  const url = window.URL.createObjectURL(new Blob([binary]), { type: contentType })
+  const url = contentType
+    ? window.URL.createObjectURL(new Blob([binary]), { type: contentType })
+    : window.URL.createObjectURL(new Blob([binary]))
   const link = document.createElement('a')
   link.href = url
   link.download = fileName
