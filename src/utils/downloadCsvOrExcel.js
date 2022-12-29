@@ -22,9 +22,9 @@ const CSV = {}
 const EXCEL = {}
 
 function s2ab(s) {
-  var buf = new ArrayBuffer(s.length)
-  var view = new Uint8Array(buf)
-  for (var i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF
+  const buf = new ArrayBuffer(s.length)
+  const view = new Uint8Array(buf)
+  for (let i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF
   return buf
 }
 
@@ -36,18 +36,18 @@ function s2ab(s) {
  */
 function sheet2blob(sheet, filename_extension, sheetName) {
   sheetName = sheetName || 'sheet1'
-  var workbook = {
+  const workbook = {
     SheetNames: [sheetName],
     Sheets: {}
   }
   workbook.Sheets[sheetName] = sheet // 生成excel的配置項
 
-  var wopts = {
+  const wopts = {
     bookType: filename_extension, // 要生成的檔案型別
     bookSST: false, // 是否生成Shared String Table，官方解釋是，如果開啟生成速度會下降，但在低版本IOS裝置上有更好的相容性
     type: 'binary'
   }
-  var wbout = XLSX.write(workbook, wopts)
+  const wbout = XLSX.write(workbook, wopts)
   return new Blob([s2ab(wbout)], {
     type: 'application/octet-stream'
   }) // 字串轉ArrayBuffer

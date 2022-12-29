@@ -17,13 +17,13 @@ PDF.install = function(options) {
       const timeNow = time.toLocaleString()
       const fullFileName = `${fileName}_${timeNow}`
 
-      var imgData = canvas.toDataURL('image/jpeg')
-      var imgWidth = 595
-      var pageHeight = 841
-      var imgHeight = canvas.height * (imgWidth / canvas.width)
-      var heightLeft = imgHeight
-      var doc = new JsPDF('p', 'pt', 'a4')
-      var position = 0
+      const imgData = canvas.toDataURL('image/jpeg')
+      const imgWidth = 595
+      const pageHeight = 841
+      const imgHeight = canvas.height * (imgWidth / canvas.width)
+      let heightLeft = imgHeight
+      const doc = new JsPDF('p', 'pt', 'a4')
+      let position = 0
 
       doc.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight)
       heightLeft -= pageHeight
