@@ -12,7 +12,7 @@
  *  a. this.$csv(sheet, filename) --> download CSV
  *  b. this.$excel(sheet, filename) --> download EXCEL
  *
- * If you need more methods, you can refer https://github.com/SheetJS/sheetjs
+ * if you need more methods, you can refer https://github.com/SheetJS/sheetjs
  */
 
 import Vue from 'vue'
