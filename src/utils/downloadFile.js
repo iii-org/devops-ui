@@ -4,7 +4,7 @@
  *  check https://javascript.info/binary to learn more
  *
  * 2. PDF and DOCX download only
- *  if if you want to download CSV or EXCEL, check @utils/downloadCsvOrExcel.js
+ *  if you want to download CSV or EXCEL, check @utils/downloadCsvOrExcel.js
  */
 
 /**
