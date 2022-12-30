@@ -37,6 +37,7 @@
             ref="selectProject"
             v-model="projectValue"
             :placeholder="$t('Project.SelectProject')"
+            :filter-method="setFilter"
             filterable
             class="project"
             :clearable="clearable"
@@ -44,7 +45,9 @@
             @blur="selectVisible = false"
             @change="setChange"
           >
-            <template slot="prefix"><em class="el-icon-s-cooperation el-input__icon" /></template>
+            <template slot="prefix">
+              <em class="el-icon-s-cooperation el-input__icon" />
+            </template>
             <el-option-group
               v-for="group in categoryProjectList"
               :key="group.label"
@@ -112,7 +115,9 @@
                   class="text-xl"
                 />
               </el-link>
-              <div class="item project-name">#{{ projectInformation.name }}</div>
+              <div class="item project-name">
+                #{{ projectInformation.name }}
+              </div>
             </div>
             <div
               slot="reference"
@@ -225,6 +230,17 @@ export default {
         type: 'warning'
       })
       this.listLoading = false
+    },
+    setFilter(value) {
+      this.getCategoryProjectList()
+      const keyword = value.toLowerCase()
+      this.categoryProjectList = this.categoryProjectList.filter((item) => {
+        item.options = item.options.filter((element) =>
+          element.display.indexOf(keyword) > -1 ||
+            element.name.indexOf(keyword) > -1
+        )
+        return item.options.length > 0
+      })
     },
     setChange(projectId) {
       if (this.keepSelection) {
