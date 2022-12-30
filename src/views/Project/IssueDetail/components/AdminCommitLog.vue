@@ -166,7 +166,7 @@ import {
 } from '@/api/issue'
 import { getLocalTime } from '@/utils/handleTime'
 import IssueSelect from '@/components/Issue/IssueSelect'
-import NoData from './widget/NoData'
+import NoData from '@/components/NoData'
 
 class CommitLogItem {
   constructor (data) {

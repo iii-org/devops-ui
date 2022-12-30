@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import NoData from './widget/NoData'
+import NoData from '@/components/NoData'
 
 export default {
   name: 'AdminCommitLog',
