@@ -218,6 +218,7 @@
             :table-height="tableHeight"
             @update-loading="handleUpdateLoading"
             @update-status="handleUpdateStatus"
+            @update-selection-list="loadSelectionList"
           />
         </el-tab-pane>
         <el-tab-pane
