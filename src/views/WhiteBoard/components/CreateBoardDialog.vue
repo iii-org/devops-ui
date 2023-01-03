@@ -1,5 +1,6 @@
 <template>
   <el-dialog
+    :loading="isLoading"
     :title="$t('Excalidraw.CreateBoard')"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
@@ -8,19 +9,16 @@
     <ExcalidrawForm
       ref="ExcalidrawForm"
       :form="form"
-      :is-loading="isLoading"
     />
     <span slot="footer" class="dialog-footer">
       <el-button
         class="buttonSecondaryReverse"
-        :loading="isLoading"
         @click="onDialogClosed"
       >
         {{ $t('general.Close') }}
       </el-button>
       <el-button
         type="primary"
-        :loading="isLoading"
         @click="handleCreate"
       >
         {{ $t('general.Add') }}

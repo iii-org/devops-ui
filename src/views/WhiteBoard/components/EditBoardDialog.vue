@@ -10,7 +10,7 @@
     <el-collapse
       v-if="dialogVisible"
       v-model="isCollapse"
-      v-loading="loading"
+      v-loading="isLoading"
     >
       <el-collapse-item name="1">
         <div slot="title" style="margin-left: auto;">
@@ -23,12 +23,10 @@
             <ExcalidrawForm
               ref="ExcalidrawForm"
               :form="form"
-              :is-loading="isLoading"
             />
           </el-col>
           <el-col :md="2" :span="4">
             <el-button
-              :loading="isLoading"
               type="primary"
               size="medium"
               @click="handleEdit"
@@ -44,12 +42,15 @@
             {{ $t('Excalidraw.EditBoard') }}
           </div>
         </div>
-        <iframe
-          title="excalidraw"
-          :src="row.url + '#' + userName"
-          :height="excalidrawHeight"
-          width="100%"
-        />
+        <div :style="{height:isShowExcalidraw?null:excalidrawHeight+'px'}">
+          <iframe
+            v-if="isShowExcalidraw"
+            title="excalidraw"
+            :src="row.url + '#' + userName"
+            :height="excalidrawHeight"
+            width="100%"
+          />
+        </div>
       </el-collapse-item>
     </el-collapse>
   </el-dialog>
@@ -57,7 +58,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { updateExcalidraw, createExcalidrawHistory } from '@/api_v2/excalidraw'
+import {
+  updateExcalidraw,
+  postExcalidrawHistory,
+  patchExcalidrawHistory
+} from '@/api_v2/excalidraw'
 import ExcalidrawForm from '@/views/WhiteBoard/components/ExcalidrawForm'
 
 const formTemplate = () => ({
@@ -82,9 +87,9 @@ export default {
     return {
       excalidrawHeight: 0,
       isLoading: false,
+      isShowExcalidraw: false,
       isCollapse: [],
-      form: formTemplate(),
-      loading: false
+      form: formTemplate()
     }
   },
   computed: {
@@ -102,13 +107,18 @@ export default {
     },
     async dialogVisible(value) {
       if (value) {
-        this.loading = true
+        this.isLoading = true
+        await postExcalidrawHistory(this.row.id)
+          .then(() => {
+            this.isShowExcalidraw = true
+          })
+          .finally(() => {
+            this.isLoading = false
+          })
+      } else {
+        await patchExcalidrawHistory(this.row.id)
+        this.$emit('update:row', {})
       }
-      await createExcalidrawHistory(this.row.id)
-        .then(() => {
-          this.loading = false
-        })
-      if (!value) this.$emit('update:row', {})
     },
     isCollapse: {
       handler: 'handleHeight'
