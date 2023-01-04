@@ -1,9 +1,18 @@
 /**
- * Download Excel or Csv by using xlsx.js to transform json to sheet or table to sheet, and then transform the sheet to Excel or Csv finally
- *! Use XLSX.utils.json_to_sheet(json) to transform json to sheet, while XLSX.utils.table_to_sheet(dom) to transform table dom to sheet
- * If you need more methods, you can refer https://github.com/SheetJS/sheetjs
- *! Use this.$csv(sheet, filename) to download csv
- *! Use this.$excel(sheet, filename) to download excel
+ *! Before using this module, you need to know:
+ * 1. there are two steps if you want to use this module for downloading CSV or EXCEL
+ *  a. use xlsx.js to transform json to sheet or table to sheet
+ *  b. transform the sheet to CSV or Excel
+ *
+ * 2. methods to get sheet
+ *  a. XLSX.utils.json_to_sheet(json) --> json to sheet
+ *  b. XLSX.utils.table_to_sheet(dom) --> table dom to sheet
+ *
+ * 3. methods to download
+ *  a. this.$csv(sheet, filename) --> download CSV
+ *  b. this.$excel(sheet, filename) --> download EXCEL
+ *
+ * if you need more methods, you can refer https://github.com/SheetJS/sheetjs
  */
 
 import Vue from 'vue'
@@ -13,31 +22,32 @@ const CSV = {}
 const EXCEL = {}
 
 function s2ab(s) {
-  var buf = new ArrayBuffer(s.length)
-  var view = new Uint8Array(buf)
-  for (var i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF
+  const buf = new ArrayBuffer(s.length)
+  const view = new Uint8Array(buf)
+  for (let i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF
   return buf
 }
 
 /**
+ * generate blob from sheet
  * @param {Object} sheet - sheet transformed by XLSX plugin, required
  * @param {String} filename_extension - file name extension, required
  * @param {String} sheetName - sheet name, optional
  */
 function sheet2blob(sheet, filename_extension, sheetName) {
   sheetName = sheetName || 'sheet1'
-  var workbook = {
+  const workbook = {
     SheetNames: [sheetName],
     Sheets: {}
   }
   workbook.Sheets[sheetName] = sheet // 生成excel的配置項
 
-  var wopts = {
+  const wopts = {
     bookType: filename_extension, // 要生成的檔案型別
     bookSST: false, // 是否生成Shared String Table，官方解釋是，如果開啟生成速度會下降，但在低版本IOS裝置上有更好的相容性
     type: 'binary'
   }
-  var wbout = XLSX.write(workbook, wopts)
+  const wbout = XLSX.write(workbook, wopts)
   return new Blob([s2ab(wbout)], {
     type: 'application/octet-stream'
   }) // 字串轉ArrayBuffer
@@ -48,7 +58,7 @@ function sheet2blob(sheet, filename_extension, sheetName) {
  * @param {String} filename - file name, required
  * @param {String} filename_extension - file name extension, required
  */
-function openDownloadDialog(sheet, filename, filename_extension) {
+function downloadFile(sheet, filename, filename_extension) {
   let url = sheet2blob(sheet, filename_extension)
   if (typeof url === 'object' && url instanceof Blob) {
     url = URL.createObjectURL(url) // 建立blob地址
@@ -70,13 +80,13 @@ function openDownloadDialog(sheet, filename, filename_extension) {
 
 CSV.install = function(options) {
   Vue.prototype.$csv = function(sheet, filename) {
-    openDownloadDialog(sheet, filename, 'csv')
+    downloadFile(sheet, filename, 'csv')
   }
 }
 
 EXCEL.install = function(options) {
   Vue.prototype.$excel = function(sheet, filename) {
-    openDownloadDialog(sheet, filename, 'xlsx')
+    downloadFile(sheet, filename, 'xlsx')
   }
 }
 

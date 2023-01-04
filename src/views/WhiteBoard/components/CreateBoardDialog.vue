@@ -1,5 +1,6 @@
 <template>
   <el-dialog
+    :loading="isLoading"
     :title="$t('Excalidraw.CreateBoard')"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
@@ -8,19 +9,16 @@
     <ExcalidrawForm
       ref="ExcalidrawForm"
       :form="form"
-      :is-loading="isLoading"
     />
     <span slot="footer" class="dialog-footer">
       <el-button
         class="buttonSecondaryReverse"
-        :loading="isLoading"
         @click="onDialogClosed"
       >
         {{ $t('general.Close') }}
       </el-button>
       <el-button
         type="primary"
-        :loading="isLoading"
         @click="handleCreate"
       >
         {{ $t('general.Add') }}
@@ -80,11 +78,6 @@ export default {
               sendData.append('issue_ids', this.form.issue_ids)
             }
             this.row = (await createExcalidraw(sendData)).data
-            this.$message({
-              title: this.$t('general.Success'),
-              message: this.$t('Notify.Added'),
-              type: 'success'
-            })
             this.isLoading = false
             this.$emit('update')
             this.$emit('handle', this.row)

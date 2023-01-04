@@ -163,15 +163,16 @@
       @pagination="onPagination"
     />
     <CreateBoardDialog
+      v-if="CreateBoardDialogVisible"
       :dialog-visible.sync="CreateBoardDialogVisible"
       @update="loadData"
       @handle="handleEdit"
       @handleError="handleError"
     />
     <EditBoardDialog
-      ref="EditBoardDialog"
+      v-if="EditBoardDialogVisible"
       :dialog-visible.sync="EditBoardDialogVisible"
-      :row.sync="row"
+      :row="row"
       @update="loadData"
       @handleError="handleError"
     />
@@ -241,8 +242,8 @@ export default {
       this.CreateBoardDialogVisible = true
     },
     handleEdit(row, isCollapse = true) {
-      this.$refs.EditBoardDialog.isCollapse = isCollapse ? ['2'] : ['1', '2']
       this.row = row
+      this.row.collapse = isCollapse ? ['2'] : ['1', '2']
       this.EditBoardDialogVisible = true
     },
     async handleDelete(row) {

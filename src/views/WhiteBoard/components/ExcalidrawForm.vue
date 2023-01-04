@@ -1,7 +1,6 @@
 <template>
   <el-form
     ref="form"
-    v-loading="isLoading"
     :model="form"
     :rules="rules"
     inline
@@ -68,10 +67,6 @@ export default {
     form: {
       type: Object,
       default: () => ({})
-    },
-    isLoading: {
-      type: Boolean,
-      default: false
     }
   },
   data() {

@@ -87,18 +87,13 @@
 
 <script>
 import { getLocalTime } from '@/utils/handleTime'
-import {
-  getSystemServerList,
-  getServerStatus,
-  getHarborUsage
-} from '@/api_v2/monitoring'
+import { getSystemServerList, getServerStatus } from '@/api_v2/monitoring'
 
 export default {
   name: 'ServiceMonitoring',
   data() {
     return {
-      listData: [],
-      harborStatus: false
+      listData: []
     }
   },
   mounted() {
@@ -118,14 +113,7 @@ export default {
     async fetchData(name) {
       await getServerStatus(name.toLowerCase()).then((res) => {
         const idx = this.listData.findIndex((item) => item.name === res.name)
-        if (res.name === 'Harbor' && res.status) {
-          this.harborStatus = res.status
-          getHarborUsage().then((res) => {
-            this.$set(this.listData, idx, this.handleData(res))
-          })
-        } else {
-          this.$set(this.listData, idx, this.handleData(res))
-        }
+        this.$set(this.listData, idx, this.handleData(res))
       })
     },
     handleUpdate() {
@@ -152,15 +140,9 @@ export default {
     async handleCheck(name) {
       const idx = this.listData.findIndex((item) => item.name === name)
       this.$set(this.listData[idx], 'status', 'loading')
-      if (name === 'Harbor' && this.harborStatus) {
-        await getHarborUsage().then((res) => {
-          this.$set(this.listData, idx, this.handleData(res))
-        })
-      } else {
-        await getServerStatus(name.toLowerCase()).then((res) => {
-          this.$set(this.listData, idx, this.handleData(res))
-        })
-      }
+      await getServerStatus(name.toLowerCase()).then((res) => {
+        this.$set(this.listData, idx, this.handleData(res))
+      })
     }
   }
 }

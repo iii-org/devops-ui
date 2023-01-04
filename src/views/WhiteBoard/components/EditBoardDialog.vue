@@ -9,8 +9,8 @@
   >
     <el-collapse
       v-if="dialogVisible"
-      v-model="isCollapse"
-      v-loading="loading"
+      v-model="collapse"
+      v-loading="isLoading"
     >
       <el-collapse-item name="1">
         <div slot="title" style="margin-left: auto;">
@@ -23,12 +23,10 @@
             <ExcalidrawForm
               ref="ExcalidrawForm"
               :form="form"
-              :is-loading="isLoading"
             />
           </el-col>
           <el-col :md="2" :span="4">
             <el-button
-              :loading="isLoading"
               type="primary"
               size="medium"
               @click="handleEdit"
@@ -44,12 +42,15 @@
             {{ $t('Excalidraw.EditBoard') }}
           </div>
         </div>
-        <iframe
-          title="excalidraw"
-          :src="row.url + '#' + userName"
-          :height="excalidrawHeight"
-          width="100%"
-        />
+        <div :style="{height:isShowExcalidraw?null:excalidrawHeight+'px'}">
+          <iframe
+            v-if="isShowExcalidraw"
+            title="excalidraw"
+            :src="row.url + '#' + userName"
+            :height="excalidrawHeight"
+            width="100%"
+          />
+        </div>
       </el-collapse-item>
     </el-collapse>
   </el-dialog>
@@ -57,7 +58,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { updateExcalidraw, createExcalidrawHistory } from '@/api_v2/excalidraw'
+import {
+  updateExcalidraw,
+  postExcalidrawHistory,
+  patchExcalidrawHistory
+} from '@/api_v2/excalidraw'
 import ExcalidrawForm from '@/views/WhiteBoard/components/ExcalidrawForm'
 
 const formTemplate = () => ({
@@ -82,47 +87,43 @@ export default {
     return {
       excalidrawHeight: 0,
       isLoading: false,
-      isCollapse: [],
-      form: formTemplate(),
-      loading: false
+      isShowExcalidraw: false,
+      collapse: [],
+      form: formTemplate()
     }
   },
   computed: {
     ...mapGetters(['selectedProjectId', 'userName']),
     formHeight() {
-      return this.isCollapse.includes('1') ? 0 : 60
+      return this.collapse.includes('1') ? 0 : 60
     }
   },
   watch: {
-    row(value) {
-      if (Object.keys(value).length > 0) {
-        this.form.issue_ids = value.issue_ids
-        this.form.name = value.name
-      }
-    },
-    async dialogVisible(value) {
-      if (value) {
-        this.loading = true
-      }
-      await createExcalidrawHistory(this.row.id)
-        .then(() => {
-          this.loading = false
-        })
-      if (!value) this.$emit('update:row', {})
-    },
-    isCollapse: {
+    collapse: {
       handler: 'handleHeight'
     }
   },
   mounted() {
     window.addEventListener('resize', this.handleHeight)
-  },
-  destroyed() {
-    window.removeEventListener('resize', this.handleHeight)
+    this.init()
+    this.handleHistory(true)
   },
   methods: {
-    handleHeight() {
-      this.excalidrawHeight = window.innerHeight + this.formHeight - 185
+    init() {
+      this.form.issue_ids = this.row.issue_ids
+      this.form.name = this.row.name
+      this.collapse = this.row.collapse
+    },
+    async handleHistory(value) {
+      this.isLoading = true
+      if (value) {
+        await postExcalidrawHistory(this.row.id).then(() => {
+          this.isShowExcalidraw = true
+        })
+      } else {
+        await patchExcalidrawHistory(this.row.id)
+      }
+      this.isLoading = false
     },
     handleEdit() {
       this.$refs['ExcalidrawForm'].$refs['form'].validate(async(valid) => {
@@ -150,7 +151,12 @@ export default {
       })
     },
     onDialogClosed() {
+      window.removeEventListener('resize', this.handleHeight)
+      this.handleHistory(false)
       this.$emit('update:dialogVisible', false)
+    },
+    handleHeight() {
+      this.excalidrawHeight = window.innerHeight + this.formHeight - 185
     }
   }
 }
