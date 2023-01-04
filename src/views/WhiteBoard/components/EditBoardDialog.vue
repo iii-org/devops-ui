@@ -9,7 +9,7 @@
   >
     <el-collapse
       v-if="dialogVisible"
-      v-model="isCollapse"
+      v-model="collapse"
       v-loading="isLoading"
     >
       <el-collapse-item name="1">
@@ -88,51 +88,42 @@ export default {
       excalidrawHeight: 0,
       isLoading: false,
       isShowExcalidraw: false,
-      isCollapse: [],
+      collapse: [],
       form: formTemplate()
     }
   },
   computed: {
     ...mapGetters(['selectedProjectId', 'userName']),
     formHeight() {
-      return this.isCollapse.includes('1') ? 0 : 60
+      return this.collapse.includes('1') ? 0 : 60
     }
   },
   watch: {
-    row(value) {
-      if (Object.keys(value).length > 0) {
-        this.form.issue_ids = value.issue_ids
-        this.form.name = value.name
-      }
-    },
-    async dialogVisible(value) {
-      if (value) {
-        this.isLoading = true
-        await postExcalidrawHistory(this.row.id)
-          .then(() => {
-            this.isShowExcalidraw = true
-          })
-          .finally(() => {
-            this.isLoading = false
-          })
-      } else {
-        await patchExcalidrawHistory(this.row.id)
-        this.$emit('update:row', {})
-      }
-    },
-    isCollapse: {
+    collapse: {
       handler: 'handleHeight'
     }
   },
   mounted() {
     window.addEventListener('resize', this.handleHeight)
-  },
-  destroyed() {
-    window.removeEventListener('resize', this.handleHeight)
+    this.init()
+    this.handleHistory(true)
   },
   methods: {
-    handleHeight() {
-      this.excalidrawHeight = window.innerHeight + this.formHeight - 185
+    init() {
+      this.form.issue_ids = this.row.issue_ids
+      this.form.name = this.row.name
+      this.collapse = this.row.collapse
+    },
+    async handleHistory(value) {
+      this.isLoading = true
+      if (value) {
+        await postExcalidrawHistory(this.row.id).then(() => {
+          this.isShowExcalidraw = true
+        })
+      } else {
+        await patchExcalidrawHistory(this.row.id)
+      }
+      this.isLoading = false
     },
     handleEdit() {
       this.$refs['ExcalidrawForm'].$refs['form'].validate(async(valid) => {
@@ -160,7 +151,12 @@ export default {
       })
     },
     onDialogClosed() {
+      window.removeEventListener('resize', this.handleHeight)
+      this.handleHistory(false)
       this.$emit('update:dialogVisible', false)
+    },
+    handleHeight() {
+      this.excalidrawHeight = window.innerHeight + this.formHeight - 185
     }
   }
 }

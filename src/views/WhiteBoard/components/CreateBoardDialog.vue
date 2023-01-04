@@ -78,11 +78,6 @@ export default {
               sendData.append('issue_ids', this.form.issue_ids)
             }
             this.row = (await createExcalidraw(sendData)).data
-            this.$message({
-              title: this.$t('general.Success'),
-              message: this.$t('Notify.Added'),
-              type: 'success'
-            })
             this.isLoading = false
             this.$emit('update')
             this.$emit('handle', this.row)
