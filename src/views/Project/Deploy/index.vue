@@ -180,21 +180,28 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button class="buttonSecondaryReverse" @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
+        <el-button
+          class="buttonSecondaryReverse"
+          @click="onDialogClosed"
+        >
+          {{ $t('general.Cancel') }}
+        </el-button>
         <el-button
           v-if="edit_id"
           class="buttonPrimary"
           :loading="memberConfirmLoading"
           @click="handleConfirm(edit_id)"
         >
-          {{ $t('general.Save') }}</el-button>
+          {{ $t('general.Save') }}
+        </el-button>
         <el-button
           v-else
           class="buttonPrimary"
           :loading="memberConfirmLoading"
           @click="handleConfirm(null)"
         >
-          {{ $t('general.Add') }}</el-button>
+          {{ $t('general.Add') }}
+        </el-button>
       </span>
     </el-dialog>
   </div>
@@ -212,13 +219,13 @@ import {
   patchService,
   patchServiceRedeploy
 } from '@/api/deploy'
-import ApplicationSetting from '@/views/Project/Deploy/components/ApplicationSetting'
+import ApplicationSetting from './components/ApplicationSetting'
 import Status from './components/Status'
 import { getLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'Deploy',
-  components: { ApplicationSetting, ElTableColumnTime, Status },
+  components: { ElTableColumnTime, ApplicationSetting, Status },
   filters: {
     getActionIcon(value) {
       return value ? 'el-icon-video-play' : 'el-icon-video-pause'
