@@ -1292,7 +1292,7 @@ export default {
     ReleaseHelper: 'above release version requires an image included.',
     NoSetting: 'Deploy setting is not yet ready, please check with your system administrator.',
     LinkToApplication: 'Link to application',
-    NameRule: `Please enter 2-30 English leading letters which combines with English, numbers or '_'. Note that the English must be all lowercase and the ID set cannot be all numbers.`
+    NameRule: `Please enter 2-30 English leading letters which combines with English, numbers or '-'. Note that the English must be all lowercase and the ID set cannot be all numbers.`
   },
   Validation: {
     Input: 'Please Input {0}',

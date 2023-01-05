@@ -411,7 +411,7 @@ export default {
           },
           {
             required: true,
-            pattern: /^[a-z][a-z0-9_]{0,28}[a-z0-9]$/,
+            pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
             message: this.$t(`Validation.Invalid`, [this.$t('Deploy.Name')]),
             trigger: 'blur'
           }
@@ -435,7 +435,7 @@ export default {
           },
           {
             required: true,
-            pattern: /^[a-z][a-z0-9_]{0,28}[a-z0-9]$/,
+            pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
             message: this.$t(`Validation.Invalid`, [this.$t('Deploy.Namespace')]),
             trigger: 'blur'
           }
