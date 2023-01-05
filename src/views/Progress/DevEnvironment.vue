@@ -21,7 +21,6 @@
         <el-col class="text-right text-base mb-2 text-info">
           {{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}
         </el-col>
-
         <el-col
           v-for="pod in filteredData"
           :key="pod.branch + pod.commit_id"
@@ -47,7 +46,8 @@
                   <svg-icon
                     class="mr-1"
                     icon-class="ion-git-commit-outline"
-                  />{{ pod.commit_id }}
+                  />
+                  {{ pod.commit_id }}
                 </el-link>
               </div>
               <div>
@@ -109,7 +109,7 @@
                             class="mr-1"
                             icon-class="k8s-pod"
                           />
-                          <span class="">{{ $t('ProcessDevEnvironment.Pod') }}</span>
+                          {{ $t('ProcessDevEnvironment.Pod') }}
                         </div>
                         <el-dropdown trigger="click">
                           <el-button
@@ -123,20 +123,24 @@
                               v-show="item.containers[0].state === 'running'"
                               @click.native="handleCommandClick(item.name, item.containers[0].name)"
                             >
-                              <em class="ri-terminal-line mr-4" />command
+                              <em class="ri-terminal-line mr-4" />
+                              command
                             </el-dropdown-item>
                             <el-dropdown-item @click.native="handleLogClick(item.name, item.containers[0].name)">
-                              <em class="ri-terminal-box-line mr-4" />log
+                              <em class="ri-terminal-box-line mr-4" />
+                              log
                             </el-dropdown-item>
                             <el-dropdown-item @click.native="handleDeletePods(selectedProjectId, item.name)">
-                              <em class="el-icon-delete mr-4" />{{ $t('general.Delete') }}
+                              <em class="el-icon-delete mr-4" />
+                              {{ $t('general.Delete') }}
                             </el-dropdown-item>
                           </el-dropdown-menu>
                         </el-dropdown>
                       </div>
-                      <div class="text-xs font-bold">{{ item.name }}</div>
+                      <div class="text-xs font-bold">
+                        {{ item.name }}
+                      </div>
                     </div>
-
                     <el-row :gutter="10">
                       <el-col :span="24">
                         <el-card
@@ -155,25 +159,32 @@
                               {{ container.state }}
                             </el-tag>
                           </div>
-
                           <div class="mb-2">
                             <em class="mr-1 text-xs ri-inbox-line" />
-                            <span class="text-xs">{{ $t('ProcessDevEnvironment.Container') }}</span>
-                            <div class="font-bold ml-5">{{ container.name }}</div>
+                            <span class="text-xs">
+                              {{ $t('ProcessDevEnvironment.Container') }}
+                            </span>
+                            <div class="font-bold ml-5">
+                              {{ container.name }}
+                            </div>
                           </div>
-
                           <div class="mb-2">
                             <em class="mr-1 text-xs ri-time-line" />
-                            <span class="text-xs mr-1">{{ $t('general.StartTime') }}</span>
-                            <div class="font-bold ml-5">{{ getRelativeTime(container.start_time) }}</div>
+                            <span class="text-xs mr-1">
+                              {{ $t('general.StartTime') }}
+                            </span>
+                            <div class="font-bold ml-5">
+                              {{ getRelativeTime(container.start_time) }}
+                            </div>
                           </div>
-
                           <div
                             v-for="(servicePM, servicePMIdx) in container.services"
                             :key="servicePMIdx"
                           >
                             <em class="ri-node-tree mr-1 text-xs" />
-                            <span class="text-xs">{{ $t('ProcessDevEnvironment.Services') }}</span>
+                            <span class="text-xs">
+                              {{ $t('ProcessDevEnvironment.Services') }}
+                            </span>
                             <div
                               v-for="(service, serviceIdx) in servicePM.services"
                               :key="serviceIdx"
@@ -187,19 +198,33 @@
                                 :open-delay="300"
                                 :close-delay="50"
                               >
-                                <p class="text-center">
-                                  <span class="text-title">
+                                <el-descriptions
+                                  label-class-name="font-bold text-center"
+                                  :label-style="{ width: '25%' }"
+                                  :column="1"
+                                  border
+                                >
+                                  <el-descriptions-item :label="$t('ProcessDevEnvironment.External')">
                                     {{ service.url }}
-                                  </span>
-                                </p>
-                                <div class="flex justify-center">
-                                  <el-button
-                                    icon="el-icon-copy-document"
-                                    circle
-                                    size="mini"
-                                    @click="copyUrl(service.url)"
-                                  />
-                                </div>
+                                    <el-button
+                                      class="ml-1"
+                                      icon="el-icon-copy-document"
+                                      size="mini"
+                                      circle
+                                      @click="copyUrl(service.url)"
+                                    />
+                                  </el-descriptions-item>
+                                  <el-descriptions-item :label="$t('ProcessDevEnvironment.Internal')">
+                                    {{ `${service.name}.${pod.project_name}.svc.cluster.local` }}
+                                    <el-button
+                                      class="ml-1"
+                                      icon="el-icon-copy-document"
+                                      size="mini"
+                                      circle
+                                      @click="copyUrl(`${service.name}.${pod.project_name}.svc.cluster.local`)"
+                                    />
+                                  </el-descriptions-item>
+                                </el-descriptions>
                                 <el-link
                                   slot="reference"
                                   :underline="false"
@@ -244,7 +269,7 @@
       >
         <el-empty :description="$t('general.NoData')" />
       </div>
-      <pod-log
+      <PodLog
         ref="podLogDialog"
         :pod-name="focusPodName"
         :container-name="focusContainerName"
@@ -254,10 +279,15 @@
 </template>
 
 <script>
-import { deleteEnvironmentByBranchName, getEnvironmentList, redeployEnvironmentByBranchName, deletePod } from '@/api/kubernetes'
+import {
+  getEnvironmentList,
+  redeployEnvironmentByBranchName,
+  deleteEnvironmentByBranchName,
+  deletePod
+} from '@/api/kubernetes'
+import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
 import { BasicData, SearchBar, ProjectSelector } from '@/mixins'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
-import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
 
 export default {
   name: 'ProgressDevEnvironment',
@@ -343,12 +373,13 @@ export default {
     },
     formatEnvironments(envInfos) {
       const result = envInfos.map((envInfo) => {
-        const { branch, commit_id, commit_url, pods } = envInfo
+        const { branch, commit_id, commit_url, pods, project_name } = envInfo
         return {
           branch,
           commit_id,
           commit_url,
-          pods: this.formatPods(pods)
+          pods: this.formatPods(pods),
+          project_name
         }
       })
       result.forEach((items) => {
@@ -380,6 +411,7 @@ export default {
           start_time: status.time,
           services: service_port_mapping.map((servicePort) => ({
             services: servicePort.services.map((service) => ({
+              name: service.name,
               type: service.service_type,
               label: `${service.service_type} (port:${service.target_port})`,
               url: service.url[0]

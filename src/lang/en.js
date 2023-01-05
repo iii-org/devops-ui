@@ -933,7 +933,9 @@ export default {
     Container: 'Container',
     Image: 'Image',
     Services: 'Services',
-    Pod: 'Pod'
+    Pod: 'Pod',
+    Internal: 'Internal',
+    External: 'External'
   },
   ProjectResource: {
     Usage: 'Usage',

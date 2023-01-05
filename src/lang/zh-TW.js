@@ -928,7 +928,9 @@ export default {
     Container: '容器',
     Image: '映像檔',
     Services: '服務',
-    Pod: 'Pod'
+    Pod: 'Pod',
+    Internal: '內部',
+    External: '外部'
   },
   ProjectResource: {
     Usage: '使用量',
