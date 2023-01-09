@@ -100,11 +100,13 @@
 
 <script>
 import { deleteConfigmap, getConfigmapList } from '@/api/kubernetes'
-import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/mixins'
+import { BasicData, SearchBar, Pagination, Table } from '@/mixins'
+import { ProjectListSelector } from '@/components'
 
 export default {
   name: 'ConfigMapsList',
-  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
+  components: { ProjectListSelector },
+  mixins: [BasicData, SearchBar, Pagination, Table],
   data() {
     return {
       editDialogVisible: false,

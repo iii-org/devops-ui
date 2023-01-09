@@ -354,19 +354,19 @@
 </template>
 
 <script>
-import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu } from 'v-contextmenu'
-import { getProjectIssueList } from '@/api_v2/projects'
 import { mapGetters } from 'vuex'
+import { cloneDeep } from 'lodash'
+import { isTimeValid, getLocalTime } from '@/utils/handleTime'
+import { getProjectIssueList } from '@/api_v2/projects'
+import { getIssue, addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
+import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu } from 'v-contextmenu'
+import { CancelRequest } from '@/mixins'
 import { Tracker, Priority, Status } from '@/components/Issue'
 import WBSInputColumn from '@/views/Plan/Milestone/components/WBSInputColumn'
 import WBSSelectColumn from '@/views/Plan/Milestone/components/WBSSelectColumn'
 import WBSDateColumn from '@/views/Plan/Milestone/components/WBSDateColumn'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
-import { getIssue, addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
-import { cloneDeep } from 'lodash'
-import { CancelRequest } from '@/mixins'
-import { isTimeValid, getLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'WBS',
@@ -379,9 +379,8 @@ export default {
     ContextmenuSubmenu,
     ProjectIssueDetail,
     SettingRelationIssue,
-    IssueMatrix: () => import('@/views/Project/IssueDetail/components/IssueMatrix'),
+    IssueMatrix: () => import('@/views/Project/IssueDetail/components/IssueMatrix')
     // eslint-disable-next-line vue/no-unused-components
-    Tracker, Status
   },
   directives: {
     contextmenu: directive

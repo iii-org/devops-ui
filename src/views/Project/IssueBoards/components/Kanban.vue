@@ -323,11 +323,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import Draggable from 'vuedraggable'
-import Status from '@/components/Issue/Status'
-import Priority from '@/components/Issue/Priority'
-import Tracker from '@/components/Issue/Tracker'
 import { getIssueFamily } from '@/api/issue'
+import Draggable from 'vuedraggable'
+import { Priority, Tracker, Status } from '@/components/Issue'
 import QuickAddIssueOnBoard from './QuickAddIssueOnBoard'
 
 export default {

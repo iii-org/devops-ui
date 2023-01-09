@@ -155,10 +155,9 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar } from '@/mixins'
 import { addSystemSecret, deleteSystemSecret, getSystemSecrets } from '@/api/maintenance'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
+import { ElTableColumnTime, ElTableColumnTag } from '@/components'
 
 const defaultFormData = () => ({
   name: '',

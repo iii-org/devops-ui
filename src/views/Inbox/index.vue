@@ -92,10 +92,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import SearchFilter from './components/SearchFilter.vue'
 import { getMessageList, setReadMessage } from '@/api_v2/monitoring'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { Pagination } from '@/mixins'
+import { ElTableColumnTime } from '@/components'
+import SearchFilter from './components/SearchFilter.vue'
 import MessageDialog from '@/components/Notification/components/MessageDialog.vue'
 
 const params = () => ({
@@ -105,7 +105,11 @@ const params = () => ({
 
 export default {
   name: 'Inbox',
-  components: { SearchFilter, ElTableColumnTime, MessageDialog },
+  components: {
+    ElTableColumnTime,
+    SearchFilter,
+    MessageDialog
+  },
   mixins: [Pagination],
   data() {
     return {

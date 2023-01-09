@@ -6,7 +6,6 @@
         :placeholder="$t('Git.searchBranchOrCommitId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
-        @input="onSearch"
       />
     </ProjectListSelector>
     <el-divider />
@@ -126,52 +125,47 @@
 </template>
 
 <script>
-import { BasicData, Pagination, ProjectSelector } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
-import { getHarborScan } from '@/api_v2/harbor'
 import { getDurationTime } from '@/utils/handleTime'
+import { getHarborScan } from '@/api_v2/harbor'
+import { BasicData, SearchBar, Pagination } from '@/mixins'
+import {
+  ProjectListSelector,
+  ElTableColumnTime,
+  ElTableColumnTag
+} from '@/components'
 
 export default {
   name: 'DockerImage',
   components: {
+    ProjectListSelector,
     ElTableColumnTime,
     ElTableColumnTag
   },
-  mixins: [BasicData, Pagination, ProjectSelector],
+  mixins: [BasicData, SearchBar, Pagination],
   data() {
     return {
-      keyword: '',
+      storageName: 'clair',
+      storageType: ['SearchBar'],
       params: {
         page: 1,
         per_page: 10,
-        search: sessionStorage.getItem('clairKeyword')
+        search: this.keyword
       },
       testList: []
     }
   },
-  beforeRouteEnter(to, from, next) {
-    if (from.name === 'DockerReport') {
-      next((vm) => {
-        vm.keyword = sessionStorage.getItem('clairKeyword')
-        sessionStorage.removeItem('clairKeyword')
-      })
-    } else {
-      next()
+  watch: {
+    async keyword(value) {
+      this.params.search = value
+      this.params.page = 1
+      this.storeKeyword()
+      await this.loadData()
     }
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.name === 'DockerReport') {
-      sessionStorage.setItem('clairKeyword', this.keyword)
-    }
-    next()
   },
   methods: {
     async fetchData() {
-      this.listLoading = true
       const res = await getHarborScan(this.selectedProjectId, this.params)
       this.setListData(res)
-      this.listLoading = false
     },
     setListData(res) {
       this.testList = res.data.scan_list
@@ -180,16 +174,11 @@ export default {
     durationText(duration) {
       return getDurationTime(0, duration)
     },
-    async onSearch(keyword) {
-      this.params.search = keyword
-      this.params.page = 1
-      await this.fetchData()
-    },
     async onPagination(query) {
       const { page, limit } = query
       this.params.page = page
       this.params.per_page = limit
-      await this.fetchData()
+      await this.loadData()
     },
     async handleToTestReport(row) {
       this.$router.push({

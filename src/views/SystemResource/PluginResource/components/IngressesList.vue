@@ -102,13 +102,13 @@
 
 <script>
 import { getIngressList } from '@/api/kubernetes'
-import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { BasicData, SearchBar, Pagination, Table } from '@/mixins'
+import { ElTableColumnTime } from '@/components'
 
 export default {
   name: 'IngressList',
   components: { ElTableColumnTime },
-  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
+  mixins: [BasicData, SearchBar, Pagination, Table],
   methods: {
     async fetchData() {
       return (await getIngressList(this.selectedProjectId)).data

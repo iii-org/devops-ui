@@ -187,10 +187,10 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
 import { getExcalidraw, deleteExcalidraw } from '@/api_v2/excalidraw'
 import { getServerStatus } from '@/api_v2/monitoring'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
 import {
   SearchFilter,
   CreateBoardDialog,
@@ -201,13 +201,14 @@ import {
 export default {
   name: 'WhiteBoardList',
   components: {
+    ProjectListSelector,
     ElTableColumnTime,
     SearchFilter,
     CreateBoardDialog,
     EditBoardDialog,
     RestoreBoardDialog
   },
-  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       searchKeys: ['name'],

@@ -22,7 +22,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import Tracker from '@/components/Issue/Tracker'
+import { Tracker } from '@/components/Issue'
 import draggable from 'vuedraggable'
 import emitter from 'element-ui/src/mixins/emitter'
 

@@ -41,8 +41,7 @@
 
 <script>
 import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
-import Tracker from '@/components/Issue/Tracker'
-import Status from '@/components/Issue/Status'
+import { Tracker, Status } from '@/components/Issue'
 
 export default {
   name: 'AdminIssueRankDetail',

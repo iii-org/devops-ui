@@ -153,7 +153,7 @@
 import { mapGetters } from 'vuex'
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import { CustomFilter, Tracker, Priority, Status } from '@/components/Issue'
-import ProjectListSelector from '@/components/ProjectListSelector'
+import { ProjectListSelector } from '@/components'
 import SaveFilterButton from '@/components/Issue/components/SaveFilterButton'
 
 export default {

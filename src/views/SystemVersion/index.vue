@@ -55,9 +55,8 @@
 <script>
 import { getVersion } from '@/api/dashboard'
 import { getDevopsApiServerVersion, updateSystemInfoReport } from '@/api/devopsVersion'
-
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-import VersionUpdater from './components/VersionUpdater.vue'
+import { ElTableColumnTime } from '@/components'
+import VersionUpdater from './components/VersionUpdater'
 
 export default {
   name: 'SystemVersion',

@@ -116,7 +116,9 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button id="dialog-btn-cancel" class="buttonSecondaryReverse" @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button id="dialog-btn-cancel" class="buttonSecondaryReverse" @click="dialogVisible = false">
+          {{ $t('general.Cancel') }}
+        </el-button>
         <el-button id="dialog-btn-confirm" class="buttonPrimary" :loading="confirmLoading" @click="handleConfirm">
           {{ $t('general.Confirm') }}
         </el-button>
@@ -126,10 +128,9 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar } from '@/mixins'
 import { addSystemRegistry, deleteSystemRegistry, getSystemRegistries } from '@/api/maintenance'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
+import { ElTableColumnTime, ElTableColumnTag } from '@/components'
 
 const defaultFormData = () => ({
   name: '',

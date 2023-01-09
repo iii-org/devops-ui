@@ -126,16 +126,20 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
 import { getSonarQubeData } from '@/api/sonarQube'
 import { getSonarQubePod } from '@/api_v2/sonarQube'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {
   name: 'ScanSonarQube',
-  components: { ElTableColumnTime, PodLog },
-  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
+  components: {
+    ProjectListSelector,
+    ElTableColumnTime,
+    PodLog
+  },
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       searchKeys: ['branch', 'commit_id'],

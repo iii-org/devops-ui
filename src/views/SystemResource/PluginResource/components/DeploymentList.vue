@@ -120,13 +120,13 @@
 
 <script>
 import { deleteDeployment, getDeploymentList, updateDeployment } from '@/api/kubernetes'
-import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { BasicData, SearchBar, Pagination, Table } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
 
 export default {
   name: 'DeploymentList',
-  components: { ElTableColumnTime },
-  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
+  components: { ProjectListSelector, ElTableColumnTime },
+  mixins: [BasicData, SearchBar, Pagination, Table],
   data() {
     return {
       btnLoading: false

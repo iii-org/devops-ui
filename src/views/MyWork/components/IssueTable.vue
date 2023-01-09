@@ -19,11 +19,11 @@
       >
         <el-table-column type="expand">
           <template slot-scope="{row}">
-            <ExpandSection
+            <IssueExpand
               :issue="row"
               @update-list="fetchData"
               @on-context-menu="onContextMenu"
-              @collapse-expend-row="collapseExpendRow"
+              @handle-expand-row="collapseExpandRow"
             />
           </template>
         </el-table-column>
@@ -67,7 +67,7 @@
               >
                 #{{ scope.row.id }}
               </div>
-              <div class="ellipsis">
+              <div class="truncate">
                 <template v-if="scope.row.tags.length > 0">
                   <el-tag
                     v-for="item in scope.row.tags"
@@ -179,14 +179,14 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { ContextMenu, Pagination, CancelRequest } from '@/mixins'
 import { getUserIssueList } from '@/api/user'
 import { getIssueFamily } from '@/api/issue'
-import { Status, Tracker, Priority, ExpandSection } from '@/components/Issue'
+import { ContextMenu, Pagination, CancelRequest } from '@/mixins'
+import { Status, Tracker, Priority, IssueExpand } from '@/components/Issue'
 
 export default {
   name: 'MyWorkIssueTable',
-  components: { Status, Tracker, Priority, ExpandSection },
+  components: { Status, Tracker, Priority, IssueExpand },
   mixins: [ContextMenu, Pagination, CancelRequest],
   props: {
     from: {
@@ -396,7 +396,7 @@ export default {
     hasRelationIssue(row) {
       return row.family
     },
-    collapseExpendRow(issueId) {
+    collapseExpandRow(issueId) {
       const row = this.listData.find((item) => item.id === issueId)
       this.$refs.issueList.toggleRowExpansion(row, false)
     }
@@ -431,7 +431,7 @@ export default {
   padding-bottom: 10px;
 }
 
->>> .row-expend-loading .el-table__expand-column .cell {
+>>> .row-expand-loading .el-table__expand-column .cell {
   padding: 0;
 
   .el-table__expand-icon {
@@ -448,11 +448,5 @@ export default {
 
 >>> .context-menu {
   cursor: context-menu;
-}
-
-.ellipsis {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
 }
 </style>

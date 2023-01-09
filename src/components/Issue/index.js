@@ -1,10 +1,29 @@
-import Priority from './Priority'
-import Status from './Status'
-import Tracker from './Tracker'
-import ContextMenu from './ContextMenu'
+// @/components/Issue/index.js for outside components
+// @/components/Issue/components for inside components
 import AddIssue from './AddIssue'
 import QuickAddIssue from './QuickAddIssue'
-import ExpandSection from './ExpandSection'
 import SearchFilter from './SearchFilter'
 import CustomFilter from './CustomFilter'
-export { Priority, Status, Tracker, ContextMenu, AddIssue, QuickAddIssue, ExpandSection, SearchFilter, CustomFilter }
+import IssueExpand from './IssueExpand'
+import IssueSelect from './IssueSelect'
+import ContextMenu from './ContextMenu'
+import Columns from './Columns'
+import Priority from './Priority'
+import Tracker from './Tracker'
+import Status from './Status'
+import Tags from './Tags'
+
+export {
+  AddIssue,
+  QuickAddIssue,
+  SearchFilter,
+  CustomFilter,
+  IssueExpand,
+  IssueSelect,
+  ContextMenu,
+  Columns,
+  Priority,
+  Tracker,
+  Status,
+  Tags
+}

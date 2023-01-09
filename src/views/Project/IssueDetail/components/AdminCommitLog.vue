@@ -154,6 +154,7 @@
 <script>
 import axios from 'axios'
 import { mapGetters } from 'vuex'
+import { getLocalTime } from '@/utils/handleTime'
 import {
   getProjectIssueList,
   getRootProjectId,
@@ -164,8 +165,7 @@ import {
   getIssue,
   getIssueGitCommitLog
 } from '@/api/issue'
-import { getLocalTime } from '@/utils/handleTime'
-import IssueSelect from '@/components/Issue/IssueSelect'
+import { IssueSelect } from '@/components/Issue'
 import NoData from './widget/NoData'
 
 class CommitLogItem {

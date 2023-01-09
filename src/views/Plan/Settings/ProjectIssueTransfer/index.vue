@@ -114,7 +114,7 @@
           width="30"
         >
           <template slot-scope="scope">
-            <ExpandSection
+            <IssueExpand
               :issue="scope.row"
               @updateListData="loadData"
             />
@@ -284,11 +284,11 @@ import { getProjectAssignable } from '@/api/projects'
 import { updateIssue, getCheckIssueClosable, getIssueFamily } from '@/api/issue'
 import { BasicData, Pagination, ContextMenu, SearchBar } from '@/mixins'
 import { Priority, Status, Tracker } from '@/components/Issue'
-import { ExpandSection } from './components'
+import { IssueExpand } from './components'
 
 export default {
   name: 'ProjectIssueTransfer',
-  components: { Tracker, Priority, Status, ExpandSection },
+  components: { Tracker, Priority, Status, IssueExpand },
   mixins: [BasicData, Pagination, ContextMenu, SearchBar],
   data() {
     return {

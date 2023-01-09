@@ -200,19 +200,20 @@ import {
   cancelCheckMarxScans
 } from '@/api/checkMarx'
 import { getCheckMarxPod } from '@/api_v2/checkMarx'
-import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
-import { ElTableColumnTime } from '@/components'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 import * as elementTagType from '@/utils/elementTagType'
 
 export default {
   name: 'ScanCheckmarx',
   components: {
+    ProjectListSelector,
     ElTableColumnTime,
     PodLog,
     Error: () => import('@/views/Error')
   },
-  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       searchKeys: ['branch', 'commit_id'],

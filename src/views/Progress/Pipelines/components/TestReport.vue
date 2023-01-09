@@ -168,41 +168,44 @@
 import { getLocalTime, getFormatTime } from '@/utils/handleTime'
 import { getProjectCommitTestSummary, getProjectInfos } from '@/api/projects'
 import XLSX from 'xlsx'
-import SonarQubeReport from '@/views/Progress/Pipelines/components/SonarQubeReport'
-import CheckMarxReport from '@/views/Progress/Pipelines/components/CheckMarxReport'
-import ClairReport from '@/views/Progress/Pipelines/components/ClairReport'
-// import AnchoreReport from '@/views/Progress/Pipelines/components/AnchoreReport'
-import ZapReport from '@/views/Progress/Pipelines/components/ZapReport'
-import WebInspectReport from '@/views/Progress/Pipelines/components/WebInspectReport'
-import PostmanReport from '@/views/Progress/Pipelines/components/PostmanReport'
-import SideexReport from '@/views/Progress/Pipelines/components/SideexReport'
-import CmasReport from '@/views/Progress/Pipelines/components/CmasReport'
+import {
+  // AnchoreReport,
+  CheckMarxReport,
+  ClairReport,
+  CmasReport,
+  PostmanReport,
+  SideexReport,
+  SonarQubeReport,
+  WebInspectReport,
+  ZapReport
+} from './'
 
 const downloadFileName = 'DevOps_test_report'
 const dataName = [
-  'sonarqube',
-  'checkmarx',
-  'clair', // clair
   // 'anchore',
-  'zap',
-  'webinspect',
+  'clair', // clair
+  'checkmarx',
   'cmas',
+  'harbor',
   'postman',
-  'sideex'
+  'sideex',
+  'sonarqube',
+  'webinspect',
+  'zap'
 ]
 
 export default {
   name: 'TestReport',
   components: {
-    SonarQubeReport,
+    // AnchoreReport,
     CheckMarxReport,
     ClairReport,
-    // AnchoreReport,
-    ZapReport,
-    WebInspectReport,
     CmasReport,
     PostmanReport,
-    SideexReport
+    SideexReport,
+    SonarQubeReport,
+    WebInspectReport,
+    ZapReport
   },
   data() {
     this.title = 'III DevOps'

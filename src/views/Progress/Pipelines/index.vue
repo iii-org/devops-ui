@@ -169,13 +169,15 @@
 <script>
 import { mapGetters } from 'vuex'
 import { changePipelineByAction, getPipelines } from '@/api/cicd'
-import TestDetail from './components/TestDetail'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import Pagination from '@/components/Pagination'
-import PipelineSettingsTable from '@/views/Plan/Settings/components/PipelineSettingsTable'
 import { CancelRequest } from '@/mixins'
 import { getLocalTime } from '@/utils/handleTime'
+import {
+  ElTableColumnTime,
+  ProjectListSelector,
+  Pagination
+} from '@/components'
+import PipelineSettingsTable from '@/views/Plan/Settings/components/PipelineSettingsTable'
+import TestDetail from './components/TestDetail'
 // import { triggerReport } from '@/utils/triggerReport'
 
 const listQuery = () => ({
@@ -190,7 +192,13 @@ const listQuery = () => ({
 
 export default {
   name: 'Pipelines',
-  components: { ElTableColumnTime, TestDetail, ProjectListSelector, Pagination, PipelineSettingsTable },
+  components: {
+    ElTableColumnTime,
+    ProjectListSelector,
+    Pagination,
+    PipelineSettingsTable,
+    TestDetail
+  },
   mixins: [CancelRequest],
   data() {
     return {

@@ -146,7 +146,7 @@
                       {{ $t('Issue.TraceabilityMatrix') }}
                     </el-button>
                   </div>
-                  <ExpandSection
+                  <IssueExpand
                     :issue="$data"
                     :family="countRelationIssue > 0"
                     :popup="true"
@@ -311,6 +311,12 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
+import {
+  addProjectTags,
+  getRootProjectId
+} from '@/api/projects'
+import { getHasSon, getProjectRelation } from '@/api_v2/projects'
 import {
   getIssue,
   updateIssue,
@@ -321,6 +327,11 @@ import {
   getIssueGitCommitLog,
   getIssueFamily
 } from '@/api/issue'
+import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
+import { atob } from '@/utils/base64'
+import getPageTitle from '@/utils/getPageTitle'
+import { ContextMenu } from '@/mixins'
+import { Status, Tracker, IssueExpand } from '@/components/Issue'
 import {
   IssueForm,
   IssueNotesDialog,
@@ -329,23 +340,12 @@ import {
   IssueDescription,
   IssueTitle,
   IssueToolbar,
+  IssueMatrix,
   IssueCollection,
   AdminCommitLog,
   WhiteBoardTable
 } from './components'
-import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
-import {
-  addProjectTags,
-  getRootProjectId
-} from '@/api/projects'
-import { getHasSon, getProjectRelation } from '@/api_v2/projects'
-import { Status, Tracker, ExpandSection } from '@/components/Issue'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
-import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
-import { atob } from '@/utils/base64'
-import getPageTitle from '@/utils/getPageTitle'
-import IssueMatrix from './components/IssueMatrix'
-import ContextMenu from '@/mixins/ContextMenu'
 import variables from '@/styles/theme/variables.scss'
 
 const commitLimit = 10
@@ -366,7 +366,7 @@ export default {
     IssueFiles,
     IssueMatrix,
     RelatedCollectionDialog,
-    ExpandSection,
+    IssueExpand,
     AdminCommitLog,
     WhiteBoardTable
   },

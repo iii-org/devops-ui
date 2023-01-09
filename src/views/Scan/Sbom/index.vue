@@ -16,7 +16,6 @@
         :placeholder="$t('Git.searchBranchOrCommitId')"
         prefix-icon="el-icon-search"
         style="width: 250px"
-        @input="onSearch"
       />
     </ProjectListSelector>
     <el-divider />
@@ -219,32 +218,34 @@
 </template>
 
 <script>
-import { BasicData, Pagination, ProjectSelector } from '@/mixins'
-import { ElTableColumnTime } from '@/components'
-import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
-import * as elementTagType from '@/utils/elementTagType'
 import {
   getSbomList,
   getSbomFile,
   getSbomDownloadFile,
   getSbomPod
 } from '@/api_v2/sbom'
+import { BasicData, SearchBar, Pagination } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
+import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
+import * as elementTagType from '@/utils/elementTagType'
 
 export default {
   name: 'Sbom',
   components: {
+    ProjectListSelector,
     ElTableColumnTime,
     PodLog,
     Error: () => import('@/views/Error')
   },
-  mixins: [BasicData, Pagination, ProjectSelector],
+  mixins: [BasicData, SearchBar, Pagination],
   data() {
     return {
-      keyword: '',
+      storageName: 'sbom',
+      storageType: ['SearchBar'],
       params: {
         page: 1,
         per_page: 10,
-        search: sessionStorage.getItem('sbomKeyword')
+        search: this.keyword
       },
       sbomList: [],
       pod: {},
@@ -253,47 +254,31 @@ export default {
       downloadList: []
     }
   },
-  beforeRouteEnter(to, from, next) {
-    if (from.name === 'SbomReport') {
-      next((vm) => {
-        vm.keyword = sessionStorage.getItem('sbomKeyword')
-        sessionStorage.removeItem('sbomKeyword')
-      })
-    } else {
-      next()
+  watch: {
+    async keyword(value) {
+      this.params.search = value
+      this.params.page = 1
+      this.storeKeyword()
+      await this.loadData()
     }
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.name === 'SbomReport') {
-      sessionStorage.setItem('sbomKeyword', this.keyword)
-    }
-    next()
   },
   async mounted() {
     this.pod = (await getSbomPod(this.selectedProjectId)).data
   },
   methods: {
     async fetchData() {
-      if (this.selectedProjectId === -1) return []
-      this.listLoading = true
       const res = await getSbomList(this.selectedProjectId, this.params)
       this.setListData(res)
-      this.listLoading = false
     },
     setListData(res) {
       this.sbomList = res.data.Sbom_list
       this.listQuery = res.data.page
     },
-    async onSearch(keyword) {
-      this.params.search = keyword
-      this.params.page = 1
-      await this.fetchData()
-    },
     async onPagination(query) {
       const { page, limit } = query
       this.params.page = page
       this.params.per_page = limit
-      await this.fetchData()
+      await this.loadData()
     },
     fetchDownloadList(row) {
       this.downloadLoading = true

@@ -229,12 +229,12 @@
 </template>
 
 <script>
-import IssueFileUploader from './IssueFileUploader'
-import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
+import { mapGetters } from 'vuex'
 import { addIssue, updateIssue } from '@/api/issue'
 import { createExcalidraw } from '@/api_v2/excalidraw'
-import AddIssue from '@/components/Issue/AddIssue'
-import { mapGetters } from 'vuex'
+import { AddIssue } from '@/components/Issue'
+import IssueFileUploader from './IssueFileUploader'
+import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
 
 export default {
   name: 'IssueToolbar',

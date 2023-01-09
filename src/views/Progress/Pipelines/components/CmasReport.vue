@@ -49,6 +49,7 @@
 
 <script>
 import { getCmasReport } from '@/api/cmas'
+import { ToolBar } from './'
 
 export default {
   name: 'Cmas',

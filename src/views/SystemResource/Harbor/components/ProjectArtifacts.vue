@@ -77,13 +77,13 @@
 
 <script>
 import { deleteProjectArtifact, getProjectArtifacts } from '@/api/harbor'
-import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { BasicData, SearchBar, Pagination, Table } from '@/mixins'
+import { ElTableColumnTime } from '@/components'
 
 export default {
   name: 'ProjectArtifacts',
   components: { ElTableColumnTime },
-  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
+  mixins: [BasicData, SearchBar, Pagination, Table],
   methods: {
     async fetchData() {
       return (await getProjectArtifacts(this.$route.params.rName)).data

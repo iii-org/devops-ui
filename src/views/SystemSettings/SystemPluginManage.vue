@@ -201,7 +201,7 @@
 import { reloadRouter } from '@/router/router'
 import { getPlugins, getPluginDetails, updatePlugin, deletePlugin } from '@/api/systemPlugin'
 import { SearchBar, Pagination } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { ElTableColumnTime } from '@/components'
 
 const formTemplate = () => ({
   disabled: false,

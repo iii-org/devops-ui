@@ -72,6 +72,7 @@
 
 <script>
 import { getCheckMarxReport, registerCheckMarxReport } from '@/api/checkMarx'
+import { ToolBar } from './'
 
 export default {
   name: 'Checkmarx',

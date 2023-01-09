@@ -194,7 +194,7 @@ import { mapGetters } from 'vuex'
 import { getLocalTime } from '@/utils/handleTime'
 import { getHarborScanReport } from '@/api_v2/harbor'
 import { getProjectInfos } from '@/api/projects'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
+import { ElTableColumnTag } from '@/components'
 
 const downloadFileName = 'Docker_Image_Vulnerability_Scan_Report'
 
@@ -245,12 +245,6 @@ export default {
       },
       immediate: true
     }
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.name !== 'DockerImage') {
-      sessionStorage.removeItem('clairKeyword')
-    }
-    next()
   },
   mounted() {
     this.fetchProjectInfo()

@@ -272,7 +272,6 @@
 </template>
 
 <script>
-import { ProjectSelector, BasicData, Pagination, SearchBar, ContextMenu } from '@/mixins'
 import { mapActions, mapGetters } from 'vuex'
 import Fuse from 'fuse.js'
 import {
@@ -282,25 +281,28 @@ import {
   postTestFile,
   postTestPlanWithTestFile
 } from '@/api/qa'
+import { isSideexResultExist } from '@/api/sideex'
+import { BasicData, Pagination, SearchBar, ContextMenu } from '@/mixins'
+import { ProjectListSelector } from '@/components'
+import IssueRow from '@/components/Issue/components/IssueRow'
 import {
   RelatedPlanDialog,
   CollectionFileUploader,
   CreateTestDataDialog,
   PreviewTestDataDialog
 } from './components'
-import { isSideexResultExist } from '@/api/sideex'
-import IssueRow from '@/components/Issue/components/IssueRow'
 
 export default {
   name: 'TestFile',
   components: {
+    ProjectListSelector,
+    IssueRow,
     CollectionFileUploader,
     CreateTestDataDialog,
     PreviewTestDataDialog,
-    RelatedPlanDialog,
-    IssueRow
+    RelatedPlanDialog
   },
-  mixins: [ProjectSelector, BasicData, Pagination, SearchBar, ContextMenu],
+  mixins: [BasicData, Pagination, SearchBar, ContextMenu],
   data() {
     return {
       filterVisible: false,

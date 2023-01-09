@@ -255,12 +255,8 @@
 import { mapGetters } from 'vuex'
 import { getLocalTime } from '@/utils/handleTime'
 import { getProjectInfos } from '@/api/projects'
-import {
-  getSbomRiskOverview,
-  getSbomRiskDetail
-} from '@/api_v2/sbom'
-import Pagination from '@/components/Pagination'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
+import { getSbomRiskOverview, getSbomRiskDetail } from '@/api_v2/sbom'
+import { Pagination, ElTableColumnTag } from '@/components'
 
 const listQuery = () => ({
   per_page: 100,
@@ -271,7 +267,7 @@ const listQuery = () => ({
 
 export default {
   name: 'SbomReport',
-  components: { ElTableColumnTag, Pagination },
+  components: { Pagination, ElTableColumnTag },
   data() {
     return {
       listQuery: listQuery(),
@@ -318,12 +314,6 @@ export default {
         }
       }
     }
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.name !== 'Sbom') {
-      sessionStorage.removeItem('sbomKeyword')
-    }
-    next()
   },
   mounted() {
     this.fetchProjectInfo()

@@ -309,6 +309,7 @@
 
 <script>
 import { getLocalTime } from '@/utils/handleTime'
+import { mapGetters } from 'vuex'
 import {
   getProjectAssignable,
   getProjectVersion,
@@ -320,11 +321,11 @@ import {
   fileSizeToMB,
   containSpecialChar
 } from '@/utils/extension'
-import Tracker from '@/components/Issue/Tracker'
-import Status from '@/components/Issue/Status'
-import Priority from '@/components/Issue/Priority'
-import { mapGetters } from 'vuex'
-import Tags from '@/components/Issue/Tags'
+import dayjs from 'dayjs'
+import Priority from './Priority'
+import Tracker from './Tracker'
+import Status from './Status'
+import Tags from './Tags'
 
 const getFormTemplate = () => ({
   name: '',

@@ -58,9 +58,9 @@
 </template>
 
 <script>
-import { BasicData } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { getExcalidrawHistory, restoreExcalidrawHistory } from '@/api_v2/excalidraw'
+import { BasicData } from '@/mixins'
+import { ElTableColumnTime } from '@/components'
 
 export default {
   name: 'RestoreBoardDialog',
