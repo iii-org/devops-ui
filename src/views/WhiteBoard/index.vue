@@ -5,7 +5,7 @@
         <el-button
           class="buttonSecondary"
           icon="el-icon-plus"
-          :disabled="isDisabled"
+          :disabled="!isAlive"
           @click="handleCreate"
         >
           {{ $t('Excalidraw.CreateBoard') }}
@@ -18,10 +18,7 @@
           {{ $t('Notify.ExcalidrawAliveWarning') }}
         </span>
       </div>
-      <SearchFilter
-        :is-alive="isAlive"
-        :keyword.sync="keyword"
-      />
+      <SearchFilter :keyword.sync="keyword" />
     </ProjectListSelector>
     <el-divider />
     <el-table
@@ -46,7 +43,6 @@
             slot="reference"
             type="primary"
             style="font-size: 16px"
-            :disabled="isDisabled"
             @click="handleEdit(scope.row,true)"
           >
             {{ scope.row.name }}
@@ -54,7 +50,6 @@
           <el-link
             size="small"
             :underline="false"
-            :disabled="isDisabled"
             @click="handleEdit(scope.row,true)"
           >
             <em class="ri-external-link-line" />
@@ -107,7 +102,6 @@
               class="buttonPrimaryReverse"
               type="primary"
               icon="el-icon-edit"
-              :disabled="isDisabled"
               @click="handleEdit(scope.row,false)"
             />
           </el-tooltip>
@@ -130,7 +124,6 @@
                 size="mini"
                 type="danger"
                 icon="el-icon-delete"
-                :disabled="isDisabled"
               />
             </el-tooltip>
           </el-popconfirm>
@@ -140,12 +133,12 @@
             placement="bottom"
           >
             <el-button
-              size="mini"
+              v-if="isProjectOwnerOrAdministrator"
               circle
+              size="mini"
               class="buttonSecondaryReverse"
               type="success"
               icon="el-icon-time"
-              :disabled="isDisabled"
               @click="handleRestore(scope.row)"
             />
           </el-tooltip>
@@ -186,6 +179,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
 import { getExcalidraw, deleteExcalidraw } from '@/api_v2/excalidraw'
 import { getServerStatus } from '@/api_v2/monitoring'
@@ -210,7 +204,6 @@ export default {
   data() {
     return {
       searchKeys: ['name'],
-      isClosed: false,
       isAlive: true,
       CreateBoardDialogVisible: false,
       EditBoardDialogVisible: false,
@@ -219,13 +212,15 @@ export default {
     }
   },
   computed: {
-    isDisabled() {
-      return this.isClosed || !this.isAlive
+    ...mapGetters(['userId', 'userRole', 'selectedProject']),
+    isProjectOwnerOrAdministrator() {
+      return this.userId === this.selectedProject.owner_id || this.userRole === 'Administrator'
     }
   },
   methods: {
     async fetchData() {
-      this.isAlive = (await getServerStatus('excalidraw')).status
+      await this.getExcalidrawStatus()
+      if (!this.isAlive) return []
       try {
         return (await getExcalidraw({ project_id: this.selectedProjectId })).data
       } catch (error) {
@@ -233,8 +228,11 @@ export default {
         this.handleError()
       }
     },
+    async getExcalidrawStatus() {
+      this.isAlive = (await getServerStatus('excalidraw')).status
+    },
     handleError() {
-      this.isClosed = true
+      this.isAlive = false
       this.listData = []
     },
     handleCreate() {
