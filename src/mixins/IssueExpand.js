@@ -1,5 +1,39 @@
+/**
+ * ! Before using this module, you need to know:
+ * 1. The feature of IssueExpand mixins is offer public function.
+ */
+
 import { getIssueFamily } from '@/api/issue'
 import { IssueExpand } from '@/components/Issue'
+
+/**
+ * * How to use IssueExpand component
+ * ! for required
+ * ? for optional
+ *
+ * ! @issue {Object}
+ * ? @popup {Boolean}
+ * ? @family {Boolean}
+ * ? @reload {String, Number}
+ * ? @isButtonDisabled {Boolean}
+ * ! @handleExpandRow {Function}
+ * ! @updateList {Function}
+ * ? @popupDialog {Function}
+ * ? @onContextMenu {Function}
+ *
+ * * Component example
+ *  <IssueExpand
+ *    :issue="row"
+ *    :popup="true"
+ *    :family="countRelationIssue > 0"
+ *    :reload="relationVisible"
+ *    :is-button-disabled="isButtonDisabled"
+ *    @handle-expand-row="handleExpandRow"
+ *    @update-list="getIssueFamilyData(issue)"
+ *    @popup-dialog="onRelationIssueDialog"
+ *    @on-context-menu="onContextMenu"
+ *  />
+ */
 
 export default {
   components: { IssueExpand },

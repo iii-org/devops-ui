@@ -1,5 +1,29 @@
+/**
+ * ! Before using this module, you need to know:
+ * 1. The feature of Columns mixins is define table column that need to show up.
+ */
+
 import { getIssueFieldDisplay } from '@/api/issue'
 import { Columns } from '@/components/Issue'
+
+/**
+ * * How to use Columns component
+ * ! for required
+ * ? for optional
+ *
+ * ! @columnsOptions {Array}
+ * ! @displayFields {Array}
+ * ? @filterValue {Object}
+ * ! @type {String}
+ *
+ * * Component example
+ *  <Columns
+ *    :columns-options="columnsOptions"
+ *    :display-fields.sync="displayFields"
+ *    :filter-value="filterValue"
+ *    :type="'issue_list' or 'wbs_cache'"
+ *  />
+ */
 
 export default {
   components: { Columns },

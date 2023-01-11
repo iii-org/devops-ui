@@ -1,3 +1,16 @@
+/**
+ * ! Before using this module, you need to know:
+ * 1. The main feature of BasicData mixins is call loadData function.
+ * 2. Define the storageType for make sure which data need to be loaded before load data.
+ *    ex:
+ *     ['SearchBar','SearchFilter','Pagination']
+ *     ! Must import which mixins you define in storageType.
+ * 3. Define the notRequiredProject for not loadData at first.
+ *    ex:
+ *     ['Dashboard','ProjectList','Inbox',...]
+ *     ! Define 'router' name inside.
+ */
+
 import { mapGetters } from 'vuex'
 
 export default {
@@ -8,17 +21,17 @@ export default {
       listData: [],
       storageType: [],
       notRequiredProject: [
+        'AccountManage',
         'Dashboard',
-        'ProjectList',
         'Inbox',
         'MessageConsole',
-        'AccountManage',
+        'Profile',
+        'ProjectList',
         'SystemActivities',
         'SystemArguments',
         'SystemDeploySettings',
         'SubAdminProjects',
         'SystemPluginManage',
-        'Profile',
         'SystemVersion'
       ]
     }

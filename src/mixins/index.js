@@ -1,29 +1,29 @@
 import BasicData from './BasicData.js'
-import Columns from './Columns'
-import SearchFilter from './SearchFilter'
 import SearchBar from './SearchBar.js'
+import SearchFilter from './SearchFilter'
 import Pagination from './Pagination.js'
+import Columns from './Columns'
 import CancelRequest from './CancelRequest.js'
 import ContextMenu from './ContextMenu'
 import IssueExpand from './IssueExpand'
+import Table from './Table.js'
 import Checkbox from './Checkbox'
 
-// ? not use
-import Table from './Table.js'
-import IssueList from './IssueList'
+// TODO not use
+// import IssueList from './IssueList'
 
 export {
   BasicData,
-  Columns,
-  SearchFilter,
   SearchBar,
+  SearchFilter,
   Pagination,
+  Columns,
   CancelRequest,
   ContextMenu,
   IssueExpand,
-  Checkbox,
-
-  // ? not use
   Table,
-  IssueList
+  Checkbox
+
+  // TODO not use
+  // IssueList
 }

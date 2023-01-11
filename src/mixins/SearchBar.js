@@ -1,3 +1,10 @@
+/**
+ * ! Before using this module, you need to know:
+ * 1. The main feature of searchBar mixins is offer filteredData.
+ * 2. Define function for saving keyword information in sessionStorage.
+ *    ! Have to define storageName if you want to save keyword info.
+ */
+
 import { mapGetters, mapActions } from 'vuex'
 
 export default {

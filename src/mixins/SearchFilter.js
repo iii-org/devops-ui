@@ -1,3 +1,10 @@
+/**
+ * ! Before using this module, you need to know:
+ * 1. The main feature of searchBar mixins is offer filterValue.
+ * 2. Define function for saving filter information in sessionStorage.
+ *    ! Have to define storageName if you want to save filter info.
+ */
+
 import { mapGetters, mapActions } from 'vuex'
 import {
   getProjectUserList,
@@ -5,6 +12,64 @@ import {
   getTagsByProject
 } from '@/api/projects'
 import { SearchFilter, CustomFilter } from '@/components/Issue'
+
+/**
+ * * How to use SearchFilter component
+ * ! for required
+ * ? for optional
+ *
+ * ! @listLoading {Boolean}
+ * ! @filterOptions {Array}
+ * ! @selectionOptions {Object}
+ * ! @prefill {Object}
+ * ! @changeFilter {Function}
+ * ! @changeFixedVersion {Function}
+ * ! @addCustomFilter {Function}
+ * ! @cleanFilter {Function}
+ *
+ * * Component example
+ *  <SearchFilter
+ *    :filter-options="filterOptions"
+ *    :list-loading="listLoading"
+ *    :selection-options="contextOptions"
+ *    :prefill="{
+ *      filterValue: filterValue,
+ *      keyword: keyword,
+ *      displayClosed: displayClosed,
+ *      fixed_version_closed: fixed_version_closed
+ *    }"
+ *    @change-filter="onChangeFilterForm"
+ *    @change-fixed-version="onChangeFixedVersionStatus"
+ *    @add-custom-filter="updateCustomFilter"
+ *    @clean-filter="cleanFilter"
+ *  >
+ * ?  <slot />
+ * ?  <slot name="download" />
+ *  </SearchFilter>
+ */
+
+/**
+ * * How to use CustomFilter component
+ * ! for required
+ * ? for optional
+ *
+ * ! @selectionOptions {Object}
+ * ! @type {String}
+ * ? @projectId {Number, String}
+ * ? @activeTab {String}
+ * ? @groupBy {Object}
+ * ! @applyFilter {Function}
+ *
+ * * Component example
+ *  <CustomFilter
+ *    type="my_work"
+ *    :selection-options="contextOptions"
+ *    :project-id="projectId"
+ *    :active-tab="activeTab"
+ *    :group-by="groupBy"
+ *    @apply-filter="applyCustomFilter"
+ *  />
+ */
 
 export default {
   components: { SearchFilter, CustomFilter },

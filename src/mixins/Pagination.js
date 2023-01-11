@@ -1,6 +1,41 @@
+/**
+ * ! Before using this module, you need to know:
+ * 1. The main feature of pagination mixins is offer pagedData.
+ * 2. Define function for saving page information in sessionStorage.
+ *    ! Have to define storageName if you want to save page info.
+ */
 
 import { mapActions } from 'vuex'
 import { Pagination } from '@/components'
+
+/**
+ * * How to use Pagination component
+ * ! for required
+ * ? for optional
+ *
+ * ! @total {Number}
+ * ! @page {Number}
+ * ! @limit {Number}
+ * ! @pageSizes {Array}
+ * ! @layout {String}
+ * ? @background {Boolean}
+ * ? @autoScroll {Boolean}
+ * ? @hidden {Boolean}
+ * ! @pagination {Function}
+ *
+ * * Component example
+ *  <Pagination
+ *    :total="listQuery.total"
+ *    :page.sync="listQuery.current"
+ *    :limit="listQuery.limit"
+ *    :page-sizes="[10, 25, 50, 100]"
+ *    :layout="'total, sizes, prev, pager, next'"
+ *    :background="true"
+ *    :auto-scroll="true"
+ *    :hidden="true"
+ *    @pagination="onPagination or handleCurrentChange"
+ *  />
+ */
 
 export default {
   components: { Pagination },
