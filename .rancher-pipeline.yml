@@ -82,6 +82,7 @@ stages:
       - pluginchart
       - issuelist
       - GitGraph
+      - feature
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -106,6 +107,7 @@ stages:
       - pluginchart
       - issuelist
       - GitGraph
+      - feature
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -126,6 +128,7 @@ stages:
       - pluginchart
       - issuelist
       - GitGraph
+      - feature
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -162,6 +165,7 @@ stages:
       - pluginchart
       - issuelist
       - GitGraph
+      - feature
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -191,6 +195,7 @@ stages:
       - pluginchart
       - issuelist
       - GitGraph
+      - feature
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -218,6 +223,7 @@ stages:
       - pluginchart
       - issuelist
       - GitGraph
+      - feature
 - name: Test--Anchore SBOM
   iiidevops: anchore
   steps:
