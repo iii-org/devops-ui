@@ -264,9 +264,7 @@ import { Pagination, ElTableColumnTag } from '@/components'
 
 const params = () => ({
   per_page: 100,
-  page: 1,
-  sort: 'severity',
-  ascending: true
+  page: 1
 })
 
 export default {
