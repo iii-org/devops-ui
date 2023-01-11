@@ -36,12 +36,6 @@
 
 export default {
   name: 'SearchFilter',
-  props: {
-    isAlive: {
-      type: Boolean,
-      default: false
-    }
-  },
   data() {
     return {
       searchVisible: false,

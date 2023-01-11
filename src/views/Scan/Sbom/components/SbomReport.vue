@@ -97,6 +97,7 @@
             :data="listData"
             size="small"
             fit
+            @sort-change="handleSortChange"
           >
             <el-table-column type="expand">
               <template slot-scope="{row}">
@@ -109,6 +110,7 @@
               :label="$t('Docker.Package')"
               prop="name"
               align="center"
+              sortable="custom"
             />
             <el-table-column
               :label="$t('Docker.Vulnerability')"
@@ -132,6 +134,7 @@
               location="docker"
               min-width="50"
               i18n-key="Docker"
+              sortable="custom"
             />
             <el-table-column
               :label="$t('Docker.Licenses')"
@@ -193,6 +196,7 @@
               prop="versions"
               align="center"
               min-width="100"
+              sortable="custom"
             >
               <template slot-scope="{row}">
                 <el-tooltip
@@ -258,11 +262,11 @@ import { getProjectInfos } from '@/api/projects'
 import { getSbomRiskOverview, getSbomRiskDetail } from '@/api_v2/sbom'
 import { Pagination, ElTableColumnTag } from '@/components'
 
-const listQuery = () => ({
+const params = () => ({
   per_page: 100,
   page: 1,
-  current: 1,
-  total: 0
+  sort: 'severity',
+  ascending: true
 })
 
 export default {
@@ -270,7 +274,12 @@ export default {
   components: { Pagination, ElTableColumnTag },
   data() {
     return {
-      listQuery: listQuery(),
+      params: params(),
+      listQuery: {
+        per_page: 100,
+        current: 1,
+        total: 0
+      },
       title: 'III DevOps',
       listLoading: false,
       listData: [],
@@ -333,7 +342,7 @@ export default {
       try {
         await Promise.all([
           getSbomRiskOverview(this.sbomId),
-          getSbomRiskDetail(this.sbomId, this.listQuery)
+          getSbomRiskDetail(this.sbomId, this.params)
         ]).then((res) => {
           const [overview, detail] = res.map((item) => item.data)
           if (Object.keys(overview).length === 0 || Object.keys(detail).length === 0) return
@@ -354,15 +363,25 @@ export default {
     },
     async fetchData() {
       this.listLoading = true
-      const res = await getSbomRiskDetail(this.sbomId, this.listQuery)
+      const res = await getSbomRiskDetail(this.sbomId, this.params)
       this.listData = res.data.detail_list
       this.listQuery = res.data.page
       this.listLoading = false
     },
     async onPagination(query) {
-      this.listQuery.per_page = query.limit
-      this.listQuery.page = query.page
+      this.params.per_page = query.limit
+      this.params.page = query.page
       await this.fetchData()
+    },
+    handleSortChange({ prop, order }) {
+      if (order) {
+        this.params.sort = prop
+        this.params.ascending = order === 'ascending'
+      } else {
+        delete this.params.sort
+        delete this.params.ascending
+      }
+      this.fetchData()
     },
     setSummaryData(data) {
       var summary = []

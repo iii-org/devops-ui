@@ -166,7 +166,7 @@ import {
   getIssueGitCommitLog
 } from '@/api/issue'
 import { IssueSelect } from '@/components/Issue'
-import NoData from './widget/NoData'
+import NoData from '@/components/NoData'
 
 class CommitLogItem {
   constructor (data) {

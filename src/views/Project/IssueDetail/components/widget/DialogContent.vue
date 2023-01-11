@@ -11,7 +11,7 @@
         v-if="right"
         class="time"
       >
-        {{ getRelativeTime(note.created_on) }}
+        <TimeTooltip :time="note.created_on" />
       </el-col>
       <el-col
         class="dialog"
@@ -20,9 +20,11 @@
         <div
           class="author"
           :class="{'text-right':right}"
-        >{{ note.user.name }}</div>
+        >
+          {{ note.user.name }}
+        </div>
         <div class="content">
-          <viewer
+          <Viewer
             ref="viewer"
             class="text"
             :initial-value="note.notes"
@@ -33,7 +35,7 @@
         v-if="!right"
         class="time"
       >
-        {{ getRelativeTime(note.created_on) }}
+        <TimeTooltip :time="note.created_on" />
       </el-col>
     </el-row>
     <template v-if="note.hasOwnProperty('details')">
@@ -56,17 +58,27 @@
             <span
               slot="user"
               class="title"
-            >{{ note.user.name }}: </span>
+            >
+              {{ note.user.name }}:
+            </span>
             <span
               slot="action"
               class="title"
             >
-              <span>{{ $t(filterTag(detail)) }}</span>
+              <span>
+                {{ $t(filterTag(detail)) }}
+              </span>
               <strong>
-                {{ ($te('Issue.detail.' + detail.name)) ? $t('Issue.detail.' + detail.name) : $t('Issue.detail.' + detail.property) }}
+                {{
+                  ($te('Issue.detail.' + detail.name)) ?
+                    $t('Issue.detail.' + detail.name) :
+                    $t('Issue.detail.' + detail.property)
+                }}
               </strong>
             </span>
-            <span slot="time">{{ getRelativeTime(note.created_on) }}</span>
+            <span slot="time">
+              <TimeTooltip :time="note.created_on" />
+            </span>
             <el-button
               slot="detail"
               size="mini"
@@ -87,7 +99,10 @@
                 class="value"
               >
                 <p class="title">
-                  <strong><em class="el-icon-caret-right" /> {{ $t('Issue.detail.message.Before') }}</strong>
+                  <strong>
+                    <em class="el-icon-caret-right" />
+                    {{ $t('Issue.detail.message.Before') }}
+                  </strong>
                 </p>
                 <el-link
                   v-if="detail.name==='parent_id'&&detail.old_value.id"
@@ -102,13 +117,15 @@
                 >
                   <em>
                     <s>
-                      {{ ($te('Issue.' + getValueName(detail.old_value))) ? $t('Issue.' + getValueName(detail.old_value)) : getValueName(detail.old_value) }}</s>
+                      {{ filterValueName(detail.old_value) }}
+                    </s>
                   </em>
                 </p>
                 <p
                   v-else
                   class="text-wrapper"
-                >{{ ($te('Issue.' + getValueName(detail.old_value))) ? $t('Issue.' + getValueName(detail.old_value)) : getValueName(detail.old_value) }}
+                >
+                  {{ filterValueName(detail.old_value) }}
                 </p>
               </el-col>
               <el-col
@@ -120,10 +137,16 @@
                   v-if="detail.old_value"
                   class="title"
                 >
-                  <strong><em class="el-icon-caret-right" /> {{ $t('Issue.detail.message.After') }}</strong>
+                  <strong>
+                    <em class="el-icon-caret-right" />
+                    {{ $t('Issue.detail.message.After') }}
+                  </strong>
                 </p>
                 <p v-else>
-                  <strong><em class="el-icon-caret-right" /> {{ $t('Issue.detail.message.Add') }}</strong>
+                  <strong>
+                    <em class="el-icon-caret-right" />
+                    {{ $t('Issue.detail.message.Add') }}
+                  </strong>
                 </p>
                 <el-link
                   v-if="detail.name==='parent_id'&&detail.new_value.id"
@@ -138,14 +161,15 @@
                 >
                   <em>
                     <s>
-                      {{ ($te('Issue.' + getValueName(detail.new_value))) ? $t('Issue.' + getValueName(detail.new_value)) : getValueName(detail.new_value) }}
+                      {{ filterValueName(detail.new_value) }}
                     </s>
                   </em>
                 </p>
                 <p
                   v-else
                   class="text-wrapper"
-                >{{ ($te('Issue.' + getValueName(detail.new_value))) ? $t('Issue.' + getValueName(detail.new_value)) : getValueName(detail.new_value) }}
+                >
+                  {{ filterValueName(detail.new_value) }}
                 </p>
               </el-col>
             </el-row>
@@ -158,16 +182,14 @@
 
 <script>
 import i18n from '@/lang'
-import { getRelativeTime } from '@/utils/handleTime'
 import '@toast-ui/editor/dist/toastui-editor-viewer.css'
 import { Viewer } from '@toast-ui/vue-editor'
+import TimeTooltip from './TimeTooltip'
 
 export default {
   name: 'DialogContent',
   i18n,
-  components: {
-    Viewer
-  },
+  components: { Viewer, TimeTooltip },
   filters: {
     justifyRight(value) {
       return value ? 'end' : 'start'
@@ -222,6 +244,10 @@ export default {
     }
   },
   methods: {
+    filterValueName(value) {
+      const valueName = this.getValueName(value)
+      return (this.$te('Issue.' + valueName)) ? this.$t('Issue.' + valueName) : valueName
+    },
     getValueName(value) {
       if (value && typeof value === 'object') {
         return value.hasOwnProperty('name') ? value.name : this.getValueName(value[Object.keys(value)[0]])
@@ -243,9 +269,6 @@ export default {
       } catch (e) {
         return false
       }
-    },
-    getRelativeTime(time) {
-      return getRelativeTime(time)
     }
   }
 }

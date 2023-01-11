@@ -738,7 +738,7 @@ export default {
       await this.removeIssue(row)
     },
     handleCellClick(row, column) {
-      if (!this.isButtonDisabled) {
+      if (!this.isButtonDisabled && column['property']) {
         let columnName = column['property'].split('.')
         if (columnName.length >= 2) {
           columnName = columnName[0]
@@ -1068,7 +1068,7 @@ export default {
     },
     handleRelationUpdate() {
       this.loadData()
-      this.$emit('update-issue')
+      this.$emit('update-selection-list')
     },
     toggleRelationDialog(target) {
       this.relationDialog.visible = !this.relationDialog.visible

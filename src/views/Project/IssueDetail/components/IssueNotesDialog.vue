@@ -1,18 +1,28 @@
 <template>
   <el-row v-if="data.length>0">
-    <el-row ref="dialog" class="dialog_wrapper" :style="{height:height}">
-      <dialog-content v-for="(item,idx) in data" :key="idx" :note="item" :right="filterAuthor(item)" @show-parent-issue="showParentIssue" />
+    <el-row
+      ref="dialog"
+      class="dialog_wrapper"
+      :style="{height:height}"
+    >
+      <DialogContent
+        v-for="(item,idx) in data"
+        :key="idx"
+        :note="item"
+        :right="filterAuthor(item)"
+        @show-parent-issue="showParentIssue"
+      />
     </el-row>
   </el-row>
   <el-col v-else>
-    <no-data />
+    <NoData />
   </el-col>
 </template>
 
 <script>
-import DialogContent from './widget/DialogContent'
-import NoData from '@/views/Overview/Dashboard/components/widget/NoData'
 import { mapGetters } from 'vuex'
+import DialogContent from './widget/DialogContent'
+import NoData from '@/components/NoData'
 
 export default {
   name: 'IssueNotesDialog',

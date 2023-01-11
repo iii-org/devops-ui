@@ -55,10 +55,10 @@ export default {
   data() {
     return {
       isLoading: false,
+      tag_name: '',
       tagsList: [],
-      tagsString: '',
-      cancelToken: null,
-      isDuplicated: false
+      isRepeated: false,
+      cancelToken: null
     }
   },
   computed: {
@@ -75,11 +75,10 @@ export default {
       return CancelToken.token
     },
     async getSearchTags(query) {
-      const tag_name = query || null
-      const tags = await this.fetchTagsData(tag_name)
-      this.tagsString = tag_name
-      this.isDuplicated = false
-      this.getTagsList(tag_name, tags, query)
+      this.isRepeated = false
+      this.tag_name = query || null
+      const tags = await this.fetchTagsData(this.tag_name)
+      this.getTagsList(this.tag_name, tags, query)
     },
     async fetchTagsData(tag_name) {
       this.isLoading = true
@@ -101,7 +100,7 @@ export default {
         const list = this.getTagsLabel(tags, sort, query)
         if (list.options.length > 0) tagsList.push(list)
       })
-      if (this.isDuplicated) { tagsList.shift() }
+      if (this.isRepeated) tagsList.shift()
       this.tagsList = tagsList
     },
     getTagsLabel(tags, tag_sort, query) {
@@ -109,7 +108,7 @@ export default {
       const addTag = [{ id: `tag__${query}`, name: query }]
       const showTags = this.getShowTags(tag_sort, tags, addTag)
       if (tag_sort === 'Result') {
-        this.isDuplicated = showTags.map((item) => item.name).includes(this.tagsString)
+        this.isRepeated = showTags.map((item) => item.name).includes(this.tag_name)
       }
       const name = `Issue.${tag_sort}`
       label.name = this.$t(name)

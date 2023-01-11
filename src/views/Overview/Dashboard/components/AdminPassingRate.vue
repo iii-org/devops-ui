@@ -70,7 +70,7 @@ import { ScatterChart } from 'echarts/charts'
 import { getPassingRateDetail } from '@/api/dashboard'
 import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
 import { getRelativeTime } from '@/utils/handleTime'
-import NoData from './widget/NoData'
+import NoData from '@/components/NoData'
 
 require('echarts/theme/macarons') // echarts theme
 

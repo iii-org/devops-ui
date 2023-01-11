@@ -58,7 +58,7 @@
 import CircleDashboard from './widget/CircleDashboard'
 import AdminProjectList from './AdminProjectList'
 import { getProjectListDetail } from '@/api/dashboard'
-import NoData from './widget/NoData'
+import NoData from '@/components/NoData'
 
 export default {
   name: 'AdminOverview',
