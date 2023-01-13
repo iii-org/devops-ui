@@ -277,6 +277,99 @@
                 </el-form-item>
               </el-col>
             </el-row>
+            <el-row>
+              <el-col>
+                <el-divider content-position="left">
+                  {{ $t('Deploy.PluginStoredPath') }}
+                  <el-button
+                    v-if="deployForm.volumes.length < 5"
+                    round
+                    size="small"
+                    icon="el-icon-plus"
+                    class="buttonPrimary"
+                    @click="addPath"
+                  >
+                    {{ $t('Deploy.AddPath') }}
+                  </el-button>
+                  <span
+                    v-else
+                    style="color: red; font-size: 12px;"
+                  >
+                    <em class="ri-error-warning-fill ri-lg" />
+                    {{ $t('Deploy.PathLimitWarning') }}
+                  </span>
+                </el-divider>
+              </el-col>
+              <el-col>
+                <el-form-item prop="volumes">
+                  <el-table :data="deployForm.volumes">
+                    <el-table-column type="index" width="50px">
+                      <template slot-scope="{$index}">
+                        {{ $index + 1 }}
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="key" :label="$tc('Deploy.Path')">
+                      <template slot-scope="{row}">
+                        <el-input v-model="row.device_path" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column :label="$t('general.Actions')" width="150px">
+                      <template slot-scope="{row}">
+                        <el-popconfirm
+                          :confirm-button-text="$t('general.Delete')"
+                          :cancel-button-text="$t('general.Cancel')"
+                          icon="el-icon-info"
+                          icon-color="red"
+                          :title="$t('Notify.confirmDelete')"
+                          @confirm="deployForm.volumes.splice(deployForm.volumes.indexOf(row),1)"
+                        >
+                          <el-button
+                            slot="reference"
+                            icon="el-icon-delete"
+                            type="danger"
+                            size="mini"
+                          >
+                            {{ $t('general.Delete') }}
+                          </el-button>
+                        </el-popconfirm>
+                      </template>
+                    </el-table-column>
+                    <template slot="empty">
+                      <el-empty>
+                        <template slot="description">
+                          <p>{{ $t('general.NoData') }}</p>
+                          <el-button
+                            round
+                            size="small"
+                            icon="el-icon-plus"
+                            class="buttonPrimaryReverse"
+                            @click="addPath"
+                          >
+                            {{ $t('Deploy.AddPath') }}
+                          </el-button>
+                        </template>
+                      </el-empty>
+                    </template>
+                    <div
+                      v-if="deployForm.volumes.length > 0 && deployForm.volumes.length < 5"
+                      slot="append"
+                    >
+                      <p>
+                        <el-button
+                          round
+                          size="small"
+                          icon="el-icon-plus"
+                          class="buttonPrimaryReverse"
+                          @click="addPath"
+                        >
+                          {{ $t('Deploy.AddPath') }}
+                        </el-button>
+                      </p>
+                    </div>
+                  </el-table>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </template>
           <el-empty v-else>
             <template slot="description">
@@ -399,7 +492,8 @@ export default {
           replicas: ''
         },
         network: { type: '', protocol: '', port: '', domain: '', path: '', expose_port: '' },
-        environments: []
+        environments: [],
+        volumes: []
       },
       edit: {},
       deployFormRules: {
@@ -538,6 +632,9 @@ export default {
     },
     addEnvironment() {
       this.deployForm.environments.push({ key: '', value: '', type: '' })
+    },
+    addPath() {
+      this.deployForm.volumes.push({ device_path: '', pvc_name: '' })
     }
   }
 }

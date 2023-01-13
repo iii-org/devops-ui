@@ -19,7 +19,9 @@
     </ProjectListSelector>
     <el-divider />
     <div class="flex justify-between items-center mb-1">
-      <div class="flex">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
+      <div class="flex">
+        {{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}
+      </div>
       <div class="flex">
         <el-button
           class="buttonPrimaryReverse"
@@ -167,6 +169,7 @@
     />
     <el-dialog
       width="80%"
+      top="5vh"
       :title="$t('Deploy.ApplicationSetting')"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"

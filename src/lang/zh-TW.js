@@ -1276,6 +1276,8 @@ export default {
     Path: '路徑',
     EnvironmentVariable: '服務環境變數',
     AddVariable: '新增環境變數',
+    PluginStoredPath: '外掛儲存路徑',
+    AddPath: '新增路徑',
     Default: '(系統預設值)',
     Key: '變數名稱',
     Value: '值',
@@ -1286,7 +1288,8 @@ export default {
     ReleaseHelper: '若下拉未呈現任何版本可供選擇，請確認是否已執行過左方選單的「釋出版本」，或該釋出版本未含有映像檔。',
     NoSetting: '服務尚未建立，請洽系統管理員',
     LinkToApplication: '連結到服務',
-    NameRule: `請輸入 2-30 英文為首之英數及'-'組合，注意英文須全為小寫且所設定之ID不可為全為數字。`
+    NameRule: `請輸入 2-30 英文為首之英數及'-'組合，注意英文須全為小寫且所設定之ID不可為全為數字。`,
+    PathLimitWarning: '每個專案僅能設置5個外掛空間'
   },
   Validation: {
     Input: '請輸入 {0}',
