@@ -52,17 +52,11 @@
       </div>
       <div class="logo-container">
         <img src="@/assets/logo.png" class="logo" alt="IIIDevOps logo">
-        <h1 class="title">{{ title }} </h1>
+        <h1 class="logo-title">{{ title }} </h1>
       </div>
-      <div
-        class="text-center font-bold clearfix"
-        style="
-              line-height: 7px;
-              color: #429470;
-              font-size: 36px;
-              text-shadow: #b3b1b1 0.05em 0.05em 0.1em;
-            "
-      >{{ $t('route.TestReport') }}</div>
+      <div class="text-center font-bold clearfix title">
+        {{ $t('route.TestReport') }}
+      </div>
       <div style="padding: 0 40px;">
         <ul class="text-base mb-10 font-semibold">
           <li>{{ $t('general.project_name') }}: {{ projectName }}</li>
@@ -359,10 +353,15 @@ export default {
 .watermark {
   display: none;
 }
+.title {
+  line-height: 7px;
+  color: #429470;
+  font-size: 36px;
+  text-shadow: #b3b1b1 0.05em 0.05em 0.1em;
+}
 .footer {
   display: none;
 }
-
 .logo-container {
   position: relative;
   left: 10px;
@@ -379,7 +378,7 @@ export default {
     margin-right: 12px;
   }
 
-  .title {
+  .logo-title {
     display: inline-block;
     margin: 0;
     font-weight: 600;
@@ -426,6 +425,9 @@ export default {
     top: 35vh;
     left: 35vw;
     opacity: 0.2;
+  }
+  .title {
+    text-shadow: initial;
   }
   .footer {
     display: block;
