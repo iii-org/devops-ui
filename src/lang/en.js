@@ -266,7 +266,8 @@ export default {
     ExpiredStatus: 'Expired Status',
     UnassignedDate: 'Unassigned Date',
     Expired: 'Expired',
-    Unexpired: 'Unexpired'
+    Unexpired: 'Unexpired',
+    DataGenerationTime: 'Data Generation Time'
   },
   Notify: {
     Updated: 'update successful',

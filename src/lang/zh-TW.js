@@ -266,7 +266,8 @@ export default {
     ExpiredStatus: '逾期狀態',
     UnassignedDate: '未指定日期',
     Expired: '已逾期',
-    Unexpired: '未逾期'
+    Unexpired: '未逾期',
+    DataGenerationTime: '資料產生時間'
   },
   Notify: {
     Updated: '已更新',

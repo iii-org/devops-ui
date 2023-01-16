@@ -103,12 +103,12 @@
             :list-loading="listLoading"
           />
           <!-- <AnchoreReport
-                v-show="anchore"
-                ref="anchore"
-                class="mb-5"
-                :anchore="anchore"
-                :list-loading="listLoading"
-              /> -->
+            v-show="anchore"
+            ref="anchore"
+            class="mb-5"
+            :anchore="anchore"
+            :list-loading="listLoading"
+          /> -->
         </div>
         <!-- black box test -->
         <div v-show="zap || webinspect">
@@ -159,6 +159,10 @@
           />
         </div>
       </div>
+      <div class="footer">
+        <span>{{ $t('general.DataGenerationTime') }}:</span>
+        <span>{{ timeNow }}</span>
+      </div>
     </div>
     <!--endprint-->
   </div>
@@ -186,7 +190,6 @@ const dataName = [
   'clair', // clair
   'checkmarx',
   'cmas',
-  'harbor',
   'postman',
   'sideex',
   'sonarqube',
@@ -262,6 +265,9 @@ export default {
         }
       })
       return newDiv
+    },
+    timeNow() {
+      return getLocalTime(new Date())
     }
   },
   mounted() {
@@ -353,6 +359,9 @@ export default {
 .watermark {
   display: none;
 }
+.footer {
+  display: none;
+}
 
 .logo-container {
   position: relative;
@@ -384,6 +393,7 @@ export default {
 @media print {
   body {
     counter-reset: page-number;
+    background: #ffffff;
   }
   @page {
     size: A4 portrait;
@@ -405,6 +415,9 @@ export default {
       text-align: center;
     }
   }
+  .el-divider__text {
+    white-space: nowrap;
+  }
   .watermark {
     display: block;
     position: fixed;
@@ -413,6 +426,12 @@ export default {
     top: 35vh;
     left: 35vw;
     opacity: 0.2;
+  }
+  .footer {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 5vw;
   }
 }
 </style>
