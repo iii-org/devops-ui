@@ -172,6 +172,7 @@ export default {
     Save: '儲存',
     Cancel: '取消',
     Restore: '還原',
+    Sync: '同步',
     SearchName: '搜尋名稱',
     SearchBranch: '搜尋分支',
     Description: '描述',
@@ -314,7 +315,8 @@ export default {
     RedmineMailActiveWarning: '平台Email設定尚未啟用，請洽系統管理者',
     RedmineMailAutoDisableWarning: '您的Email通知已被關閉，因後台Email設定尚未啟用或已關閉，請洽系統管理者',
     RedmineMailConfirmWarning: '信箱（SMTP）設定修改，即將重啟Redmine，屆時將導致DevOps平台停止服務5-8分鐘，請問確定要執行修改並重啟Redmine嗎？',
-    ExcalidrawAliveWarning: '白板伺服器失效，請洽III DevOps服務團隊'
+    ExcalidrawAliveWarning: '白板伺服器失效，請洽III DevOps服務團隊',
+    DeleteExcalidrawWarning: '一併"刪除"本議題之關聯白板'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -1241,7 +1243,6 @@ export default {
     FailMessage: '請檢查表單內容是否正確並填寫密碼。',
     NoNameWarning: '請填寫 Cluster 名稱。',
     FillInPassword: '請輸入密碼',
-    NoService: '尚無服務',
     NoImage: '尚無映像檔',
     Initializing: '準備中',
     StartReplication: '同步中',

@@ -172,6 +172,7 @@ export default {
     Save: 'Save',
     Cancel: 'Cancel',
     Restore: 'Restore',
+    Sync: 'Sync',
     SearchName: 'Search Name',
     SearchBranch: 'Search Branch',
     Description: 'Description',
@@ -316,7 +317,8 @@ export default {
     RedmineMailActiveWarning: 'Mail notification setting can not be opened, when mail server is disable.',
     RedmineMailAutoDisableWarning: 'Email notification is disabled, it might caused by disabled or invalid email setting at backend. Please contact with system administrator for further information.',
     RedmineMailConfirmWarning: 'Mail(SMTP) setting modification will be restarted to Redmine, which will cause the DEVOPS platform to stop the service for 5-8 minutes. If it is necessary to perform modification and restart the redmine?',
-    ExcalidrawAliveWarning: 'Excalidraw service failed, please contact DevOps for assistance.'
+    ExcalidrawAliveWarning: 'Excalidraw service failed, please contact DevOps for assistance.',
+    DeleteExcalidrawWarning: 'Also "delete" the related excalidraw of this issue.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -1249,7 +1251,6 @@ export default {
     FailMessage: 'Please check if the content of the form is correct and fill in the password',
     NoNameWarning: 'Please fill in Cluster name',
     FillInPassword: 'Please fill in password',
-    NoService: 'No service',
     NoImage: 'No image',
     Initializing: 'Initializing',
     StartReplication: 'Synchronizing',
