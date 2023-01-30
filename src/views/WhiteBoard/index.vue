@@ -40,7 +40,6 @@
       >
         <template slot-scope="scope">
           <el-link
-            slot="reference"
             type="primary"
             style="font-size: 16px"
             @click="handleEdit(scope.row,true)"
