@@ -63,9 +63,6 @@ export default {
     selectedProject() {
       this.listQuery.page = 1
     },
-    pagedData(data) {
-      if (data.length === 0) this.listQuery.page -= 1
-    },
     filterValue: {
       handler() {
         this.listQuery.page = 1
