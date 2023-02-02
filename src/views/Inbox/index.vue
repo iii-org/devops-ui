@@ -21,7 +21,7 @@
     <el-divider />
     <el-table
       v-loading="listLoading"
-      :data="pagedData"
+      :data="messageList"
       :element-loading-text="$t('Loading')"
       :row-class-name="tableRowStyle"
       fit
@@ -71,11 +71,10 @@
       </template>
     </el-table>
     <Pagination
-      ref="pagination"
       :total="listQuery.total"
       :page.sync="listQuery.current"
-      :limit="listQuery.limit"
-      :page-sizes="[10, 25, 50, 100]"
+      :limit.sync="listQuery.limit"
+      :page-sizes="[10, 20, 50, 100]"
       :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
@@ -124,9 +123,6 @@ export default {
   },
   computed: {
     ...mapGetters(['userId']),
-    pagedData() {
-      return this.messageList
-    },
     options() {
       return [{
         id: 1,
@@ -167,10 +163,10 @@ export default {
     window.clearTimeout(this.timeoutId)
   },
   mounted() {
-    this.loadData()
+    this.fetchData()
   },
   methods: {
-    async loadData() {
+    async fetchData() {
       this.listLoading = true
       const res = await getMessageList(this.params)
       this.messageList = res.data.notification_message_list
@@ -184,12 +180,12 @@ export default {
     async onSearch(keyword) {
       this.params.search = keyword
       if (keyword === '') delete this.params.search
-      await this.loadData()
+      await this.fetchData()
       this.initParams()
     },
     async changeFilter(filter) {
       this.params = { ...this.params, ...filter }
-      await this.loadData()
+      await this.fetchData()
       this.initParams()
     },
     async onPagination(listQuery) {
@@ -198,7 +194,7 @@ export default {
       this.params.offset = offset
       this.params.limit = limit
       if (this.keyword !== '') this.params.search = this.keyword
-      await this.loadData()
+      await this.fetchData()
       this.initParams()
     },
     initParams() {
