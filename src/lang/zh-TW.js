@@ -172,6 +172,7 @@ export default {
     Save: '儲存',
     Cancel: '取消',
     Restore: '還原',
+    Sync: '同步',
     SearchName: '搜尋名稱',
     SearchBranch: '搜尋分支',
     Description: '描述',
@@ -266,7 +267,8 @@ export default {
     ExpiredStatus: '逾期狀態',
     UnassignedDate: '未指定日期',
     Expired: '已逾期',
-    Unexpired: '未逾期'
+    Unexpired: '未逾期',
+    DataGenerationTime: '資料產生時間'
   },
   Notify: {
     Updated: '已更新',
@@ -313,7 +315,8 @@ export default {
     RedmineMailActiveWarning: '平台Email設定尚未啟用，請洽系統管理者',
     RedmineMailAutoDisableWarning: '您的Email通知已被關閉，因後台Email設定尚未啟用或已關閉，請洽系統管理者',
     RedmineMailConfirmWarning: '信箱（SMTP）設定修改，即將重啟Redmine，屆時將導致DevOps平台停止服務5-8分鐘，請問確定要執行修改並重啟Redmine嗎？',
-    ExcalidrawAliveWarning: '白板伺服器失效，請洽III DevOps服務團隊'
+    ExcalidrawAliveWarning: '白板伺服器失效，請洽III DevOps服務團隊',
+    DeleteExcalidrawWarning: '一併"刪除"本議題之關聯白板'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -928,7 +931,9 @@ export default {
     Container: '容器',
     Image: '映像檔',
     Services: '服務',
-    Pod: 'Pod'
+    Pod: 'Pod',
+    Internal: '內部',
+    External: '外部'
   },
   ProjectResource: {
     Usage: '使用量',
@@ -1238,7 +1243,6 @@ export default {
     FailMessage: '請檢查表單內容是否正確並填寫密碼。',
     NoNameWarning: '請填寫 Cluster 名稱。',
     FillInPassword: '請輸入密碼',
-    NoService: '尚無服務',
     NoImage: '尚無映像檔',
     Initializing: '準備中',
     StartReplication: '同步中',
@@ -1274,6 +1278,8 @@ export default {
     Path: '路徑',
     EnvironmentVariable: '服務環境變數',
     AddVariable: '新增環境變數',
+    PluginStoredPath: '外掛儲存路徑',
+    AddPath: '新增路徑',
     Default: '(系統預設值)',
     Key: '變數名稱',
     Value: '值',
@@ -1284,7 +1290,8 @@ export default {
     ReleaseHelper: '若下拉未呈現任何版本可供選擇，請確認是否已執行過左方選單的「釋出版本」，或該釋出版本未含有映像檔。',
     NoSetting: '服務尚未建立，請洽系統管理員',
     LinkToApplication: '連結到服務',
-    NameRule: `請輸入 2-30 英文為首之英數及'_'組合，注意英文須全為小寫且所設定之ID不可為全為數字。`
+    NameRule: `請輸入 2-30 英文為首之英數及'-'組合，注意英文須全為小寫且所設定之ID不可為全為數字。`,
+    PathLimitWarning: '每個專案僅能設置5個外掛空間'
   },
   Validation: {
     Input: '請輸入 {0}',

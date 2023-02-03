@@ -16,7 +16,12 @@
         :filter-options="filterOptions"
         :list-loading="listLoading"
         :selection-options="contextOptions"
-        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed,fixed_version_closed:fixed_version_closed }"
+        :prefill="{
+          filterValue: filterValue,
+          keyword: keyword,
+          displayClosed: displayClosed,
+          fixed_version_closed: fixed_version_closed
+        }"
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
         @add-custom-filter="updateCustomFilter"
@@ -42,41 +47,34 @@
                 :disabled="isDisabled || allDataLoading"
                 @click="downloadExcel('allDownloadData')"
               >
-                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
+                <em class="el-icon-download" />
+                {{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
               <el-menu-item
                 v-show="hasSelectedIssue"
                 :disabled="isDisabled"
                 @click="downloadExcel(selectedIssueList)"
               >
-                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
+                <em class="el-icon-download" />
+                {{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
               </el-menu-item>
             </el-menu>
             <el-button
               slot="reference"
               class="buttonPrimaryReverse"
               icon="el-icon-download"
-            >{{ $t('File.Download') }}</el-button>
+              size="mini"
+            >
+              {{ $t('File.Download') }}
+            </el-button>
           </el-popover>
         </span>
-        <el-popover
-          placement="bottom"
-          trigger="click"
-        >
-          <el-form class="display-column">
-            <el-form-item v-for="item in columnsOptions" :key="item.field">
-              <el-checkbox
-                :value="getCheckColumnValue(item.field)"
-                :label="item.display"
-                @change="onCheckColumnChange(item.field)"
-              >
-                {{ item.display }}
-              </el-checkbox>
-            </el-form-item>
-          </el-form>
-          <el-button slot="reference" icon="el-icon-s-operation" type="text" class="headerTextColor"> {{ $t('Milestone.Display') }}
-            <em class="el-icon-arrow-down el-icon--right" /></el-button>
-        </el-popover>
+        <Columns
+          :columns-options="columnsOptions"
+          :display-fields.sync="displayFields"
+          :filter-value="filterValue"
+          :type="'issue_list'"
+        />
         <el-divider direction="vertical" />
       </SearchFilter>
     </ProjectListSelector>
@@ -124,16 +122,16 @@
             class-name="informationExpand"
           >
             <template slot-scope="{row}">
-              <ExpandSection
+              <IssueExpand
                 :issue="row"
                 @on-context-menu="onContextMenu"
                 @update-list="loadData"
-                @collapse-expend-row="collapseExpendRow"
+                @handle-expand-row="handleExpandRow"
               />
             </template>
           </el-table-column>
           <el-table-column
-            v-if="columns.indexOf('project')>=0"
+            v-if="columns.indexOf('project') >= 0"
             :label="$t('Issue.project')"
             min-width="130"
             show-overflow-tooltip
@@ -148,7 +146,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="columns.indexOf('tracker')>=0"
+            v-if="columns.indexOf('tracker') >= 0"
             :label="$t('general.Type')"
             width="130"
             prop="tracker"
@@ -163,7 +161,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="columns.indexOf('name')>=0"
+            v-if="columns.indexOf('name') >= 0"
             :label="$t('Issue.Id')"
             min-width="280"
             show-overflow-tooltip
@@ -178,7 +176,7 @@
                 >
                   #{{ scope.row.id }}
                 </div>
-                <div class="ellipsis">
+                <div class="truncate">
                   <template v-if="scope.row.tags.length > 0">
                     <el-tag
                       v-for="item in scope.row.tags"
@@ -196,7 +194,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="columns.indexOf('priority')>=0"
+            v-if="columns.indexOf('priority') >= 0"
             align="center"
             :label="$t('Issue.Priority')"
             width="150"
@@ -212,7 +210,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="columns.indexOf('status')>=0"
+            v-if="columns.indexOf('status') >= 0"
             align="center"
             :label="$t('general.Status')"
             width="150"
@@ -228,7 +226,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="columns.indexOf('assigned_to')>=0"
+            v-if="columns.indexOf('assigned_to') >= 0"
             align="center"
             :label="$t('Issue.Assignee')"
             min-width="180"
@@ -240,12 +238,16 @@
               v-if="scope.row.assigned_to"
               slot-scope="scope"
             >
-              <span>{{ scope.row.assigned_to.name }}</span>
-              <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
+              <span>
+                {{ scope.row.assigned_to.name }}
+              </span>
+              <span v-if="scope.row.assigned_to.login">
+                ({{ scope.row.assigned_to.login }})
+              </span>
             </template>
           </el-table-column>
           <el-table-column
-            v-if="columns.indexOf('fixed_version')>=0"
+            v-if="columns.indexOf('fixed_version') >= 0"
             align="center"
             :label="$t('Issue.fixed_version')"
             min-width="180"
@@ -257,11 +259,13 @@
               v-if="scope.row.fixed_version"
               slot-scope="scope"
             >
-              <span>{{ scope.row.fixed_version.name }}</span>
+              <span>
+                {{ scope.row.fixed_version.name }}
+              </span>
             </template>
           </el-table-column>
           <el-table-column
-            v-if="columns.indexOf('StartDate')>=0"
+            v-if="columns.indexOf('StartDate') >= 0"
             align="center"
             :label="$t('Issue.StartDate')"
             min-width="180"
@@ -273,11 +277,13 @@
               v-if="scope.row.start_date"
               slot-scope="scope"
             >
-              <span>{{ scope.row.start_date }}</span>
+              <span>
+                {{ scope.row.start_date }}
+              </span>
             </template>
           </el-table-column>
           <el-table-column
-            v-if="columns.indexOf('EndDate')>=0"
+            v-if="columns.indexOf('EndDate') >= 0"
             align="center"
             :label="$t('Issue.EndDate')"
             min-width="180"
@@ -289,11 +295,13 @@
               v-if="scope.row.due_date"
               slot-scope="scope"
             >
-              <span>{{ scope.row.due_date }}</span>
+              <span>
+                {{ scope.row.due_date }}
+              </span>
             </template>
           </el-table-column>
           <el-table-column
-            v-if="columns.indexOf('DoneRatio')>=0"
+            v-if="columns.indexOf('DoneRatio') >= 0"
             align="center"
             :label="$t('Issue.DoneRatio')"
             min-width="180"
@@ -305,7 +313,9 @@
               v-if="scope.row.done_ratio"
               slot-scope="scope"
             >
-              <span>{{ scope.row.done_ratio }}</span>
+              <span>
+                {{ scope.row.done_ratio }}
+              </span>
             </template>
           </el-table-column>
           <el-table-column
@@ -326,10 +336,10 @@
           </template>
         </el-table>
         <Pagination
-          :total="pageInfo.total"
+          :total="listQuery.total"
           :page="listQuery.page"
           :limit="listQuery.limit"
-          :layout="'total, prev, pager, next'"
+          :layout="'total, sizes, prev, pager, next'"
           @pagination="handleCurrentChange"
         />
       </el-row>
@@ -348,13 +358,30 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import { QuickAddIssue, ExpandSection, SearchFilter, CustomFilter } from '@/components/Issue'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, IssueList, ContextMenu } from '@/mixins'
-import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api_v2/projects'
-import { getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
+import { addIssue } from '@/api/issue'
+import { excelTranslate } from '@/utils/excelTableTranslate'
+import {
+  getStatusTagType,
+  getPriorityTagType,
+  getCategoryTagType
+} from '@/utils/getElementType'
+import {
+  BasicData,
+  Columns,
+  IssueExpand,
+  SearchFilter,
+  Pagination,
+  ContextMenu
+} from '@/mixins'
+import { ProjectListSelector } from '@/components'
+import {
+  QuickAddIssue,
+  Priority,
+  Status,
+  Tracker
+} from '@/components/Issue'
+import axios from 'axios'
 import XLSX from 'xlsx'
 
 /**
@@ -365,21 +392,24 @@ import XLSX from 'xlsx'
 export default {
   name: 'ProjectIssueList',
   components: {
-    QuickAddIssue,
     ProjectListSelector,
-    SearchFilter,
-    ExpandSection,
-    CustomFilter
+    QuickAddIssue,
+    Priority,
+    Status,
+    Tracker
   },
-  mixins: [Table, IssueList, ContextMenu],
+  mixins: [
+    BasicData,
+    Columns,
+    IssueExpand,
+    SearchFilter,
+    Pagination,
+    ContextMenu
+  ],
   data() {
     return {
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
-      searchVisible: false,
-      assigned_to: [],
-      fixed_version: [],
-      tags: [],
       form: {},
       selectedIssueList: [],
       allDataLoading: false,
@@ -396,148 +426,153 @@ export default {
         { display: this.$t('Issue.assigned_to'), field: 'assigned_to' },
         { display: this.$t('Issue.DoneRatio'), field: 'DoneRatio' }
       ]),
-      displayFields: []
+      filterOptions: Object.freeze([
+        {
+          id: 1,
+          label: this.$t('Issue.FilterDimensions.tracker'),
+          value: 'tracker',
+          placeholder: 'Type',
+          tag: true
+        },
+        {
+          id: 2,
+          label: this.$t('Issue.FilterDimensions.status'),
+          value: 'status',
+          placeholder: 'Status',
+          tag: true
+        },
+        {
+          id: 3,
+          label: this.$t('Issue.FilterDimensions.tags'),
+          value: 'tags',
+          placeholder: 'Tag'
+        },
+        {
+          id: 4,
+          label: this.$t('Issue.FilterDimensions.assigned_to'),
+          value: 'assigned_to',
+          placeholder: 'Member'
+        },
+        {
+          id: 5,
+          label: this.$t('Issue.FilterDimensions.fixed_version'),
+          value: 'fixed_version',
+          placeholder: 'Version'
+        },
+        {
+          id: 6,
+          label: this.$t('Issue.FilterDimensions.priority'),
+          value: 'priority',
+          placeholder: 'Priority',
+          tag: true
+        }
+      ]),
+      storageName: 'issueList',
+      storageType: ['SearchFilter', 'Pagination'],
+      parentId: 0,
+      sort: '',
+      lastIssueListCancelToken: null
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'fixedVersionShowClosed']),
-    refTable() {
-      return this.$refs['issueList']
-    },
     hasSelectedIssue() {
       return this.selectedIssueList.length > 0
     },
-    columns() {
-      if (this.displayFields.length <= 0) {
-        return this.columnsOptions.map(item => item.field)
-      }
-      return this.displayFields
+    mainSelectedProjectId() {
+      return this.filterValue.project || this.selectedProjectId
     },
     isDisabled() {
       return this.mainSelectedProjectId === -1
-    },
-    mainSelectedProjectId() {
-      return this.filterValue.project || this.selectedProjectId
     }
-  },
-  watch: {
-    selectedProjectId: {
-      async handler() {
-        this.keyword = ''
-        await this.onChangeFilter()
-        await this.fetchInitData()
-      }
-    }
-  },
-  async mounted() {
-    this.fetchInitData()
-    this.rowHeight = 46
   },
   methods: {
-    ...mapActions('projects', [
-      'getIssueFilter',
-      'getKeyword',
-      'getDisplayClosed',
-      'setKeyword',
-      'setIssueFilter',
-      'setDisplayClosed',
-      'setFixedVersionShowClosed',
-      'getFixedVersionShowClosed'
-    ]),
-    async fetchInitData() {
-      this.getInitPage()
-      await this.getInitStoredData()
-      await this.loadSelectionList()
-      await this.loadDisplayColumns()
-      await this.loadData() // TODO: loadData should be called after getInitStoredData, will solve this problem on vuetify ui
-    },
     async fetchAllDownloadData() {
       this.allDataLoading = true
       const res = await getProjectIssueList(
         this.mainSelectedProjectId,
-        this.getParams(this.totalData)
+        this.getParams(this.listQuery.total)
       )
       this.allDataLoading = false
       return res.data.issue_list
     },
-    async getInitStoredData() {
-      const key = 'list'
-      const storedData = await this.fetchStoredData()
-      const { storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed } = storedData
-      this.filterValue = storedFilterValue[key] ? storedFilterValue[key] : {}
-      this.keyword = storedKeyword[key] ? storedKeyword[key] : null
-      this.displayClosed = storedDisplayClosed[key] ? storedDisplayClosed[key] : false
-      this.fixed_version_closed = storedVersionClosed[key] ? storedVersionClosed[key] : false
-    },
-    async fetchStoredData() {
-      let storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed
-      await Promise.all([
-        this.getIssueFilter(),
-        this.getKeyword(),
-        this.getDisplayClosed(),
-        this.getFixedVersionShowClosed()
-      ]).then((res) => {
-        const [filterValue, keyword, displayClosed, fixedVersionClosed] = res.map((item) => item)
-        storedFilterValue = filterValue
-        storedKeyword = keyword
-        storedDisplayClosed = displayClosed
-        storedVersionClosed = fixedVersionClosed
-      })
-      return { storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed }
-    },
-    getParams(limit) {
-      const result = {
-        offset: this.listQuery.offset,
-        limit: limit || this.listQuery.limit,
-        only_superproject_issues: !!this.filterValue.project
+    async fetchData() {
+      let listData
+      try {
+        await this.checkLastRequest()
+        const cancelTokenSource = axios.CancelToken.source()
+        this.lastIssueListCancelToken = cancelTokenSource
+        const res = await getProjectIssueList(
+          this.mainSelectedProjectId,
+          this.getParams(), {
+            cancelToken: cancelTokenSource.token
+          })
+        listData = res.data.issue_list
+        this.setNewListQuery(res.data.page)
+      } catch (e) {
+        // null
       }
-      if (this.sort) {
-        result['sort'] = this.sort
-      }
-      if (!this.displayClosed) {
-        result['status_id'] = 'open'
-      }
-      Object.keys(this.filterValue).forEach((item) => {
-        if (this.filterValue[item]) {
-          if (item === 'tags' && this.filterValue[item].length > 0) {
-            result[item] = this.filterValue[item].join()
-          } else {
-            (result[item + '_id'] = this.filterValue[item])
-          }
-        }
-      })
-      if (this.keyword) {
-        result['search'] = this.keyword
-      }
-      return result
+      this.lastIssueListCancelToken = null
+      return listData
     },
-    adjustTableRemote() {
-      // for replace mixins/Table.js adjustTableRemote()
-      this.$nextTick(() => {
-        this.listQuery.limit = 10
-        const nowPage = Math.ceil((this.listQuery.offset + 1) / this.listQuery.limit)
-        if (nowPage <= 0) {
-          this.listQuery.page = 1
-        } else {
-          this.listQuery.page = nowPage
-        }
-      })
-    },
-    async onChangeFilter() {
-      const key = 'list'
-      const storedData = await this.fetchStoredData()
-      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
-      storedFilterValue[key] = this.filterValue
-      storedKeyword[key] = this.keyword
-      storedDisplayClosed[key] = this.displayClosed
-      await this.setIssueFilter(storedFilterValue)
-      await this.setKeyword(storedKeyword)
-      await this.setDisplayClosed(storedDisplayClosed)
-      await this.backToFirstPage()
-      await this.loadData()
+    checkLastRequest() {
+      if (this.lastIssueListCancelToken && this.listLoading) {
+        this.lastIssueListCancelToken.cancel()
+      }
     },
     handleSelectionChange(list) {
       this.selectedIssueList = list
+    },
+    handleClick(row, column) {
+      if (column.type === 'action') {
+        return false
+      }
+      if (column.type === 'expand' && row.family) {
+        return this.$refs['issueList'].toggleRowExpansion(row)
+      }
+      this.$router.push({ name: 'IssueDetail', params: { issueId: row.id, project: row.project }})
+    },
+    async saveIssue(data) {
+      const res = await addIssue(data)
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Added'),
+        type: 'success'
+      })
+      this.backToFirstPage()
+      this.loadData()
+      this.addTopicDialogVisible = false
+      this.$refs['quickAddIssue'].form.name = ''
+      return res
+    },
+    backToFirstPage() {
+      this.listQuery.page = 1
+      this.listQuery.offset = 0
+    },
+    handleQuickAddClose() {
+      this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
+    },
+    handleSortChange({ prop, order }) {
+      const orderBy = this.checkOrder(order)
+      if (orderBy) {
+        this.sort = prop + ':' + orderBy
+      } else {
+        this.sort = orderBy
+      }
+      this.loadData()
+    },
+    checkOrder(order) {
+      if (order === 'descending') {
+        return 'desc'
+      }
+      if (order === 'ascending') {
+        return 'asc'
+      }
+      return false
+    },
+    advancedAddIssue(form) {
+      this.addTopicDialogVisible = true
+      this.parentId = 0
+      this.form = form
     },
     async downloadExcel(selectedIssueList) {
       if (selectedIssueList === 'allDownloadData') {
@@ -559,13 +594,13 @@ export default {
         this.excelColumnSelected.forEach((itemSelected) => {
           switch (itemSelected) {
             case 'status':
-              this.$set(targetObject, itemSelected, this.getStatusTagType(item.status.name))
+              this.$set(targetObject, itemSelected, getStatusTagType(item.status.name))
               break
             case 'priority':
-              this.$set(targetObject, itemSelected, this.getPriorityTagType(item.priority.name))
+              this.$set(targetObject, itemSelected, getPriorityTagType(item.priority.name))
               break
             case 'tracker':
-              this.$set(targetObject, itemSelected, this.getCategoryTagType(item.tracker.name))
+              this.$set(targetObject, itemSelected, getCategoryTagType(item.tracker.name))
               break
             case 'assigned_to':
               this.$set(
@@ -597,126 +632,65 @@ export default {
       })
       return translateTable
     },
-    getStatusTagType(status) {
-      switch (status) {
-        case 'Active':
-          return '已開立'
-        case 'Assigned':
-          return '已分派'
-        case 'Closed':
-          return '已關閉'
-        case 'Solved':
-          return '已解決'
-        case 'Responded':
-          return '已回應'
-        case 'Finished':
-          return '已完成'
-      }
-    },
-    getPriorityTagType(priority) {
-      switch (priority) {
-        case 'Immediate':
-          return '緊急'
-        case 'High':
-          return '高'
-        case 'Normal':
-          return '一般'
-        case 'Low':
-          return '低'
-      }
-    },
-    getCategoryTagType(category) {
-      switch (category) {
-        case 'Epic':
-          return '需求規格'
-        case 'Audit':
-          return '合規需求'
-        case 'Feature':
-          return '功能設計'
-        case 'Bug':
-          return '程式錯誤'
-        case 'Issue':
-          return '議題'
-        case 'Change Request':
-          return '變更請求'
-        case 'Risk':
-          return '風險管理'
-        case 'Test Plan':
-          return '測試計畫'
-        case 'Fail Management':
-          return '異常管理'
-      }
-    },
-    async loadDisplayColumns() {
-      const res = await getIssueFieldDisplay({
-        project_id: this.mainSelectedProjectId,
-        type: 'issue_list'
-      })
-      this.displayFields = res.data
-    },
     getRowClass({ row }) {
-      return row.family ? '' : 'row-expand-cover'
-    },
-    getCheckColumnValue(value) {
-      if (this.displayFields.length <= 0) return true
-      return this.displayFields.includes(value)
-    },
-    async onCheckColumnChange(value) {
-      if (this.displayFields.includes(value)) {
-        const columnIndex = this.displayFields.findIndex(item => item === value)
-        this.displayFields.splice(columnIndex, 1)
-      } else {
-        this.displayFields.push(value)
+      const result = []
+      if (!row.family) {
+        result.push('hide-expand-icon')
       }
-      if (this.displayFields.length <= 0) {
-        this.displayFields = this.columnsOptions.map(item => item.field)
-      }
-      const res = await putIssueFieldDisplay({
-        project_id: this.mainSelectedProjectId,
-        type: 'issue_list',
-        display_fields: this.displayFields
-      })
-      this.displayFields = res.data
-      this.$nextTick(() => { this.$refs['issueList'].doLayout() })
-    },
-    updateCustomFilter() {
-      this.$refs.customFilter.fetchCustomFilter()
-    },
-    cleanFilter() {
-      this.$refs.customFilter.resetApplyFilter()
-    },
-    applyCustomFilter(filters) {
-      const { result, displayClosed, fixed_version_closed } = filters
-      this.onChangeFilterForm({ filterValue: result })
-      this.displayClosed = displayClosed
-      this.fixed_version_closed = fixed_version_closed
-    },
-    collapseExpendRow(issueId) {
-      const row = this.listData.find((item) => item.id === issueId)
-      this.refTable.toggleRowExpansion(row, false)
+      this.contextMenu ? result.push('context-menu') : result.push('cursor-pointer')
+      return result.join(' ')
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
->>> .row-expand-cover .el-table__expand-icon {
-  display: none
+.wrapper {
+  height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
 }
 
-.el-table .el-button {
-  border: none
+.download {
+  @apply border-none;
 }
 
-.display-column {
-  .el-form-item {
-    margin: 0;
+>>> .el-table__body-wrapper {
+  overflow-y: auto;
+}
+
+>>> .el-table {
+  .hide-expand-icon {
+    .el-table__expand-column .cell {
+      display: none;
+    }
+  }
+
+  .action {
+    @apply border-0;
   }
 }
 
-.ellipsis {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
+>>> .el-table__expanded-cell {
+  font-size: 0.875em;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+>>> .row-expand-loading .el-table__expand-column .cell {
+  padding: 0;
+
+  .el-table__expand-icon {
+    .el-icon-arrow-right {
+      animation: rotating 2s linear infinite;
+    }
+
+    .el-icon-arrow-right:before {
+      content: '\e6cf';
+      font-size: 1.25em;
+    }
+  }
+}
+
+>>> .context-menu {
+  cursor: context-menu;
 }
 </style>

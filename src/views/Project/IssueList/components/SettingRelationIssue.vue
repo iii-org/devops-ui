@@ -37,7 +37,8 @@
               </el-card>
               <div slot="reference">
                 <span
-                  style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                  class="truncate"
+                  style="float: left; width: 250px;"
                 >
                   <strong>#<span v-html="highLight(item.id.toString())" /></strong> -
                   <span v-html="highLight(item.name)" />
@@ -107,7 +108,8 @@
               </el-card>
               <div slot="reference">
                 <span
-                  style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                  class="truncate"
+                  style="float: left; width: 250px;"
                 >
                   <strong>#<span v-html="highLight(item.id.toString())" /></strong> -
                   <span v-html="highLight(item.name)" />
@@ -158,16 +160,15 @@
       </div>
     </el-alert>
   </el-form>
-
 </template>
 
 <script>
-import { getIssue, getIssueFamily } from '@/api/issue'
-import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
+import { getProjectIssueList } from '@/api/projects'
+import { getIssue, getIssueFamily } from '@/api/issue'
+import axios from 'axios'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
-import axios from 'axios'
 
 export default {
   name: 'SettingRelationIssue',

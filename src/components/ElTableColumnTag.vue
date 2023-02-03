@@ -56,7 +56,7 @@ export default {
       default: 'el-tag--circle'
     },
     sortable: {
-      type: Boolean,
+      type: [Boolean, String],
       default: false
     }
   },

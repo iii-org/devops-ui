@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-table
+      v-loading="listLoading"
       :data="excalidrawData"
       fit
     >
@@ -49,40 +50,50 @@
         width="240"
       >
         <template slot-scope="scope">
-          <el-button
-            :loading="listLoading"
-            size="mini"
-            class="buttonPrimaryReverse"
-            @click="handleUnlink(scope.row)"
-          >
-            {{ $t('Issue.Unlink') }}
-          </el-button>
-          <el-popconfirm
-            :confirm-button-text="$t('general.Delete')"
-            :cancel-button-text="$t('general.Cancel')"
-            icon="el-icon-info"
-            icon-color="red"
-            :title="$t('Notify.confirmDelete')"
-            @confirm="handleDelete(scope.row)"
+          <el-tooltip
+            :content="$t('Issue.Unlink')"
+            effect="dark"
+            placement="bottom"
           >
             <el-button
-              slot="reference"
-              :loading="listLoading"
+              circle
               size="mini"
-              type="danger"
+              type="primary"
+              icon="el-icon-close"
+              class="buttonPrimaryReverse"
+              @click="handleUnlink(scope.row)"
+            />
+          </el-tooltip>
+          <el-popconfirm
+            :title="$t('Notify.confirmDelete')"
+            :confirm-button-text="$t('general.Delete')"
+            :cancel-button-text="$t('general.Cancel')"
+            icon-color="red"
+            icon="el-icon-info"
+            @confirm="handleDelete(scope.row)"
+          >
+            <el-tooltip
+              slot="reference"
+              :content="$t('general.Delete')"
+              effect="dark"
+              placement="bottom"
             >
-              <em class="el-icon-delete" />
-              {{ $t('general.Delete') }}
-            </el-button>
+              <el-button
+                circle
+                size="mini"
+                type="danger"
+                icon="el-icon-delete"
+              />
+            </el-tooltip>
           </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
     <EditBoardDialog
-      ref="EditBoardDialog"
+      v-if="EditBoardDialogVisible"
       :dialog-visible.sync="EditBoardDialogVisible"
       :row.sync="row"
-      @update="fetchData"
+      @update="$emit('update')"
     />
   </div>
 </template>
@@ -116,12 +127,9 @@ export default {
     }
   },
   methods: {
-    async fetchData() {
-      this.$emit('update')
-    },
     handleEdit(row) {
-      this.$refs.EditBoardDialog.isCollapse = ['2']
       this.row = row
+      this.row.collapse = ['2']
       this.EditBoardDialogVisible = true
     },
     async handleUnlink(row) {
@@ -135,10 +143,9 @@ export default {
         await updateExcalidraw(row.id, sendData)
         const message = this.$t('Notify.Updated')
         this.showSuccessMessage(message)
-        this.fetchData()
+        this.$emit('update')
       } catch (error) {
         console.error(error)
-        this.$emit('handleError')
       } finally {
         this.listLoading = false
       }
@@ -149,10 +156,9 @@ export default {
         await deleteExcalidraw(row.id)
         const message = this.$t('Notify.Deleted')
         this.showSuccessMessage(message)
-        this.fetchData()
+        this.$emit('update')
       } catch (error) {
         console.error(error)
-        this.handleError()
       } finally {
         this.listLoading = false
       }

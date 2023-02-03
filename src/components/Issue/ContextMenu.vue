@@ -164,16 +164,16 @@
 </template>
 
 <script>
-import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu } from 'v-contextmenu'
-import 'v-contextmenu/dist/index.css'
-import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
-import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
+import { mapGetters } from 'vuex'
+import { getProjectUserList, getProjectVersion, getTagsByProject } from '@/api/projects'
 import { addIssue, getCheckIssueClosable, updateIssue } from '@/api/issue'
 import { getIssueStrictTracker, getIssueForceTracker } from '@/api_v2/issue'
-import { getProjectUserList, getProjectVersion, getTagsByProject } from '@/api/projects'
 import { cloneDeep } from 'lodash'
-import { mapGetters } from 'vuex'
-import AddIssue from './AddIssue'
+import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu } from 'v-contextmenu'
+import 'v-contextmenu/dist/index.css'
+import { AddIssue } from './'
+import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
+import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 
 const getAPI = {
   fixed_version: [getProjectVersion, 'versions'],

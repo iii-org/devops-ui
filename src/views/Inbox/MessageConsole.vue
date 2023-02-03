@@ -197,8 +197,8 @@ const params = () => ({
 export default {
   name: 'Inbox',
   components: {
-    SearchFilter,
     ElTableColumnTime,
+    SearchFilter,
     CreateMessage: () => import('./components/CreateMessage.vue')
   },
   mixins: [BasicData, Pagination],

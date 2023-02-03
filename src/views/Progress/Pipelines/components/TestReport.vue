@@ -52,17 +52,11 @@
       </div>
       <div class="logo-container">
         <img src="@/assets/logo.png" class="logo" alt="IIIDevOps logo">
-        <h1 class="title">{{ title }} </h1>
+        <h1 class="logo-title">{{ title }} </h1>
       </div>
-      <div
-        class="text-center font-bold clearfix"
-        style="
-              line-height: 7px;
-              color: #429470;
-              font-size: 36px;
-              text-shadow: #b3b1b1 0.05em 0.05em 0.1em;
-            "
-      >{{ $t('route.TestReport') }}</div>
+      <div class="text-center font-bold clearfix title">
+        {{ $t('route.TestReport') }}
+      </div>
       <div style="padding: 0 40px;">
         <ul class="text-base mb-10 font-semibold">
           <li>{{ $t('general.project_name') }}: {{ projectName }}</li>
@@ -103,12 +97,12 @@
             :list-loading="listLoading"
           />
           <!-- <AnchoreReport
-                v-show="anchore"
-                ref="anchore"
-                class="mb-5"
-                :anchore="anchore"
-                :list-loading="listLoading"
-              /> -->
+            v-show="anchore"
+            ref="anchore"
+            class="mb-5"
+            :anchore="anchore"
+            :list-loading="listLoading"
+          /> -->
         </div>
         <!-- black box test -->
         <div v-show="zap || webinspect">
@@ -159,6 +153,10 @@
           />
         </div>
       </div>
+      <div class="footer">
+        <span>{{ $t('general.DataGenerationTime') }}:</span>
+        <span>{{ timeNow }}</span>
+      </div>
     </div>
     <!--endprint-->
   </div>
@@ -168,41 +166,43 @@
 import { getLocalTime, getFormatTime } from '@/utils/handleTime'
 import { getProjectCommitTestSummary, getProjectInfos } from '@/api/projects'
 import XLSX from 'xlsx'
-import SonarQubeReport from '@/views/Progress/Pipelines/components/SonarQubeReport'
-import CheckMarxReport from '@/views/Progress/Pipelines/components/CheckMarxReport'
-import ClairReport from '@/views/Progress/Pipelines/components/ClairReport'
-// import AnchoreReport from '@/views/Progress/Pipelines/components/AnchoreReport'
-import ZapReport from '@/views/Progress/Pipelines/components/ZapReport'
-import WebInspectReport from '@/views/Progress/Pipelines/components/WebInspectReport'
-import PostmanReport from '@/views/Progress/Pipelines/components/PostmanReport'
-import SideexReport from '@/views/Progress/Pipelines/components/SideexReport'
-import CmasReport from '@/views/Progress/Pipelines/components/CmasReport'
+import {
+  // AnchoreReport,
+  CheckMarxReport,
+  ClairReport,
+  CmasReport,
+  PostmanReport,
+  SideexReport,
+  SonarQubeReport,
+  WebInspectReport,
+  ZapReport
+} from './'
 
 const downloadFileName = 'DevOps_test_report'
 const dataName = [
-  'sonarqube',
-  'checkmarx',
-  'clair', // clair
   // 'anchore',
-  'zap',
-  'webinspect',
+  'clair', // clair
+  'checkmarx',
   'cmas',
   'postman',
-  'sideex'
+  'sideex',
+  'sonarqube',
+  'webinspect',
+  'zap'
 ]
 
 export default {
   name: 'TestReport',
   components: {
-    SonarQubeReport,
+    // AnchoreReport,
     CheckMarxReport,
     ClairReport,
-    // AnchoreReport,
-    ZapReport,
-    WebInspectReport,
     CmasReport,
     PostmanReport,
-    SideexReport
+    SideexReport,
+    SonarQubeReport,
+    WebInspectReport,
+    ZapReport
   },
   data() {
     this.title = 'III DevOps'
@@ -259,6 +259,9 @@ export default {
         }
       })
       return newDiv
+    },
+    timeNow() {
+      return getLocalTime(new Date())
     }
   },
   mounted() {
@@ -350,7 +353,15 @@ export default {
 .watermark {
   display: none;
 }
-
+.title {
+  line-height: 7px;
+  color: #429470;
+  font-size: 36px;
+  text-shadow: #b3b1b1 0.05em 0.05em 0.1em;
+}
+.footer {
+  display: none;
+}
 .logo-container {
   position: relative;
   left: 10px;
@@ -367,7 +378,7 @@ export default {
     margin-right: 12px;
   }
 
-  .title {
+  .logo-title {
     display: inline-block;
     margin: 0;
     font-weight: 600;
@@ -381,6 +392,7 @@ export default {
 @media print {
   body {
     counter-reset: page-number;
+    background: #ffffff;
   }
   @page {
     size: A4 portrait;
@@ -402,6 +414,9 @@ export default {
       text-align: center;
     }
   }
+  .el-divider__text {
+    white-space: nowrap;
+  }
   .watermark {
     display: block;
     position: fixed;
@@ -410,6 +425,15 @@ export default {
     top: 35vh;
     left: 35vw;
     opacity: 0.2;
+  }
+  .title {
+    text-shadow: initial;
+  }
+  .footer {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 5vw;
   }
 }
 </style>

@@ -91,7 +91,7 @@ import { PieChart } from 'echarts/charts'
 import { getProjectMembersByProjectID, getProjectMembersDetail } from '@/api/dashboard'
 import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
 import AdminMemberTable from './widget/AdminMemberTable'
-import NoData from './widget/NoData'
+import NoData from '@/components/NoData'
 
 require('echarts/theme/macarons') // echarts theme
 

@@ -142,12 +142,6 @@ export default {
       immediate: true
     }
   },
-  beforeRouteLeave(to, from, next) {
-    if (to.name !== 'AccountManage') {
-      sessionStorage.removeItem('keyword')
-    }
-    next()
-  },
   methods: {
     async fetchData(user_id) {
       if (!user_id) return

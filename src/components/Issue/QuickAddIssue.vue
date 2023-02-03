@@ -73,7 +73,10 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button class="buttonSecondaryReverse" @click="handleAdvancedClose">
+        <el-button
+          class="buttonSecondaryReverse"
+          @click="handleAdvancedClose"
+        >
           {{ $t('general.Cancel') }}
         </el-button>
         <el-button
@@ -89,8 +92,8 @@
 </template>
 
 <script>
-import Tracker from '@/components/Issue/Tracker'
 import { mapGetters } from 'vuex'
+import Tracker from './Tracker'
 import AddIssue from './AddIssue'
 
 export default {
@@ -136,13 +139,24 @@ export default {
           }
         ],
         tracker_id: [
-          { required: true, message: this.$t('Validation.Select', [this.$t('general.Type')]), trigger: 'blur' }
+          {
+            required: true,
+            message: this.$t('Validation.Select', [this.$t('general.Type')]),
+            trigger: 'blur'
+          }
         ]
       }
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'tracker', 'strictTracker', 'issueFilter', 'enableForceTracker']),
+    ...mapGetters([
+      'selectedProjectId',
+      'userId',
+      'issueFilter',
+      'tracker',
+      'strictTracker',
+      'enableForceTracker'
+    ]),
     hasSetTracker() {
       return !!this.trackerName
     },

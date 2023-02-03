@@ -62,7 +62,7 @@ import { deleteIssueRelation, updateIssue } from '@/api/issue'
 import IssueRow from './components/IssueRow'
 
 export default {
-  name: 'ExpandSection',
+  name: 'IssueExpand',
   components: { IssueRow },
   props: {
     issue: {
@@ -87,12 +87,8 @@ export default {
     }
   },
   watch: {
-    issue: {
-      handler(value) {
-        if (!value.family) {
-          this.$emit('collapse-expend-row', value.id)
-        }
-      }
+    issue(value) {
+      this.$emit('handle-expand-row', value)
     }
   },
   methods: {

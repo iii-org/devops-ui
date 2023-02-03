@@ -1,5 +1,10 @@
 <template>
-  <el-form ref="deployForm" :model="deployForm" :rules="deployFormRules" label-width="150px">
+  <el-form
+    ref="deployForm"
+    :model="deployForm"
+    :rules="deployFormRules"
+    label-width="150px"
+  >
     <el-row>
       <el-col>
         <el-form-item :label="$t('Deploy.Name')" prop="name">
@@ -8,7 +13,9 @@
             :maxlength="30"
             show-word-limit
           />
-          <p class="helper">* {{ $t('Deploy.NameRule') }}</p>
+          <p class="helper">
+            * {{ $t('Deploy.NameRule') }}
+          </p>
         </el-form-item>
         <el-divider />
       </el-col>
@@ -17,7 +24,7 @@
           <el-row>
             <el-col :md="12">
               <el-form-item :label="$t('Deploy.Cluster')" prop="cluster_id">
-                <el-select v-model="deployForm.cluster_id" :disabled="cluster.length<=0">
+                <el-select v-model="deployForm.cluster_id" :disabled="cluster.length <= 0">
                   <el-option
                     v-for="item in cluster"
                     :key="item.id"
@@ -30,7 +37,7 @@
             </el-col>
             <el-col :md="12">
               <el-form-item :label="$t('Deploy.Registry')" prop="registry_id">
-                <el-select v-model="deployForm.registry_id" :disabled="registry.length<=0">
+                <el-select v-model="deployForm.registry_id" :disabled="registry.length <= 0">
                   <el-option
                     v-for="item in registry"
                     :key="item.registries_id"
@@ -56,45 +63,73 @@
                     :maxlength="30"
                     show-word-limit
                   />
-                  <p class="helper">* {{ $t('Deploy.NameRule') }}</p>
+                  <p class="helper">
+                    * {{ $t('Deploy.NameRule') }}
+                  </p>
                 </el-form-item>
               </el-col>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.Policy')" prop="image.policy">
                   <el-select v-model="deployForm.image.policy" clearable>
-                    <el-option v-for="item in policy" :key="item" :label="item" :value="item" />
+                    <el-option
+                      v-for="item in policy"
+                      :key="item"
+                      :label="item"
+                      :value="item"
+                    />
                   </el-select>
                 </el-form-item>
               </el-col>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.Release')" prop="release_id">
                   <el-select v-model="deployForm.release_id">
-                    <el-option v-for="item in release" :key="item.id" :label="item.tag_name" :value="item.id" />
+                    <el-option
+                      v-for="item in release"
+                      :key="item.id"
+                      :label="item.tag_name"
+                      :value="item.id"
+                    />
                   </el-select>
-                  <p class="helper">* {{ $t('Deploy.ReleaseHelper') }}</p>
+                  <p class="helper">
+                    * {{ $t('Deploy.ReleaseHelper') }}
+                  </p>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col>
-                <el-divider content-position="left">{{ $t('Deploy.Resource') }}</el-divider>
+                <el-divider content-position="left">
+                  {{ $t('Deploy.Resource') }}
+                </el-divider>
               </el-col>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.CPU')" prop="resources.cpu">
-                  <el-input v-model.number="deployForm.resources.cpu" clearable :placeholder="$t('Deploy.Default')" />
+                  <el-input
+                    v-model.number="deployForm.resources.cpu"
+                    :placeholder="$t('Deploy.Default')"
+                    clearable
+                  />
                 </el-form-item>
               </el-col>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.Memory')" prop="resources.memory">
-                  <el-input v-model.number="deployForm.resources.memory" clearable :placeholder="$t('Deploy.Default')">
-                    <template slot="append">GB</template>
+                  <el-input
+                    v-model.number="deployForm.resources.memory"
+                    :placeholder="$t('Deploy.Default')"
+                    clearable
+                  >
+                    <template slot="append">
+                      GB
+                    </template>
                   </el-input>
                 </el-form-item>
               </el-col>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.Replicas')" prop="resources.replicas">
-                  <el-input v-model.number="deployForm.resources.replicas" clearable
-                            :placeholder="$t('Deploy.Default')"
+                  <el-input
+                    v-model.number="deployForm.resources.replicas"
+                    :placeholder="$t('Deploy.Default')"
+                    clearable
                   />
                 </el-form-item>
               </el-col>
@@ -106,14 +141,24 @@
               <el-col :md="12">
                 <el-form-item :label="$tc('Deploy.Type')" prop="network.type">
                   <el-select v-model="deployForm.network.type">
-                    <el-option v-for="item in network_type" :key="item" :label="item" :value="item" />
+                    <el-option
+                      v-for="item in network_type"
+                      :key="item"
+                      :label="item"
+                      :value="item"
+                    />
                   </el-select>
                 </el-form-item>
               </el-col>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.Protocol')" prop="network.protocol">
                   <el-radio-group v-model="deployForm.network.protocol">
-                    <el-radio-button v-for="item in protocol" :key="item" :label="item" :value="item" />
+                    <el-radio-button
+                      v-for="item in protocol"
+                      :key="item"
+                      :label="item"
+                      :value="item"
+                    />
                   </el-radio-group>
                 </el-form-item>
               </el-col>
@@ -135,7 +180,8 @@
             </el-row>
             <el-row>
               <el-col>
-                <el-divider content-position="left">{{ $t('Deploy.EnvironmentVariable') }}
+                <el-divider content-position="left">
+                  {{ $t('Deploy.EnvironmentVariable') }}
                   <el-button
                     round
                     size="small"
@@ -168,7 +214,12 @@
                     <el-table-column prop="type" :label="$tc('Deploy.Type')" width="150px">
                       <template slot-scope="{row}">
                         <el-select v-model="row.type">
-                          <el-option v-for="item in environments_type" :key="item" :label="item" :value="item" />
+                          <el-option
+                            v-for="item in environments_type"
+                            :key="item"
+                            :label="item"
+                            :value="item"
+                          />
                         </el-select>
                       </template>
                     </el-table-column>
@@ -182,7 +233,12 @@
                           :title="$t('Notify.confirmDelete')"
                           @confirm="deployForm.environments.splice(deployForm.environments.indexOf(row),1)"
                         >
-                          <el-button slot="reference" icon="el-icon-delete" size="mini" type="danger">
+                          <el-button
+                            slot="reference"
+                            icon="el-icon-delete"
+                            type="danger"
+                            size="mini"
+                          >
                             {{ $t('general.Delete') }}
                           </el-button>
                         </el-popconfirm>
@@ -204,7 +260,7 @@
                         </template>
                       </el-empty>
                     </template>
-                    <div v-if="deployForm.environments.length>0" slot="append">
+                    <div v-if="deployForm.environments.length > 0" slot="append">
                       <p>
                         <el-button
                           round
@@ -214,6 +270,99 @@
                           @click="addEnvironment"
                         >
                           {{ $t('Deploy.AddVariable') }}
+                        </el-button>
+                      </p>
+                    </div>
+                  </el-table>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col>
+                <el-divider content-position="left">
+                  {{ $t('Deploy.PluginStoredPath') }}
+                  <el-button
+                    v-if="deployForm.volumes.length < 5"
+                    round
+                    size="small"
+                    icon="el-icon-plus"
+                    class="buttonPrimary"
+                    @click="addPath"
+                  >
+                    {{ $t('Deploy.AddPath') }}
+                  </el-button>
+                  <span
+                    v-else
+                    style="color: red; font-size: 12px;"
+                  >
+                    <em class="ri-error-warning-fill ri-lg" />
+                    {{ $t('Deploy.PathLimitWarning') }}
+                  </span>
+                </el-divider>
+              </el-col>
+              <el-col>
+                <el-form-item prop="volumes">
+                  <el-table :data="deployForm.volumes">
+                    <el-table-column type="index" width="50px">
+                      <template slot-scope="{$index}">
+                        {{ $index + 1 }}
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="key" :label="$tc('Deploy.Path')">
+                      <template slot-scope="{row}">
+                        <el-input v-model="row.device_path" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column :label="$t('general.Actions')" width="150px">
+                      <template slot-scope="{row}">
+                        <el-popconfirm
+                          :confirm-button-text="$t('general.Delete')"
+                          :cancel-button-text="$t('general.Cancel')"
+                          icon="el-icon-info"
+                          icon-color="red"
+                          :title="$t('Notify.confirmDelete')"
+                          @confirm="deployForm.volumes.splice(deployForm.volumes.indexOf(row),1)"
+                        >
+                          <el-button
+                            slot="reference"
+                            icon="el-icon-delete"
+                            type="danger"
+                            size="mini"
+                          >
+                            {{ $t('general.Delete') }}
+                          </el-button>
+                        </el-popconfirm>
+                      </template>
+                    </el-table-column>
+                    <template slot="empty">
+                      <el-empty>
+                        <template slot="description">
+                          <p>{{ $t('general.NoData') }}</p>
+                          <el-button
+                            round
+                            size="small"
+                            icon="el-icon-plus"
+                            class="buttonPrimaryReverse"
+                            @click="addPath"
+                          >
+                            {{ $t('Deploy.AddPath') }}
+                          </el-button>
+                        </template>
+                      </el-empty>
+                    </template>
+                    <div
+                      v-if="deployForm.volumes.length > 0 && deployForm.volumes.length < 5"
+                      slot="append"
+                    >
+                      <p>
+                        <el-button
+                          round
+                          size="small"
+                          icon="el-icon-plus"
+                          class="buttonPrimaryReverse"
+                          @click="addPath"
+                        >
+                          {{ $t('Deploy.AddPath') }}
                         </el-button>
                       </p>
                     </div>
@@ -236,7 +385,12 @@
 </template>
 
 <script>
-import { getDeployedHostsLists, getRegistryHostsLists, getReleaseEnvironments, getService } from '@/api/deploy'
+import {
+  getDeployedHostsLists,
+  getRegistryHostsLists,
+  getReleaseEnvironments,
+  getService
+} from '@/api/deploy'
 import { getReleaseVersion } from '@/api/release'
 import { mapGetters } from 'vuex'
 
@@ -338,15 +492,20 @@ export default {
           replicas: ''
         },
         network: { type: '', protocol: '', port: '', domain: '', path: '', expose_port: '' },
-        environments: []
+        environments: [],
+        volumes: []
       },
       edit: {},
       deployFormRules: {
         name: [
-          { required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Name')]), trigger: 'blur' },
           {
             required: true,
-            pattern: /^[a-z][a-z0-9_]{0,28}[a-z0-9]$/,
+            message: this.$t(`Validation.Input`, [this.$t('Deploy.Name')]),
+            trigger: 'blur'
+          },
+          {
+            required: true,
+            pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
             message: this.$t(`Validation.Invalid`, [this.$t('Deploy.Name')]),
             trigger: 'blur'
           }
@@ -362,10 +521,15 @@ export default {
           trigger: 'blur'
         }],
         namespace: [
-          { required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Namespace')]), trigger: 'blur' },
           {
             required: true,
-            pattern: /^[a-z][a-z0-9_]{0,28}[a-z0-9]$/,
+            message: this.$t(`Validation.Input`,
+              [this.$t('Deploy.Namespace')]),
+            trigger: 'blur'
+          },
+          {
+            required: true,
+            pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
             message: this.$t(`Validation.Invalid`, [this.$t('Deploy.Namespace')]),
             trigger: 'blur'
           }
@@ -447,7 +611,11 @@ export default {
   },
   methods: {
     async getSelectionList() {
-      const res = (await Promise.all([getDeployedHostsLists(), getRegistryHostsLists(), getReleaseVersion(this.selectedProjectId, { image: true })])).map(item => item.data)
+      const res = (await Promise.all([
+        getDeployedHostsLists(),
+        getRegistryHostsLists(),
+        getReleaseVersion(this.selectedProjectId, { image: true })
+      ])).map(item => item.data)
       this.cluster = res[0].cluster
       this.registry = res[1].registries
       this.release = res[2].releases
@@ -455,7 +623,7 @@ export default {
     async getEnvironmentFromRelease(value) {
       const getEnvironment = await getReleaseEnvironments(value)
       if (getEnvironment.data.env.length > 0) {
-        this.deployForm.environments.push([...getEnvironment.data.env])
+        this.deployForm.environments.push(...getEnvironment.data.env)
       }
     },
     async getServiceDetail(value) {
@@ -464,6 +632,9 @@ export default {
     },
     addEnvironment() {
       this.deployForm.environments.push({ key: '', value: '', type: '' })
+    },
+    addPath() {
+      this.deployForm.volumes.push({ device_path: '', pvc_name: '' })
     }
   }
 }

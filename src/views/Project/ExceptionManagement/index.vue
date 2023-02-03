@@ -16,7 +16,12 @@
         :filter-options="filterOptions"
         :list-loading="listLoading"
         :selection-options="contextOptions"
-        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
+        :prefill="{
+          filterValue: filterValue,
+          keyword: keyword,
+          displayClosed: displayClosed,
+          fixed_version_closed: fixed_version_closed
+        }"
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
       >
@@ -31,27 +36,32 @@
                 :disabled="selectedProjectId === -1 || allDataLoading"
                 @click="downloadExcel(allDownloadData)"
               >
-                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
+                <em class="el-icon-download" />
+                {{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
               <el-menu-item
                 v-show="hasSelectedFail"
                 :disabled="selectedProjectId === -1"
                 @click="downloadExcel(selectedFailList)"
               >
-                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
+                <em class="el-icon-download" />
+                {{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
               </el-menu-item>
             </el-menu>
             <el-button
               slot="reference"
               class="buttonPrimaryReverse"
               icon="el-icon-download"
-            >{{ $t('File.Download') }}</el-button>
+              size="mini"
+            >
+              {{ $t('File.Download') }}
+            </el-button>
           </el-popover>
         </span>
       </SearchFilter>
     </ProjectListSelector>
     <el-divider />
-    <quick-add-issue
+    <QuickAddIssue
       ref="quickAddIssue"
       :save-data="saveIssue"
       :project-id="selectedProjectId"
@@ -75,7 +85,7 @@
           fit
           highlight-current-row
           row-key="id"
-          :height="tableHeight"
+          size="mini"
           :tree-props="{ children: 'child' }"
           :row-class-name="getRowClass"
           @cell-click="handleClick"
@@ -94,9 +104,10 @@
             class-name="informationExpand"
           >
             <template slot-scope="{row}">
-              <ExpandSection
+              <IssueExpand
                 :issue="row"
                 @on-context-menu="onContextMenu"
+                @handle-expand-row="handleExpandRow"
               />
             </template>
           </el-table-column>
@@ -122,13 +133,18 @@
             sortable="custom"
           >
             <template slot-scope="scope">
-              <span class="text-success mr-2">#{{ scope.row.id }}</span>
+              <span class="text-success mr-2">
+                #{{ scope.row.id }}
+              </span>
               <el-tag
                 v-for="item in scope.row.tags"
                 :key="item.id"
                 size="mini"
                 class="mr-1"
-              >[{{ item.name }}]</el-tag>{{ scope.row.name }}
+              >
+                [{{ item.name }}]
+              </el-tag>
+              {{ scope.row.name }}
             </template>
           </el-table-column>
           <el-table-column
@@ -173,8 +189,12 @@
               v-if="scope.row.assigned_to"
               slot-scope="scope"
             >
-              <span>{{ scope.row.assigned_to.name }}</span>
-              <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
+              <span>
+                {{ scope.row.assigned_to.name }}
+              </span>
+              <span v-if="scope.row.assigned_to.login">
+                ({{ scope.row.assigned_to.login }})
+              </span>
             </template>
           </el-table-column>
           <template slot="empty">
@@ -182,11 +202,11 @@
           </template>
         </el-table>
         <Pagination
-          :total="pageInfo.total"
+          :total="listQuery.total"
           :page="listQuery.page"
           :limit="listQuery.limit"
           :page-sizes="[listQuery.limit]"
-          :layout="'total, prev, pager, next'"
+          :layout="'total, sizes, prev, pager, next'"
           @pagination="handleCurrentChange"
         />
       </el-row>
@@ -203,14 +223,30 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import { QuickAddIssue, ExpandSection } from '@/components/Issue'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, IssueList, ContextMenu } from '@/mixins'
-import SearchFilter from '@/components/Issue/SearchFilter'
+import { getProjectIssueList } from '@/api_v2/projects'
+import { addIssue } from '@/api/issue'
 import { excelTranslate } from '@/utils/excelTableTranslate'
-import { getProjectUserList, getProjectIssueList } from '@/api/projects'
+import {
+  getStatusTagType,
+  getPriorityTagType,
+  getCategoryTagType
+} from '@/utils/getElementType'
+import {
+  BasicData,
+  IssueExpand,
+  SearchFilter,
+  Pagination,
+  ContextMenu
+} from '@/mixins'
+import { ProjectListSelector } from '@/components'
+import {
+  QuickAddIssue,
+  Priority,
+  Status,
+  Tracker
+} from '@/components/Issue'
 import XLSX from 'xlsx'
+import axios from 'axios'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -220,134 +256,163 @@ import XLSX from 'xlsx'
 export default {
   name: 'ExceptionManagement',
   components: {
-    QuickAddIssue,
     ProjectListSelector,
-    SearchFilter,
-    ExpandSection
+    QuickAddIssue,
+    Priority,
+    Status,
+    Tracker
   },
-  mixins: [Table, IssueList, ContextMenu],
+  mixins: [
+    BasicData,
+    IssueExpand,
+    SearchFilter,
+    Pagination,
+    ContextMenu
+  ],
   data() {
     return {
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
-      searchVisible: false,
-      tracker_id: null,
-      assigned_to: [],
-      fixed_version: [],
       form: {},
       filterOptions: Object.freeze([
-        { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
-        { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
         {
-          id: 4,
+          id: 1,
+          label: this.$t('Issue.FilterDimensions.status'),
+          value: 'status',
+          placeholder: 'Status',
+          tag: true
+        },
+        { id: 2,
+          label: this.$t('Issue.FilterDimensions.assigned_to'),
+          value: 'assigned_to',
+          placeholder: 'Member'
+        },
+        {
+          id: 3,
           label: this.$t('Issue.FilterDimensions.fixed_version'),
           value: 'fixed_version',
           placeholder: 'Version'
         },
         {
-          id: 5,
+          id: 4,
           label: this.$t('Issue.FilterDimensions.priority'),
           value: 'priority',
           placeholder: 'Priority',
           tag: true
         }
       ]),
-      csvColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to'],
-      allDownloadData: [],
+      csvColumnSelected: [
+        'tracker',
+        'id',
+        'name',
+        'priority',
+        'status',
+        'assigned_to'
+      ],
       allDataLoading: false,
-      selectedFailList: []
+      allDownloadData: [],
+      selectedFailList: [],
+      storageName: 'exceptionManagement',
+      storageType: ['SearchFilter', 'Pagination'],
+      parentId: 0,
+      sort: '',
+      tracker_id: 9,
+      lastIssueListCancelToken: null
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed']),
-    refTable() {
-      return this.$refs['issueList']
-    },
     hasSelectedFail() {
       return this.selectedFailList.length > 0
-    },
-    trackerList() {
-      return this.tracker.filter((item) => item.name === 'Fail Management')
     }
   },
-  watch: {
-    fixed_version_closed(value) {
-      this.setFixedVersionShowClosed(value)
-      this.loadVersionList(value)
-    },
-    trackerList(value) {
-      this.tracker_id = value[0].id
-    },
-    tracker_id() {
-      this.fetchData()
-    },
-    listData() {
-      this.fetchAllDownloadData()
-    }
-  },
-  async created() {
-    this.fixed_version_closed = this.fixedVersionShowClosed
-    this.tracker_id = this.trackerList[0].id
-    await this.loadSelectionList()
-  },
-  mounted() {
-    this.fetchAllDownloadData()
-    this.getInitPage()
+  async mounted() {
+    await this.fetchAllDownloadData()
   },
   methods: {
-    ...mapActions('projects', ['setFixedVersionShowClosed']),
     async fetchAllDownloadData() {
       this.allDataLoading = true
-      const res = await getProjectIssueList(this.selectedProjectId, this.getParams(this.totalData))
+      const res = await getProjectIssueList(
+        this.selectedProjectId,
+        this.getParams(this.listQuery.total)
+      )
       this.allDownloadData = res.data.issue_list
       this.allDataLoading = false
     },
-    getOptionsData(option_name) {
-      if (option_name === 'tracker') return this.trackerList
-      return this[option_name]
+    async fetchData() {
+      let listData
+      try {
+        await this.checkLastRequest()
+        const cancelTokenSource = axios.CancelToken.source()
+        this.lastIssueListCancelToken = cancelTokenSource
+        const res = await getProjectIssueList(
+          this.filterValue.project || this.selectedProjectId,
+          this.getParams(), {
+            cancelToken: cancelTokenSource.token
+          })
+        listData = res.data.issue_list
+        this.setNewListQuery(res.data.page)
+      } catch (e) {
+        // null
+      }
+      this.lastIssueListCancelToken = null
+      return listData
     },
-    getParams(limit) {
-      const result = {
-        offset: this.listQuery.offset,
-        limit: limit || this.listQuery.limit,
-        tracker_id: this.tracker_id
+    checkLastRequest() {
+      if (this.lastIssueListCancelToken && this.listLoading) {
+        this.lastIssueListCancelToken.cancel()
       }
-      if (this.sort) {
-        result['sort'] = this.sort
-      }
-      if (!this.displayClosed) {
-        result['status_id'] = 'open'
-      }
-      Object.keys(this.filterValue).forEach((item) => {
-        if (this.filterValue[item]) {
-          result[item + '_id'] = this.filterValue[item]
-        }
-      })
-      if (this.keyword) {
-        result['search'] = this.keyword
-      }
-      return result
     },
-    async loadSelectionList() {
-      if (this.selectedProjectId === -1) return
-      await Promise.all([getProjectUserList(this.selectedProjectId)]).then((res) => {
-        const [assigneeList] = res.map((item) => item.data)
-        this.assigned_to = [
-          { name: this.$t('Issue.Unassigned'), id: 'null' },
-          {
-            name: this.$t('Issue.me'),
-            login: '-Me-',
-            id: this.userId,
-            class: 'bg-yellow-100'
-          },
-          ...assigneeList.user_list
-        ]
-        if (this.userRole === 'Engineer') {
-          this.$set(this.filterValue, 'assigned_to', this.userId)
-          this.$set(this.originFilterValue, 'assigned_to', this.userId)
-        }
+    handleQuickAddClose() {
+      this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
+    },
+    async saveIssue(data) {
+      const res = await addIssue(data)
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Added'),
+        type: 'success'
       })
-      await this.loadVersionList(this.fixed_version_closed)
+      this.backToFirstPage()
+      this.loadData()
+      this.addTopicDialogVisible = false
+      this.$refs['quickAddIssue'].form.name = ''
+      return res
+    },
+    backToFirstPage() {
+      this.listQuery.page = 1
+      this.listQuery.offset = 0
+    },
+    advancedAddIssue(form) {
+      this.addTopicDialogVisible = true
+      this.parentId = 0
+      this.form = form
+    },
+    handleClick(row, column) {
+      if (column.type === 'action') {
+        return false
+      }
+      if (column.type === 'expand' && row.family) {
+        return this.$refs.issueList.toggleRowExpansion(row)
+      }
+      this.$router.push({ name: 'IssueDetail', params: { issueId: row.id, project: row.project }})
+    },
+    handleSortChange({ prop, order }) {
+      const orderBy = this.checkOrder(order)
+      if (orderBy) {
+        this.sort = prop + ':' + orderBy
+      } else {
+        this.sort = orderBy
+      }
+      this.loadData()
+    },
+    checkOrder(order) {
+      if (order === 'descending') {
+        return 'desc'
+      }
+      if (order === 'ascending') {
+        return 'asc'
+      }
+      return false
     },
     handleSelectionChange(list) {
       this.selectedFailList = list
@@ -364,11 +429,11 @@ export default {
         const targetObject = {}
         this.csvColumnSelected.map((itemSelected) => {
           if (itemSelected === 'status') {
-            this.$set(targetObject, itemSelected, this.getStatusTagType(item.status.name))
+            this.$set(targetObject, itemSelected, getStatusTagType(item.status.name))
           } else if (itemSelected === 'priority') {
-            this.$set(targetObject, itemSelected, this.getPriorityTagType(item.priority.name))
+            this.$set(targetObject, itemSelected, getPriorityTagType(item.priority.name))
           } else if (itemSelected === 'tracker') {
-            this.$set(targetObject, itemSelected, this.getCategoryTagType(item.tracker.name))
+            this.$set(targetObject, itemSelected, getCategoryTagType(item.tracker.name))
           } else if (itemSelected === 'assigned_to') {
             this.$set(
               targetObject,
@@ -398,41 +463,65 @@ export default {
       })
       return translateTable
     },
-    getStatusTagType(status) {
-      switch (status) {
-        case 'Active':
-          return '已開立'
-        case 'Assigned':
-          return '已分派'
-        case 'Closed':
-          return '已關閉'
-        case 'Solved':
-          return '已解決'
-        case 'Responded':
-          return '已回應'
-        case 'Finished':
-          return '已完成'
+    getRowClass({ row }) {
+      const result = []
+      if (!row.family) {
+        result.push('hide-expand-icon')
       }
-    },
-    getPriorityTagType(priority) {
-      switch (priority) {
-        case 'Immediate':
-          return '緊急'
-        case 'High':
-          return '高'
-        case 'Normal':
-          return '一般'
-        case 'Low':
-          return '低'
-      }
-    },
-    getCategoryTagType(category) {
-      if (category === 'Fail Management') return '異常管理'
-    },
-    onChangeFilter() {
-      this.backToFirstPage()
-      this.loadData()
+      this.contextMenu ? result.push('context-menu') : result.push('cursor-pointer')
+      return result.join(' ')
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.wrapper {
+  height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
+}
+
+.download {
+  @apply border-none;
+}
+
+>>> .el-table__body-wrapper {
+  overflow-y: auto;
+}
+
+>>> .el-table {
+  .hide-expand-icon {
+    .el-table__expand-column .cell {
+      display: none;
+    }
+  }
+
+  .action {
+    @apply border-0;
+  }
+}
+
+>>> .el-table__expanded-cell {
+  font-size: 0.875em;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+>>> .row-expand-loading .el-table__expand-column .cell {
+  padding: 0;
+
+  .el-table__expand-icon {
+    .el-icon-arrow-right {
+      animation: rotating 2s linear infinite;
+    }
+
+    .el-icon-arrow-right:before {
+      content: '\e6cf';
+      font-size: 1.25em;
+    }
+  }
+}
+
+>>> .context-menu {
+  cursor: context-menu;
+}
+</style>

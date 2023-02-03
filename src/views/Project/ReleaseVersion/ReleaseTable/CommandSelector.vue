@@ -8,7 +8,11 @@
         {{ getDockerCommand(image, scope.row.harbor_external_base_url) }}
       </div>
     </section>
-    <el-select v-model="selectedTag" class="ml-3">
+    <el-select
+      v-model="selectedTag"
+      class="ml-3"
+      size="mini"
+    >
       <el-option
         v-for="tag in image.tags"
         :key="tag"
@@ -16,24 +20,31 @@
         :value="tag"
       />
     </el-select>
-    <div class="flex justify-center">
+    <el-button
+      class="ml-3"
+      icon="el-icon-copy-document"
+      circle
+      size="mini"
+      @click="copyUrl(`copy-${scope.$index}-${idx}`)"
+    />
+    <el-popconfirm
+      :confirm-button-text="$t('general.Delete')"
+      :cancel-button-text="$t('general.Cancel')"
+      icon="el-icon-info"
+      icon-color="red"
+      :title="$t('Notify.confirmDelete')"
+      @confirm="deleteTag"
+    >
       <el-button
-        class="mr-2"
-        icon="el-icon-copy-document"
-        circle
-        size="mini"
-        @click="copyUrl(`copy-${scope.$index}-${idx}`)"
-      />
-      <el-button
-        class="mr-2"
+        slot="reference"
+        class="ml-3"
         :style="getStyle('danger')"
         :disabled="image.default"
         icon="el-icon-error"
         circle
         size="mini"
-        @click="deleteTag"
       />
-    </div>
+    </el-popconfirm>
   </div>
 </template>
 

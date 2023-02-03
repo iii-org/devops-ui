@@ -139,22 +139,26 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getSideexScans, getSideexReport } from '@/api/sideex'
 import { getSideexPod } from '@/api_v2/sideex'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
+import {
+  ProjectListSelector,
+  ElTableColumnTime,
+  ElTableColumnTag
+} from '@/components'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 import { getDurationTime } from '@/utils/handleTime'
 
 export default {
   name: 'ScanSideex',
   components: {
+    ProjectListSelector,
     ElTableColumnTime,
     ElTableColumnTag,
     PodLog
   },
-  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       confirmLoading: false,

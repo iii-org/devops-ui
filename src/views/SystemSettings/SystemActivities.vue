@@ -36,7 +36,7 @@
 <script>
 import { getAllActivities } from '@/api/activities'
 import { BasicData, Pagination } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { ElTableColumnTime } from '@/components'
 
 const params = () => ({
   limit: 10,

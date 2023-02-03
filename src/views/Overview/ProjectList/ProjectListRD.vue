@@ -234,10 +234,10 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
 import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'
+import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
+import { ElTableColumnTime } from '@/components'
 import { SearchFilter, UpdateButton } from './components'
 
 const params = () => ({
@@ -248,7 +248,11 @@ const params = () => ({
 
 export default {
   name: 'ProjectListRD',
-  components: { ElTableColumnTime, SearchFilter, UpdateButton },
+  components: {
+    ElTableColumnTime,
+    SearchFilter,
+    UpdateButton
+  },
   mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {

@@ -100,13 +100,13 @@
 <script>
 import { mapGetters } from 'vuex'
 import { camelCase } from 'lodash'
+import { isTimeValid, getLocalTime } from '@/utils/handleTime'
 import { getProjectIssueList } from '@/api_v2/projects'
 import { addIssue, getIssueFamily } from '@/api/issue'
-import AddIssue from '@/components/Issue/AddIssue'
+import { CancelRequest } from '@/mixins'
+import { AddIssue } from '@/components/Issue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail'
 import theme from '@/theme.js'
-import { CancelRequest } from '@/mixins'
-import { isTimeValid, getLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'Gantt',

@@ -109,10 +109,9 @@
 </template>
 
 <script>
-import Tracker from '@/components/Issue/Tracker'
-import { getProjectAssignable } from '@/api/projects'
 import { mapGetters } from 'vuex'
-import AddIssue from '@/components/Issue/AddIssue'
+import { getProjectAssignable } from '@/api/projects'
+import { AddIssue, Tracker } from '@/components/Issue'
 
 export default {
   name: 'QuickAddIssueOnBoard',

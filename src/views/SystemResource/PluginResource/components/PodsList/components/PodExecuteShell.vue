@@ -2,6 +2,15 @@
   <div class="app-container">
     <div class="flex justify-between mb-2">
       <div>
+        <el-button
+          type="text"
+          size="medium"
+          icon="el-icon-arrow-left"
+          class="mr-3"
+          @click="handleBack"
+        >
+          {{ $t('general.Back') }}
+        </el-button>
         <span class="text-title"><em class="ri-terminal-line mr-3" />{{ podName }}</span>
         <el-popover placement="top" width="160" trigger="hover">
           <div>{{ $t('PodsList.ExecuteShellNotify') }}</div>
@@ -212,6 +221,9 @@ export default {
       }
       this.socket.emit('pod_exec_cmd', emitObj)
       // console.log('emit ===>', emitObj)
+    },
+    handleBack() {
+      this.$router.push({ name: 'DevEnvironment' })
     }
   }
 }

@@ -13,10 +13,15 @@
       v-loading="isLoading"
     >
       <el-collapse-item name="1">
-        <div slot="title" style="margin-left: auto;">
-          <div class="text-title">
-            {{ $t('general.Settings', { name: $t('Issue.Issue') }) }}
-          </div>
+        <div
+          slot="title"
+          class="flex justify-between text-title"
+          style="width: -webkit-fill-available;"
+        >
+          <span class="text-xl" style="margin: auto;">
+            {{ row.name }}
+          </span>
+          {{ $t('general.Settings', { name: $t('Issue.Issue') }) }}
         </div>
         <el-row>
           <el-col :md="22" :span="20">
@@ -37,10 +42,8 @@
         </el-row>
       </el-collapse-item>
       <el-collapse-item name="2">
-        <div slot="title" style="margin-right: auto;">
-          <div class="text-title">
-            {{ $t('Excalidraw.EditBoard') }}
-          </div>
+        <div slot="title" class="text-title" style="margin-right: auto;">
+          {{ $t('Excalidraw.EditBoard') }}
         </div>
         <div :style="{height:isShowExcalidraw?null:excalidrawHeight+'px'}">
           <iframe

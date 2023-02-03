@@ -61,19 +61,21 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BasicData, ProjectSelector } from '@/mixins'
 import { getPluginResource } from '@/api/harbor'
 import { getProjectUsage } from '@/api/kubernetes'
-import ResourcePie from './components/ResourcePie'
 import { handlePluginData } from '@/utils/pluginResourceFormatter'
 import { handleK8sData } from '@/utils/k8sResourceFormatter'
+import { BasicData } from '@/mixins'
+import { ProjectListSelector } from '@/components'
+import ResourcePie from './components/ResourcePie'
 
 export default {
   name: 'PluginResource',
   components: {
+    ProjectListSelector,
     ResourcePie
   },
-  mixins: [BasicData, ProjectSelector],
+  mixins: [BasicData],
   data() {
     return {
       listLoading: false,

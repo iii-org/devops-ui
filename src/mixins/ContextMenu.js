@@ -1,4 +1,4 @@
-import ContextMenu from '@/components/Issue/ContextMenu'
+import { ContextMenu } from '@/components/Issue'
 import { getIssue } from '@/api/issue'
 
 export default {

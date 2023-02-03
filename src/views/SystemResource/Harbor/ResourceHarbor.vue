@@ -205,9 +205,14 @@
 </template>
 
 <script>
-import { deleteHarborRepo, editHarborRepo, getHarborRepoList, getHarborRepoStorageSummary } from '@/api/harbor'
-import { BasicData, Pagination, SearchBar, Table, ProjectSelector } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import {
+  getHarborRepoList,
+  deleteHarborRepo,
+  editHarborRepo,
+  getHarborRepoStorageSummary
+} from '@/api/harbor'
+import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
 
 const formTemplate = {
   name: '',
@@ -218,8 +223,8 @@ const formTemplate = {
 
 export default {
   name: 'ResourceHarbor',
-  components: { ElTableColumnTime },
-  mixins: [BasicData, Pagination, SearchBar, Table, ProjectSelector],
+  components: { ProjectListSelector, ElTableColumnTime },
+  mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {
       projectName: '',

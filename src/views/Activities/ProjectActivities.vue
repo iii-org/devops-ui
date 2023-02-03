@@ -53,8 +53,8 @@
 
 <script>
 import { getProjectActivities } from '@/api/activities'
-import { BasicData, Pagination, ProjectSelector } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { BasicData, Pagination } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
 
 const params = () => ({
   limit: 10,
@@ -63,8 +63,8 @@ const params = () => ({
 
 export default {
   name: 'ProjectActivities',
-  components: { ElTableColumnTime },
-  mixins: [BasicData, Pagination, ProjectSelector],
+  components: { ProjectListSelector, ElTableColumnTime },
+  mixins: [BasicData, Pagination],
   data() {
     return {
       params: params(),

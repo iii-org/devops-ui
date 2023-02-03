@@ -153,24 +153,25 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
 import {
   getCmasScans,
   getCmasScansStatus,
   getCmasReport
 } from '@/api/cmas'
 import { getCmasPod } from '@/api_v2/cmas'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 import * as elementTagType from '@/utils/elementTagType'
 
 export default {
   name: 'Cmas',
   components: {
+    ProjectListSelector,
     ElTableColumnTime,
     PodLog
   },
-  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     this.levels = ['High', 'Medium', 'Low']
     this.MOEA = ['L3', 'L2', 'L1']

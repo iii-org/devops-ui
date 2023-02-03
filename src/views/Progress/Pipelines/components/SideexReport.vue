@@ -77,6 +77,7 @@
 
 <script>
 import { getSideexReport } from '@/api/sideex'
+import { ToolBar } from './'
 
 export default {
   name: 'Sideex',

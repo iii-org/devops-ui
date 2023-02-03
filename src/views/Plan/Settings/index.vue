@@ -60,8 +60,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { ProjectListSelector } from '@/components'
 import { ProjectVersions, ProjectMembers, PipelineSettings } from './components'
-import ProjectListSelector from '@/components/ProjectListSelector'
 
 export default {
   name: 'ProjectSettings',

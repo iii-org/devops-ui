@@ -1,22 +1,23 @@
 /**
  *! Before using this module, you need to know:
- * 1. binary? blob? arraybuffer?
+ * 1. Binary? Blob? Arraybuffer?
  *  check https://javascript.info/binary to learn more
  *
- * 2. PDF and DOCX download only
- *  if you want to download CSV or EXCEL, check @utils/downloadCsvOrExcel.js
+ * 2. Binary data download only, including Blob (Binary Large Object)
+ *  if you want to download file by JSON data, check @utils/downloadCsvOrExcel.js
+ *
  */
 
 /**
  * download file from binary
- * @param {string} binary - binary string from backend, required
+ * @param {string} blobParts - binary data from backend, required
  * @param {string} fileName - file name, ex: xxx.pdf, xxx.docx, required
  * @param {string} contentType - content type, optional
  */
-export const downloadFileFromBinary = (binary, fileName, contentType) => {
+export const downloadFileFromBinary = (blobParts, fileName, contentType) => {
   const url = contentType
-    ? window.URL.createObjectURL(new Blob([binary]), { type: contentType })
-    : window.URL.createObjectURL(new Blob([binary]))
+    ? window.URL.createObjectURL(new Blob([blobParts]), { type: contentType })
+    : window.URL.createObjectURL(new Blob([blobParts]))
   const link = document.createElement('a')
   link.href = url
   link.download = fileName

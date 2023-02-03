@@ -22,7 +22,9 @@
           v-model="form.project"
           :placeholder="$t('Project.SelectProject')"
           :disabled="title === $t('Activities.EditTemplate')"
+          :filter-method="setFilter"
           filterable
+          style="width:100%"
           @change="changeProject()"
         >
           <el-option-group
@@ -164,6 +166,17 @@ export default {
         },
         { options: projects }
       ]
+    },
+    setFilter(value) {
+      this.getCategoryProjectList()
+      const keyword = value.toLowerCase()
+      this.categoryProjectList = this.categoryProjectList.filter((item) => {
+        item.options = item.options.filter((element) =>
+          element.display.indexOf(keyword) > -1 ||
+            element.name.indexOf(keyword) > -1
+        )
+        return item.options.length > 0
+      })
     },
     async changeProject() {
       if (!this.form.project) return

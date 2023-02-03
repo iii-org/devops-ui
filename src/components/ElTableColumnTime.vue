@@ -38,7 +38,7 @@ export default {
       default: '130'
     },
     sortable: {
-      type: Boolean,
+      type: [Boolean, String],
       default: false
     }
   },

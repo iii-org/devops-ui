@@ -1,47 +1,72 @@
-import { deleteIssueRelation, updateIssue } from '@/api/issue'
+/**
+ * ! Before using this module, you need to know:
+ * 1. The feature of IssueExpand mixins is offer public function.
+ */
+
+import { getIssueFamily } from '@/api/issue'
+import { IssueExpand } from '@/components/Issue'
+
+/**
+ * * How to use IssueExpand component
+ * ! for required
+ * ? for optional
+ *
+ * ! @issue {Object}
+ * ? @popup {Boolean}
+ * ? @family {Boolean}
+ * ? @reload {String, Number}
+ * ? @isButtonDisabled {Boolean}
+ * ! @handleExpandRow {Function}
+ * ! @updateList {Function}
+ * ? @popupDialog {Function}
+ * ? @onContextMenu {Function}
+ *
+ * * Component example
+ *  <IssueExpand
+ *    :issue="row"
+ *    :popup="true"
+ *    :family="countRelationIssue > 0"
+ *    :reload="relationVisible"
+ *    :is-button-disabled="isButtonDisabled"
+ *    @handle-expand-row="handleExpandRow"
+ *    @update-list="getIssueFamilyData(issue)"
+ *    @popup-dialog="onRelationIssueDialog"
+ *    @on-context-menu="onContextMenu"
+ *  />
+ */
 
 export default {
+  components: { IssueExpand },
   methods: {
-    getFormData(data) {
-      const formData = new FormData()
-      Object.keys(data).forEach((item) => {
-        formData.append(item, data[item])
-      })
-      return formData
-    },
-    async removeIssueRelation(childIssueId) {
-      this.listLoading = true
-      try {
-        const formData = this.getFormData({ parent_id: '' })
-        await updateIssue(childIssueId, formData)
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
-        await this.loadData()
-      } catch (err) {
-        console.error(err)
+    handleExpandRow(row) {
+      if (row.family) {
+        this.getIssueFamilyData(row)
+      } else {
+        this.$refs['issueList'].toggleRowExpansion(row, false)
       }
-      this.listLoading = false
     },
-    async removeRelationIssue(relation_id) {
-      this.listLoading = true
+    async getIssueFamilyData(row) {
       try {
-        await deleteIssueRelation(relation_id)
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
-        await this.loadData()
-      } catch (err) {
-        console.error(err)
+        await this.$set(row, 'isLoadingFamily', true)
+        const family = await getIssueFamily(row.id)
+        const data = family.data
+        this.formatIssueFamilyData(row, data)
+        this.$set(row, 'isLoadingFamily', false)
+      } catch (e) {
+        //   null
       }
-      this.listLoading = false
+      return Promise.resolve()
     },
-    handleEdit(issueId) {
-      this.$router.push({ name: 'IssueDetail', params: { issueId }})
+    formatIssueFamilyData(row, data) {
+      if (data.hasOwnProperty('parent')) {
+        this.$set(row, 'parent', data.parent)
+      }
+      if (data.hasOwnProperty('children')) {
+        this.$set(row, 'children', data.children)
+      }
+      if (data.hasOwnProperty('relations')) {
+        this.$set(row, 'relations', data.relations)
+      }
     }
   }
 }

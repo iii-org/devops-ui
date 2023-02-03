@@ -172,6 +172,7 @@ export default {
     Save: 'Save',
     Cancel: 'Cancel',
     Restore: 'Restore',
+    Sync: 'Sync',
     SearchName: 'Search Name',
     SearchBranch: 'Search Branch',
     Description: 'Description',
@@ -266,7 +267,8 @@ export default {
     ExpiredStatus: 'Expired Status',
     UnassignedDate: 'Unassigned Date',
     Expired: 'Expired',
-    Unexpired: 'Unexpired'
+    Unexpired: 'Unexpired',
+    DataGenerationTime: 'Data Generation Time'
   },
   Notify: {
     Updated: 'update successful',
@@ -315,7 +317,8 @@ export default {
     RedmineMailActiveWarning: 'Mail notification setting can not be opened, when mail server is disable.',
     RedmineMailAutoDisableWarning: 'Email notification is disabled, it might caused by disabled or invalid email setting at backend. Please contact with system administrator for further information.',
     RedmineMailConfirmWarning: 'Mail(SMTP) setting modification will be restarted to Redmine, which will cause the DEVOPS platform to stop the service for 5-8 minutes. If it is necessary to perform modification and restart the redmine?',
-    ExcalidrawAliveWarning: 'Excalidraw service failed, please contact DevOps for assistance.'
+    ExcalidrawAliveWarning: 'Excalidraw service failed, please contact DevOps for assistance.',
+    DeleteExcalidrawWarning: 'Also "delete" the related excalidraw of this issue.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -933,7 +936,9 @@ export default {
     Container: 'Container',
     Image: 'Image',
     Services: 'Services',
-    Pod: 'Pod'
+    Pod: 'Pod',
+    Internal: 'Internal',
+    External: 'External'
   },
   ProjectResource: {
     Usage: 'Usage',
@@ -1246,7 +1251,6 @@ export default {
     FailMessage: 'Please check if the content of the form is correct and fill in the password',
     NoNameWarning: 'Please fill in Cluster name',
     FillInPassword: 'Please fill in password',
-    NoService: 'No service',
     NoImage: 'No image',
     Initializing: 'Initializing',
     StartReplication: 'Synchronizing',
@@ -1282,6 +1286,8 @@ export default {
     Path: 'Path',
     EnvironmentVariable: 'Environment Variable',
     AddVariable: 'Add Variable',
+    PluginStoredPath: 'Plugin Stored Path',
+    AddPath: 'Add Path',
     Key: 'Key | Keys',
     Value: 'Value',
     Default: '(default)',
@@ -1292,7 +1298,8 @@ export default {
     ReleaseHelper: 'above release version requires an image included.',
     NoSetting: 'Deploy setting is not yet ready, please check with your system administrator.',
     LinkToApplication: 'Link to application',
-    NameRule: `Please enter 2-30 English leading letters which combines with English, numbers or '_'. Note that the English must be all lowercase and the ID set cannot be all numbers.`
+    NameRule: `Please enter 2-30 English leading letters which combines with English, numbers or '-'. Note that the English must be all lowercase and the ID set cannot be all numbers.`,
+    PathLimitWarning: 'Only 5 plug-in spaces can be set for each project'
   },
   Validation: {
     Input: 'Please Input {0}',

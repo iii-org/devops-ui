@@ -68,7 +68,7 @@ import {
   getProjectIssueStatistics,
   getProjectTest
 } from '@/api/projects'
-import ProjectListSelector from '@/components/ProjectListSelector'
+import { ProjectListSelector } from '@/components'
 import {
   IssueTrackingStatusCard,
   WorkloadCard,

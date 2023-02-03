@@ -19,7 +19,9 @@
     </ProjectListSelector>
     <el-divider />
     <div class="flex justify-between items-center mb-1">
-      <div class="flex">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
+      <div class="flex">
+        {{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}
+      </div>
       <div class="flex">
         <el-button
           class="buttonPrimaryReverse"
@@ -167,6 +169,7 @@
     />
     <el-dialog
       width="80%"
+      top="5vh"
       :title="$t('Deploy.ApplicationSetting')"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
@@ -180,29 +183,35 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button class="buttonSecondaryReverse" @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
+        <el-button
+          class="buttonSecondaryReverse"
+          @click="onDialogClosed"
+        >
+          {{ $t('general.Cancel') }}
+        </el-button>
         <el-button
           v-if="edit_id"
           class="buttonPrimary"
           :loading="memberConfirmLoading"
           @click="handleConfirm(edit_id)"
         >
-          {{ $t('general.Save') }}</el-button>
+          {{ $t('general.Save') }}
+        </el-button>
         <el-button
           v-else
           class="buttonPrimary"
           :loading="memberConfirmLoading"
           @click="handleConfirm(null)"
         >
-          {{ $t('general.Add') }}</el-button>
+          {{ $t('general.Add') }}
+        </el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar, ProjectSelector, CancelRequest } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { getLocalTime } from '@/utils/handleTime'
 import {
   getServices,
   getService,
@@ -212,19 +221,25 @@ import {
   patchService,
   patchServiceRedeploy
 } from '@/api/deploy'
-import ApplicationSetting from '@/views/Project/Deploy/components/ApplicationSetting'
+import { BasicData, Pagination, SearchBar, CancelRequest } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
+import ApplicationSetting from './components/ApplicationSetting'
 import Status from './components/Status'
-import { getLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'Deploy',
-  components: { ApplicationSetting, ElTableColumnTime, Status },
+  components: {
+    ProjectListSelector,
+    ElTableColumnTime,
+    ApplicationSetting,
+    Status
+  },
   filters: {
     getActionIcon(value) {
       return value ? 'el-icon-video-play' : 'el-icon-video-pause'
     }
   },
-  mixins: [BasicData, Pagination, SearchBar, ProjectSelector, CancelRequest],
+  mixins: [BasicData, Pagination, SearchBar, CancelRequest],
   data() {
     return {
       dialogVisible: false,

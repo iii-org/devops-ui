@@ -86,9 +86,10 @@ const mutations = {
   SET_LIST_QUERY: (state, value) => {
     state.listQuery = value
   },
-  SET_PAGE_INFO: (state, value) => {
-    state.pageInfo = value
-  },
+  // ? not use
+  // SET_PAGE_INFO: (state, value) => {
+  //   state.pageInfo = value
+  // },
   SET_FIXED_VERSION_SHOW_CLOSED: (state, value) => {
     state.fixedVersionShowClosed = value
   }
@@ -209,12 +210,15 @@ const actions = {
   setSelectedProject({ commit, dispatch }, project) {
     const { id } = project
     if (localStorage.getItem('projectId') !== id.toString()) {
+      sessionStorage.removeItem('listQuery')
+      sessionStorage.removeItem('keyword')
       sessionStorage.removeItem('issueFilter')
       sessionStorage.removeItem('groupBy')
       sessionStorage.removeItem('displayClosed')
-      sessionStorage.removeItem('Keyword')
     }
     commit('SET_SELECTED_PROJECT', project)
+    commit('SET_LIST_QUERY', {})
+    commit('SET_KEYWORD', {})
     commit('SET_FILTER', {})
     commit('SET_GROUP_BY', { dimension: 'status', value: [] })
     commit('SET_DISPLAY_CLOSED', {})
@@ -281,18 +285,19 @@ const actions = {
     sessionStorage.setItem('listQuery', JSON.stringify(value))
     commit('SET_LIST_QUERY', value)
   },
-  getPageInfo({ commit, state }) {
-    const getSessionValue = sessionStorage.getItem('pageInfo')
-    if (getSessionValue) {
-      commit('SET_PAGE_INFO', JSON.parse(getSessionValue))
-      return JSON.parse(getSessionValue)
-    }
-    return state.pageInfo
-  },
-  setPageInfo({ commit }, value) {
-    sessionStorage.setItem('pageInfo', JSON.stringify(value))
-    commit('SET_PAGE_INFO', value)
-  },
+  // ? not use
+  // getPageInfo({ commit, state }) {
+  //   const getSessionValue = sessionStorage.getItem('pageInfo')
+  //   if (getSessionValue) {
+  //     commit('SET_PAGE_INFO', JSON.parse(getSessionValue))
+  //     return JSON.parse(getSessionValue)
+  //   }
+  //   return state.pageInfo
+  // },
+  // setPageInfo({ commit }, value) {
+  //   sessionStorage.setItem('pageInfo', JSON.stringify(value))
+  //   commit('SET_PAGE_INFO', value)
+  // },
   getFixedVersionShowClosed({ commit, state }) {
     const getSessionValue = sessionStorage.getItem('fixed_version_show_closed')
     if (getSessionValue) {

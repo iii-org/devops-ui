@@ -113,16 +113,22 @@
 import { mapGetters } from 'vuex'
 import { getPostmanResult } from '@/api/postman'
 import { getPostmanPod } from '@/api_v2/postman'
-import { BasicData, SearchBar, Pagination, ProjectSelector } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { BasicData, SearchBar, Pagination } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
 import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 
 export default {
   name: 'Postman',
-  components: { ElTableColumnTime, PodLog },
-  mixins: [BasicData, SearchBar, Pagination, ProjectSelector],
+  components: {
+    ProjectListSelector,
+    ElTableColumnTime,
+    PodLog
+  },
+  mixins: [BasicData, SearchBar, Pagination],
   data() {
     return {
+      storageName: 'postman',
+      storageType: ['SearchBar'],
       dialogVisible: false,
       searchKeys: ['branch', 'commit_id'],
       pod: {}
@@ -130,22 +136,6 @@ export default {
   },
   computed: {
     ...mapGetters(['userRole'])
-  },
-  beforeRouteEnter(to, from, next) {
-    if (from.name === 'PostmanTestCase') {
-      next((vm) => {
-        vm.keyword = sessionStorage.getItem('postmanKeyword')
-        sessionStorage.removeItem('postmanKeyword')
-      })
-    } else {
-      next()
-    }
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.name === 'PostmanTestCase') {
-      sessionStorage.setItem('postmanKeyword', this.keyword)
-    }
-    next()
   },
   methods: {
     async fetchData() {

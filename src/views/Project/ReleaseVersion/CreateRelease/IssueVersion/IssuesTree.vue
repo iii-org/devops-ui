@@ -209,9 +209,8 @@
 import { mapGetters } from 'vuex'
 import { updateIssue } from '@/api/issue'
 import { getAllChildrenIssue, closeAllIssueByIssueIds } from '@/api_v2/issue'
+import { Tracker, Status } from '@/components/Issue'
 import SearchFilter from './SearchFilter'
-import Status from '@/components/Issue/Status'
-import Tracker from '@/components/Issue/Tracker'
 
 export default {
   name: 'IssuesTree',

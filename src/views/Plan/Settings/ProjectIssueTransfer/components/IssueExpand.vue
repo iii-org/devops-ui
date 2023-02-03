@@ -94,7 +94,7 @@ import { ContextMenu } from '@/mixins'
 import { updateIssue } from '@/api/issue'
 
 export default {
-  name: 'ExpandSection',
+  name: 'IssueExpand',
   components: { Status, Tracker },
   mixins: [ContextMenu],
   props: {

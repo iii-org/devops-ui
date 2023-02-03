@@ -21,6 +21,11 @@ import XLSX from 'xlsx'
 const CSV = {}
 const EXCEL = {}
 
+/**
+ * string to array buffer
+ * @param {String} s - string
+ * @returns buf - ArrayBuffer
+ */
 function s2ab(s) {
   const buf = new ArrayBuffer(s.length)
   const view = new Uint8Array(buf)
@@ -66,16 +71,13 @@ function downloadFile(sheet, filename, filename_extension) {
   const time = new Date()
   const timeNow = time.toLocaleDateString()
   const saveName = `${filename}_${timeNow}.${filename_extension}`
-  const aLink = document.createElement('a')
-  aLink.href = url
-  aLink.download = saveName || ''
-  let event
-  if (window.MouseEvent) event = new MouseEvent('click')
-  else {
-    event = document.createEvent('MouseEvents')
-    event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
-  }
-  aLink.dispatchEvent(event)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = saveName
+  document.body.appendChild(link)
+  link.click()
+  URL.revokeObjectURL(link.href)
+  document.body.removeChild(link)
 }
 
 CSV.install = function(options) {

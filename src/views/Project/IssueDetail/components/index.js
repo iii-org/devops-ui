@@ -12,7 +12,16 @@ import AdminCommitLog from './AdminCommitLog'
 import WhiteBoardTable from './WhiteBoardTable'
 
 export {
-  IssueFiles, IssueForm, IssueNotesDialog, IssueNotesEditor, IssueFileUploader,
-  IssueDescription, IssueTitle, IssueToolbar, IssueMatrix, IssueCollection,
-  AdminCommitLog, WhiteBoardTable
+  IssueFiles,
+  IssueForm,
+  IssueNotesDialog,
+  IssueNotesEditor,
+  IssueFileUploader,
+  IssueDescription,
+  IssueTitle,
+  IssueToolbar,
+  IssueMatrix,
+  IssueCollection,
+  AdminCommitLog,
+  WhiteBoardTable
 }

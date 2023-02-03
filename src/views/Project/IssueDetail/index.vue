@@ -63,15 +63,17 @@
               :type="isButtonDisabled ? 'info' : 'danger'"
               plain
               :disabled="isButtonDisabled"
-              @click="handleDelete('Delete', false)"
-            >{{ $t('general.Delete') }}
+              @click="isDeleteIssueDialog = true"
+            >
+              {{ $t('general.Delete') }}
             </el-button>
             <el-button
               size="medium"
               :class="isButtonDisabled ? 'buttonInfo' : 'buttonPrimary'"
               :disabled="isButtonDisabled"
               @click="handleSave"
-            >{{ $t('general.Save') }}
+            >
+              {{ $t('general.Save') }}
             </el-button>
           </el-col>
         </el-row>
@@ -146,7 +148,7 @@
                       {{ $t('Issue.TraceabilityMatrix') }}
                     </el-button>
                   </div>
-                  <ExpandSection
+                  <IssueExpand
                     :issue="$data"
                     :family="countRelationIssue > 0"
                     :popup="true"
@@ -172,10 +174,13 @@
                 v-model="issueTabs"
                 type="border-card"
               >
-                <el-tab-pane
-                  :label="$t('Issue.History')"
-                  name="history"
-                >
+                <el-tab-pane name="history">
+                  <template slot="label">
+                    <span>
+                      <em class="ri-history-line" />
+                      {{ $t('Issue.History') }}
+                    </span>
+                  </template>
                   <IssueNotesDialog
                     :height="dialogHeight"
                     :data="journals"
@@ -198,7 +203,7 @@
                   />
                 </el-tab-pane>
                 <el-tab-pane
-                  v-if="issue.excalidraw && issue.excalidraw.length !== 0"
+                  v-if="isHasWhiteBoard"
                   name="whiteBoard"
                 >
                   <template slot="label">
@@ -294,8 +299,87 @@
         {{ $t('Notify.ChangeProject') }}
       </span>
       <span slot="footer">
-        <el-button @click="onCancel">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" @click="onConfirm">{{ $t('general.Confirm') }}</el-button>
+        <el-button @click="onCancel">
+          {{ $t('general.Cancel') }}
+        </el-button>
+        <el-button type="primary" @click="onConfirm">
+          {{ $t('general.Confirm') }}
+        </el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :visible.sync="isDeleteIssueDialog"
+      append-to-body
+      destroy-on-close
+      width="30%"
+    >
+      <span class="block text-center text-lg font-bold">
+        <em class="el-icon-warning" :style="getStyle('danger')" />
+        {{ this.$t(`Issue.${hasChildrenIssue ? 'ConfirmDeleteIssue' : 'DeleteIssue'}`, { issueName: issueName }) }}
+      </span>
+      <ul v-if="hasChildrenIssue">
+        <li
+          v-for="item in children"
+          :key="item.id"
+          class="p-1"
+        >
+          <Status
+            class="mx-1"
+            size="mini"
+            :name="$t(`Issue.${item.status.name}`)"
+          />
+          <Tracker
+            size="mini"
+            :name="$t(`Issue.${item.tracker.name}`)"
+          />
+          <span>
+            {{ `#${item.id} - ` }}
+          </span>
+          <span v-if="item.tags && item.tags.length > 0">
+            <span v-for="tag in item.tags" :key="tag.id">
+              <el-tag
+                class="mx-1"
+                type="mini"
+              >
+                {{ tag.name }}
+              </el-tag>
+            </span>
+          </span>
+          <span>
+            {{
+              `${item.name} ${(
+                item.assigned_to && Object.keys(item.assigned_to).length > 0 ?
+                  `(${$t(`Issue.assigned_to`)}:${item.assigned_to.name} - ${item.assigned_to.login})` : ''
+              )}`
+            }}
+          </span>
+        </li>
+      </ul>
+      <span v-if="isHasWhiteBoard">
+        <el-divider class="w-auto m-3" />
+        <span class="block text-center" :style="{ color: 'red' }">
+          <el-checkbox v-model="checkDeleteWhiteBoard" />
+          {{ $t('Notify.DeleteExcalidrawWarning') }}
+        </span>
+        <ul class="mt-0">
+          <li
+            v-for="item in issue.excalidraw"
+            :key="item.id"
+            class="p-1"
+          >
+            <el-link type="primary" @click="editWhiteBoard(item)">
+              {{ item.name }}
+            </el-link>
+          </li>
+        </ul>
+      </span>
+      <span slot="footer">
+        <el-button @click="handleCancel()">
+          {{ $t('general.Cancel') }}
+        </el-button>
+        <el-button type="primary" @click="handleDelete()">
+          {{ $t('general.Confirm') }}
+        </el-button>
       </span>
     </el-dialog>
     <ContextMenu
@@ -311,6 +395,12 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
+import {
+  addProjectTags,
+  getRootProjectId
+} from '@/api/projects'
+import { getHasSon, getProjectRelation } from '@/api_v2/projects'
 import {
   getIssue,
   updateIssue,
@@ -321,6 +411,11 @@ import {
   getIssueGitCommitLog,
   getIssueFamily
 } from '@/api/issue'
+import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
+import { atob } from '@/utils/base64'
+import getPageTitle from '@/utils/getPageTitle'
+import { ContextMenu } from '@/mixins'
+import { Status, Tracker, IssueExpand } from '@/components/Issue'
 import {
   IssueForm,
   IssueNotesDialog,
@@ -329,23 +424,12 @@ import {
   IssueDescription,
   IssueTitle,
   IssueToolbar,
+  IssueMatrix,
   IssueCollection,
   AdminCommitLog,
   WhiteBoardTable
 } from './components'
-import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
-import {
-  addProjectTags,
-  getRootProjectId
-} from '@/api/projects'
-import { getHasSon, getProjectRelation } from '@/api_v2/projects'
-import { Status, Tracker, ExpandSection } from '@/components/Issue'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
-import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
-import { atob } from '@/utils/base64'
-import getPageTitle from '@/utils/getPageTitle'
-import IssueMatrix from './components/IssueMatrix'
-import ContextMenu from '@/mixins/ContextMenu'
 import variables from '@/styles/theme/variables.scss'
 
 const commitLimit = 10
@@ -366,7 +450,7 @@ export default {
     IssueFiles,
     IssueMatrix,
     RelatedCollectionDialog,
-    ExpandSection,
+    IssueExpand,
     AdminCommitLog,
     WhiteBoardTable
   },
@@ -451,7 +535,9 @@ export default {
       isShowDialog: false,
       storagePId: '',
       issueProject: {},
-      issueTabs: 'history'
+      issueTabs: 'history',
+      isDeleteIssueDialog: false,
+      checkDeleteWhiteBoard: false
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -501,6 +587,9 @@ export default {
     hasRelationIssue() {
       return Object.keys(this.parent).length > 0 || this.children.length > 0
     },
+    hasChildrenIssue() {
+      return this.children && this.children.length > 0
+    },
     countRelationIssue() {
       let parent = 0
       let children = 0
@@ -529,6 +618,9 @@ export default {
     },
     formProjectId() {
       return this.form.project_id ? this.form.project_id : this.selectedProjectId
+    },
+    isHasWhiteBoard() {
+      return this.issue.excalidraw && this.issue.excalidraw.length > 0
     }
   },
   watch: {
@@ -760,72 +852,36 @@ export default {
       this.form.tags = this.tags.length > 0 ? this.tags.map((item) => item.id) : []
       this.originForm = Object.assign({}, this.form)
     },
-    async handleDelete(msg, force, detail) {
-      const h = this.$createElement
-      const issueName = { issueName: this.issueName }
-      const messageList = [h('span', null, this.$t(`Issue.${msg}Issue`, issueName))]
-      if (detail) {
-        messageList.push(h('ul', null,
-          detail.map(issue => {
-            let tags = ''
-            if (issue.tags && issue.tags.length > 0) {
-              tags = issue.tags.map(tag => h('el-tag', { class: { 'mx-1': true }, props: { type: 'mini' }}, tag.name))
-            }
-            return h('li', null, [
-              h('Status', { class: { 'mx-1': true }, props: { name: this.$t(`Issue.${issue.status.name}`), size: 'mini' }}, ''),
-              h('Tracker', { props: { name: this.$t(`Issue.${issue.tracker.name}`), size: 'mini' }}, ''),
-              h('span', null, [
-                h('span', null, `#${issue.id} - `),
-                ...tags,
-                h('span', null, `${issue.name} ${(Object.keys(issue.assigned_to).length > 0 ? `(${this.$t(`Issue.assigned_to`)}: ${issue.assigned_to.name}
-             -  ${issue.assigned_to.login})` : '')}`)
-              ])
-            ])
-          })
-        ))
-      }
-      const message = h('p', null, messageList)
-      const deleteRequest = await this.$confirm(message, this.$t('general.Delete'), {
-        confirmButtonText: this.$t('general.Delete'),
-        cancelButtonText: this.$t('general.Cancel'),
-        type: 'error',
-        confirmButtonClass: 'el-button--danger'
-      }).catch(err => console.error(err))
-      if (deleteRequest === 'confirm') {
-        this.isLoading = true
-        try {
-          await this.deleteIssueAPI(force)
-        } catch (err) {
-          const errorRes = err.response.data
-          if (errorRes && errorRes.error.code === 1013) {
-            await this.handleDelete('ConfirmDelete', true, errorRes.error.details)
-          } else {
-            this.$message({
-              title: this.$t('general.Error'),
-              message: err,
-              type: 'error'
-            })
-          }
-        }
-        this.isLoading = false
-      }
+    async handleCancel() {
+      this.checkDeleteWhiteBoard = false
+      this.isDeleteIssueDialog = false
     },
-    async deleteIssueAPI(force) {
-      let params = {}
-      if (force) {
-        params = { force: force }
+    async handleDelete() {
+      this.isLoading = true
+      const params = { force: this.hasChildrenIssue }
+      if (this.checkDeleteWhiteBoard) {
+        params.delete_excalidraw = this.checkDeleteWhiteBoard
       }
-      await deleteIssue(this.issueId, params)
-      this.$message({
-        title: this.$t('general.Success'),
-        message: this.$t('Notify.Deleted'),
-        type: 'success'
-      })
-      if (this.isInDialog) {
-        this.$emit('delete')
-      } else {
-        this.handleBackPage()
+      try {
+        await deleteIssue(this.issueId, params)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Deleted'),
+          type: 'success'
+        })
+        if (this.isInDialog) {
+          this.$emit('delete')
+        } else {
+          this.handleBackPage()
+        }
+      } catch (err) {
+        this.$message({
+          title: this.$t('general.Error'),
+          message: err,
+          type: 'error'
+        })
       }
+      this.isLoading = false
     },
     async handleUpdated(issue_id) {
       this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
@@ -1231,6 +1287,9 @@ export default {
       await this.fetchIssueLink()
       this.issueTabs = 'whiteBoard'
       const row = this.issue.excalidraw.find((item) => item.name === excalidrawName)
+      this.editWhiteBoard(row)
+    },
+    editWhiteBoard(row) {
       this.$refs['WhiteBoardTable'].handleEdit(row)
     },
     sleep(ms) {

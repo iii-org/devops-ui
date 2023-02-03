@@ -49,17 +49,16 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import ProjectListSelector from '@/components/ProjectListSelector'
 import {
   getProjectVersion,
   getProjectIssueProgress,
   getProjectIssueStatistics,
   getProjectIssueList
 } from '@/api/projects'
-
-import WorkloadCard from '@/views/Plan/Overview/components/WorkloadCard'
 import Issue from '@/data/issue'
+import { ProjectListSelector } from '@/components'
 import { Tracker, Priority } from '@/components/Issue'
+import WorkloadCard from '@/views/Plan/Overview/components/WorkloadCard'
 
 export default {
   name: 'ProjectRoadmap',

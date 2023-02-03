@@ -130,7 +130,7 @@
         <div class="form__body">
           <br>
           <template>
-            <editor
+            <Editor
               v-if="dialogVisible"
               id="md_editor"
               ref="mdEditor"
@@ -197,8 +197,8 @@
 
 <script>
 import { deleteWiki, getWikiDetail, getWikiList, putWikiDetail } from '@/api/wiki'
-import { BasicData, Pagination, SearchBar, ProjectSelector } from '@/mixins'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
+import { ProjectListSelector, ElTableColumnTime } from '@/components'
 import 'codemirror/lib/codemirror.css'
 import '@toast-ui/editor/dist/toastui-editor.css'
 import { Editor } from '@toast-ui/vue-editor'
@@ -206,10 +206,11 @@ import { Editor } from '@toast-ui/vue-editor'
 export default {
   name: 'ProjectNotes',
   components: {
+    ProjectListSelector,
     ElTableColumnTime,
-    editor: Editor
+    Editor: Editor
   },
-  mixins: [BasicData, Pagination, SearchBar, ProjectSelector],
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       editBtnLoading: false,
