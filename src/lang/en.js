@@ -173,6 +173,7 @@ export default {
     Cancel: 'Cancel',
     Restore: 'Restore',
     Sync: 'Sync',
+    Finish: 'Finish',
     SearchName: 'Search Name',
     SearchBranch: 'Search Branch',
     Description: 'Description',
@@ -1255,7 +1256,9 @@ export default {
     Initializing: 'Initializing',
     StartReplication: 'Synchronizing',
     Finished: 'Finished',
-    StartDeployment: 'Setting up'
+    StartDeployment: 'Setting up',
+    UploadRemoteK8sConfig: 'Upload remote Kubernetes Config',
+    SetVolume: 'Set(enable/disable) Volume'
   },
   Deploy: {
     AddApplication: 'Add Application',

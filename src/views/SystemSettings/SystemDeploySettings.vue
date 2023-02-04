@@ -1,8 +1,10 @@
 <template>
   <div class="app-container">
-    <ProjectListSelector />
-    <el-divider />
-    <el-tabs v-model="tabActiveName" type="card" :before-leave="checkBeforeLeave">
+    <el-tabs
+      v-model="tabActiveName"
+      type="card"
+      :before-leave="checkBeforeLeave"
+    >
       <el-tab-pane label="Cluster" name="cluster">
         <el-card>
           <Cluster ref="cluster" />
@@ -18,13 +20,12 @@
 </template>
 
 <script>
-import { ProjectListSelector } from '@/components'
 import Cluster from '@/views/SystemSettings/components/Cluster'
 import Registry from '@/views/SystemSettings/components/Registry'
 
 export default {
   name: 'SystemDeploySettings',
-  components: { ProjectListSelector, Cluster, Registry },
+  components: { Cluster, Registry },
   beforeRouteLeave(to, from, next) {
     if (this.hasUnsavedChanges) {
       this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), this.confirm_options)
@@ -47,7 +48,11 @@ export default {
   },
   computed: {
     hasUnsavedChanges() {
-      return this.$refs.cluster.isFormChanged || this.$refs.registry.isFormChanged
+      return (
+        this.$refs.cluster.updateStatus !== 'UPDATE_INIT' ||
+        this.$refs.registry.isFormChanged ||
+        this.$refs.registry.showAddPage
+      )
     },
     confirm_options() {
       const options = {
@@ -78,7 +83,11 @@ export default {
     */
     showLeaveMessage() {
       const isLeave = new Promise(async(resolve, reject) => {
-        return await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), this.confirm_options)
+        return await this.$confirm(
+          this.$t('Notify.UnSavedChanges'),
+          this.$t('general.Warning'),
+          this.confirm_options
+        )
           .then(() => {
             this.isConfirmLeave = true
             this.initTabsStatus()
@@ -94,11 +103,9 @@ export default {
       return isLeave
     },
     initTabsStatus() {
-      const tabs = ['registry', 'cluster']
-      tabs.forEach(tab => {
-        this.$refs[tab].initData()
-        this.$refs[tab].showAddPage = false
-      })
+      this.$refs.cluster.initCluster(true)
+      this.$refs.registry.initData()
+      this.$refs.registry.showAddPage = false
     }
   }
 }
@@ -113,6 +120,10 @@ export default {
   border-top: 5px solid #3e3f41;
   border-bottom-color: #e4ecf7 ;
   height: 45px;
+}
+
+>>> .el-tabs--card>.el-tabs__header .el-tabs__nav {
+  border: none;
 }
 
 >>> .el-tabs--card>.el-tabs__header .el-tabs__item {

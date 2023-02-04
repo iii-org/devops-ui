@@ -12,11 +12,19 @@
       drag
     >
       <div>
-        <el-button size="small" :class="tagType()">{{ $t('File.ChooseFile') }}</el-button>
-        <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
+        <el-button size="small" :class="tagType()">
+          {{ $t('File.ChooseFile') }}
+        </el-button>
+        <div class="el-upload__text">
+          {{ $t('File.DragFilesHere') }}
+        </div>
         <div class="text-xs text-gray-400">
-          <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
-          <div>{{ $t('File.AllowedFileTypes') }}: {{ fileTypeLimit }}</div>
+          <div>
+            {{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}
+          </div>
+          <div>
+            {{ $t('File.AllowedFileTypes') }}: {{ fileTypeLimit }}
+          </div>
         </div>
       </div>
     </el-upload>
