@@ -80,9 +80,8 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - issuelist
       - GitGraph
-      - feature
+      - keycloak
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -105,9 +104,8 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - issuelist
       - GitGraph
-      - feature
+      - keycloak
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -126,9 +124,8 @@ stages:
       - master
       - errorcode
       - pluginchart
-      - issuelist
       - GitGraph
-      - feature
+      - keycloak
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -163,9 +160,8 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - issuelist
       - GitGraph
-      - feature
+      - keycloak
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -193,9 +189,8 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - issuelist
       - GitGraph
-      - feature
+      - keycloak
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -221,9 +216,8 @@ stages:
       - develop
       - errorcode
       - pluginchart
-      - issuelist
       - GitGraph
-      - feature
+      - keycloak
 - name: Test--Anchore SBOM
   iiidevops: anchore
   steps:
