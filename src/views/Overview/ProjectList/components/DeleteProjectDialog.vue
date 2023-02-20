@@ -1,21 +1,52 @@
 <template>
-  <el-dialog :visible.sync="showDialog" width="40%" :close-on-click-modal="false" @closed="onDialogClosedDelete">
-    <div slot="title">{{ `${$t('general.Delete')} 「${deleteProjectObj.name}」 ${$t('Project.Project')}` }}</div>
-    <p v-if="projectRelationList.length > 0" class="text-danger">
+  <el-dialog
+    :visible.sync="showDialog"
+    :close-on-click-modal="false"
+    width="40%"
+    @closed="onDialogClosedDelete"
+  >
+    <div slot="title">
+      {{ `${$t('general.Delete')} 「${deleteProjectObj.name}」 ${$t('Project.Project')}` }}
+    </div>
+    <p
+      v-if="projectRelationList.length > 0"
+      class="text-danger"
+    >
       {{ $t('Project.deleteHasSonProjectText', [projectRelationList.map((item) => item.name)]) }}
     </p>
-    <p class="text-danger">{{ $t('Project.deleteProjectConfirmText') }}</p>
-    <p>
-      <span>{{ $t('Project.PleaseType') }} </span>
-      <span class="text-xl font-semibold text-danger mx-1">{{ deleteProjectObj.name }}</span>
-      <span>{{ $t('Project.AndThen') }}</span>
+    <p class="text-danger">
+      {{ $t('Project.deleteProjectConfirmText') }}
     </p>
-    <el-input v-model="confirmProjectName" :placeholder="`Please Input ${deleteProjectObj.name}`" />
+    <p>
+      <span>
+        {{ $t('Project.PleaseType') }}
+      </span>
+      <span class="text-xl font-semibold text-danger mx-1">
+        {{ deleteProjectObj.name }}
+      </span>
+      <span>
+        {{ $t('Project.AndThen') }}
+      </span>
+    </p>
+    <el-input
+      v-model="confirmProjectName"
+      :placeholder="`Please Input ${deleteProjectObj.name}`"
+    />
     <span slot="footer" class="dialog-footer">
-      <el-button id="dialog-btn-cancel" class="buttonSecondaryReverse" :loading="isLoading" @click="showDialog = false">
+      <el-button
+        id="dialog-btn-cancel"
+        class="buttonSecondaryReverse"
+        :loading="isLoading"
+        @click="showDialog = false"
+      >
         {{ $t('general.Cancel') }}
       </el-button>
-      <el-button id="dialog-btn-delete" type="danger" :loading="isLoading" @click="handleDeleteModal">
+      <el-button
+        id="dialog-btn-delete"
+        type="danger"
+        :loading="isLoading"
+        @click="handleDeleteModal"
+      >
         {{ $t('general.Delete') }}
       </el-button>
     </span>

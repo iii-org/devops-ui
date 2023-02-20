@@ -5,6 +5,10 @@ export const getDeployedHostsLists = () => request.get(`/deploy/clusters`)
 export const getDeployedHostsByList = (cluster_id) => request.get(`/deploy/clusters/${cluster_id}`)
 export const addDeployHosts = (data) => request.post(`/deploy/clusters`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
 export const updateDeployHostsById = (cluster_id, data) => request.put(`/deploy/clusters/${cluster_id}`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
+export const getDeployedStorageLists = (cluster_id) => request.get(`/deploy/clusters/storage/${cluster_id}`)
+export const syncDeployedStorageLists = (cluster_id) => request.post(`/deploy/clusters/storage/${cluster_id}`)
+export const patchStorageStatus = (storage_id, data) => request.patch(`/deploy/storage/${storage_id}`, data)
+export const getPVCLists = (storage_id) => request.get(`/deploy/clusters/storage/pvc/${storage_id}`)
 
 // registry
 export const getRegistryHostsLists = () => request.get(`/deploy/registries`)

@@ -2,7 +2,12 @@
   <div class="app-container">
     <template v-if="!showAddPage">
       <div class="text-right">
-        <el-button class="buttonSecondary" @click="addRegistry">+ {{ $t('general.Add') }}</el-button>
+        <el-button
+          class="buttonSecondary"
+          @click="addRegistry"
+        >
+          + {{ $t('general.Add') }}
+        </el-button>
       </div>
       <el-divider />
       <el-table
@@ -11,46 +16,94 @@
         class="cursor-pointer"
         :element-loading-text="$t('Loading')"
         :data="listData"
-        border
+        :row-class-name="getRowClass"
         fit
-        @row-click="rowClicked"
       >
-        <el-table-column type="expand" width="100">
+        <el-table-column type="expand">
           <template slot-scope="scope">
-            <ul v-if="scope.row.application.length > 0">
-              <li v-for="(item, index) in scope.row.application" :key="index" class="mb-5">
-                <span class="mr-5">{{ item.project_name }}</span>
-                <span class="mr-5">{{ item.tag }}</span>
-                <el-tag :type="tagType(item.status)" effect="dark">{{ registryStatus(item.status) }}</el-tag>
+            <ul>
+              <li
+                v-for="(item, index) in scope.row.application"
+                :key="index"
+                class="mb-5"
+              >
+                <span class="mr-5">
+                  {{ item.project_name }}
+                </span>
+                <span class="mr-5">
+                  {{ item.tag }}
+                </span>
+                <el-tag :type="tagType(item.status)" effect="dark">
+                  {{ registryStatus(item.status) }}
+                </el-tag>
               </li>
             </ul>
-            <div v-else>{{ $t('SystemDeploySettings.NoImage') }}</div>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('SystemDeploySettings.ImpressionFileRepo')" prop="name" />
-        <el-table-column align="center" label="URL">
+        <el-table-column
+          type="index"
+          align="center"
+          :label="$t('SystemDeploySettings.Index')"
+          width="100"
+        />
+        <el-table-column
+          align="center"
+          :label="$t('SystemDeploySettings.ImpressionFileRepo')"
+          prop="name"
+        />
+        <el-table-column
+          align="center"
+          label="URL"
+        >
           <template slot-scope="scope">
-            <el-link class="linkTextColor" target="_blank" :href="scope.row.url">
+            <el-link
+              class="linkTextColor"
+              target="_blank"
+              :href="scope.row.url"
+            >
               {{ scope.row.url }}
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('SystemDeploySettings.Status')" width="100">
+        <el-table-column
+          align="center"
+          :label="$t('SystemDeploySettings.Status')"
+          width="100"
+        >
           <template slot-scope="scope">
             <el-tag :type="scope.row.disabled ? 'danger' : 'success'">
               {{ scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('SystemDeploySettings.Actions')" width="120">
+        <el-table-column
+          align="center"
+          :label="$t('SystemDeploySettings.Actions')"
+          width="200"
+        >
           <template slot-scope="scope">
-            <el-button size="mini" @click.stop="toggleUsage(scope.row)">
-              <div class="flex items-center">
-                <span class="dot" :class="scope.row.disabled ? 'bg-success' : 'bg-danger'" />
-                <span class="ml-2" :class="scope.row.disabled ? 'text-success' : 'text-danger'">
-                  {{ !scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
-                </span>
-              </div>
+            <el-button
+              size="mini"
+              @click.stop="editRegistry(scope.row)"
+            >
+              <span class="text-primary">
+                {{ $t('general.Edit') }}
+              </span>
+            </el-button>
+            <el-button
+              size="mini"
+              @click.stop="toggleUsage(scope.row)"
+            >
+              <span
+                class="inline-block dot"
+                :class="scope.row.disabled ? 'bg-success' : 'bg-danger'"
+              />
+              <span
+                class="ml-2"
+                :class="scope.row.disabled ? 'text-success' : 'text-danger'"
+              >
+                {{ !scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
+              </span>
             </el-button>
           </template>
         </el-table-column>
@@ -58,13 +111,29 @@
     </template>
     <template v-else>
       <div class="flex justify-between">
-        <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous linkTextColor" @click="handleBackPage">
+        <el-button
+          type="text"
+          size="medium"
+          icon="el-icon-arrow-left"
+          class="previous linkTextColor"
+          @click="handleBackPage"
+        >
           {{ $t('general.Back') }}
         </el-button>
-        <el-button class="buttonSecondary" @click="handleSave">{{ $t('general.Save') }}</el-button>
+        <el-button
+          class="buttonSecondary"
+          @click="handleSave"
+        >
+          {{ $t('general.Save') }}
+        </el-button>
       </div>
       <el-divider />
-      <el-form ref="form" :model="form" label-width="120px" size="medium">
+      <el-form
+        ref="form"
+        :model="form"
+        label-width="120px"
+        size="medium"
+      >
         <el-row :gutter="10">
           <el-col :span="24" :sm="13">
             <el-form-item :label="$t('SystemDeploySettings.RegistryName')">
@@ -74,8 +143,12 @@
           <el-col :span="24" :sm="24" class="mb-5">
             <el-form-item :label="$t('general.Status')">
               <el-radio-group v-model="form.disabled">
-                <el-radio :label="false">{{ $t('general.Enable') }}</el-radio>
-                <el-radio :label="true">{{ $t('general.Disable') }}</el-radio>
+                <el-radio :label="false">
+                  {{ $t('general.Enable') }}
+                </el-radio>
+                <el-radio :label="true">
+                  {{ $t('general.Disable') }}
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -91,7 +164,11 @@
           </el-col>
           <el-col :span="24" :sm="13">
             <el-form-item :label="$t('general.Password')" required>
-              <el-input v-model="form.access_secret" show-password :placeholder="$t('SystemDeploySettings.FillInPassword')" />
+              <el-input
+                v-model="form.access_secret"
+                show-password
+                :placeholder="$t('SystemDeploySettings.FillInPassword')"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -101,8 +178,12 @@
 </template>
 
 <script>
+import {
+  getRegistryHostsLists,
+  addRegistryHosts,
+  updateRegistryHostsById
+} from '@/api/deploy'
 import { BasicData } from '@/mixins'
-import { getRegistryHostsLists, addRegistryHosts, updateRegistryHostsById } from '@/api/deploy'
 
 const formData = () => ({
   type: 'harbor',
@@ -167,9 +248,26 @@ export default {
         })
     },
     async updateHostsDisabled(row) {
-      const { name, disabled, url, type, description, access_key, access_secret } = row
+      const {
+        name,
+        disabled,
+        url,
+        type,
+        description,
+        access_key,
+        access_secret
+      } = row
       const registries_id = row.registries_id
-      const data = { name, disabled, type, description, access_key, access_secret, insecure: true, login_server: url }
+      const data = {
+        name,
+        disabled,
+        type,
+        description,
+        access_key,
+        access_secret,
+        insecure: true,
+        login_server: url
+      }
       this.updateRegistryHostsById(registries_id, data)
     },
     toggleUsage(row) {
@@ -208,7 +306,7 @@ export default {
     setOriginData(data) {
       this.origin = JSON.parse(JSON.stringify(data))
     },
-    rowClicked(row) {
+    editRegistry(row) {
       this.editingId = row.registries_id
       this.isSaved = false
       this.setFormData(row)
@@ -216,7 +314,15 @@ export default {
       this.showAddPage = true
     },
     setFormData(rowData) {
-      const { name, disabled, type, description, url, access_key, access_secret } = rowData
+      const {
+        name,
+        disabled,
+        type,
+        description,
+        url,
+        access_key
+        // access_secret
+      } = rowData
       this.form.name = name
       this.form.disabled = disabled
       this.form.type = type
@@ -293,7 +399,25 @@ export default {
         case 'Error, No Image need to be replicated':
           return 'danger'
       }
+    },
+    getRowClass({ row }) {
+      if (row.application.length === 0) return 'hide-expand-icon'
+      return ''
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.dot {
+  @apply rounded-full w-2 h-2;
+}
+
+>>> .el-table {
+  .hide-expand-icon {
+    .el-table__expand-column .cell {
+      display: none;
+    }
+  }
+}
+</style>

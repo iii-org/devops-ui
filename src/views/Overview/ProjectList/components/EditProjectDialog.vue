@@ -25,10 +25,18 @@
         />
       </div>
     </div>
-    <el-form ref="editProjectForm" :model="form" :rules="rules" label-position="top" size="medium">
+    <el-form
+      ref="editProjectForm"
+      :model="form"
+      :rules="rules"
+      label-position="top"
+      size="medium"
+    >
       <el-row :gutter="10">
         <el-col :span="24">
-          <el-divider content-position="left">{{ $t('Project.Info') }}</el-divider>
+          <el-divider content-position="left">
+            {{ $t('Project.Info') }}
+          </el-divider>
           <el-col :span="24" :sm="12" :xl="6">
             <el-form-item :label="$t('Project.Identifier')">
               <el-input v-model="form.name" disabled />
@@ -41,8 +49,17 @@
           </el-col>
           <el-col :span="24" :sm="8" :xl="5">
             <el-form-item :label="$t('Project.Owner')" prop="owner_id">
-              <el-select v-model="form.owner_id" style="width: 100%" :disabled="disabledEditOwner">
-                <el-option v-for="item in assignedList" :key="item.id" :label="item.label" :value="item.id">
+              <el-select
+                v-model="form.owner_id"
+                style="width: 100%"
+                :disabled="disabledEditOwner"
+              >
+                <el-option
+                  v-for="item in assignedList"
+                  :key="item.id"
+                  :label="item.label"
+                  :value="item.id"
+                >
                   {{ item.label }}
                 </el-option>
               </el-select>
@@ -79,7 +96,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col v-if="isHasFatherProject" :span="24">
             <el-form-item :label="$t('Project.ParentProject')">
               <el-col
                 :xl="18"
@@ -111,8 +128,9 @@
             :span="24"
           >
             <el-form-item :label="$t('Project.OriginalTemplate')">
-              <span class="font-bold">{{ baseExampleDisplay }}</span>
-              <br>
+              <div class="font-bold">
+                {{ baseExampleDisplay }}
+              </div>
               <span v-html="baseExampleDescription" />
             </el-form-item>
           </el-col>
@@ -187,7 +205,11 @@ export default {
       form: formTemplate(),
       rules: {
         name: [
-          { required: true, message: 'Project Identifier is required', trigger: 'blur' },
+          {
+            required: true,
+            message: 'Project Identifier is required',
+            trigger: 'blur'
+          },
           {
             required: true,
             pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
@@ -195,10 +217,34 @@ export default {
             trigger: 'blur'
           }
         ],
-        display: [{ required: true, message: 'Project Name is required', trigger: 'blur' }],
-        start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
-        due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
-        owner_id: [{ required: true, message: 'Project Owner is required', trigger: 'blur' }],
+        display: [
+          {
+            required: true,
+            message: 'Project Name is required',
+            trigger: 'blur'
+          }
+        ],
+        start_date: [
+          {
+            required: true,
+            message: 'Start Date is required',
+            trigger: 'blur'
+          }
+        ],
+        due_date: [
+          {
+            required: true,
+            message: 'Due Date is required',
+            trigger: 'blur'
+          }
+        ],
+        owner_id: [
+          {
+            required: true,
+            message: 'Project Owner is required',
+            trigger: 'blur'
+          }
+        ],
         description: [
           {
             pattern: /^[^<&]+$/,
@@ -224,7 +270,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'userRole']),
+    ...mapGetters(['userId', 'userRole', 'projectOptions']),
     assignedList() {
       return this.assignableList.filter(item => item.role_id !== 1).map(item => ({ id: item.id, label: item.name }))
     },
@@ -235,6 +281,9 @@ export default {
     isInheritanceMemberChange() {
       return (this.originProject.parent_id === this.form.parent_id &&
       this.originProject.is_inheritance_member) || !this.form.parent_id
+    },
+    isHasFatherProject() {
+      return this.projectOptions.some((item) => item.id === this.form.parent_id)
     }
   },
   watch: {

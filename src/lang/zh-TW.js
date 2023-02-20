@@ -173,6 +173,7 @@ export default {
     Cancel: '取消',
     Restore: '還原',
     Sync: '同步',
+    Finish: '完成',
     SearchName: '搜尋名稱',
     SearchBranch: '搜尋分支',
     Description: '描述',
@@ -1247,7 +1248,9 @@ export default {
     Initializing: '準備中',
     StartReplication: '同步中',
     Finished: '已完成',
-    StartDeployment: '設置中'
+    StartDeployment: '設置中',
+    UploadRemoteK8sConfig: '上傳遠端 Kubernetes Config',
+    SetVolume: '設置(啟用/停用)掛載空間'
   },
   Deploy: {
     AddApplication: '新增部署服務',

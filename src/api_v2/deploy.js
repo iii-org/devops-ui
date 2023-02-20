@@ -4,9 +4,13 @@ import request from '@/utils/request'
 export const getDeployedHostsLists = () => request.get(`/v2/deploy/clusters`)
 export const getDeployedHostsByList = (cluster_id) => request.get(`/v2/deploy/clusters/${cluster_id}`)
 export const addDeployHosts = (data) =>
-  request.post(`/v2/deploy/clusters`, data, { headers: { 'Content-Type': 'multipart/form-data' } })
+  request.post(`/v2/deploy/clusters`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
 export const updateDeployHostsById = (cluster_id, data) =>
-  request.put(`/v2/deploy/clusters/${cluster_id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } })
+  request.put(`/v2/deploy/clusters/${cluster_id}`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
+export const getDeployedStorageLists = (cluster_id) => request.get(`/v2/deploy/clusters/storage/${cluster_id}`)
+export const syncDeployedStorageLists = (cluster_id) => request.post(`/v2/deploy/clusters/storage/${cluster_id}`)
+export const patchStorageStatus = (storage_id, data) => request.patch(`/v2/deploy/storage/${storage_id}`, data)
+export const getPVCLists = (storage_id) => request.get(`/v2/deploy/clusters/storage/pvc/${storage_id}`)
 
 // registry
 export const getRegistryHostsLists = () => request.get(`/v2/deploy/registries`)
