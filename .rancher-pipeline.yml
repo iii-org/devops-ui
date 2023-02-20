@@ -43,6 +43,8 @@ stages:
         git.repoName: ${CICD_GIT_REPO_NAME}
         git.url: ${CICD_GIT_URL}
         harbor.host: harbor-dev3.iiidevops.org
+        image.repository: checkmarx-runner/master
+        checkmarx.runnerVersion: 0c820c6
         pipeline.sequence: ${CICD_EXECUTION_SEQUENCE}
       catalogTemplate: cattle-global-data:iii-dev-charts3-scan-checkmarx
       name: ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-cmx
