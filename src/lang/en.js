@@ -82,6 +82,7 @@ export default {
     TestReport: 'III DevOps Test Report',
     Monitoring: 'III DevOps Service Monitoring',
     Deploy: 'Deploy',
+    ApplicationSetting: 'Application Setting',
     DockerReport: 'Docker Test Report',
     SbomReport: 'Docker Test Report',
     Activities: 'Activities',
@@ -1263,6 +1264,7 @@ export default {
   Deploy: {
     AddApplication: 'Add Application',
     ApplicationSetting: 'Application Setting',
+    AdvancedApplicationSetting: 'Each Advanced Application Setting',
     ID: 'ID',
     Name: 'Application Name',
     Cluster: 'Cluster',
@@ -1277,6 +1279,13 @@ export default {
     Namespace: 'Namespace',
     Policy: 'Policy',
     Resource: 'Resource Settings',
+    RelationProject: 'Relation Project',
+    Location: 'Location',
+    Local: 'Local',
+    Remote: 'Remote',
+    SourceProject: 'Source Project',
+    SourceImage: 'Source Image',
+    SourceType: 'Source Type',
     CPU: 'CPU',
     Memory: 'Memory',
     Replicas: 'Replicas',
@@ -1302,7 +1311,8 @@ export default {
     NoSetting: 'Deploy setting is not yet ready, please check with your system administrator.',
     LinkToApplication: 'Link to application',
     NameRule: `Please enter 2-30 English leading letters which combines with English, numbers or '-'. Note that the English must be all lowercase and the ID set cannot be all numbers.`,
-    PathLimitWarning: 'Only 5 plug-in spaces can be set for each project'
+    PathLimitWarning: 'Only 5 plug-in spaces can be set for each project',
+    AtLeastContainer: 'At least add one container'
   },
   Validation: {
     Input: 'Please Input {0}',

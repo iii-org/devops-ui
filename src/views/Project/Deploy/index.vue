@@ -6,7 +6,7 @@
         class="buttonSecondary"
         :disabled="selectedProjectId === -1"
         icon="el-icon-plus"
-        @click="handleEditDialog(null)"
+        @click="handleApplicationSetting(null)"
       >
         {{ $t('Deploy.AddApplication') }}
       </el-button>
@@ -132,7 +132,7 @@
               <el-dropdown-item
                 size="mini"
                 icon="el-icon-edit"
-                @click.native="handleEditDialog(row.id)"
+                @click.native="handleApplicationSetting(row.id)"
               >{{ $t('general.Edit') }}
               </el-dropdown-item>
               <el-popconfirm
@@ -167,46 +167,6 @@
       :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
-    <el-dialog
-      width="80%"
-      top="5vh"
-      :title="$t('Deploy.ApplicationSetting')"
-      :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
-    >
-      <ApplicationSetting
-        v-if="dialogVisible"
-        :id="edit_id"
-        ref="ApplicationSetting"
-      />
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          class="buttonSecondaryReverse"
-          @click="onDialogClosed"
-        >
-          {{ $t('general.Cancel') }}
-        </el-button>
-        <el-button
-          v-if="edit_id"
-          class="buttonPrimary"
-          :loading="memberConfirmLoading"
-          @click="handleConfirm(edit_id)"
-        >
-          {{ $t('general.Save') }}
-        </el-button>
-        <el-button
-          v-else
-          class="buttonPrimary"
-          :loading="memberConfirmLoading"
-          @click="handleConfirm(null)"
-        >
-          {{ $t('general.Add') }}
-        </el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -215,15 +175,12 @@ import { getLocalTime } from '@/utils/handleTime'
 import {
   getServices,
   getService,
-  postService,
   deleteService,
-  putService,
   patchService,
   patchServiceRedeploy
 } from '@/api/deploy'
 import { BasicData, Pagination, SearchBar, CancelRequest } from '@/mixins'
 import { ProjectListSelector, ElTableColumnTime } from '@/components'
-import ApplicationSetting from './components/ApplicationSetting'
 import Status from './components/Status'
 
 export default {
@@ -231,7 +188,6 @@ export default {
   components: {
     ProjectListSelector,
     ElTableColumnTime,
-    ApplicationSetting,
     Status
   },
   filters: {
@@ -242,14 +198,6 @@ export default {
   mixins: [BasicData, Pagination, SearchBar, CancelRequest],
   data() {
     return {
-      dialogVisible: false,
-      edit_id: null,
-      versionList: [],
-      dialogStatus: 1,
-      memberConfirmLoading: false,
-      uploadFileList: [],
-      loadingInstance: '',
-      isDownloading: false,
       searchKeys: ['name'],
       lastUpdateTime: null
     }
@@ -258,13 +206,6 @@ export default {
     isPodNumberNotNull() {
       return function(data) {
         return data.available_pod_number !== null && data.total_pod_number !== null
-      }
-    },
-    sortFiles() {
-      return function (files) {
-        const sortedFiles = files.map((file) => file)
-        sortedFiles.sort((a, b) => new Date(b.created_on) - new Date(a.created_on))
-        return sortedFiles
       }
     },
     format() {
@@ -322,19 +263,20 @@ export default {
     },
     async fetchUnfinishedData() {
       const listData = await this.getAllServices()
-      await listData.forEach(async (data, i) => {
+      for (const [data, i] of listData.entries()) {
         const statusId = data.status_id
         if ((statusId > 0 && statusId < 5) || statusId === 9 || statusId === 11) {
           const restData = await getService(data.id)
           this.$set(listData, i, restData.data.application)
         }
-      })
+      }
       this.setTimer()
       this.listData = listData
     },
-    handleEditDialog(id) {
-      this.dialogVisible = true
-      this.edit_id = id
+    handleApplicationSetting(application_id) {
+      this.$router.push({ name: 'ApplicationSetting', params: {
+        applicationId: application_id || null
+      }})
     },
     getActionText(value) {
       return value ? this.$t('Deploy.Start') : this.$t('Deploy.Stop')
@@ -371,42 +313,6 @@ export default {
       }
       await this.loadData()
       this.listLoading = false
-    },
-    async handleConfirm(id) {
-      await this.$refs['ApplicationSetting'].$refs['deployForm'].validate(async (valid) => {
-        if (valid) {
-          this.loadingInstance = this.$loading({
-            target: '.el-dialog',
-            text: 'Loading'
-          })
-          try {
-            if (id) {
-              await putService(id, {
-                ...this.$refs['ApplicationSetting'].deployForm,
-                project_id: this.selectedProjectId
-              })
-              this.showSuccessMessage(this.$t('Notify.Updated'))
-            } else {
-              await postService({
-                ...this.$refs['ApplicationSetting'].deployForm,
-                project_id: this.selectedProjectId
-              })
-              this.showSuccessMessage(this.$t('Notify.Created'))
-            }
-            this.loadingInstance.close()
-            this.$refs['ApplicationSetting'].$refs['deployForm'].resetFields()
-            this.dialogVisible = false
-          } catch (err) {
-            this.loadingInstance.close()
-            console.error(err)
-          }
-          await this.loadData()
-        } else return false
-      })
-    },
-    onDialogClosed() {
-      this.$refs['ApplicationSetting'].$refs['deployForm'].resetFields()
-      this.dialogVisible = false
     },
     setTimer() {
       let timer = null

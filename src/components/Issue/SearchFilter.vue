@@ -230,7 +230,7 @@ export default {
         const hasSon = await this.fetchHasSon(this.selectedProjectId)
         this.filterOptionsWithProject = await this.getFilterOptions(hasSon)
         if (hasSon) {
-          this.projectRelationList = await this.getProjectRelationData(this.selectedProject)
+          this.projectRelationList = await this.getProjectRelationData()
         }
       },
       immediate: true

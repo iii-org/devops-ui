@@ -1,13 +1,19 @@
 <template>
-  <el-form
-    ref="deployForm"
-    :model="deployForm"
-    :rules="deployFormRules"
-    label-width="150px"
-  >
-    <el-row>
-      <el-col>
-        <el-form-item :label="$t('Deploy.Name')" prop="name">
+  <div class="app-container m-5">
+    <el-form
+      ref="deployForm"
+      :model="deployForm"
+      :rules="deployFormRules"
+      label-width="125px"
+    >
+      <el-card class="box-card">
+        <div slot="header">
+          {{ $t('Deploy.ApplicationSetting') }}
+        </div>
+        <el-form-item
+          :label="$t('Deploy.Name')"
+          prop="name"
+        >
           <el-input
             v-model="deployForm.name"
             :maxlength="30"
@@ -17,104 +23,269 @@
             * {{ $t('Deploy.NameRule') }}
           </p>
         </el-form-item>
-        <el-divider />
-      </el-col>
-      <el-col>
-        <el-row class="form-container">
-          <el-row>
-            <el-col :md="12">
-              <el-form-item :label="$t('Deploy.Cluster')" prop="cluster_id">
-                <el-select v-model="deployForm.cluster_id" :disabled="cluster.length <= 0">
-                  <el-option
-                    v-for="item in cluster"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                    :disabled="item.disabled"
+      </el-card>
+      <el-card class="box-card mt-5">
+        <el-form-item
+          :label="$t('Deploy.Location')"
+          prop="remote"
+        >
+          <el-radio-group
+            v-model="deployForm.remote"
+            size="mini"
+            @change="changeRemote"
+          >
+            <el-radio-button :label="false">
+              {{ $t('Deploy.Local') }}
+            </el-radio-button>
+            <el-radio-button :label="true">
+              {{ $t('Deploy.Remote') }}
+            </el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <template v-if="deployForm.remote">
+          <el-divider />
+          <el-form-item
+            :label="$t('Deploy.Namespace')"
+            prop="namespace"
+          >
+            <el-input
+              v-model="deployForm.namespace"
+              :maxlength="30"
+              show-word-limit
+            />
+            <p class="helper">
+              * {{ $t('Deploy.NameRule') }}
+            </p>
+          </el-form-item>
+          <el-form-item
+            :label="$t('Deploy.Cluster')"
+            prop="cluster_id"
+          >
+            <el-select
+              v-model="deployForm.cluster_id"
+              :disabled="cluster.length <= 0"
+              @change="changeClusterId"
+            >
+              <el-option
+                v-for="item in cluster"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+                :disabled="item.disabled"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            :label="$t('Deploy.Registry')"
+            prop="registry_id"
+          >
+            <el-select
+              v-model="deployForm.registry_id"
+              :disabled="registry.length <= 0"
+            >
+              <el-option
+                v-for="item in registry"
+                :key="item.registries_id"
+                :label="item.name"
+                :value="item.registries_id"
+                :disabled="item.disabled"
+              />
+            </el-select>
+          </el-form-item>
+        </template>
+      </el-card>
+      <el-card class="box-card mt-5">
+        <el-row>
+          <el-col :md="5">
+            <el-form-item
+              :label="$t('Project.Project')"
+              style="margin-bottom: unset;"
+            >
+              <el-select v-model="projectId">
+                <el-option
+                  v-for="item in projectOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :md="18">
+            <el-form-item
+              :label="$t('Deploy.RelationProject')"
+              style="margin-bottom: unset;"
+            >
+              <el-select
+                v-model="projectRelationIds"
+                multiple
+                collapse-tags
+                :disabled="projectRelationList.length === 0"
+              >
+                <el-option
+                  v-for="item in projectRelationList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+              <el-button class="mx-3" @click="addContainer">
+                {{ $t('general.Add') + 'Container' }}
+              </el-button>
+              <span
+                v-if="deployForm.applications.length === 0"
+                style="color: red; font-size: 12px;"
+              >
+                <em class="ri-error-warning-fill ri-lg" />
+                {{ $t('Deploy.AtLeastContainer') }}
+              </span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <template v-if="deployForm.applications.length > 0">
+          <el-divider />
+          <ElTableDraggable :animate="300">
+            <el-table
+              :data="deployForm.applications"
+              fit
+              class="cursor-move"
+            >
+              <el-table-column
+                align="center"
+                width="50"
+              >
+                <em class="ri-menu-line" />
+              </el-table-column>
+              <el-table-column
+                prop="project_name"
+                :label="$t('Deploy.SourceProject')"
+                align="center"
+                width="180"
+              />
+              <el-table-column :label="$t('Deploy.SourceProject')">
+                <el-row slot-scope="{$index}">
+                  <el-col :md="6">
+                    <el-form-item
+                      :prop="`applications.${$index}.image.type`"
+                      :label="$t('Deploy.SourceType')"
+                      style="display: inline-block;"
+                    >
+                      <el-select
+                        v-model="deployForm.applications[$index].image.type"
+                        clearable
+                        @change="changeSourceType($index)"
+                      >
+                        <el-option
+                          v-for="item in source_type"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        />
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :md="18">
+                    <template v-if="deployForm.applications[$index].image.type === 'harbor'">
+                      <el-form-item
+                        :prop="`applications.${$index}.release_id`"
+                        :label="$t('Deploy.Release')"
+                        style="display: inline-block;"
+                      >
+                        <el-select v-model="deployForm.applications[$index].release_id">
+                          <el-option
+                            v-for="item in deployForm.applications[$index].releaseList"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id"
+                          />
+                        </el-select>
+                        <p v-if="deployForm.applications[$index].releaseList.length === 0" class="helper text-xs">
+                          * {{ $t('Deploy.ReleaseHelper') }}
+                        </p>
+                      </el-form-item>
+                      <span v-if="deployForm.applications[$index].releaseList && deployForm.applications[$index].releaseList.length > 0 && deployForm.applications[$index].release_id" class="ml-3">
+                        {{ deployForm.applications[$index].releaseList.find((item) => item.id === deployForm.applications[$index].release_id).value }}
+                      </span>
+                    </template>
+                    <template v-if="deployForm.applications[$index].image.type === 'dockerhub'">
+                      <el-form-item
+                        :prop="`applications.${$index}.image.uri`"
+                        :label="$t('Deploy.Path')"
+                        style="display: inline-block;"
+                      >
+                        <el-input v-model="deployForm.applications[$index].image.uri" />
+                      </el-form-item>
+                      <span v-if="deployForm.applications[$index].image.uri" class="ml-3">
+                        {{ deployForm.applications[$index].image.uri }}
+                      </span>
+                    </template>
+                  </el-col>
+                </el-row>
+              </el-table-column>
+              <el-table-column
+                :label="$t('general.Actions')"
+                align="center"
+                width="100"
+              >
+                <template slot-scope="{$index}">
+                  <el-link
+                    icon="el-icon-delete"
+                    class="ml-3"
+                    @click="removeContainer($index)"
                   />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :md="12">
-              <el-form-item :label="$t('Deploy.Registry')" prop="registry_id">
-                <el-select v-model="deployForm.registry_id" :disabled="registry.length <= 0">
-                  <el-option
-                    v-for="item in registry"
-                    :key="item.registries_id"
-                    :label="item.name"
-                    :value="item.registries_id"
-                    :disabled="item.disabled"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :md="12">
-              <el-form-item :label="$t('Deploy.Port')" prop="network.port">
-                <el-input v-model.number="deployForm.network.port" clearable />
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <template v-if="checkAvailable">
+                </template>
+              </el-table-column>
+            </el-table>
+          </ElTableDraggable>
+        </template>
+      </el-card>
+      <el-card
+        v-if="deployForm.applications.length > 0"
+        class="box-card mt-5"
+      >
+        <div slot="header">
+          {{ $t('Deploy.AdvancedApplicationSetting') }}
+        </div>
+        <el-tabs
+          v-model="tabName"
+          type="card"
+        >
+          <el-tab-pane
+            v-for="(item,index) in deployForm.applications"
+            :key="item.project_id"
+            :label="item.project_name"
+            :name="item.project_name"
+          >
+            <el-form-item
+              :label="$t('Deploy.Policy')"
+              :prop="`applications.${index}.image.policy`"
+            >
+              <el-radio-group v-model="deployForm.applications[index].image.policy">
+                <el-radio label="Always" />
+                <el-radio label="Never" />
+                <el-radio label="If not present" />
+              </el-radio-group>
+            </el-form-item>
             <el-row>
-              <el-col :md="12">
-                <el-form-item :label="$t('Deploy.Namespace')" prop="namespace">
+              <el-col :md="8">
+                <el-form-item
+                  :label="$t('Deploy.CPU')"
+                  :prop="`applications.${index}.resources.cpu`"
+                >
                   <el-input
-                    v-model="deployForm.namespace"
-                    :maxlength="30"
-                    show-word-limit
-                  />
-                  <p class="helper">
-                    * {{ $t('Deploy.NameRule') }}
-                  </p>
-                </el-form-item>
-              </el-col>
-              <el-col :md="12">
-                <el-form-item :label="$t('Deploy.Policy')" prop="image.policy">
-                  <el-select v-model="deployForm.image.policy" clearable>
-                    <el-option
-                      v-for="item in policy"
-                      :key="item"
-                      :label="item"
-                      :value="item"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :md="12">
-                <el-form-item :label="$t('Deploy.Release')" prop="release_id">
-                  <el-select v-model="deployForm.release_id">
-                    <el-option
-                      v-for="item in release"
-                      :key="item.id"
-                      :label="item.tag_name"
-                      :value="item.id"
-                    />
-                  </el-select>
-                  <p class="helper">
-                    * {{ $t('Deploy.ReleaseHelper') }}
-                  </p>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col>
-                <el-divider content-position="left">
-                  {{ $t('Deploy.Resource') }}
-                </el-divider>
-              </el-col>
-              <el-col :md="12">
-                <el-form-item :label="$t('Deploy.CPU')" prop="resources.cpu">
-                  <el-input
-                    v-model.number="deployForm.resources.cpu"
+                    v-model.number="deployForm.applications[index].resources.cpu"
                     :placeholder="$t('Deploy.Default')"
                     clearable
                   />
                 </el-form-item>
               </el-col>
-              <el-col :md="12">
-                <el-form-item :label="$t('Deploy.Memory')" prop="resources.memory">
+              <el-col :md="8">
+                <el-form-item
+                  :label="$t('Deploy.Memory')"
+                  :prop="`applications.${index}.resources.memory`"
+                >
                   <el-input
-                    v-model.number="deployForm.resources.memory"
+                    v-model.number="deployForm.applications[index].resources.memory"
                     :placeholder="$t('Deploy.Default')"
                     clearable
                   >
@@ -124,25 +295,141 @@
                   </el-input>
                 </el-form-item>
               </el-col>
-              <el-col :md="12">
-                <el-form-item :label="$t('Deploy.Replicas')" prop="resources.replicas">
+              <el-col :md="8">
+                <el-form-item
+                  :label="$t('Deploy.Replicas')"
+                  :prop="`applications.${index}.resources.replicas`"
+                >
                   <el-input
-                    v-model.number="deployForm.resources.replicas"
+                    v-model.number="deployForm.applications[index].resources.replicas"
                     :placeholder="$t('Deploy.Default')"
                     clearable
                   />
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row>
-              <el-col>
-                <el-divider content-position="left">{{ $t('Deploy.Network') }}</el-divider>
+            <el-form-item
+              :label="$t('Deploy.Domain')"
+              :prop="`applications.${index}.network.domain`"
+            >
+              <el-input
+                v-model="deployForm.applications[index].network.domain"
+                clearable
+              />
+            </el-form-item>
+            <el-form-item :label="$t('Deploy.Network')">
+              <el-link
+                type="primary"
+                :underline="false"
+                @click="addNetwork(index)"
+              >
+                {{ $t('general.Add')+ $t('Deploy.Network') }}
+              </el-link>
+            </el-form-item>
+            <el-row
+              v-for="(item,i) in deployForm.applications[index].network.ports"
+              :key="'ports'+i"
+            >
+              <el-col :md="8">
+                <el-form-item :prop="`applications.${index}.network.ports.${i}.port`">
+                  <el-input v-model.number="item.port" clearable>
+                    <template slot="prepend">
+                      Inner
+                    </template>
+                  </el-input>
+                </el-form-item>
               </el-col>
-              <el-col :md="12">
-                <el-form-item :label="$tc('Deploy.Type')" prop="network.type">
-                  <el-select v-model="deployForm.network.type">
+              <el-col :md="8">
+                <el-form-item :prop="`applications.${index}.network.ports.${i}.expose_port`">
+                  <em slot="label" class="el-icon-right" />
+                  <el-input v-model.number="item.expose_port" clearable>
+                    <template slot="prepend">
+                      Outer
+                    </template>
+                  </el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :md="8">
+                <el-form-item :prop="`applications.${index}.network.ports.${i}.protocol`">
+                  <el-radio-group v-model="item.protocol">
+                    <el-radio-button
+                      v-for="item in protocol"
+                      :key="item"
+                      :label="item"
+                    />
+                  </el-radio-group>
+                  <el-link
+                    v-if="i !== 0"
+                    icon="el-icon-delete"
+                    class="ml-3"
+                    @click="removeNetwork(index,i)"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <template v-if="clusterList.length > 0">
+              <el-form-item :label="$t('Deploy.PluginStoredPath')">
+                <el-link
+                  type="primary"
+                  :underline="false"
+                  @click="addPath(index)"
+                >
+                  {{ $t('Deploy.AddPath') }}
+                </el-link>
+              </el-form-item>
+              <el-row
+                v-for="(item,i) in deployForm.applications[index].volumes"
+                :key="'volume'+i"
+              >
+                <el-col :md="4">
+                  <el-form-item>
+                    <el-select v-model="item.sc_name">
+                      <el-option
+                        v-for="item in clusterList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.name"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :md="20">
+                  <el-form-item label="path">
+                    <el-col :md="23">
+                      <el-input
+                        v-model="item.device_path"
+                        clearable
+                      />
+                    </el-col>
+                    <el-col :md="1">
+                      <el-link
+                        icon="el-icon-delete"
+                        class="ml-3"
+                        @click="removePath(index,i)"
+                      />
+                    </el-col>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </template>
+            <el-form-item :label="$t('Deploy.EnvironmentVariable')">
+              <el-link
+                type="primary"
+                :underline="false"
+                @click="addEnvironment(index)"
+              >
+                {{ $t('Deploy.AddVariable') }}
+              </el-link>
+            </el-form-item>
+            <el-row
+              v-for="(item,i) in deployForm.applications[index].environments"
+              :key="'environment'+i"
+            >
+              <el-col :md="4">
+                <el-form-item :prop="`applications.${index}.environments.${i}.type`">
+                  <el-select v-model="item.type">
                     <el-option
-                      v-for="item in network_type"
+                      v-for="item in environments_type"
                       :key="item"
                       :label="item"
                       :value="item"
@@ -150,249 +437,76 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :md="12">
-                <el-form-item :label="$t('Deploy.Protocol')" prop="network.protocol">
-                  <el-radio-group v-model="deployForm.network.protocol">
-                    <el-radio-button
-                      v-for="item in protocol"
-                      :key="item"
-                      :label="item"
-                      :value="item"
+              <el-col :md="4">
+                <el-form-item label="key">
+                  <el-input
+                    v-model="item.key"
+                    clearable
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :md="16">
+                <el-form-item label="value" :prop="`applications.${index}.environments.${i}.value`">
+                  <el-col :md="23">
+                    <el-input
+                      v-model="item.value"
+                      clearable
                     />
-                  </el-radio-group>
-                </el-form-item>
-              </el-col>
-              <el-col :md="12">
-                <el-form-item :label="$t('Deploy.ExposePort')" prop="network.expose_port">
-                  <el-input v-model.number="deployForm.network.expose_port" clearable />
-                </el-form-item>
-              </el-col>
-              <el-col :md="12">
-                <el-form-item :label="$t('Deploy.Domain')" prop="network.domain">
-                  <el-input v-model="deployForm.network.domain" clearable />
-                </el-form-item>
-              </el-col>
-              <el-col :md="12">
-                <el-form-item :label="$t('Deploy.Path')" prop="network.path">
-                  <el-input v-model="deployForm.network.path" clearable />
+                  </el-col>
+                  <el-col :md="1">
+                    <el-link
+                      icon="el-icon-delete"
+                      class="ml-3"
+                      @click="removeEnvironment(index,i)"
+                    />
+                  </el-col>
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row>
-              <el-col>
-                <el-divider content-position="left">
-                  {{ $t('Deploy.EnvironmentVariable') }}
-                  <el-button
-                    round
-                    size="small"
-                    icon="el-icon-plus"
-                    class="buttonPrimary"
-                    @click="addEnvironment"
-                  >
-                    {{ $t('Deploy.AddVariable') }}
-                  </el-button>
-                </el-divider>
-              </el-col>
-              <el-col>
-                <el-form-item prop="environments" class="environments">
-                  <el-table :data="deployForm.environments">
-                    <el-table-column type="index" width="50px">
-                      <template slot-scope="{$index}">
-                        {{ $index + 1 }}
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="key" :label="$tc('Deploy.Key')">
-                      <template slot-scope="{row}">
-                        <el-input v-model="row.key" />
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="value" :label="$t('Deploy.Value')">
-                      <template slot-scope="{row}">
-                        <el-input v-model="row.value" />
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="type" :label="$tc('Deploy.Type')" width="150px">
-                      <template slot-scope="{row}">
-                        <el-select v-model="row.type">
-                          <el-option
-                            v-for="item in environments_type"
-                            :key="item"
-                            :label="item"
-                            :value="item"
-                          />
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column :label="$t('general.Actions')" width="150px">
-                      <template slot-scope="{row}">
-                        <el-popconfirm
-                          :confirm-button-text="$t('general.Delete')"
-                          :cancel-button-text="$t('general.Cancel')"
-                          icon="el-icon-info"
-                          icon-color="red"
-                          :title="$t('Notify.confirmDelete')"
-                          @confirm="deployForm.environments.splice(deployForm.environments.indexOf(row),1)"
-                        >
-                          <el-button
-                            slot="reference"
-                            icon="el-icon-delete"
-                            type="danger"
-                            size="mini"
-                          >
-                            {{ $t('general.Delete') }}
-                          </el-button>
-                        </el-popconfirm>
-                      </template>
-                    </el-table-column>
-                    <template slot="empty">
-                      <el-empty>
-                        <template slot="description">
-                          <p>{{ $t('general.NoData') }}</p>
-                          <el-button
-                            round
-                            size="small"
-                            icon="el-icon-plus"
-                            class="buttonPrimaryReverse"
-                            @click="addEnvironment"
-                          >
-                            {{ $t('Deploy.AddVariable') }}
-                          </el-button>
-                        </template>
-                      </el-empty>
-                    </template>
-                    <div v-if="deployForm.environments.length > 0" slot="append">
-                      <p>
-                        <el-button
-                          round
-                          size="small"
-                          icon="el-icon-plus"
-                          class="buttonPrimaryReverse"
-                          @click="addEnvironment"
-                        >
-                          {{ $t('Deploy.AddVariable') }}
-                        </el-button>
-                      </p>
-                    </div>
-                  </el-table>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col>
-                <el-divider content-position="left">
-                  {{ $t('Deploy.PluginStoredPath') }}
-                  <el-button
-                    v-if="deployForm.volumes.length < 5"
-                    round
-                    size="small"
-                    icon="el-icon-plus"
-                    class="buttonPrimary"
-                    @click="addPath"
-                  >
-                    {{ $t('Deploy.AddPath') }}
-                  </el-button>
-                  <span
-                    v-else
-                    style="color: red; font-size: 12px;"
-                  >
-                    <em class="ri-error-warning-fill ri-lg" />
-                    {{ $t('Deploy.PathLimitWarning') }}
-                  </span>
-                </el-divider>
-              </el-col>
-              <el-col>
-                <el-form-item prop="volumes">
-                  <el-table :data="deployForm.volumes">
-                    <el-table-column type="index" width="50px">
-                      <template slot-scope="{$index}">
-                        {{ $index + 1 }}
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="key" :label="$tc('Deploy.Path')">
-                      <template slot-scope="{row}">
-                        <el-input v-model="row.device_path" />
-                      </template>
-                    </el-table-column>
-                    <el-table-column :label="$t('general.Actions')" width="150px">
-                      <template slot-scope="{row}">
-                        <el-popconfirm
-                          :confirm-button-text="$t('general.Delete')"
-                          :cancel-button-text="$t('general.Cancel')"
-                          icon="el-icon-info"
-                          icon-color="red"
-                          :title="$t('Notify.confirmDelete')"
-                          @confirm="deployForm.volumes.splice(deployForm.volumes.indexOf(row),1)"
-                        >
-                          <el-button
-                            slot="reference"
-                            icon="el-icon-delete"
-                            type="danger"
-                            size="mini"
-                          >
-                            {{ $t('general.Delete') }}
-                          </el-button>
-                        </el-popconfirm>
-                      </template>
-                    </el-table-column>
-                    <template slot="empty">
-                      <el-empty>
-                        <template slot="description">
-                          <p>{{ $t('general.NoData') }}</p>
-                          <el-button
-                            round
-                            size="small"
-                            icon="el-icon-plus"
-                            class="buttonPrimaryReverse"
-                            @click="addPath"
-                          >
-                            {{ $t('Deploy.AddPath') }}
-                          </el-button>
-                        </template>
-                      </el-empty>
-                    </template>
-                    <div
-                      v-if="deployForm.volumes.length > 0 && deployForm.volumes.length < 5"
-                      slot="append"
-                    >
-                      <p>
-                        <el-button
-                          round
-                          size="small"
-                          icon="el-icon-plus"
-                          class="buttonPrimaryReverse"
-                          @click="addPath"
-                        >
-                          {{ $t('Deploy.AddPath') }}
-                        </el-button>
-                      </p>
-                    </div>
-                  </el-table>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </template>
-          <el-empty v-else>
-            <template slot="description">
-              <span class="text-danger">
-                {{ $t('Deploy.NoSetting') }}
-              </span>
-            </template>
-          </el-empty>
-        </el-row>
-      </el-col>
-    </el-row>
-  </el-form>
+          </el-tab-pane>
+        </el-tabs>
+      </el-card>
+    </el-form>
+    <span class="float-right my-5">
+      <el-button
+        class="buttonSecondaryReverse"
+        @click="handleLeave"
+      >
+        {{ $t('general.Cancel') }}
+      </el-button>
+      <el-button
+        v-if="applicationId"
+        class="buttonPrimary"
+        @click="handleConfirm(applicationId)"
+      >
+        {{ $t('general.Save') }}
+      </el-button>
+      <el-button
+        v-else
+        class="buttonPrimary"
+        @click="handleConfirm(null)"
+      >
+        {{ $t('general.Add') }}
+      </el-button>
+    </span>
+  </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {
   getDeployedHostsLists,
+  getDeployedStorageLists,
   getRegistryHostsLists,
-  getReleaseEnvironments,
-  getService
+  // getReleaseEnvironments,
+  getMultiService,
+  postMultiService,
+  putMultiService
 } from '@/api/deploy'
-import { getReleaseVersion } from '@/api/release'
-import { mapGetters } from 'vuex'
+import { getHasSon, getProjectRelation } from '@/api_v2/projects'
+import { getReleaseVersion } from '@/api_v2/release'
+import project from '@/data/project'
+import ElTableDraggable from 'element-ui-el-table-draggable'
 
 const protocol = ['TCP', 'UDP']
 const policy = ['Always', 'Never', 'IfNotPresent']
@@ -402,15 +516,14 @@ const network_type = [
   // 'LoadBalancer'
 ] // 'ExternalName',
 const environments_type = ['configmap', 'secret']
+const source_type = [
+  { label: 'III DevOps Release', value: 'harbor' },
+  { label: 'dockerhub', value: 'dockerhub' }
+]
 
 export default {
   name: 'ApplicationSetting',
-  props: {
-    id: {
-      type: Number,
-      default: null
-    }
-  },
+  components: { ElTableDraggable },
   data() {
     const _this = this
     const keyValidator = (rule, value) => {
@@ -433,8 +546,10 @@ export default {
     }
     const domainValidator = (rule, value) => {
       return new Promise((resolve, reject) => {
+        const index = rule.field.split('.')[1]
+        const network = _this.deployForm.applications[index].network
         if (
-          (_this.deployForm.network.path && (_this.deployForm.network.path !== '' || _this.deployForm.network.path.length > 0)) &&
+          (network.path && (network.path !== '' || network.path.length > 0)) &&
           (!value || value === '' || value.length <= 0)
         ) {
           return reject(this.$t('Deploy.PairCondition', [this.$t('Deploy.Domain'), [this.$t('Deploy.Domain'), this.$t('Deploy.Path')].join(', ')]))
@@ -444,8 +559,10 @@ export default {
     }
     const pathValidator = (rule, value) => {
       return new Promise((resolve, reject) => {
+        const index = rule.field.split('.')[1]
+        const network = _this.deployForm.applications[index].network
         if (
-          (_this.deployForm.network.domain && (_this.deployForm.network.domain !== '' || _this.deployForm.network.domain.length > 0)) &&
+          (network.domain && (network.domain !== '' || network.domain.length > 0)) &&
           (!value || value === '' || value.length <= 0)
         ) {
           return reject(this.$t('Deploy.PairCondition', [this.$t('Deploy.Path'), [this.$t('Deploy.Domain'), this.$t('Deploy.Path')].join(', ')]))
@@ -472,30 +589,28 @@ export default {
       })
     }
     return {
+      loadingInstance: '',
+      projectId: '',
+      projectRelationIds: [],
+      projectRelationList: [],
+      tabName: '',
+      existedTab: [],
+      clusterList: [],
       cluster: [],
       registry: [],
       protocol: protocol,
       policy: policy,
       network_type: network_type,
       environments_type: environments_type,
-      release: [],
+      source_type: source_type,
       deployForm: {
         name: '',
+        remote: null,
+        namespace: '',
         cluster_id: '',
         registry_id: '',
-        namespace: '',
-        image: { policy: '' },
-        release_id: '',
-        resources: {
-          cpu: '',
-          memory: '',
-          replicas: ''
-        },
-        network: { type: '', protocol: '', port: '', domain: '', path: '', expose_port: '' },
-        environments: [],
-        volumes: []
+        applications: []
       },
-      edit: {},
       deployFormRules: {
         name: [
           {
@@ -510,6 +625,11 @@ export default {
             trigger: 'blur'
           }
         ],
+        remote: [{
+          required: true,
+          message: this.$t(`Validation.Select`, [this.$t('Deploy.Location')]),
+          trigger: 'blur'
+        }],
         cluster_id: [{
           required: true,
           message: this.$t(`Validation.Select`, [this.$t('Deploy.Cluster')]),
@@ -534,119 +654,327 @@ export default {
             trigger: 'blur'
           }
         ],
-        release_id: [{
-          required: true,
-          message: this.$t(`Validation.Select`, [this.$t('Deploy.Release')]),
-          trigger: 'blur'
-        }],
-        resources: {
-          cpu: [{ validator: numberValidator, trigger: 'change' }],
-          memory: [{ validator: numberValidator, trigger: 'change' }],
-          replicas: [{ validator: numberValidator, trigger: 'change' }]
-        },
-        network: {
-          type: [{ required: true, message: this.$t(`Validation.Select`, [this.$tc('Deploy.Type')]), trigger: 'blur' }],
-          protocol: [{
-            required: true,
-            message: this.$t(`Validation.Select`, [this.$t('Deploy.Protocol')]),
-            trigger: 'blur'
-          }],
-          port: [
-            { required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Port')]), trigger: 'blur' },
-            { type: 'number', message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]), trigger: 'blur' }
-          ],
-          expose_port: [
-            { validator: numberValidator, trigger: 'change' },
-            { validator: exposePortValidator, trigger: 'change' }
-          ],
-          domain: [{ validator: domainValidator, trigger: 'blur' }],
-          path: [{ validator: pathValidator, trigger: 'blur' }]
-        },
-        environments: [
-          { type: 'array', validator: keyValidator, trigger: 'change' }
-        ]
-      }
+        applications: []
+      },
+      keyValidator,
+      domainValidator,
+      pathValidator,
+      numberValidator,
+      exposePortValidator
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
-    checkAvailable() {
-      return this.cluster.length > 0 && this.registry.length > 0
+    ...mapGetters(['projectOptions']),
+    applicationId () {
+      return this.$route.params.applicationId
     }
   },
   watch: {
-    id(value) {
-      if (value) {
-        this.getServiceDetail(this.id)
+    // 'deployForm.release_id': {
+    //   immediate: false,
+    //   handler(value) {
+    //     if (value) {
+    //       this.getEnvironmentFromRelease(value)
+    //     }
+    //   }
+    // },
+    'deployForm.applications'(value) {
+      if (value.length === 0) return
+      if (!value.some((item) => item.project_name === this.tabName)) this.tabName = value[0].project_name
+    },
+    async projectId(value) {
+      this.projectRelationIds = []
+      const hasSon = (await getHasSon(value)).has_child
+      if (hasSon) {
+        this.projectRelationList = await this.getProjectRelationData(value)
       } else {
-        this.$refs['deployForm'].resetFields()
-      }
-    },
-    edit: {
-      deep: true,
-      handler(value) {
-        Object.keys(this.deployForm).forEach(item => {
-          if (value[item]) {
-            this.deployForm[item] = value[item]
-          }
-        })
-      }
-    },
-    'deployForm.release_id': {
-      immediate: false,
-      handler(value) {
-        if (value) {
-          this.getEnvironmentFromRelease(value)
-        }
+        this.projectRelationList = [{
+          id: value,
+          name: this.projectOptions.find((item) => item.id === value).display
+        }]
       }
     }
   },
   mounted() {
     this.getSelectionList()
-    if (this.id) {
-      this.getServiceDetail(this.id)
-    } else {
-      this.$refs['deployForm'].resetFields()
-    }
+    if (this.applicationId) this.getServiceDetail(this.applicationId)
   },
   methods: {
+    project,
     async getSelectionList() {
       const res = (await Promise.all([
         getDeployedHostsLists(),
-        getRegistryHostsLists(),
-        getReleaseVersion(this.selectedProjectId, { image: true })
+        getRegistryHostsLists()
       ])).map(item => item.data)
       this.cluster = res[0].cluster
       this.registry = res[1].registries
-      this.release = res[2].releases
-    },
-    async getEnvironmentFromRelease(value) {
-      const getEnvironment = await getReleaseEnvironments(value)
-      if (getEnvironment.data.env.length > 0) {
-        this.deployForm.environments.push(...getEnvironment.data.env)
-      }
     },
     async getServiceDetail(value) {
-      const res = await getService(value)
-      this.edit = res.data.application
+      const res = await getMultiService(value)
+      const application = res.data.app_header
+      if (!application) return
+      await application.applications.reduce(async(acc, item) => {
+        await acc
+        item.releaseList = await this.getReleaseList(item.project_id)
+      }, Promise.resolve())
+      Object.keys(this.deployForm).forEach((item) => {
+        if (item === 'applications' && application[item].length > 0) {
+          application[item].forEach((app, index) => {
+            this.addApplicationRule()
+            app.network.ports.forEach(() => { this.addNetworkRule(index) })
+            if (app.environments) app.environments.forEach(() => { this.addEnvironmentRule(index) })
+          })
+        }
+        this.deployForm[item] = application[item]
+      })
     },
-    addEnvironment() {
-      this.deployForm.environments.push({ key: '', value: '', type: '' })
+    // async getEnvironmentFromRelease(value) {
+    //   const getEnvironment = await getReleaseEnvironments(value)
+    //   if (getEnvironment.data.env.length > 0) {
+    //     this.deployForm.environments.push(...getEnvironment.data.env)
+    //   }
+    // },
+    async changeRemote(value) {
+      if (value) {
+        this.deployForm.namespace = ''
+        this.deployForm.cluster_id = ''
+        this.deployForm.registry_id = ''
+        this.clusterList = []
+      } else if (!value) {
+        this.clusterList = (await getDeployedStorageLists(0)).data.filter(
+          (item) => item.status === 'Enabled'
+        )
+      }
     },
-    addPath() {
-      this.deployForm.volumes.push({ device_path: '', pvc_name: '' })
+    async changeClusterId(cluster_id) {
+      this.clusterList = (await getDeployedStorageLists(cluster_id)).data.filter(
+        (item) => item.status === 'Enabled'
+      )
+    },
+    changeSourceType(index) {
+      this.deployForm.applications[index].release_id = ''
+      this.deployForm.applications[index].image.uri = ''
+    },
+    async getReleaseList(projectId) {
+      const releases = (await getReleaseVersion(projectId)).data.releases
+      return releases.length === 0 ? [] : releases.map((item) => ({
+        id: item.id,
+        name: item.tag_name,
+        value: `${item.harbor_external_base_url}/${item.image_paths[0]}`
+      }))
+    },
+    addContainer() {
+      this.projectRelationIds.reduce(async(acc, item) => {
+        if (this.existedTab.includes(item)) return
+        this.existedTab.push(item)
+        const { id, name } = this.projectRelationList.find((project) => project.id === item)
+        await acc
+        const releaseList = await this.getReleaseList(id)
+        this.deployForm.applications.push(
+          {
+            project_id: id,
+            project_name: name,
+            releaseList: releaseList,
+            release_id: null,
+            image: {
+              type: '',
+              uri: '',
+              policy: ''
+            },
+            resources: {
+              cpu: null,
+              memory: null,
+              replicas: null
+            },
+            network: {
+              ports: [{
+                port: null,
+                expose_port: null,
+                protocol: ''
+              }],
+              type: this.network_type[0],
+              domain: '',
+              path: ''
+            },
+            volumes: [],
+            environments: []
+          }
+        )
+        this.addApplicationRule()
+        this.tabName = this.deployForm.applications[0].project_name
+      }, Promise.resolve())
+    },
+    removeContainer(index) {
+      this.existedTab.splice(index, 1)
+      this.deployForm.applications.splice(index, 1)
+      this.deployFormRules.applications.splice(index, 1)
+    },
+    addApplicationRule() {
+      this.deployFormRules.applications.push({
+        release_id: [{
+          required: true,
+          message: this.$t('Validation.Select', [this.$t('Deploy.Release')]),
+          trigger: 'blur'
+        }],
+        image: {
+          type: [{
+            required: true,
+            message: this.$t('Validation.Select', [this.$t('Deploy.SourceType')]),
+            trigger: 'blur'
+          }],
+          uri: [{
+            required: true,
+            message: this.$t(`Validation.Input`, [this.$t('Deploy.Path')]),
+            trigger: 'blur'
+          }]
+        },
+        resources: {
+          cpu: [{ validator: this.numberValidator, trigger: 'change' }],
+          memory: [{ validator: this.numberValidator, trigger: 'change' }],
+          replicas: [{ validator: this.numberValidator, trigger: 'change' }]
+        },
+        network: {
+          ports: [{
+            port: [
+              {
+                required: true,
+                message: this.$t(`Validation.Input`, [this.$t('Deploy.Port')]),
+                trigger: 'blur'
+              },
+              {
+                type: 'number',
+                message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]),
+                trigger: 'blur'
+              }
+            ],
+            expose_port: [
+              { validator: this.numberValidator, trigger: 'change' },
+              { validator: this.exposePortValidator, trigger: 'change' }
+            ],
+            protocol: [{
+              required: true,
+              message: this.$t(`Validation.Select`, [this.$t('Deploy.Protocol')]),
+              trigger: 'blur'
+            }]
+          }],
+          domain: [{ validator: this.domainValidator, trigger: 'blur' }],
+          path: [{ validator: this.pathValidator, trigger: 'blur' }]
+        },
+        environments: []
+      })
+    },
+    addNetwork(index) {
+      this.deployForm.applications[index].network.ports.push({
+        port: null,
+        expose_port: null,
+        protocol: ''
+      })
+      this.addNetworkRule(index)
+    },
+    removeNetwork(index, networkIndex) {
+      this.deployForm.applications[index].network.ports.splice(networkIndex, 1)
+      this.deployFormRules.applications[index].network.ports.splice(networkIndex, 1)
+    },
+    addNetworkRule(index) {
+      this.deployFormRules.applications[index].network.ports.push({
+        port: [
+          {
+            required: true,
+            message: this.$t(`Validation.Input`, [this.$t('Deploy.Port')]),
+            trigger: 'blur'
+          },
+          {
+            type: 'number',
+            message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]),
+            trigger: 'blur'
+          }
+        ],
+        expose_port: [
+          { validator: this.numberValidator, trigger: 'change' },
+          { validator: this.exposePortValidator, trigger: 'change' }
+        ],
+        protocol: [{
+          required: true,
+          message: this.$t(`Validation.Select`, [this.$t('Deploy.Protocol')]),
+          trigger: 'blur'
+        }]
+      })
+    },
+    addPath(index) {
+      this.deployForm.applications[index].volumes.push({ sc_name: '', device_path: '' })
+    },
+    removePath(index, pathIndex) {
+      this.deployForm.applications[index].volumes.splice(pathIndex, 1)
+    },
+    addEnvironment(index) {
+      this.deployForm.applications[index].environments.push({ type: '', key: '', value: '' })
+      this.addEnvironmentRule(index)
+    },
+    removeEnvironment(index, environmentIndex) {
+      this.deployForm.applications[index].environments.splice(environmentIndex, 1)
+      this.deployFormRules.applications[index].environments.splice(environmentIndex, 1)
+    },
+    addEnvironmentRule(index) {
+      this.deployFormRules.applications[index].environments.push({
+        required: true,
+        type: 'array',
+        validator: this.keyValidator,
+        trigger: 'change'
+      })
+    },
+    async getProjectRelationData(projectId) {
+      const projectRelation = (await getProjectRelation(projectId)).data
+      if (projectRelation && projectRelation[0].child.length > 0) return [...projectRelation[0].child]
+      return []
+    },
+    showSuccessMessage(message) {
+      this.$message({
+        title: this.$t('general.Success'),
+        type: 'success',
+        message
+      })
+    },
+    handleConfirm(application_id) {
+      if (this.deployForm.applications.length === 0) return false
+      this.$refs['deployForm'].validate(async (valid) => {
+        if (valid) {
+          const data = Object.assign({}, this.deployForm)
+          if (!data.remote) {
+            delete data.namespace
+            delete data.cluster_id
+            delete data.registry_id
+          }
+          this.loadingInstance = this.$loading({
+            target: '.el-dialog',
+            text: 'Loading'
+          })
+          try {
+            if (application_id) {
+              await putMultiService(application_id, { ...data })
+              this.showSuccessMessage(this.$t('Notify.Updated'))
+            } else {
+              await postMultiService({ ...data })
+              this.showSuccessMessage(this.$t('Notify.Created'))
+            }
+            this.loadingInstance.close()
+            this.handleLeave()
+          } catch (err) {
+            this.loadingInstance.close()
+            console.error(err)
+          }
+        } else {
+          return false
+        }
+      })
+    },
+    handleLeave() {
+      this.$router.push({ name: 'Deploy' })
     }
   }
 }
 </script>
 
 <style scoped>
-.form-container {
-  height: 50vh;
-  padding: 0 20px;
-  overflow-y: auto;
-}
-
 .helper {
   line-height: initial;
 }
