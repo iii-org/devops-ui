@@ -96,7 +96,7 @@
           <el-table-column type="expand">
             <template slot-scope="{row}">
               <el-table
-                v-loading="isExpandedLoading"
+                v-loading="expandedLoading"
                 :header-cell-style="{
                   'font-size':'14px',
                   color: 'black',
@@ -220,7 +220,7 @@ export default {
       hasUploadFile: false,
       form: formData(),
       origin: {},
-      isExpandedLoading: false,
+      expandedLoading: false,
       getRowKey: (row) => row.id,
       expands: [],
       pvcList: []
@@ -319,9 +319,9 @@ export default {
       this.pvcList = []
       if (expandedRows.length) this.expands.push(row.id)
       if (!expandedRows.some((r) => r.id === row.id)) return
-      this.isExpandedLoading = true
+      this.expandedLoading = true
       this.pvcList = (await getPVCLists(row.id)).data.pvc_list
-      this.isExpandedLoading = false
+      this.expandedLoading = false
     },
     hasFileList(value) {
       this.form.kubeConfigString = ''

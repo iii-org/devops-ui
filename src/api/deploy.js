@@ -16,12 +16,13 @@ export const addRegistryHosts = (data) => request.post(`/harbor/registries`, dat
 export const updateRegistryHostsById = (registry_id, data) => request.put(`/harbor/registries/${registry_id}`, data)
 
 // services
-export const getServices = (params, config) => request.get(`/deploy/applications`, { params, config })
 export const getService = (application_id) => request.get(`/deploy/applications/${application_id}`)
-export const getMultiService = (application_id) => request.get(`/deploy/app_headers/${application_id}`)
-export const postMultiService = (data) => request.post(`/deploy/app_headers`, data)
-export const putMultiService = (application_id, data) => request.put(`/deploy/app_headers/${application_id}`, data)
 export const patchService = (application_id, data) => request.patch(`/deploy/applications/${application_id}`, data)
-export const deleteService = (application_id) => request.delete(`/deploy/applications/${application_id}`)
+export const getMultiServices = (config) => request.get(`/deploy/app_headers`, { config })
+export const getMultiService = (app_header_id) => request.get(`/deploy/app_headers/${app_header_id}`)
+export const postMultiService = (data) => request.post(`/deploy/app_headers`, data)
+export const putMultiService = (app_header_id, data) => request.put(`/deploy/app_headers/${app_header_id}`, data)
+export const patchMultiService = (app_header_id, data) => request.patch(`/deploy/app_headers/${app_header_id}`, data)
+export const deleteMultiService = (app_header_id) => request.delete(`/deploy/app_headers/${app_header_id}`)
 export const patchServiceRedeploy = (application_id) => request.patch(`/deploy/applications/${application_id}/redeploy`)
 export const getReleaseEnvironments = (release_id) => request.get(`/deploy/release/${release_id}`)

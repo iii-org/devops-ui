@@ -1310,6 +1310,7 @@ export default {
     ReleaseHelper: 'above release version requires an image included.',
     NoSetting: 'Deploy setting is not yet ready, please check with your system administrator.',
     LinkToApplication: 'Link to application',
+    CopyApplicationIP: 'Copy application IP',
     NameRule: `Please enter 2-30 English leading letters which combines with English, numbers or '-'. Note that the English must be all lowercase and the ID set cannot be all numbers.`,
     PathLimitWarning: 'Only 5 plug-in spaces can be set for each project',
     AtLeastContainer: 'At least add one container'

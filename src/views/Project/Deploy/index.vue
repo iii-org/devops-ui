@@ -1,22 +1,20 @@
 <template>
   <div class="app-container">
-    <ProjectListSelector>
-      <el-button
-        slot="button"
-        class="buttonSecondary"
-        :disabled="selectedProjectId === -1"
-        icon="el-icon-plus"
-        @click="handleApplicationSetting(null)"
-      >
-        {{ $t('Deploy.AddApplication') }}
-      </el-button>
-      <el-input
-        v-model="keyword"
-        prefix-icon="el-icon-search"
-        :placeholder="$t('general.SearchName')"
-        style="width: 300px; float: right"
-      />
-    </ProjectListSelector>
+    <el-button
+      slot="button"
+      class="buttonSecondary"
+      :disabled="selectedProjectId === -1"
+      icon="el-icon-plus"
+      @click="handleApplicationSetting(null)"
+    >
+      {{ $t('Deploy.AddApplication') }}
+    </el-button>
+    <el-input
+      v-model="keyword"
+      prefix-icon="el-icon-search"
+      :placeholder="$t('general.SearchName')"
+      style="width: 300px; float: right"
+    />
     <el-divider />
     <div class="flex justify-between items-center mb-1">
       <div class="flex">
@@ -28,7 +26,7 @@
           icon="el-icon-refresh"
           size="mini"
           plain
-          @click="loadData"
+          @click="handleRefresh"
         >
           {{ $t('general.Refresh') }}
         </el-button>
@@ -36,59 +34,54 @@
     </div>
     <el-table
       v-loading="listLoading"
-      :data="pagedData"
       :element-loading-text="$t('Loading')"
+      :data="pagedData"
+      :row-key="getRowKey"
+      :expand-row-keys="expands"
       fit
       highlight-current-row
+      @expand-change="handelExpand"
     >
+      <el-table-column type="expand">
+        <template slot-scope="{row}">
+          <Applications
+            :is-loading="expandedLoading"
+            :list-data="applications"
+            @loadData="getApplications()"
+          />
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         :label="$t('Deploy.ID')"
-        min-width="110"
+        width="80"
         prop="id"
       />
       <el-table-column
         align="center"
         :label="$t('Deploy.Name')"
-        min-width="100"
+        min-width="150"
         prop="name"
       />
       <el-table-column
         align="center"
         :label="$t('Deploy.Cluster')"
-        min-width="100"
+        min-width="150"
         prop="cluster.name"
       />
       <el-table-column
+        prop="total_pods"
         align="center"
-        :label="$t('Deploy.Status')"
-        min-width="100"
-        prop="status"
-      >
-        <template slot-scope="{row}">
-          <template v-if="!row.disabled">
-            {{ row.status }}
-            <Status :id="row.status_id" />
-          </template>
-          <template v-else>
-            {{ $t('Deploy.Stopped') }}
-            <Status :id="0" />
-          </template>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="pod"
-        align="center"
-        width="200"
+        min-width="150"
         :label="$t('Deploy.Pod')"
       >
         <template slot-scope="{row}">
           <el-progress
-            :percentage="calcPercentage(row.deployment)"
-            :status="format(row.deployment)"
+            :percentage="calcPercentage(row)"
+            :status="format(row)"
           />
-          <span v-if="isPodNumberNotNull(row.deployment)">
-            {{ row.deployment.available_pod_number }} / {{ row.deployment.total_pod_number }}
+          <span v-if="isPodNumberNotNull(row)">
+            {{ row.available_pods }} / {{ row.total_pods }}
           </span>
         </template>
       </el-table-column>
@@ -109,31 +102,22 @@
             :type="row.disabled ? 'warning' : 'success'"
             @click="handleServiceStatus(row)"
           >
-            <em :class="row.disabled| getActionIcon" /> {{ getActionText(row.disabled) }}
+            <em :class="row.disabled| getActionIcon" />
+            {{ getActionText(row.disabled) }}
             <el-dropdown-menu slot="dropdown">
-              <template v-if="row.public_endpoint">
-                <el-dropdown-item
-                  type="danger"
-                  icon="el-icon-link"
-                  @click.native="toEndpoint(row.public_endpoint)"
-                >
-                  {{ $t('Deploy.LinkToApplication') }}
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <el-divider />
-                </el-dropdown-item>
-              </template>
               <el-dropdown-item
                 size="mini"
                 icon="el-icon-refresh-right"
-                @click.native="handleRedeploy(row.id)"
-              >{{ $t('Deploy.Redeploy') }}
+                @click.native="handleRedeploy(row)"
+              >
+                {{ $t('Deploy.Redeploy') }}
               </el-dropdown-item>
               <el-dropdown-item
                 size="mini"
                 icon="el-icon-edit"
                 @click.native="handleApplicationSetting(row.id)"
-              >{{ $t('general.Edit') }}
+              >
+                {{ $t('general.Edit') }}
               </el-dropdown-item>
               <el-popconfirm
                 :confirm-button-text="$t('general.Delete')"
@@ -173,22 +157,22 @@
 <script>
 import { getLocalTime } from '@/utils/handleTime'
 import {
-  getServices,
+  getMultiServices,
+  getMultiService,
   getService,
-  deleteService,
-  patchService,
+  patchMultiService,
+  deleteMultiService,
   patchServiceRedeploy
 } from '@/api/deploy'
 import { BasicData, Pagination, SearchBar, CancelRequest } from '@/mixins'
-import { ProjectListSelector, ElTableColumnTime } from '@/components'
-import Status from './components/Status'
+import { ElTableColumnTime } from '@/components'
+import Applications from './components/Applications'
 
 export default {
   name: 'Deploy',
   components: {
-    ProjectListSelector,
     ElTableColumnTime,
-    Status
+    Applications
   },
   filters: {
     getActionIcon(value) {
@@ -199,28 +183,34 @@ export default {
   data() {
     return {
       searchKeys: ['name'],
-      lastUpdateTime: null
+      lastUpdateTime: null,
+      getRowKey: (row) => row.id,
+      expands: [],
+      expandedLoading: false,
+      app_header_id: null,
+      applications: []
     }
   },
   computed: {
     isPodNumberNotNull() {
-      return function(data) {
-        return data.available_pod_number !== null && data.total_pod_number !== null
+      return function(row) {
+        const { available_pods, total_pods } = row
+        return available_pods !== null && total_pods !== null
       }
     },
     format() {
-      return function (deployment) {
-        const { available_pod_number, total_pod_number } = deployment
-        if (available_pod_number && total_pod_number) {
-          return available_pod_number / total_pod_number === 1 ? 'success' : 'warning'
+      return function (row) {
+        const { available_pods, total_pods } = row
+        if (available_pods && total_pods) {
+          return available_pods / total_pods === 1 ? 'success' : 'warning'
         }
       }
     },
-    calcPercentage(deployment) {
-      return function (deployment) {
-        const { available_pod_number, total_pod_number } = deployment
-        if (available_pod_number && total_pod_number) {
-          return (available_pod_number / total_pod_number) * 100
+    calcPercentage() {
+      return function (row) {
+        const { available_pods, total_pods } = row
+        if (available_pods && total_pods) {
+          return (available_pods / total_pods) * 100
         }
       }
     }
@@ -241,12 +231,11 @@ export default {
       })
     },
     async getAllServices() {
-      const res = await getServices(
-        { project_id: this.selectedProjectId },
+      const res = await getMultiServices(
         { cancelToken: this.cancelToken }
       )
       this.lastUpdateTime = getLocalTime(res.datetime)
-      return res.data.applications
+      return res.data.app_headers
     },
     async fetchData() {
       if (this.selectedProjectId === -1) {
@@ -262,16 +251,18 @@ export default {
       return listData
     },
     async fetchUnfinishedData() {
-      const listData = await this.getAllServices()
-      for (const [data, i] of listData.entries()) {
-        const statusId = data.status_id
-        if ((statusId > 0 && statusId < 5) || statusId === 9 || statusId === 11) {
-          const restData = await getService(data.id)
-          this.$set(listData, i, restData.data.application)
-        }
+      if (this.expands.length !== 0) {
+        this.expandedLoading = true
+        this.applications.reduce(async (acc, app, index) => {
+          const statusId = app.status_id
+          await acc
+          if ((statusId > 0 && statusId < 5) || statusId === 9 || statusId === 11) {
+            this.applications[index] = (await getService(app.id)).data.application
+          }
+        }, Promise.resolve())
       }
       this.setTimer()
-      this.listData = listData
+      this.expandedLoading = false
     },
     handleApplicationSetting(application_id) {
       this.$router.push({ name: 'ApplicationSetting', params: {
@@ -281,10 +272,28 @@ export default {
     getActionText(value) {
       return value ? this.$t('Deploy.Start') : this.$t('Deploy.Stop')
     },
+    handelExpand(row, expandedRows) {
+      this.expands = []
+      this.applications = []
+      if (expandedRows.length) this.expands.push(row.id)
+      if (!expandedRows.some((r) => r.id === row.id)) return
+      this.getApplications(row.id)
+    },
+    async getApplications(app_header_id) {
+      this.expandedLoading = true
+      const app_header = (await getMultiService(app_header_id || this.app_header_id)).data.app_header
+      this.app_header_id = app_header.id
+      this.applications = app_header.applications
+      this.expandedLoading = false
+    },
+    handleRefresh() {
+      this.expands = []
+      this.loadData()
+    },
     async handleServiceStatus(row) {
       this.listLoading = true
       try {
-        await patchService(row.id, { disabled: !row.disabled })
+        await patchMultiService(row.id, { disabled: !row.disabled })
         this.showSuccessMessage(this.$t('Notify.Updated'))
       } catch (e) {
         console.error(e)
@@ -292,10 +301,11 @@ export default {
       await this.loadData()
       this.listLoading = false
     },
-    async handleRedeploy(id) {
+    async handleRedeploy(row) {
       this.listLoading = true
+      const redeploys = row.applications_id.map((id) => patchServiceRedeploy(id))
       try {
-        await patchServiceRedeploy(id)
+        await Promise.all(redeploys)
         this.showSuccessMessage(this.$t('Notify.Updated'))
       } catch (e) {
         console.error(e)
@@ -306,7 +316,7 @@ export default {
     async handleDelete(id) {
       this.listLoading = true
       try {
-        await deleteService(id)
+        await deleteMultiService(id)
         this.showSuccessMessage(this.$t('Notify.Deleted'))
       } catch (error) {
         console.error(error)
@@ -325,9 +335,6 @@ export default {
     clearTimer(timer) {
       clearTimeout(timer)
       timer = null
-    },
-    toEndpoint(url) {
-      window.open(url, '_blank')
     }
   }
 }

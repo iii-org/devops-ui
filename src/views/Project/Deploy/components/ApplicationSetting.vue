@@ -101,7 +101,10 @@
               :label="$t('Project.Project')"
               style="margin-bottom: unset;"
             >
-              <el-select v-model="projectId">
+              <el-select
+                v-model="projectId"
+                filterable
+              >
                 <el-option
                   v-for="item in projectOptions"
                   :key="item.id"
@@ -118,6 +121,7 @@
             >
               <el-select
                 v-model="projectRelationIds"
+                filterable
                 multiple
                 collapse-tags
                 :disabled="projectRelationList.length === 0"
