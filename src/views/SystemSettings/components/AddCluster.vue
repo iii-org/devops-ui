@@ -198,7 +198,6 @@ export default {
   },
   methods: {
     handleAdd() {
-      this.step = 1
       if (!this.form.clusterName) {
         this.showNoNameWarning()
         return
