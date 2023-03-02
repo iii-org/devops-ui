@@ -64,7 +64,7 @@
             <el-select
               v-model="deployForm.cluster_id"
               :disabled="cluster.length <= 0"
-              @change="changeClusterId"
+              filterable
             >
               <el-option
                 v-for="item in cluster"
@@ -82,6 +82,7 @@
             <el-select
               v-model="deployForm.registry_id"
               :disabled="registry.length <= 0"
+              filterable
             >
               <el-option
                 v-for="item in registry"
@@ -96,7 +97,7 @@
       </el-card>
       <el-card class="box-card mt-5">
         <el-row>
-          <el-col :md="5">
+          <el-col class="mb-3" :xl="6" :md="6" :sm="10" :xs="24">
             <el-form-item
               :label="$t('Project.Project')"
               style="margin-bottom: unset;"
@@ -114,7 +115,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :md="18">
+          <el-col class="mb-3" :xl="6" :md="8" :sm="10" :xs="24">
             <el-form-item
               :label="$t('Deploy.RelationProject')"
               style="margin-bottom: unset;"
@@ -133,17 +134,23 @@
                   :value="item.id"
                 />
               </el-select>
-              <el-button class="mx-3" @click="addContainer">
-                {{ $t('general.Add') + 'Container' }}
-              </el-button>
-              <span
-                v-if="deployForm.applications.length === 0"
-                style="color: red; font-size: 12px;"
-              >
-                <em class="ri-error-warning-fill ri-lg" />
-                {{ $t('Deploy.AtLeastContainer') }}
-              </span>
             </el-form-item>
+          </el-col>
+          <el-col :xl="9" :md="10" :sm="14" :xs="24">
+            <el-button
+              class="mx-3"
+              :disabled="projectRelationIds.length === 0"
+              @click="addContainer"
+            >
+              {{ $t('general.Add') + 'Container' }}
+            </el-button>
+            <span
+              v-if="deployForm.applications.length === 0"
+              style="color: red; font-size: 12px;"
+            >
+              <em class="ri-error-warning-fill ri-lg" />
+              {{ $t('Deploy.AtLeastContainer') }}
+            </span>
           </el-col>
         </el-row>
         <template v-if="deployForm.applications.length > 0">
@@ -168,7 +175,7 @@
               />
               <el-table-column :label="$t('Deploy.SourceProject')">
                 <el-row slot-scope="{$index}">
-                  <el-col :md="6">
+                  <el-col :xl="6" :lg="8" :md="12" :sm="24" :xs="24">
                     <el-form-item
                       :prop="`applications.${$index}.image.type`"
                       :label="$t('Deploy.SourceType')"
@@ -188,8 +195,8 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :md="18">
-                    <template v-if="deployForm.applications[$index].image.type === 'harbor'">
+                  <template v-if="deployForm.applications[$index].image.type === 'harbor'">
+                    <el-col :xl="6" :lg="8" :md="12" :sm="24" :xs="24">
                       <el-form-item
                         :prop="`applications.${$index}.release_id`"
                         :label="$t('Deploy.Release')"
@@ -203,15 +210,22 @@
                             :value="item.id"
                           />
                         </el-select>
-                        <p v-if="deployForm.applications[$index].releaseList.length === 0" class="helper text-xs">
-                          * {{ $t('Deploy.ReleaseHelper') }}
-                        </p>
                       </el-form-item>
-                      <span v-if="deployForm.applications[$index].releaseList && deployForm.applications[$index].releaseList.length > 0 && deployForm.applications[$index].release_id" class="ml-3">
+                    </el-col>
+                    <el-col
+                      v-if="deployForm.applications[$index].releaseList"
+                      :xl="12" :lg="8" :md="24" :sm="24" :xs="24"
+                    >
+                      <p v-if="deployForm.applications[$index].releaseList.length === 0" class="helper text-xs">
+                        * {{ $t('Deploy.ReleaseHelper') }}
+                      </p>
+                      <p v-else-if="deployForm.applications[$index].release_id">
                         {{ deployForm.applications[$index].releaseList.find((item) => item.id === deployForm.applications[$index].release_id).value }}
-                      </span>
-                    </template>
-                    <template v-if="deployForm.applications[$index].image.type === 'dockerhub'">
+                      </p>
+                    </el-col>
+                  </template>
+                  <template v-if="deployForm.applications[$index].image.type === 'dockerhub'">
+                    <el-col :xl="6" :lg="8" :md="12" :sm="24" :xs="24">
                       <el-form-item
                         :prop="`applications.${$index}.image.uri`"
                         :label="$t('Deploy.Path')"
@@ -219,11 +233,13 @@
                       >
                         <el-input v-model="deployForm.applications[$index].image.uri" />
                       </el-form-item>
-                      <span v-if="deployForm.applications[$index].image.uri" class="ml-3">
+                    </el-col>
+                    <el-col :xl="12" :lg="8" :md="24" :sm="24" :xs="24">
+                      <p v-if="deployForm.applications[$index].image.uri">
                         {{ deployForm.applications[$index].image.uri }}
-                      </span>
-                    </template>
-                  </el-col>
+                      </p>
+                    </el-col>
+                  </template>
                 </el-row>
               </el-table-column>
               <el-table-column
@@ -598,7 +614,6 @@ export default {
       projectRelationIds: [],
       projectRelationList: [],
       tabName: '',
-      existedTab: [],
       clusterList: [],
       cluster: [],
       registry: [],
@@ -682,20 +697,26 @@ export default {
     //     }
     //   }
     // },
-    'deployForm.applications'(value) {
-      if (value.length === 0) return
-      if (!value.some((item) => item.project_name === this.tabName)) this.tabName = value[0].project_name
+    'deployForm.cluster_id'(cluster_id) {
+      if (cluster_id) this.changeClusterId(cluster_id)
     },
-    async projectId(value) {
+    'deployForm.applications'(applications) {
+      if (applications.length === 0) return
+      if (!applications.some((item) => item.project_name === this.tabName)) {
+        this.tabName = applications[0].project_name
+      }
+    },
+    async projectId(id) {
       this.projectRelationIds = []
-      const hasSon = (await getHasSon(value)).has_child
+      const hasSon = (await getHasSon(id)).has_child
       if (hasSon) {
-        this.projectRelationList = await this.getProjectRelationData(value)
+        this.projectRelationList = await this.getProjectRelationData(id)
       } else {
-        this.projectRelationList = [{
-          id: value,
-          name: this.projectOptions.find((item) => item.id === value).display
-        }]
+        const { display } = this.projectOptions.find((item) => item.id === id)
+        this.projectRelationList = [{ id: id, name: display }]
+      }
+      if (this.projectRelationList.length === 1) {
+        this.projectRelationIds = this.projectRelationList.map((item) => item.id)
       }
     }
   },
@@ -738,17 +759,8 @@ export default {
     //     this.deployForm.environments.push(...getEnvironment.data.env)
     //   }
     // },
-    async changeRemote(value) {
-      if (value) {
-        this.deployForm.namespace = ''
-        this.deployForm.cluster_id = ''
-        this.deployForm.registry_id = ''
-        this.clusterList = []
-      } else if (!value) {
-        this.clusterList = (await getDeployedStorageLists(0)).data.filter(
-          (item) => item.status === 'Enabled'
-        )
-      }
+    changeRemote(value) {
+      this.changeClusterId(value ? this.deployForm.cluster_id : 0)
     },
     async changeClusterId(cluster_id) {
       this.clusterList = (await getDeployedStorageLists(cluster_id)).data.filter(
@@ -768,10 +780,9 @@ export default {
       }))
     },
     addContainer() {
-      this.projectRelationIds.reduce(async(acc, item) => {
-        if (this.existedTab.includes(item)) return
-        this.existedTab.push(item)
-        const { id, name } = this.projectRelationList.find((project) => project.id === item)
+      this.projectRelationIds.reduce(async(acc, id) => {
+        if (this.deployForm.applications.some((app) => app.project_id === id)) return
+        const { name } = this.projectRelationList.find((project) => project.id === id)
         await acc
         const releaseList = await this.getReleaseList(id)
         this.deployForm.applications.push(
@@ -794,7 +805,7 @@ export default {
               ports: [{
                 port: null,
                 expose_port: null,
-                protocol: ''
+                protocol: 'TCP'
               }],
               type: this.network_type[0],
               domain: '',
@@ -809,7 +820,6 @@ export default {
       }, Promise.resolve())
     },
     removeContainer(index) {
-      this.existedTab.splice(index, 1)
       this.deployForm.applications.splice(index, 1)
       this.deployFormRules.applications.splice(index, 1)
     },
@@ -839,27 +849,15 @@ export default {
         },
         network: {
           ports: [{
-            port: [
-              {
-                required: true,
-                message: this.$t(`Validation.Input`, [this.$t('Deploy.Port')]),
-                trigger: 'blur'
-              },
-              {
-                type: 'number',
-                message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]),
-                trigger: 'blur'
-              }
-            ],
+            port: [{
+              type: 'number',
+              message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]),
+              trigger: 'blur'
+            }],
             expose_port: [
               { validator: this.numberValidator, trigger: 'change' },
               { validator: this.exposePortValidator, trigger: 'change' }
-            ],
-            protocol: [{
-              required: true,
-              message: this.$t(`Validation.Select`, [this.$t('Deploy.Protocol')]),
-              trigger: 'blur'
-            }]
+            ]
           }],
           domain: [{ validator: this.domainValidator, trigger: 'blur' }],
           path: [{ validator: this.pathValidator, trigger: 'blur' }]
@@ -871,7 +869,7 @@ export default {
       this.deployForm.applications[index].network.ports.push({
         port: null,
         expose_port: null,
-        protocol: ''
+        protocol: 'TCP'
       })
       this.addNetworkRule(index)
     },
@@ -881,36 +879,26 @@ export default {
     },
     addNetworkRule(index) {
       this.deployFormRules.applications[index].network.ports.push({
-        port: [
-          {
-            required: true,
-            message: this.$t(`Validation.Input`, [this.$t('Deploy.Port')]),
-            trigger: 'blur'
-          },
-          {
-            type: 'number',
-            message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]),
-            trigger: 'blur'
-          }
-        ],
+        port: [{
+          type: 'number',
+          message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]),
+          trigger: 'blur'
+        }],
         expose_port: [
           { validator: this.numberValidator, trigger: 'change' },
           { validator: this.exposePortValidator, trigger: 'change' }
-        ],
-        protocol: [{
-          required: true,
-          message: this.$t(`Validation.Select`, [this.$t('Deploy.Protocol')]),
-          trigger: 'blur'
-        }]
+        ]
       })
     },
     addPath(index) {
+      if (!this.deployForm.applications[index].volumes) this.deployForm.applications[index].volumes = []
       this.deployForm.applications[index].volumes.push({ sc_name: '', device_path: '' })
     },
     removePath(index, pathIndex) {
       this.deployForm.applications[index].volumes.splice(pathIndex, 1)
     },
     addEnvironment(index) {
+      if (!this.deployForm.applications[index].environments) this.deployForm.applications[index].environments = []
       this.deployForm.applications[index].environments.push({ type: '', key: '', value: '' })
       this.addEnvironmentRule(index)
     },

@@ -69,22 +69,22 @@
         min-width="150"
         prop="cluster.name"
       />
-      <el-table-column
-        prop="total_pods"
-        align="center"
-        min-width="150"
-        :label="$t('Deploy.Pod')"
-      >
-        <template slot-scope="{row}">
-          <el-progress
-            :percentage="calcPercentage(row)"
-            :status="format(row)"
-          />
-          <span v-if="isPodNumberNotNull(row)">
-            {{ row.available_pods }} / {{ row.total_pods }}
-          </span>
-        </template>
-      </el-table-column>
+      <!--      <el-table-column-->
+      <!--        prop="total_pods"-->
+      <!--        align="center"-->
+      <!--        min-width="150"-->
+      <!--        :label="$t('Deploy.Pod')"-->
+      <!--      >-->
+      <!--        <template slot-scope="{row}">-->
+      <!--          <el-progress-->
+      <!--            :percentage="calcPercentage(row)"-->
+      <!--            :status="format(row)"-->
+      <!--          />-->
+      <!--          <span v-if="isPodNumberNotNull(row)">-->
+      <!--            {{ row.available_pods }} / {{ row.total_pods }}-->
+      <!--          </span>-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
       <el-table-column-time
         prop="created_at"
         :label="$t('general.CreateTime')"
@@ -192,27 +192,30 @@ export default {
     }
   },
   computed: {
-    isPodNumberNotNull() {
-      return function(row) {
-        const { available_pods, total_pods } = row
-        return available_pods !== null && total_pods !== null
-      }
-    },
-    format() {
-      return function (row) {
-        const { available_pods, total_pods } = row
-        if (available_pods && total_pods) {
-          return available_pods / total_pods === 1 ? 'success' : 'warning'
-        }
-      }
-    },
-    calcPercentage() {
-      return function (row) {
-        const { available_pods, total_pods } = row
-        if (available_pods && total_pods) {
-          return (available_pods / total_pods) * 100
-        }
-      }
+    // isPodNumberNotNull() {
+    //   return function(row) {
+    //     const { available_pods, total_pods } = row
+    //     return available_pods !== null && total_pods !== null
+    //   }
+    // },
+    // format() {
+    //   return function (row) {
+    //     const { available_pods, total_pods } = row
+    //     if (available_pods && total_pods) {
+    //       return available_pods / total_pods === 1 ? 'success' : 'warning'
+    //     }
+    //   }
+    // },
+    // calcPercentage() {
+    //   return function (row) {
+    //     const { available_pods, total_pods } = row
+    //     if (available_pods && total_pods) {
+    //       return (available_pods / total_pods) * 100
+    //     }
+    //   }
+    // },
+    isNeedSetTimer() {
+      return this.applications.some((app) => app.status_id !== 5 && !app.error_message)
     }
   },
   methods: {
@@ -245,23 +248,20 @@ export default {
       if (this.isUpdating) this.cancelRequest()
       this.isUpdating = true
       const listData = await this.getAllServices()
-      this.setTimer()
       this.isUpdating = false
       this.listLoading = false
       return listData
     },
     async fetchUnfinishedData() {
-      if (this.expands.length !== 0) {
-        this.expandedLoading = true
-        this.applications.reduce(async (acc, app, index) => {
-          const statusId = app.status_id
-          await acc
-          if ((statusId > 0 && statusId < 5) || statusId === 9 || statusId === 11) {
-            this.applications[index] = (await getService(app.id)).data.application
-          }
-        }, Promise.resolve())
-      }
-      this.setTimer()
+      this.expandedLoading = true
+      this.applications.reduce(async (acc, app, index) => {
+        const statusId = app.status_id
+        await acc
+        if ((statusId > 0 && statusId < 5) || statusId === 9 || statusId === 11) {
+          this.applications[index] = (await getService(app.id)).data.application
+        }
+      }, Promise.resolve())
+      if (this.isNeedSetTimer) this.setTimer()
       this.expandedLoading = false
     },
     handleApplicationSetting(application_id) {
@@ -284,6 +284,7 @@ export default {
       const app_header = (await getMultiService(app_header_id || this.app_header_id)).data.app_header
       this.app_header_id = app_header.id
       this.applications = app_header.applications
+      if (this.isNeedSetTimer) this.setTimer()
       this.expandedLoading = false
     },
     handleRefresh() {
