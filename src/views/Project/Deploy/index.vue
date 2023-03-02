@@ -258,7 +258,7 @@ export default {
         const statusId = app.status_id
         await acc
         if ((statusId > 0 && statusId < 5) || statusId === 9 || statusId === 11) {
-          this.applications[index] = (await getService(app.id)).data.application
+          this.$set(this.applications, index, (await getService(app.id)).data.application)
         }
       }, Promise.resolve())
       if (this.isNeedSetTimer) this.setTimer()
@@ -313,6 +313,9 @@ export default {
       }
       await this.loadData()
       this.listLoading = false
+      if (this.app_header_id) {
+        await this.getApplications(this.app_header_id)
+      }
     },
     async handleDelete(id) {
       this.listLoading = true
