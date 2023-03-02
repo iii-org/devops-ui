@@ -760,12 +760,15 @@ export default {
     //   }
     // },
     changeRemote(value) {
-      this.changeClusterId(value ? this.deployForm.cluster_id : 0)
+      console.log(value)
+      if (value) {
+        if (this.deployForm.cluster_id) this.changeClusterId(this.deployForm.cluster_id)
+      } else {
+        this.changeClusterId(0)
+      }
     },
     async changeClusterId(cluster_id) {
-      this.clusterList = (await getDeployedStorageLists(cluster_id)).data.filter(
-        (item) => item.status === 'Enabled'
-      )
+      this.clusterList = (await getDeployedStorageLists(cluster_id)).data.filter((item) => item.status === 'Enabled')
     },
     changeSourceType(index) {
       this.deployForm.applications[index].release_id = ''
