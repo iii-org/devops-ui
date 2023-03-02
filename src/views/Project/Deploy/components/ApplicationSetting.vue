@@ -760,7 +760,6 @@ export default {
     //   }
     // },
     changeRemote(value) {
-      console.log(value)
       if (value) {
         if (this.deployForm.cluster_id) this.changeClusterId(this.deployForm.cluster_id)
       } else {
