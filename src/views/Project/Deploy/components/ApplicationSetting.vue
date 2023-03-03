@@ -698,7 +698,7 @@ export default {
     //   }
     // },
     'deployForm.cluster_id'(cluster_id) {
-      if (cluster_id) this.changeClusterId(cluster_id)
+      this.changeClusterId(cluster_id)
     },
     'deployForm.applications'(applications) {
       if (applications.length === 0) return
@@ -737,7 +737,7 @@ export default {
     async getServiceDetail(value) {
       const res = await getMultiService(value)
       const application = res.data.app_header
-      if (!application) return
+      if (!application && !application.applications) return
       await application.applications.reduce(async(acc, item) => {
         await acc
         item.releaseList = await this.getReleaseList(item.project_id)
@@ -760,14 +760,13 @@ export default {
     //   }
     // },
     changeRemote(value) {
-      if (value) {
-        if (this.deployForm.cluster_id) this.changeClusterId(this.deployForm.cluster_id)
-      } else {
-        this.changeClusterId(0)
-      }
+      this.changeClusterId(value ? this.deployForm.cluster_id : 0)
     },
     async changeClusterId(cluster_id) {
-      this.clusterList = (await getDeployedStorageLists(cluster_id)).data.filter((item) => item.status === 'Enabled')
+      this.deployForm.applications.forEach((item) => { item.volumes = [] })
+      this.clusterList = cluster_id
+        ? (await getDeployedStorageLists(cluster_id)).data.filter((item) => item.status === 'Enabled')
+        : []
     },
     changeSourceType(index) {
       this.deployForm.applications[index].release_id = ''
