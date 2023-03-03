@@ -27,8 +27,8 @@ export default {
           // distinguish string and number, string to lowercase while number to string, and only Checkmarx uses number
           if (data[value] === null) data[value] = ''
           const columnValue =
-            typeof data[value] === 'string' ? data[value].toLowerCase() : data[value].toString()
-          result = result || columnValue.includes(keyword)
+            typeof data[value] === 'string' ? data[value].toLowerCase() : data[value]?.toString()
+          result = result || columnValue?.includes(keyword)
           if (result) break
         }
         return result
