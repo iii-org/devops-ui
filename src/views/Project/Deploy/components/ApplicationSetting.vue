@@ -97,7 +97,7 @@
       </el-card>
       <el-card class="box-card mt-5">
         <el-row>
-          <el-col class="mb-3" :xl="6" :md="6" :sm="10" :xs="24">
+          <el-col class="mb-3" :xl="6" :lg="8" :md="8" :sm="24" :xs="24">
             <el-form-item
               :label="$t('Project.Project')"
               style="margin-bottom: unset;"
@@ -115,42 +115,45 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col class="mb-3" :xl="6" :md="8" :sm="10" :xs="24">
+          <el-col :xl="18" :lg="16" :md="16" :sm="24" :xs="24">
             <el-form-item
               :label="$t('Deploy.RelationProject')"
               style="margin-bottom: unset;"
             >
-              <el-select
-                v-model="projectRelationIds"
-                filterable
-                multiple
-                collapse-tags
-                :disabled="projectRelationList.length === 0"
-              >
-                <el-option
-                  v-for="item in projectRelationList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
+              <el-col :xl="6" :lg="8" :md="10" :sm="10" :xs="24">
+                <el-select
+                  v-model="projectRelationIds"
+                  filterable
+                  multiple
+                  collapse-tags
+                  :disabled="projectRelationList.length === 0"
+                  class="mb-3"
+                >
+                  <el-option
+                    v-for="item in projectRelationList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  />
+                </el-select>
+              </el-col>
+              <el-col :xl="18" :lg="16" :md="14" :sm="14" :xs="24">
+                <el-button
+                  class="mr-3"
+                  :disabled="projectRelationIds.length === 0"
+                  @click="addContainer"
+                >
+                  {{ $t('general.Add') + 'Container' }}
+                </el-button>
+                <span
+                  v-if="deployForm.applications.length === 0"
+                  style="color: red; font-size: 12px;"
+                >
+                  <em class="ri-error-warning-fill ri-lg" />
+                  {{ $t('Deploy.AtLeastContainer') }}
+                </span>
+              </el-col>
             </el-form-item>
-          </el-col>
-          <el-col :xl="9" :md="10" :sm="14" :xs="24">
-            <el-button
-              class="mx-3"
-              :disabled="projectRelationIds.length === 0"
-              @click="addContainer"
-            >
-              {{ $t('general.Add') + 'Container' }}
-            </el-button>
-            <span
-              v-if="deployForm.applications.length === 0"
-              style="color: red; font-size: 12px;"
-            >
-              <em class="ri-error-warning-fill ri-lg" />
-              {{ $t('Deploy.AtLeastContainer') }}
-            </span>
           </el-col>
         </el-row>
         <template v-if="deployForm.applications.length > 0">
@@ -287,7 +290,7 @@
               </el-radio-group>
             </el-form-item>
             <el-row>
-              <el-col :md="8">
+              <el-col :xl="8" :lg="8" :md="8" :sm="24" :xs="24">
                 <el-form-item
                   :label="$t('Deploy.CPU')"
                   :prop="`applications.${index}.resources.cpu`"
@@ -299,7 +302,7 @@
                   />
                 </el-form-item>
               </el-col>
-              <el-col :md="8">
+              <el-col :xl="8" :lg="8" :md="8" :sm="24" :xs="24">
                 <el-form-item
                   :label="$t('Deploy.Memory')"
                   :prop="`applications.${index}.resources.memory`"
@@ -315,7 +318,7 @@
                   </el-input>
                 </el-form-item>
               </el-col>
-              <el-col :md="8">
+              <el-col :xl="8" :lg="8" :md="8" :sm="24" :xs="24">
                 <el-form-item
                   :label="$t('Deploy.Replicas')"
                   :prop="`applications.${index}.resources.replicas`"
@@ -350,42 +353,49 @@
               v-for="(item,i) in deployForm.applications[index].network.ports"
               :key="'ports'+i"
             >
-              <el-col :md="8">
-                <el-form-item :prop="`applications.${index}.network.ports.${i}.port`">
-                  <el-input v-model.number="item.port" clearable>
-                    <template slot="prepend">
-                      Inner
-                    </template>
-                  </el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :md="8">
-                <el-form-item :prop="`applications.${index}.network.ports.${i}.expose_port`">
-                  <em slot="label" class="el-icon-right" />
-                  <el-input v-model.number="item.expose_port" clearable>
-                    <template slot="prepend">
-                      Outer
-                    </template>
-                  </el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :md="8">
-                <el-form-item :prop="`applications.${index}.network.ports.${i}.protocol`">
-                  <el-radio-group v-model="item.protocol">
-                    <el-radio-button
-                      v-for="item in protocol"
-                      :key="item"
-                      :label="item"
+              <el-divider v-if="i>0" class="mt-0" />
+              <el-form
+                :model="deployForm"
+                :rules="deployFormRules"
+                label-width="50px"
+              >
+                <el-col :xl="8" :lg="8" :md="8" :sm="24" :xs="24">
+                  <el-form-item :prop="`applications.${index}.network.ports.${i}.port`">
+                    <el-input v-model.number="item.port" clearable>
+                      <template slot="prepend">
+                        Inner
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :xl="8" :lg="8" :md="8" :sm="24" :xs="24">
+                  <el-form-item :prop="`applications.${index}.network.ports.${i}.expose_port`">
+                    <em slot="label" class="el-icon-right" />
+                    <el-input v-model.number="item.expose_port" clearable>
+                      <template slot="prepend">
+                        Outer
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :xl="8" :lg="8" :md="8" :sm="24" :xs="24">
+                  <el-form-item :prop="`applications.${index}.network.ports.${i}.protocol`">
+                    <el-radio-group v-model="item.protocol">
+                      <el-radio-button
+                        v-for="item in protocol"
+                        :key="item"
+                        :label="item"
+                      />
+                    </el-radio-group>
+                    <el-link
+                      v-if="i !== 0"
+                      icon="el-icon-delete"
+                      class="ml-3"
+                      @click="removeNetwork(index,i)"
                     />
-                  </el-radio-group>
-                  <el-link
-                    v-if="i !== 0"
-                    icon="el-icon-delete"
-                    class="ml-3"
-                    @click="removeNetwork(index,i)"
-                  />
-                </el-form-item>
-              </el-col>
+                  </el-form-item>
+                </el-col>
+              </el-form>
             </el-row>
             <template v-if="clusterList.length > 0">
               <el-form-item :label="$t('Deploy.PluginStoredPath')">
@@ -401,35 +411,51 @@
                 v-for="(item,i) in deployForm.applications[index].volumes"
                 :key="'volume'+i"
               >
-                <el-col :md="4">
-                  <el-form-item>
-                    <el-select v-model="item.sc_name">
-                      <el-option
-                        v-for="item in clusterList"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.name"
-                      />
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :md="20">
-                  <el-form-item label="path">
-                    <el-col :md="23">
-                      <el-input
-                        v-model="item.device_path"
-                        clearable
-                      />
-                    </el-col>
-                    <el-col :md="1">
-                      <el-link
-                        icon="el-icon-delete"
-                        class="ml-3"
-                        @click="removePath(index,i)"
-                      />
-                    </el-col>
-                  </el-form-item>
-                </el-col>
+                <el-divider v-if="i>0" class="mt-0" />
+                <el-form
+                  :model="deployForm"
+                  :rules="deployFormRules"
+                  label-width="50px"
+                >
+                  <el-col :xl="4" :lg="6" :md="8" :sm="24" :xs="24">
+                    <el-form-item>
+                      <el-select v-model="item.sc_name">
+                        <el-option
+                          v-for="item in clusterList"
+                          :key="item.id"
+                          :label="item.name"
+                          :value="item.name"
+                        />
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xl="20" :lg="18" :md="16" :sm="24" :xs="24">
+                    <el-form-item label="path">
+                      <el-col :xl="20" :lg="20" :md="20" :sm="20" :xs="20">
+                        <el-popover
+                          :disabled="!item.device_path"
+                          placement="top-start"
+                          width="400"
+                          trigger="hover"
+                          :content="item.device_path"
+                        >
+                          <el-input
+                            slot="reference"
+                            v-model="item.device_path"
+                            clearable
+                          />
+                        </el-popover>
+                      </el-col>
+                      <el-col :xl="1" :lg="1" :md="1" :sm="1" :xs="1">
+                        <el-link
+                          icon="el-icon-delete"
+                          class="ml-3"
+                          @click="removePath(index,i)"
+                        />
+                      </el-col>
+                    </el-form-item>
+                  </el-col>
+                </el-form>
               </el-row>
             </template>
             <el-form-item :label="$t('Deploy.EnvironmentVariable')">
@@ -445,43 +471,70 @@
               v-for="(item,i) in deployForm.applications[index].environments"
               :key="'environment'+i"
             >
-              <el-col :md="4">
-                <el-form-item :prop="`applications.${index}.environments.${i}.type`">
-                  <el-select v-model="item.type">
-                    <el-option
-                      v-for="item in environments_type"
-                      :key="item"
-                      :label="item"
-                      :value="item"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :md="4">
-                <el-form-item label="key">
-                  <el-input
-                    v-model="item.key"
-                    clearable
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :md="16">
-                <el-form-item label="value" :prop="`applications.${index}.environments.${i}.value`">
-                  <el-col :md="23">
-                    <el-input
-                      v-model="item.value"
-                      clearable
-                    />
-                  </el-col>
-                  <el-col :md="1">
-                    <el-link
-                      icon="el-icon-delete"
-                      class="ml-3"
-                      @click="removeEnvironment(index,i)"
-                    />
-                  </el-col>
-                </el-form-item>
-              </el-col>
+              <el-divider v-if="i>0" class="mt-0" />
+              <el-form
+                :model="deployForm"
+                :rules="deployFormRules"
+                label-width="50px"
+              >
+                <el-col :xl="4" :lg="6" :md="8" :sm="24" :xs="24">
+                  <el-form-item :prop="`applications.${index}.environments.${i}.type`">
+                    <el-select v-model="item.type">
+                      <el-option
+                        v-for="item in environments_type"
+                        :key="item"
+                        :label="item"
+                        :value="item"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :xl="6" :lg="8" :md="8" :sm="24" :xs="24">
+                  <el-form-item label="key">
+                    <el-col :xl="20" :lg="20" :md="20" :sm="20" :xs="20">
+                      <el-popover
+                        :disabled="!item.key"
+                        placement="top-start"
+                        width="300"
+                        trigger="hover"
+                        :content="item.key"
+                      >
+                        <el-input
+                          slot="reference"
+                          v-model="item.key"
+                          clearable
+                        />
+                      </el-popover>
+                    </el-col>
+                  </el-form-item>
+                </el-col>
+                <el-col :xl="14" :lg="10" :md="8" :sm="24" :xs="24">
+                  <el-form-item label="value" :prop="`applications.${index}.environments.${i}.value`">
+                    <el-col :xl="20" :lg="20" :md="20" :sm="20" :xs="20">
+                      <el-popover
+                        :disabled="!item.value"
+                        placement="top-start"
+                        width="400"
+                        trigger="hover"
+                        :content="item.value"
+                      >
+                        <el-input
+                          slot="reference"
+                          v-model="item.value"
+                          clearable
+                        />
+                      </el-popover>
+                    </el-col>
+                    <el-col :xl="1" :lg="1" :md="1" :sm="1" :xs="1">
+                      <el-link
+                        icon="el-icon-delete"
+                        class="ml-3"
+                        @click="removeEnvironment(index,i)"
+                      />
+                    </el-col>
+                  </el-form-item>
+                </el-col>
+              </el-form>
             </el-row>
           </el-tab-pane>
         </el-tabs>
@@ -850,11 +903,7 @@ export default {
         },
         network: {
           ports: [{
-            port: [{
-              type: 'number',
-              message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]),
-              trigger: 'blur'
-            }],
+            port: [{ validator: this.numberValidator, trigger: 'change' }],
             expose_port: [
               { validator: this.numberValidator, trigger: 'change' },
               { validator: this.exposePortValidator, trigger: 'change' }
@@ -880,11 +929,7 @@ export default {
     },
     addNetworkRule(index) {
       this.deployFormRules.applications[index].network.ports.push({
-        port: [{
-          type: 'number',
-          message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]),
-          trigger: 'blur'
-        }],
+        port: [{ validator: this.numberValidator, trigger: 'change' }],
         expose_port: [
           { validator: this.numberValidator, trigger: 'change' },
           { validator: this.exposePortValidator, trigger: 'change' }
