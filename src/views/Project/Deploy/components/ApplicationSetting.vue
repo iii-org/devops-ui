@@ -65,6 +65,7 @@
               v-model="deployForm.cluster_id"
               :disabled="cluster.length <= 0"
               filterable
+              @change="changeClusterId"
             >
               <el-option
                 v-for="item in cluster"
@@ -218,13 +219,14 @@
                     <el-col
                       v-if="deployForm.applications[$index].releaseList"
                       :xl="12" :lg="8" :md="24" :sm="24" :xs="24"
+                      class="pt-2 pl-2"
                     >
-                      <p v-if="deployForm.applications[$index].releaseList.length === 0" class="helper text-xs">
+                      <span v-if="deployForm.applications[$index].releaseList.length === 0" class="helper text-xs">
                         * {{ $t('Deploy.ReleaseHelper') }}
-                      </p>
-                      <p v-else-if="deployForm.applications[$index].release_id">
+                      </span>
+                      <span v-else-if="deployForm.applications[$index].release_id">
                         {{ deployForm.applications[$index].releaseList.find((item) => item.id === deployForm.applications[$index].release_id).value }}
-                      </p>
+                      </span>
                     </el-col>
                   </template>
                   <template v-if="deployForm.applications[$index].image.type === 'dockerhub'">
@@ -237,10 +239,13 @@
                         <el-input v-model="deployForm.applications[$index].image.uri" />
                       </el-form-item>
                     </el-col>
-                    <el-col :xl="12" :lg="8" :md="24" :sm="24" :xs="24">
-                      <p v-if="deployForm.applications[$index].image.uri">
+                    <el-col
+                      :xl="12" :lg="8" :md="24" :sm="24" :xs="24"
+                      class="pt-2 pl-2"
+                    >
+                      <span v-if="deployForm.applications[$index].image.uri">
                         {{ deployForm.applications[$index].image.uri }}
-                      </p>
+                      </span>
                     </el-col>
                   </template>
                 </el-row>
@@ -667,8 +672,10 @@ export default {
       projectRelationIds: [],
       projectRelationList: [],
       tabName: '',
+      remote: false,
       clusterList: [],
       cluster: [],
+      clusterId: null,
       registry: [],
       protocol: protocol,
       policy: policy,
@@ -750,9 +757,6 @@ export default {
     //     }
     //   }
     // },
-    'deployForm.cluster_id'(cluster_id) {
-      this.changeClusterId(cluster_id)
-    },
     'deployForm.applications'(applications) {
       if (applications.length === 0) return
       if (!applications.some((item) => item.project_name === this.tabName)) {
@@ -788,6 +792,10 @@ export default {
       this.registry = res[1].registries
     },
     async getServiceDetail(value) {
+      this.loadingInstance = this.$loading({
+        target: '.el-form',
+        text: 'Loading'
+      })
       const res = await getMultiService(value)
       const application = res.data.app_header
       if (!application && !application.applications) return
@@ -805,6 +813,12 @@ export default {
         }
         this.deployForm[item] = application[item]
       })
+      this.remote = this.deployForm.remote
+      if (this.deployForm.cluster_id) {
+        this.clusterId = this.deployForm.cluster_id
+        this.clusterList = (await getDeployedStorageLists(this.clusterId)).data.filter((item) => item.status === 'Enabled')
+      }
+      this.loadingInstance.close()
     },
     // async getEnvironmentFromRelease(value) {
     //   const getEnvironment = await getReleaseEnvironments(value)
@@ -815,7 +829,25 @@ export default {
     changeRemote(value) {
       this.changeClusterId(value ? this.deployForm.cluster_id : 0)
     },
-    async changeClusterId(cluster_id) {
+    changeClusterId(cluster_id) {
+      if (this.clusterList.length > 0 && this.deployForm.applications.some((item) => item.volumes.length > 0)) {
+        this.$confirm(this.$t('Notify.ChangeClusterId'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        }).then(() => {
+          this.setClusterList(cluster_id)
+        }).catch(() => {
+          this.deployForm.remote = this.remote
+          this.deployForm.cluster_id = this.clusterId
+        })
+      } else {
+        this.setClusterList(cluster_id)
+      }
+    },
+    async setClusterList(cluster_id) {
+      this.remote = this.deployForm.remote
+      this.clusterId = this.deployForm.cluster_id
       this.deployForm.applications.forEach((item) => { item.volumes = [] })
       this.clusterList = cluster_id
         ? (await getDeployedStorageLists(cluster_id)).data.filter((item) => item.status === 'Enabled')
@@ -983,7 +1015,7 @@ export default {
             delete data.registry_id
           }
           this.loadingInstance = this.$loading({
-            target: '.el-dialog',
+            target: '.el-form',
             text: 'Loading'
           })
           try {

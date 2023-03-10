@@ -318,7 +318,8 @@ export default {
     RedmineMailAutoDisableWarning: '您的Email通知已被關閉，因後台Email設定尚未啟用或已關閉，請洽系統管理者',
     RedmineMailConfirmWarning: '信箱（SMTP）設定修改，即將重啟Redmine，屆時將導致DevOps平台停止服務5-8分鐘，請問確定要執行修改並重啟Redmine嗎？',
     ExcalidrawAliveWarning: '白板伺服器失效，請洽III DevOps服務團隊',
-    DeleteExcalidrawWarning: '一併"刪除"本議題之關聯白板'
+    DeleteExcalidrawWarning: '一併"刪除"本議題之關聯白板',
+    ChangeClusterId: '[注意] 變更部署位置將重設原Volume設定，請問確認要變更嗎？'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
