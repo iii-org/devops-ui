@@ -15,7 +15,9 @@
     >
       <el-row :gutter="10">
         <el-col :span="24">
-          <el-divider content-position="left">{{ $t('Project.Info') }}</el-divider>
+          <el-divider content-position="left">
+            {{ $t('Project.Info') }}
+          </el-divider>
           <el-col
             :span="24"
             :sm="12"
@@ -158,12 +160,16 @@
         :loading="isLoading"
         class="buttonSecondaryReverse"
         @click="onDialogClosed"
-      >{{ $t('general.Cancel') }}</el-button>
+      >
+        {{ $t('general.Cancel') }}
+      </el-button>
       <el-button
         class="buttonPrimary"
         :loading="isLoading"
         @click="handleConfirm"
-      >{{ $t('general.Confirm') }}</el-button>
+      >
+        {{ $t('general.Confirm') }}
+      </el-button>
     </span>
   </el-dialog>
 </template>
@@ -203,7 +209,11 @@ export default {
       form: formTemplate(),
       rules: {
         name: [
-          { required: true, message: this.$t('general.PleaseInput') + this.$t('Project.Identifier'), trigger: 'blur' },
+          {
+            required: true,
+            message: this.$t('general.PleaseInput') + this.$t('Project.Identifier'),
+            trigger: 'blur'
+          },
           {
             required: true,
             pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
@@ -212,7 +222,11 @@ export default {
           }
         ],
         display: [
-          { required: true, message: this.$t('general.PleaseInput') + this.$t('Project.Name'), trigger: 'blur' },
+          {
+            required: true,
+            message: this.$t('general.PleaseInput') + this.$t('Project.Name'),
+            trigger: 'blur'
+          },
           {
             required: true,
             pattern: /^[^<&]+$/,
@@ -221,13 +235,25 @@ export default {
           }
         ],
         start_date: [
-          { required: true, message: this.$t('general.PleaseInput') + this.$t('Project.StartDate'), trigger: 'blur' }
+          {
+            required: true,
+            message: this.$t('general.PleaseInput') + this.$t('Project.StartDate'),
+            trigger: 'blur'
+          }
         ],
         due_date: [
-          { required: true, message: this.$t('general.PleaseInput') + this.$t('general.DueDate'), trigger: 'blur' }
+          {
+            required: true,
+            message: this.$t('general.PleaseInput') + this.$t('general.DueDate'),
+            trigger: 'blur'
+          }
         ],
         owner_id: [
-          { required: true, message: this.$t('general.PleaseInput') + this.$t('general.owner_name'), trigger: 'blur' }
+          {
+            required: true,
+            message: this.$t('general.PleaseInput') + this.$t('general.owner_name'),
+            trigger: 'blur'
+          }
         ],
         description: [
           {
@@ -245,7 +271,12 @@ export default {
           }
         }
       },
-      loadingText: ['createRedmine', 'createGitLab', 'createHarbor', 'integrationProject'],
+      loadingText: [
+        'createRedmine',
+        'createGitLab',
+        'createHarbor',
+        'integrationProject'
+      ],
       loadingInstance: {},
       timer: ''
     }

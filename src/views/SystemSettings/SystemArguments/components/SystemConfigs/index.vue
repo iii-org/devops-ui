@@ -141,7 +141,7 @@ export default {
           type: 'boolean',
           name: this.$t('SystemConfigs.GitLabExternalAccess'),
           description: `For security concern, III DevOps only enable Gitlab internal access.
-                        But Will not be affected in the IP mode`,
+                        But will not be affected in the IP mode`,
           content: false,
           method: this.handleGitlabActive
         }
