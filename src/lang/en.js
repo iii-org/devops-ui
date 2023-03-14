@@ -1314,7 +1314,8 @@ export default {
     CopyApplicationIP: 'Copy application IP',
     NameRule: `Please enter 2-30 English leading letters which combines with English, numbers or '-'. Note that the English must be all lowercase and the ID set cannot be all numbers.`,
     PathLimitWarning: 'Only 5 plug-in spaces can be set for each project',
-    AtLeastContainer: 'At least add one container'
+    AtLeastContainer: 'At least add one container',
+    OuterPortOccupied: 'The outer port is occupied'
   },
   Validation: {
     Input: 'Please Input {0}',

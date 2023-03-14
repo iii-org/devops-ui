@@ -1306,7 +1306,8 @@ export default {
     CopyApplicationIP: '複製服務連結',
     NameRule: `請輸入 2-30 英文為首之英數及'-'組合，注意英文須全為小寫且所設定之ID不可為全為數字。`,
     PathLimitWarning: '每個專案僅能設置5個外掛空間',
-    AtLeastContainer: '至少新增一個Container'
+    AtLeastContainer: '至少新增一個Container',
+    OuterPortOccupied: '外部端口已被占用'
   },
   Validation: {
     Input: '請輸入 {0}',

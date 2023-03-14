@@ -26,3 +26,4 @@ export const patchMultiService = (app_header_id, data) => request.patch(`/deploy
 export const deleteMultiService = (app_header_id) => request.delete(`/deploy/app_headers/${app_header_id}`)
 export const patchServiceRedeploy = (application_id) => request.patch(`/deploy/applications/${application_id}/redeploy`)
 export const getReleaseEnvironments = (release_id) => request.get(`/deploy/release/${release_id}`)
+export const isExposePortAvailable = (cluster_name, expose_port, data) => request.post(`/deploy/clusters/${cluster_name}/outer_port/${expose_port}/can_use`, data)
