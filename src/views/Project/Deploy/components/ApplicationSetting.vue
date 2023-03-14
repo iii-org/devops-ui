@@ -206,7 +206,10 @@
                         :label="$t('Deploy.Release')"
                         style="display: inline-block;"
                       >
-                        <el-select v-model="deployForm.applications[$index].release_id">
+                        <el-select
+                          v-model="deployForm.applications[$index].release_id"
+                          @change="getEnvironmentFromRelease($index)"
+                        >
                           <el-option
                             v-for="item in deployForm.applications[$index].releaseList"
                             :key="item.id"
@@ -579,7 +582,7 @@ import {
   getDeployedHostsLists,
   getDeployedStorageLists,
   getRegistryHostsLists,
-  // getReleaseEnvironments,
+  getReleaseEnvironments,
   getMultiService,
   postMultiService,
   putMultiService,
@@ -697,6 +700,7 @@ export default {
       clusterList: [],
       clusterId: null,
       registryList: [],
+      releaseId: null,
       protocol: protocol,
       policy: policy,
       network_type: network_type,
@@ -770,14 +774,6 @@ export default {
     }
   },
   watch: {
-    // 'deployForm.release_id': {
-    //   immediate: false,
-    //   handler(value) {
-    //     if (value) {
-    //       this.getEnvironmentFromRelease(value)
-    //     }
-    //   }
-    // },
     'deployForm.applications'(applications) {
       if (applications.length === 0) return
       if (!applications.some((item) => item.project_name === this.tabName)) {
@@ -841,12 +837,6 @@ export default {
       }
       this.loadingInstance.close()
     },
-    // async getEnvironmentFromRelease(value) {
-    //   const getEnvironment = await getReleaseEnvironments(value)
-    //   if (getEnvironment.data.env.length > 0) {
-    //     this.deployForm.environments.push(...getEnvironment.data.env)
-    //   }
-    // },
     changeRemote(value) {
       this.changeClusterId(value ? this.deployForm.cluster_id : 0)
     },
@@ -885,6 +875,31 @@ export default {
         name: item.tag_name,
         value: `${item.harbor_external_base_url}/${item.image_paths[0]}`
       }))
+    },
+    getEnvironmentFromRelease(index) {
+      const applications = this.deployForm.applications[index]
+      const { release_id, environments } = applications
+      if (environments.length > 0) {
+        this.$confirm(this.$t('Notify.ChangeReleaseId'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        }).then(() => {
+          environments.length = 0
+          this.setEnvironmentFromRelease(release_id, environments)
+        }).catch(() => {
+          applications.release_id = this.releaseId
+        })
+      } else {
+        this.setEnvironmentFromRelease(release_id, environments)
+      }
+    },
+    async setEnvironmentFromRelease(release_id, environments) {
+      this.releaseId = release_id
+      const getEnvironment = await getReleaseEnvironments(release_id)
+      if (getEnvironment.data.env.length > 0) {
+        environments.push(...getEnvironment.data.env)
+      }
     },
     addContainer() {
       this.projectRelationIds.reduce(async(acc, id) => {

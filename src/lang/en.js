@@ -321,7 +321,8 @@ export default {
     RedmineMailConfirmWarning: 'Mail(SMTP) setting modification will be restarted to Redmine, which will cause the DEVOPS platform to stop the service for 5-8 minutes. If it is necessary to perform modification and restart the redmine?',
     ExcalidrawAliveWarning: 'Excalidraw service failed, please contact DevOps for assistance.',
     DeleteExcalidrawWarning: 'Also "delete" the related excalidraw of this issue.',
-    ChangeClusterId: '[Note] Switching destination will cause the volumes reset, confirm to delete?'
+    ChangeClusterId: '[Note] Switching destination will cause the volumes reset, confirm to delete?',
+    ChangeReleaseId: '[Note] Switching release id will cause the environments reset, confirm to delete?'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
