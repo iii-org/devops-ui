@@ -442,19 +442,21 @@
                   <el-col :xl="20" :lg="18" :md="16" :sm="24" :xs="24">
                     <el-form-item label="path">
                       <el-col :xl="20" :lg="20" :md="20" :sm="20" :xs="20">
-                        <el-popover
-                          :disabled="!item.device_path"
-                          placement="top-start"
-                          width="400"
-                          trigger="hover"
-                          :content="item.device_path"
+                        <el-tooltip
+                          :disabled="!isShowTooltip"
+                          placement="top"
                         >
+                          <div
+                            slot="content"
+                            style="max-width: 25rem;"
+                            v-html="item.device_path"
+                          />
                           <el-input
-                            slot="reference"
                             v-model="item.device_path"
                             clearable
+                            @mouseover.native="checkWidth"
                           />
-                        </el-popover>
+                        </el-tooltip>
                       </el-col>
                       <el-col :xl="1" :lg="1" :md="1" :sm="1" :xs="1">
                         <el-link
@@ -503,38 +505,42 @@
                 <el-col :xl="6" :lg="8" :md="8" :sm="24" :xs="24">
                   <el-form-item label="key">
                     <el-col :xl="20" :lg="20" :md="20" :sm="20" :xs="20">
-                      <el-popover
-                        :disabled="!item.key"
-                        placement="top-start"
-                        width="300"
-                        trigger="hover"
-                        :content="item.key"
+                      <el-tooltip
+                        :disabled="!isShowTooltip"
+                        placement="top"
                       >
+                        <div
+                          slot="content"
+                          style="max-width: 25rem;"
+                          v-html="item.key"
+                        />
                         <el-input
-                          slot="reference"
                           v-model="item.key"
                           clearable
+                          @mouseover.native="checkWidth"
                         />
-                      </el-popover>
+                      </el-tooltip>
                     </el-col>
                   </el-form-item>
                 </el-col>
                 <el-col :xl="14" :lg="10" :md="8" :sm="24" :xs="24">
                   <el-form-item label="value" :prop="`applications.${index}.environments.${i}.value`">
                     <el-col :xl="20" :lg="20" :md="20" :sm="20" :xs="20">
-                      <el-popover
-                        :disabled="!item.value"
-                        placement="top-start"
-                        width="400"
-                        trigger="hover"
-                        :content="item.value"
+                      <el-tooltip
+                        :disabled="!isShowTooltip"
+                        placement="top"
                       >
+                        <div
+                          slot="content"
+                          style="max-width: 25rem;"
+                          v-html="item.value"
+                        />
                         <el-input
-                          slot="reference"
                           v-model="item.value"
                           clearable
+                          @mouseover.native="checkWidth"
                         />
-                      </el-popover>
+                      </el-tooltip>
                     </el-col>
                     <el-col :xl="1" :lg="1" :md="1" :sm="1" :xs="1">
                       <el-link
@@ -701,6 +707,8 @@ export default {
       clusterId: null,
       registryList: [],
       releaseId: null,
+      clientWidth: null,
+      scrollWidth: null,
       protocol: protocol,
       policy: policy,
       network_type: network_type,
@@ -771,6 +779,9 @@ export default {
     ...mapGetters(['projectOptions']),
     applicationId () {
       return this.$route.params.applicationId
+    },
+    isShowTooltip() {
+      return this.clientWidth < this.scrollWidth
     }
   },
   watch: {
@@ -1080,6 +1091,11 @@ export default {
     },
     handleLeave() {
       this.$router.push({ name: 'Deploy' })
+    },
+    checkWidth(e) {
+      const { clientWidth, scrollWidth } = e.target
+      this.clientWidth = clientWidth
+      this.scrollWidth = scrollWidth
     }
   }
 }
