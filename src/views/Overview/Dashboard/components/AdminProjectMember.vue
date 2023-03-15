@@ -17,7 +17,12 @@
     >
       <el-row type="flex" align="middle">
         <el-col :span="12">
-          <el-input v-model="keyword" style="width: 250px" :placeholder="$t('Project.SearchProjectName')" clearable />
+          <el-input
+            v-model="keyword"
+            style="width: 250px"
+            :placeholder="$t('Project.SearchProjectName')"
+            clearable
+          />
         </el-col>
         <el-col v-if="listData.length > 0" :span="12" class="text-right">
           {{ $t('Dashboard.ADMIN.sync_date', [listData[0].sync_date]) }}
@@ -28,13 +33,14 @@
           v-if="listData.length > 0"
           ref="tableData"
           :data="pagedData"
-          :row-key="'project_id'"
+          :row-key="getRowKey"
+          :expand-row-keys="expandKeys"
           @row-click="rowClicked"
           @expand-change="loadMembers"
         >
           <el-table-column type="expand">
             <template slot-scope="props">
-              <AdminMemberTable :loading="props.row.loading" :data="props.row.children" />
+              <AdminMemberTable :member-data="memberData" />
             </template>
           </el-table-column>
           <el-table-column
@@ -118,7 +124,10 @@ export default {
     return {
       loading: false,
       chartData: [],
-      searchKeys: ['project_name', 'owner_name']
+      searchKeys: ['project_name', 'owner_name'],
+      getRowKey: (row) => row.project_id,
+      expandKeys: [],
+      memberData: { loading: '', children: [] }
     }
   },
   computed: {
@@ -189,11 +198,15 @@ export default {
     rowClicked(row) {
       this.$refs['tableData'].toggleRowExpansion(row)
     },
-    async loadMembers(row) {
-      this.$set(row, 'loading', true)
+    async loadMembers(row, expandedRows) {
+      this.expandKeys = []
+      this.memberData.children = []
+      if (expandedRows.length) this.expandKeys.push(row.project_id)
+      if (!expandedRows.some((r) => r.project_id === row.project_id)) return
+      this.memberData.loading = true
       const res = await getProjectMembersByProjectID(row.project_id)
-      this.$set(row, 'children', res.data)
-      this.$set(row, 'loading', false)
+      this.memberData.children = res.data
+      this.memberData.loading = false
     },
     onClickChart(row) {
       this.dialogVisible.projectMember = true

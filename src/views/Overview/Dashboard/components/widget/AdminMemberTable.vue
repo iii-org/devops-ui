@@ -1,12 +1,12 @@
 <template>
   <el-table
-    v-loading="loading"
+    v-loading="memberData.loading"
     :data="categoryByRole"
     row-key="user_id"
     :show-header="false"
   >
     <el-table-column
-      label="角色"
+      :label="$t('Member.Role')"
       prop="role_name"
       width="200"
       sortable
@@ -16,12 +16,16 @@
         slot-scope="scope"
         class="text-right"
       >
-        <span><strong>{{ scope.row.role_name }}</strong>
-          ({{ scope.row.user_name.length }})</span>
+        <span>
+          <strong>
+            {{ scope.row.role_name }}
+          </strong>
+          ({{ scope.row.user_name.length }})
+        </span>
       </div>
     </el-table-column>
     <el-table-column
-      label="專案成員"
+      :label="$t('Dashboard.ADMIN.ProjectMembers.NAME')"
       prop="user_name"
       sortable
       show-overflow-tooltip
@@ -32,8 +36,8 @@
           :key="idx"
           class="member"
           :class="scope.row.role_name"
-        >{{ user
-        }}
+        >
+          {{ user }}
         </el-tag>
       </template>
     </el-table-column>
@@ -44,20 +48,16 @@
 export default {
   name: 'AdminMemberTable',
   props: {
-    data: {
-      type: Array,
-      default: () => []
-    },
-    loading: {
-      type: Boolean,
-      default: false
+    memberData: {
+      type: Object,
+      default: () => ({})
     }
   },
   computed: {
     categoryByRole() {
       const category = {}
       const result = []
-      this.data.forEach((item) => {
+      this.memberData.children.forEach((item) => {
         if (!category.hasOwnProperty(item.role_name)) {
           category[item.role_name] = []
         }
