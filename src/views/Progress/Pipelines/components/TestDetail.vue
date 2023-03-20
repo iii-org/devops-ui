@@ -52,7 +52,7 @@
             }"
             shadow="never"
           >
-            <pre>{{ step.message }}</pre>
+            <pre v-html="step.message" />
           </el-card>
         </el-card>
       </el-tab-pane>
@@ -65,6 +65,7 @@
 
 <script>
 import { io } from 'socket.io-client'
+import AnsiUp from 'ansi_up'
 import { mapGetters } from 'vuex'
 import { getPipelinesConfig, getCiPipelineId } from '@/api/cicd'
 
@@ -150,13 +151,15 @@ export default {
       }
     },
     setLogMessage(stageIdx, step_index, data) {
+      const ansiUp = new AnsiUp()
+      const html = ansiUp.ansi_to_html(data.replaceAll('&gt;', '>'))
       const target = this.stages[stageIdx].steps[step_index].message
       const isHistoryMessage = target === data || target === 'Loading...'
       if (isHistoryMessage) {
-        this.stages[stageIdx].steps[step_index].message = data
+        this.stages[stageIdx].steps[step_index].message = html
       } else {
         if (target.includes(data)) return
-        this.stages[stageIdx].steps[step_index].message = this.stages[stageIdx].steps[step_index].message.concat(data)
+        this.stages[stageIdx].steps[step_index].message = this.stages[stageIdx].steps[step_index].message.concat(html)
       }
     },
     changeFocusTab(order, stageIdx, timeout = 0) {
