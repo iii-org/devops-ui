@@ -5,14 +5,14 @@
       ref="mdEditor"
       initial-edit-type="wysiwyg"
       :options="editorOptions"
-      height="auto"
+      height="18rem"
       @change="onChange"
     />
   </div>
 </template>
 
 <script>
-import 'codemirror/lib/codemirror.css'
+// import 'codemirror/lib/codemirror.css'
 import '@toast-ui/editor/dist/toastui-editor.css'
 import { Editor } from '@toast-ui/vue-editor'
 import '@toast-ui/editor/dist/i18n/zh-tw'
@@ -28,7 +28,15 @@ export default {
     editorOptions() {
       return {
         minHeight: '100px',
-        language: this.language
+        language: this.language,
+        toolbarItems: [
+          ['heading', 'bold', 'italic', 'strike', 'image', 'link'],
+          ['hr', 'quote'],
+          ['ul', 'ol', 'task', 'indent', 'outdent'],
+          ['table', 'image', 'link'],
+          ['code', 'codeblock'],
+          ['scrollSync']
+        ]
       }
     }
   },

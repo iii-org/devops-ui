@@ -1354,7 +1354,7 @@ export default {
 }
 
 .issueHeightEditor {
-  height: calc(95vh - 50px - 81px - 40px - 32px - 150px);
+  height: calc(95vh - 50px - 81px - 40px - 32px - 18rem);
   overflow-y: auto;
 }
 
