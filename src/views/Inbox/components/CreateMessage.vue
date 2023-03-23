@@ -96,7 +96,6 @@
 import { mapGetters } from 'vuex'
 import { getAllUser } from '@/api/user'
 import { createMessage, deleteMessage } from '@/api_v2/monitoring'
-// import 'codemirror/lib/codemirror.css'
 import '@toast-ui/editor/dist/toastui-editor.css'
 import { Editor } from '@toast-ui/vue-editor'
 import '@toast-ui/editor/dist/i18n/zh-tw'

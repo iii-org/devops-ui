@@ -1436,7 +1436,8 @@ export default {
     AlertLevel: 'Alert Level',
     Send: 'Send',
     NotifyClosed: 'Message closed successfully',
-    SearchLabel: 'Search Title or Sender'
+    SearchLabel: 'Search Title or Sender',
+    MentionMessage: '{name} mentioned you in {info}'
   },
   Excalidraw: {
     Whiteboard: 'Whiteboard',
