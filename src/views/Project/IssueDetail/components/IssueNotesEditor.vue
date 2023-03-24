@@ -55,9 +55,9 @@ export default {
         ],
         widgetRules: [
           {
-            rule: /[@＠].*&nbsp/,
+            rule: /@.*&nbsp/,
             toDOM(text) {
-              const rule = /[@＠].*&nbsp/
+              const rule = /@.*&nbsp/
               const matched = text.match(rule)
               const span = document.createElement('span')
               span.innerHTML = `<a style="text-decoration: none; color: #4b96e6;">${matched[0]}</a>`
@@ -88,7 +88,9 @@ export default {
       this.$emit('change', event)
     },
     onKeyup(editorType, event) {
-      if (editorType === 'markdown' && event.key === '@' || event.key === '＠') {
+      if (editorType === 'wysiwyg') return
+      const lastWord = this.$refs.mdEditor.invoke('getMarkdown').substr(-1, 1)
+      if (event.code === 'Digit2' && (lastWord === '@' || lastWord === '＠')) {
         const editor = this.$refs.mdEditor.editor
         const ul = document.createElement('ul')
         ul.setAttribute('class', 'm-3 p-3')
@@ -107,9 +109,10 @@ export default {
         editor.addWidget(ul, 'top')
         ul.addEventListener('mousedown', (event) => {
           const text = event.target.textContent
-          const outputText = text.length <= this.maxLength ? `@${text}&nbsp` : ''
+          if (text.length > this.maxLength) return
+          const outputText = `@${text}&nbsp`
           const [start, end] = editor.getSelection()
-          if (outputText && !this.tagList.includes(outputText)) {
+          if (!this.tagList.includes(outputText)) {
             this.tagList.push({
               id: this.assigned_to.find((user) => user.name === text).id,
               name: outputText
