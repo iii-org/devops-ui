@@ -95,8 +95,8 @@ export default {
         const ul = document.createElement('ul')
         ul.setAttribute('class', 'm-3 p-3')
         ul.setAttribute('style', `
-        list-style-type: none;
-          max-height: 150px;
+          list-style-type: none;
+          max-height: 6rem;
           overflow-y: auto;
           background: #fff;
           border: 0.5px solid #ccc;

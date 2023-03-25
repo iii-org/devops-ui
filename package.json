@@ -55,7 +55,6 @@
     "vue-router": "3.0.6",
     "vue-runtime-helpers": "^1.1.2",
     "vue-showdown": "^2.4.1",
-    "vue2-editor": "^2.10.3",
     "vuedraggable": "git+https://github.com/SortableJS/Vue.Draggable.git",
     "vuex": "3.1.0",
     "xlsx": "^0.17.0",

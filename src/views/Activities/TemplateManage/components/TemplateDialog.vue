@@ -52,7 +52,13 @@
         :label="$t('Activities.TemplateDescription')"
         prop="description"
       >
-        <VueEditor v-model="form.description" />
+        <Editor
+          ref="mdEditor"
+          initial-edit-type="wysiwyg"
+          :options="editorOptions"
+          style="line-height: 24px;"
+          height="20rem"
+        />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -87,17 +93,18 @@
 import { mapGetters } from 'vuex'
 import { getTemplateParams } from '@/api/template'
 import { createTemplateFromProject, updateTemplateFromProject } from '@/api_v2/template'
-import { VueEditor } from 'vue2-editor'
+import '@toast-ui/editor/dist/toastui-editor.css'
+import '@toast-ui/editor/dist/i18n/zh-tw'
+import { Editor } from '@toast-ui/vue-editor'
 
 const formTemplate = () => ({
   project: '',
-  name: '',
-  description: ''
+  name: ''
 })
 
 export default {
   name: 'TemplateDialog',
-  components: { VueEditor },
+  components: { Editor },
   props: {
     existedTemplateIds: {
       type: Array,
@@ -135,7 +142,21 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['projectOptions', 'selectedProjectId'])
+    ...mapGetters(['projectOptions', 'selectedProjectId', 'language']),
+    editorOptions() {
+      return {
+        minHeight: '100px',
+        language: this.language,
+        toolbarItems: [
+          ['heading', 'bold', 'italic', 'strike'],
+          ['hr', 'quote'],
+          ['ul', 'ol', 'task', 'indent', 'outdent'],
+          ['table', 'image', 'link'],
+          ['code', 'codeblock'],
+          ['scrollSync']
+        ]
+      }
+    }
   },
   watch: {
     row(value) {
@@ -150,7 +171,7 @@ export default {
   },
   methods: {
     getCategoryProjectList() {
-      if ((this.selectedProjectId === -1 || !this.selectedProjectId)) {
+      if (this.selectedProjectId === -1 || !this.selectedProjectId) {
         return []
       }
       const filteredArray = this.projectOptions.filter(obj => {
@@ -186,7 +207,7 @@ export default {
       })[0].repository_ids[0]
       const data = (await getTemplateParams(repositoryId)).data
       this.form.name = data.name
-      this.form.description = data.description.replace(/\>[\t ]+\</g, '><')
+      this.$refs.mdEditor.invoke('setHTML', data.description.replace(/\>[\t ]+\</g, '><'))
       this.isLoading = false
     },
     handleCreate() {
@@ -201,8 +222,9 @@ export default {
           this.isLoading = true
           try {
             const sendData = new FormData()
+            const description = this.$refs.mdEditor.invoke('getHTML')
             sendData.append('name', this.form.name)
-            sendData.append('description', this.form.description)
+            sendData.append('description', description)
             await createTemplateFromProject(this.form.project, sendData)
             this.$message({
               title: this.$t('general.Success'),
@@ -225,8 +247,9 @@ export default {
           this.isLoading = true
           try {
             const sendData = new FormData()
+            const description = this.$refs.mdEditor.invoke('getHTML')
             sendData.append('name', this.form.name)
-            sendData.append('description', this.form.description)
+            sendData.append('description', description)
             await updateTemplateFromProject(this.row.id, sendData)
             this.$message({
               title: this.$t('general.Success'),
@@ -245,7 +268,8 @@ export default {
     },
     onDialogClosed() {
       this.row = {}
-      this.$refs['form'].resetFields()
+      this.$refs.mdEditor.invoke('reset')
+      this.$refs.form.resetFields()
       this.dialogVisible = false
     }
   }

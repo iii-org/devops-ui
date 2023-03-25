@@ -131,8 +131,8 @@ export default {
       this.assigned_to = (await getProjectAssignable(this.projectId)).data.user_list
     },
     onChange() {
-      const notes = this.$refs.mdEditor.invoke('getMarkdown')
-      this.tagList = this.tagList.filter((tag) => notes.includes(tag.name))
+      const description = this.$refs.mdEditor.invoke('getMarkdown')
+      this.tagList = this.tagList.filter((tag) => description.includes(tag.name))
       this.$emit('update:mentionList', this.tagList.map((tag) => tag.id))
       this.$emit('input', this.$refs.mdEditor.invoke('getMarkdown'))
     },
@@ -144,8 +144,8 @@ export default {
         const ul = document.createElement('ul')
         ul.setAttribute('class', 'm-3 p-3')
         ul.setAttribute('style', `
-        list-style-type: none;
-          max-height: 150px;
+          list-style-type: none;
+          max-height: 6rem;
           overflow-y: auto;
           background: #fff;
           border: 0.5px solid #ccc;
