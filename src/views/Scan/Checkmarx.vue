@@ -368,7 +368,7 @@ export default {
       return row.status === 'PreScan' || row.status === 'Queued' || row.status === 'Scanning'
     },
     isInProcess(row) {
-      return row.status !== 'Failed' && row.status !== 'Canceled'
+      return row.status !== 'Failed' && row.status !== 'Canceled' && row.status !== 'Deleted'
     },
     // the scans report sometimes wouldn't be produced when they have been scanned
     isException(row) {
