@@ -20,7 +20,10 @@
     >
       <el-table-column type="expand">
         <template slot-scope="props">
-          <el-skeleton v-if="props.row.timelineLoading" v-loading="props.row.timelineLoading" />
+          <el-skeleton
+            v-if="props.row.timelineLoading"
+            v-loading="props.row.timelineLoading"
+          />
           <el-timeline v-else>
             <el-timeline-item
               v-for="commit in props.row.gitCommitLog"
@@ -72,7 +75,9 @@
                           effect="light"
                           :content="getLocalTime(commit.commit_time)"
                         >
-                          <span>{{ getRelativeTime(commit.commit_time) }}</span>
+                          <span>
+                            {{ getRelativeTime(commit.commit_time) }}
+                          </span>
                         </el-tooltip>
                       </div>
                     </div>
@@ -84,7 +89,9 @@
                       @click="toIssueDetail(issue.id)"
                     >
                       <li v-show="issue" class="cursor-pointer">
-                        <span class="text-success">#{{ issue.id }}</span>
+                        <span class="text-success">
+                          #{{ issue.id }}
+                        </span>
                         <Status
                           v-if="issue.status.name"
                           class="ml-1"
@@ -101,7 +108,9 @@
                         >
                           {{ issue.assigned_to.name }}
                         </el-tag>
-                        <span class="ml-1">{{ issue.name }}</span>
+                        <span class="ml-1">
+                          {{ issue.name }}
+                        </span>
                       </li>
                     </ul>
                   </section>
@@ -145,11 +154,19 @@
             style="font-size: 16px"
             :href="scope.row.commit_url"
           >
-            <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.short_id }}
+            <svg-icon
+              class="mr-1"
+              icon-class="ion-git-commit-outline"
+            />
+            {{ scope.row.short_id }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-time prop="last_commit_time" width="170" :label="$t('general.LastUpdateTime')" />
+      <el-table-column-time
+        prop="last_commit_time"
+        :label="$t('general.LastUpdateTime')"
+        width="170"
+      />
       <template slot="empty">
         <el-empty :description="$t('general.NoData')" />
       </template>
@@ -302,7 +319,6 @@ export default {
         item['id'] = index
         item['issue_id'] = this.getIssueId(item['issue_hook'])
         item['issues'] = await this.getIssue(item['issue_id'], item['issue_hook'])
-        item['commit_time'] = getLocalTime(item['commit_time'])
       })
       return res.data
     },
