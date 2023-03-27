@@ -89,9 +89,8 @@ export default {
     },
     onKeyup(editorType, event) {
       if (editorType === 'wysiwyg') return
-      const lastWord = this.$refs.mdEditor.invoke('getMarkdown').substr(-1, 1)
-      if (event.code === 'Digit2' && (lastWord === '@' || lastWord === '＠')) {
-        const editor = this.$refs.mdEditor.editor
+      const includeTag = this.$refs.mdEditor.invoke('getMarkdown').includes('@')
+      if (event.code === 'Digit2' && includeTag) {
         const ul = document.createElement('ul')
         ul.setAttribute('class', 'm-3 p-3')
         ul.setAttribute('style', `
@@ -106,6 +105,7 @@ export default {
           if (index === 0) ul.innerHTML = `<li >${user.name}</li>`
           else ul.innerHTML += `<li class="mt-2">${user.name}</li>`
         })
+        const editor = this.$refs.mdEditor.editor
         editor.addWidget(ul, 'top')
         ul.addEventListener('mousedown', (event) => {
           const text = event.target.textContent

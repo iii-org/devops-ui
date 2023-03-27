@@ -270,7 +270,9 @@ export default {
     UnassignedDate: 'Unassigned Date',
     Expired: 'Expired',
     Unexpired: 'Unexpired',
-    DataGenerationTime: 'Data Generation Time'
+    DataGenerationTime: 'Data Generation Time',
+    Expand: 'Expand',
+    Fold: 'Fold'
   },
   Notify: {
     Updated: 'update successful',

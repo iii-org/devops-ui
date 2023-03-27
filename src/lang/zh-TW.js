@@ -270,7 +270,9 @@ export default {
     UnassignedDate: '未指定日期',
     Expired: '已逾期',
     Unexpired: '未逾期',
-    DataGenerationTime: '資料產生時間'
+    DataGenerationTime: '資料產生時間',
+    Expand: '展開',
+    Fold: '收合'
   },
   Notify: {
     Updated: '已更新',

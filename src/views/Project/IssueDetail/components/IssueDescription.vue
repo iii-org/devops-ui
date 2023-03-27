@@ -3,6 +3,16 @@
     <el-col>
       <el-row class="text-sm mt-2 mb-3">
         {{ $t('Issue.Description') }}
+        <el-button
+          v-if="!edit"
+          :class="isButtonDisabled ? 'buttonInfoReverse' : 'buttonSecondaryReverse'"
+          :disabled="isButtonDisabled"
+          icon="el-icon-edit"
+          size="mini"
+          @click="edit=true"
+        >
+          {{ $t('general.Edit') }}
+        </el-button>
       </el-row>
       <el-col v-if="edit">
         <p>{{ $t('Issue.ResetESCTip') }}</p>
@@ -18,16 +28,24 @@
         />
       </el-col>
       <el-col v-else>
-        <Viewer :key="componentKey" :initial-value="value" />
-        <el-button
-          :class="isButtonDisabled?'buttonInfoReverse':'buttonSecondaryReverse'"
-          :disabled="isButtonDisabled"
-          icon="el-icon-edit"
-          size="mini"
-          @click="edit=true"
+        <Viewer
+          ref="mdViewer"
+          :key="componentKey"
+          :initial-value="value"
+          :class="ellipsisStatus ? 'break-word whitespace-normal overflow-hidden text-ellipsis' : null"
+          :style="ellipsisStatus ? 'display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;' : null"
+          @load="isFolded"
+        />
+        <el-link
+          v-if="isViewerFolded"
+          :icon="ellipsisStatus ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"
+          class="table m-auto my-1"
+          type="info"
+          :underline="false"
+          @click="ellipsisStatus = !ellipsisStatus"
         >
-          {{ $t('general.Edit') }}
-        </el-button>
+          {{ ellipsisStatus ? $t('general.Expand') : $t('general.Fold') }}
+        </el-link>
       </el-col>
     </el-col>
   </el-row>
@@ -40,6 +58,7 @@ import '@toast-ui/editor/dist/toastui-editor.css'
 import '@toast-ui/editor/dist/toastui-editor-viewer.css'
 import '@toast-ui/editor/dist/i18n/zh-tw'
 import { Editor, Viewer } from '@toast-ui/vue-editor'
+import { query } from 'vue-gtag'
 
 export default {
   name: 'IssueDescription',
@@ -75,7 +94,9 @@ export default {
       edit: false,
       componentKey: 0,
       assigned_to: [],
-      tagList: []
+      tagList: [],
+      ellipsisStatus: false,
+      isViewerFolded: false
     }
   },
   computed: {
@@ -115,6 +136,7 @@ export default {
   watch: {
     value() {
       this.componentKey += 1
+      this.ellipsisStatus = true
     },
     oldValue() {
       this.edit = !this.issueId
@@ -127,6 +149,10 @@ export default {
     this.getUserList()
   },
   methods: {
+    isFolded() {
+      const el = this.$refs.mdViewer.$el
+      this.isViewerFolded = el.clientHeight < el.scrollHeight
+    },
     async getUserList() {
       this.assigned_to = (await getProjectAssignable(this.projectId)).data.user_list
     },
@@ -138,9 +164,8 @@ export default {
     },
     onKeyup(editorType, event) {
       if (editorType === 'wysiwyg') return
-      const lastWord = this.$refs.mdEditor.invoke('getMarkdown').substr(-1, 1)
-      if (event.code === 'Digit2' && (lastWord === '@' || lastWord === '＠')) {
-        const editor = this.$refs.mdEditor.editor
+      const includeTag = this.$refs.mdEditor.invoke('getMarkdown').includes('@')
+      if (event.code === 'Digit2' && includeTag) {
         const ul = document.createElement('ul')
         ul.setAttribute('class', 'm-3 p-3')
         ul.setAttribute('style', `
@@ -155,6 +180,7 @@ export default {
           if (index === 0) ul.innerHTML = `<li >${user.name}</li>`
           else ul.innerHTML += `<li class="mt-2">${user.name}</li>`
         })
+        const editor = this.$refs.mdEditor.editor
         editor.addWidget(ul, 'top')
         ul.addEventListener('mousedown', (event) => {
           const text = event.target.textContent
@@ -174,6 +200,7 @@ export default {
     cancelInput() {
       this.$refs.mdEditor.invoke('setMarkdown', this.oldValue)
       this.edit = !this.issueId
+      this.ellipsisStatus = true
     }
   }
 }
