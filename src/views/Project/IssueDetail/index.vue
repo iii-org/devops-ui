@@ -120,24 +120,37 @@
                 :project-id="formProjectId"
                 :mention-list.sync="descriptionMentionList"
               />
-              <IssueFiles
-                v-if="files.length > 0"
-                :is-button-disabled="isButtonDisabled"
-                :issue-file.sync="files"
-              />
-              <IssueCollection
-                v-if="test_files.length > 0"
-                :is-button-disabled="isButtonDisabled"
-                :issue-test.sync="test_files"
-                @update="updateTestCollection"
-              />
               <el-collapse
-                v-if="countRelationIssue > 0"
+                v-if="files.length > 0 || countRelationIssue > 0"
                 v-model="relationVisible"
-                v-loading="isLoadingFamily"
                 accordion
               >
-                <el-collapse-item :name="1">
+                <el-collapse-item
+                  v-if="files.length > 0"
+                  :title="$t('Issue.Files')+ '(' + files.length + ')'"
+                  :name="1"
+                >
+                  <IssueFiles
+                    :is-button-disabled="isButtonDisabled"
+                    :issue-file.sync="files"
+                  />
+                </el-collapse-item>
+                <el-collapse-item
+                  v-if="test_files.length > 0"
+                  :title="$t('Test.TestPlan.file_name')+ '(' + test_files.length + ')'"
+                  :name="2"
+                >
+                  <IssueCollection
+                    :is-button-disabled="isButtonDisabled"
+                    :issue-test.sync="test_files"
+                    @update="updateTestCollection"
+                  />
+                </el-collapse-item>
+                <el-collapse-item
+                  v-if="countRelationIssue > 0"
+                  v-loading="isLoadingFamily"
+                  :name="3"
+                >
                   <div slot="title">
                     {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
                     <el-button
@@ -1041,11 +1054,11 @@ export default {
       // })
       const sendForm = new FormData()
       if (notes !== '') {
-        sendData['notes'] = notes.replaceAll('&nbsp', ' ')
+        sendData['notes'] = notes.replace(/\$\$widget0\s/g, '').replace(/&nbsp\$\$/g, ' ')
         this.filterImage(sendData['notes'], sendForm, false)
       }
       if (sendData['description'] !== '') {
-        sendData['description'] = sendData['description'].replaceAll('&nbsp', ' ')
+        sendData['description'] = sendData['description'].replace(/\$\$widget0\s/g, '').replace(/&nbsp\$\$/g, ' ')
         this.filterImage(sendData['description'], sendForm, true)
       }
       Object.keys(sendData).forEach((objKey) => {

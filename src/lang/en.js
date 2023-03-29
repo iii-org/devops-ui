@@ -688,7 +688,8 @@ export default {
       Type: 'type',
       RangePlaceholder: 'Input range, separate by ",",like 1,2,3',
       LimitNotes: '[Attention] Want to limit the variable, make sure enclose it in brackets, such as [variable]',
-      EnterPositive: 'Please make sure the input is a positive integer!'
+      EnterPositive: 'Please make sure the input is a positive integer!',
+      MovementNotSaved: 'Movement not saved'
     }
   },
   Wiki: {

@@ -3,14 +3,38 @@
     <div class="text-sm mt-2 mb-3">
       {{ $t('Issue.Notes') }}
     </div>
-    <Editor
-      ref="mdEditor"
-      initial-edit-type="markdown"
-      :options="editorOptions"
-      height="18rem"
-      @change="onChange"
-      @keyup="onKeyup"
-    />
+    <el-popover
+      v-model="tagListVisible"
+      trigger="manual"
+      placement="top"
+      width="auto"
+      popper-class="p-0"
+    >
+      <ul
+        class="my-0 py-3"
+        style="overflow-y: auto; max-height: 6rem;"
+      >
+        <li
+          v-for="(user,index) in assigned_to"
+          :key="user.id"
+          :class="{ 'mt-2': index !== 0}"
+          class="cursor-pointer"
+          @click="addTag"
+        >
+          {{ user.name }}
+        </li>
+      </ul>
+      <Editor
+        slot="reference"
+        ref="mdEditor"
+        initial-edit-type="wysiwyg"
+        :options="editorOptions"
+        height="18rem"
+        @change="onChange"
+        @keypress.native="onKeypress"
+        @blur="onBlur"
+      />
+    </el-popover>
   </div>
 </template>
 
@@ -36,11 +60,6 @@ export default {
   },
   computed: {
     ...mapGetters(['language']),
-    maxLength() {
-      return this.assigned_to.reduce((prev, item) => {
-        return Math.max(prev, item.name.length)
-      }, 0)
-    },
     editorOptions() {
       return {
         minHeight: '100px',
@@ -71,7 +90,9 @@ export default {
   data() {
     return {
       assigned_to: [],
-      tagList: []
+      tagList: [],
+      editorType: 'wysiwyg',
+      tagListVisible: false
     }
   },
   mounted() {
@@ -82,44 +103,35 @@ export default {
       this.assigned_to = (await getProjectAssignable(this.projectId)).data.user_list
     },
     onChange(event) {
+      this.editorType = event
       const notes = this.$refs.mdEditor.invoke('getMarkdown')
       this.tagList = this.tagList.filter((tag) => notes.includes(tag.name))
       this.$emit('update:mentionList', this.tagList.map((tag) => tag.id))
       this.$emit('change', event)
     },
-    onKeyup(editorType, event) {
-      if (editorType === 'wysiwyg') return
-      const includeTag = this.$refs.mdEditor.invoke('getMarkdown').includes('@')
-      if (event.code === 'Digit2' && includeTag) {
-        const ul = document.createElement('ul')
-        ul.setAttribute('class', 'm-3 p-3')
-        ul.setAttribute('style', `
-          list-style-type: none;
-          max-height: 6rem;
-          overflow-y: auto;
-          background: #fff;
-          border: 0.5px solid #ccc;
-          border-radius: 16px;
-        `)
-        this.assigned_to.forEach((user, index) => {
-          if (index === 0) ul.innerHTML = `<li >${user.name}</li>`
-          else ul.innerHTML += `<li class="mt-2">${user.name}</li>`
+    onBlur() {
+      this.tagListVisible = false
+    },
+    onKeypress(event) {
+      if (event.code === 'Digit2' && event.shiftKey) this.tagListVisible = true
+      else this.tagListVisible = false
+    },
+    addTag(event) {
+      const editor = this.$refs.mdEditor.editor
+      const text = event.target.outerText
+      const outputText = `@${text}&nbsp`
+      const [start, end] = editor.getSelection()
+      if (!this.tagList.includes(outputText)) {
+        this.tagList.push({
+          id: this.assigned_to.find((user) => user.name === text).id,
+          name: outputText
         })
-        const editor = this.$refs.mdEditor.editor
-        editor.addWidget(ul, 'top')
-        ul.addEventListener('mousedown', (event) => {
-          const text = event.target.textContent
-          if (text.length > this.maxLength) return
-          const outputText = `@${text}&nbsp`
-          const [start, end] = editor.getSelection()
-          if (!this.tagList.includes(outputText)) {
-            this.tagList.push({
-              id: this.assigned_to.find((user) => user.name === text).id,
-              name: outputText
-            })
-          }
-          editor.replaceSelection(outputText, [start[0], start[1] - 1], end)
-        })
+      }
+      this.tagListVisible = false
+      if (this.editorType === 'wysiwyg') {
+        editor.replaceSelection(outputText, start - 1, end)
+      } else {
+        editor.replaceSelection(outputText, [start[0], start[1] - 1], end)
       }
     }
   }

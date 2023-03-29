@@ -1,6 +1,5 @@
 <template>
   <el-row class="el-upload-list">
-    <div class="text-subtitle-2 mb-2">測試檔案</div>
     <el-row
       v-for="(file,idx) in issueTest"
       :key="idx"
@@ -11,12 +10,15 @@
           :ref="'file'+idx"
           class="el-upload-list__item-name"
         >
-          <em class="el-icon-document" />{{ file.software_name }} - {{ file.name }} ({{ file.file_name }})
+          <em class="el-icon-document" />
+          {{ file.software_name }} - {{ file.name }} ({{ file.file_name }})
         </span>
         <el-tag
           v-if="file.edit"
           class="buttonPrimary"
-        >異動未儲存</el-tag>
+        >
+          {{ $t('Test.TestFile.MovementNotSaved') }}
+        </el-tag>
       </el-col>
       <el-col
         :span="4"
@@ -29,7 +31,7 @@
           icon="el-icon-remove"
           @click="deleteIssueFile(file)"
         >
-          移除關聯
+          {{ $t('Issue.Unlink') }}
         </el-button>
       </el-col>
     </el-row>

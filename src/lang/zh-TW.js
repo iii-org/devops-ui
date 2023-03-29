@@ -683,7 +683,8 @@ export default {
       Type: '類型',
       RangePlaceholder: '請輸入範圍,請以,隔開,如1,2,3',
       LimitNotes: '[注意] 欲設限之變數，記得以中括弧包起來，如[變數]',
-      EnterPositive: '請確認所輸入都是正整數!'
+      EnterPositive: '請確認所輸入都是正整數!',
+      MovementNotSaved: '異動未儲存'
     }
   },
   Wiki: {

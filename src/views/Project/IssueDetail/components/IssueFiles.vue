@@ -1,6 +1,5 @@
 <template>
   <el-row class="el-upload-list">
-    <div class="text-sm mb-2">{{ $t('Issue.Files') }}</div>
     <el-row
       v-for="file in issueFile"
       :key="file.id"
