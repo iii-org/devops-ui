@@ -1430,7 +1430,8 @@ export default {
     Send: '傳送',
     NotifyClosed: '訊息已關閉',
     SearchLabel: '搜尋訊息標題或寄送者',
-    MentionMessage: '{name} 在 {info} 提到你'
+    MentionMessage: '{name} 在 {info} 提到你',
+    ReadAll: '閱讀全部'
   },
   Excalidraw: {
     Whiteboard: '協作白板',

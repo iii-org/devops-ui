@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { io } from 'socket.io-client'
 import MessageDialog from './components/MessageDialog.vue'
 import { setReadMessage } from '@/api_v2/monitoring'
@@ -39,6 +39,7 @@ export default {
       info: [],
       update: [],
       message: {},
+      msgIds: [],
       socket: io(`/v2/get_notification_message`, {
         reconnectionAttempts: 5
       })
@@ -54,6 +55,7 @@ export default {
     this.socket.disconnect()
   },
   methods: {
+    ...mapActions('user', ['setMessageIds']),
     async connectSocket() {
       this.setSocketListener()
       await this.socket.connect()
@@ -91,6 +93,7 @@ export default {
       this.msgList = this.msgList
         .sort((a, b) => -(new Date(a.created_at) - new Date(b.created_at)))
       this.filterMsg()
+      this.setMessageIds(this.msgList.filter(x => x.users_can_read === true).map(a => a.id))
     },
     filterMsg() {
       this.alert = this.msgList.filter((item) =>

@@ -9,13 +9,16 @@
         class="buttonPrimary"
         @click="messageConsole"
       >
+        <em class="ri-mail-send-fill" />
         {{ $t('Inbox.MessageConsole') }}
       </el-button>
       <SearchFilter
         ref="filter"
         :options="options"
         :keyword.sync="keyword"
+        :is-read-disable="isReadAllDisable"
         @changeFilter="changeFilter"
+        @readAll="handleReadAll"
       />
     </div>
     <el-divider />
@@ -118,11 +121,12 @@ export default {
       params: params(),
       listQuery: {},
       timeoutId: -1,
-      message: {}
+      message: {},
+      isReadAllDisable: true
     }
   },
   computed: {
-    ...mapGetters(['userId']),
+    ...mapGetters(['userId', 'messageIds']),
     options() {
       return [{
         id: 1,
@@ -176,17 +180,27 @@ export default {
       })
       this.listQuery = Object.assign({}, res.data.page)
       this.listLoading = false
+      window.setTimeout(() => { this.isReadAllDisable = false }, 3000)
     },
     async onSearch(keyword) {
       this.params.search = keyword
       if (keyword === '') delete this.params.search
       await this.fetchData()
-      this.initParams()
     },
     async changeFilter(filter) {
-      this.params = { ...this.params, ...filter }
+      if (filter) {
+        this.params = { ...this.params, ...filter }
+      } else {
+        this.params = {
+          limit: this.params.limit,
+          offset: this.params.offset
+        }
+      }
+      if ((Object.prototype.hasOwnProperty.call(this.params, 'unread')) &&
+        (!this.params.unread)) {
+        delete this.params.unread
+      }
       await this.fetchData()
-      this.initParams()
     },
     async onPagination(listQuery) {
       const { limit, page } = listQuery
@@ -195,10 +209,6 @@ export default {
       this.params.limit = limit
       if (this.keyword !== '') this.params.search = this.keyword
       await this.fetchData()
-      this.initParams()
-    },
-    initParams() {
-      this.params = params()
     },
     messageType(level) {
       const alert = this.options.find(x => x.id === level.id)
@@ -239,7 +249,23 @@ export default {
       this.$set(this.messageList, idx, this.message)
     },
     messageConsole() {
+      this.$refs.filter.cleanFilter()
       this.$router.push({ name: 'MessageConsole' })
+    },
+    async handleReadAll() {
+      this.listLoading = true
+      await setReadMessage(this.userId, { message_ids: this.messageIds }).then(() => {
+        const updateIds = 
+        this.messageList.filter(x => x.users_can_read === true).map(a => a.id)
+        for (const msg_id of updateIds) {
+          const findChangeIndex = 
+            this.messageList.findIndex(
+              item => parseInt(msg_id) === parseInt(item.id)
+            )
+          this.messageList[findChangeIndex].read = true
+        }
+      })
+      this.listLoading = false
     }
   }
 }

@@ -1,5 +1,15 @@
 <template>
   <div>
+    <el-button
+      v-if="isMessageConsole === false"
+      :disabled="isReadDisable"
+      size="small"
+      class="buttonPrimary"
+      @click="handleReadAll"
+    >
+      <em class="ri-mail-check-fill" />
+      {{ $t('Inbox.ReadAll') }}
+    </el-button>
     <el-popover placement="bottom" trigger="click">
       <h3 style="margin: 0">{{ $t('Inbox.TimeRange') }}</h3>
       <el-form :model="filter">
@@ -12,7 +22,14 @@
             align="right"
             :placeholder="$t('Inbox.SelectDate')"
             value-format="yyyy-MM-dd"
-            :picker-options="pickerOptions(filter.to_date)"
+            :picker-options="{
+              disabledDate(date) {
+                if (filter.to_date) {
+                  return date > new Date(filter.to_date)
+                }
+                return false
+              }
+            }"
           />
         </el-form-item>
         <el-form-item>
@@ -24,16 +41,22 @@
             align="right"
             :placeholder="$t('Inbox.SelectDate')"
             value-format="yyyy-MM-dd"
-            :picker-options="pickerOptions(filter.from_date)"
+            :picker-options="{
+              disabledDate(date) {
+                if (filter.from_date) {
+                  return (
+                    date < new Date(filter.from_date).setDate(
+                      new Date(filter.from_date).getDate() - 1)
+                  )
+                }
+                return false
+              }
+            }"
           />
         </el-form-item>
         <el-form-item>
           <div slot="label">{{ $t('general.Type') }}</div>
-          <el-select
-            v-model="filter.alert_ids"
-            multiple
-            :placeholder="$t('Inbox.SelectMessageType')"
-          >
+          <el-select v-model="filter.alert_ids" multiple :placeholder="$t('Inbox.SelectMessageType')">
             <el-option v-for="item in options" :key="item.id" :label="item.label" :value="item.id" />
           </el-select>
         </el-form-item>
@@ -45,7 +68,8 @@
         </el-form-item>
       </el-form>
       <el-button class="w-full buttonPrimary" @click="onChangeFilter">{{ $t('Inbox.Apply') }}</el-button>
-      <el-button slot="reference" icon="el-icon-s-operation" class="headerTextColor" type="text"> {{ displayFilterValue }}
+      <el-button slot="reference" icon="el-icon-s-operation" class="headerTextColor" type="text">
+        {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" />
       </el-button>
     </el-popover>
@@ -57,10 +81,10 @@
       :placeholder="$t('Inbox.SearchLabel')"
       prefix-icon="el-icon-search"
       clearable
-      @blur="searchVisible=!searchVisible"
+      @blur="searchVisible = !searchVisible"
     />
-    <el-button v-else type="text" icon="el-icon-search" class="headerTextColor" @click="searchVisible=!searchVisible">
-      {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
+    <el-button v-else type="text" icon="el-icon-search" class="headerTextColor" @click="searchVisible = !searchVisible">
+      {{ $t('general.Search') + (keyword ? ': ' + keyword : '') }}
     </el-button>
     <template v-if="isFilterChanged">
       <el-divider direction="vertical" />
@@ -72,10 +96,9 @@
 </template>
 
 <script>
-
 const defaultFilter = () => ({
-  from_date: '',
-  to_date: '',
+  from_date: null,
+  to_date: null,
   unread: false,
   include_system_message: false,
   alert_ids: []
@@ -91,26 +114,44 @@ export default {
     isMessageConsole: {
       type: Boolean,
       default: false
+    },
+    isReadDisable: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     return {
       searchVisible: false,
       keyword: '',
-      filter: defaultFilter()
+      filter: defaultFilter(),
+      filterList: []
     }
   },
   computed: {
     displayFilterValue() {
       const list = []
-      this.filter.alert_ids.forEach(item => {
-        list.push(this.options.find(x => x.id === item).label)
+      this.filter.alert_ids.forEach((item) => {
+        list.push(this.options.find((x) => x.id === item).label)
       })
+      if (this.filter.from_date !== null && this.filter.to_date !== null) {
+        list.push(`${this.filter.from_date} - ${this.filter.to_date}`)
+      } else {
+        if (this.filter.from_date !== null) {
+          list.push(`${this.filter.from_date}`)
+        }
+        if (this.filter.to_date !== null) {
+          list.push(`${this.filter.to_date}`)
+        }
+      }
+      if (this.filter.include_system_message) {
+        list.push(this.$t('Inbox.IncludeSystemMessage'))
+      }
       const listJoined = list.join(', ')
       return list.length > 0 ? `${this.$t('general.Filter')}: ${listJoined}` : `${this.$t('general.Filter')}`
     },
     isFilterChanged() {
-      return !!this.keyword || this.filter.alert_ids.length > 0
+      return this.displayFilterValue.search(':') !== -1
     }
   },
   watch: {
@@ -120,12 +161,10 @@ export default {
   },
   methods: {
     async onChangeFilter() {
-      const cleanFilter = {}
-      for (const [key, value] of Object.entries(this.filter)) {
+      const cleanFilter = JSON.parse(JSON.stringify(this.filter))
+      for (const key of Object.keys(this.filter)) {
         if (key === 'alert_ids' && this.filter.alert_ids.length > 0) {
           cleanFilter.alert_ids = JSON.stringify(this.filter.alert_ids)
-        } else if (key !== 'alert_ids' && value !== defaultFilter()[key]) {
-          cleanFilter[key] = this.filter[key]
         }
       }
       this.$emit('changeFilter', cleanFilter)
@@ -133,22 +172,11 @@ export default {
     cleanFilter() {
       this.keyword = ''
       this.filter = defaultFilter()
-      this.onChangeFilter()
+      this.$emit('changeFilter')
+      // this.onChangeFilter()
     },
-    pickerOptions() {
-      const _this = this
-      return {
-        disabledDate(date) {
-          if (_this.dateTo) {
-            return date > new Date(_this.dateTo) || date < new Date(_this.dateFrom)
-          }
-          if (_this.dateFrom) {
-            const setAfterDate = new Date(_this.dateFrom)
-            return date < setAfterDate.setDate(setAfterDate.getDate() - 1) || date < setAfterDate.setDate(setAfterDate.getDate() + 1)
-          }
-          return false
-        }
-      }
+    handleReadAll() {
+      this.$emit('readAll')
     }
   }
 }

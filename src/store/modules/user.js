@@ -8,7 +8,8 @@ const getDefaultState = () => {
     token: getToken(),
     userId: 0,
     userRole: '',
-    userName: ''
+    userName: '',
+    messageIds: []
   }
 }
 
@@ -29,6 +30,9 @@ const mutations = {
   },
   SET_TOKEN: (state, token) => {
     state.token = token
+  },
+  SET_MESSAGE_IDS: (state, messageIds) => {
+    state.messageIds = messageIds
   }
 }
 
@@ -117,6 +121,10 @@ const actions = {
       commit('RESET_STATE')
       resolve()
     })
+  },
+
+  setMessageIds({ commit }, messageIds) {
+    commit('SET_MESSAGE_IDS', messageIds)
   }
 }
 

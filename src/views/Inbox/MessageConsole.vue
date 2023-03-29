@@ -11,10 +11,8 @@
         >
           {{ $t('general.Back') }}
         </el-button>
-        <el-button
-          class="buttonSecondary"
-          @click="createMessage"
-        >
+        <el-button class="buttonSecondary" @click="createMessage">
+          <em class="ri-mail-add-fill" />
           {{ $t('Inbox.CreateMessage') }}
         </el-button>
       </div>
@@ -34,84 +32,49 @@
       height="calc(100vh - 300px)"
       fit
     >
-      <el-table-column
-        align="center"
-        :label="$t('Inbox.No')"
-        prop="row_id"
-        width="80px"
-      />
-      <el-table-column
-        header-align="center"
-        :label="$t('Inbox.Title')"
-        width="450px"
-      >
+      <el-table-column align="center" :label="$t('Inbox.No')" prop="row_id" width="80px" />
+      <el-table-column header-align="center" :label="$t('Inbox.Title')" width="450px">
         <template slot-scope="scope">
           {{ scope.row.title ? scope.row.title : 'No Title' }}
         </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        :label="$t('Inbox.Type')"
-      >
+      <el-table-column align="center" :label="$t('Inbox.Type')">
         <template slot-scope="scope">
           <el-tag
             effect="dark"
-            :style="{'background-color': tagColor(scope.row.alert_level),
-                     'border-color': tagColor(scope.row.alert_level)
+            :style="{
+              'background-color': tagColor(scope.row.alert_level),
+              'border-color': tagColor(scope.row.alert_level)
             }"
           >
             {{ messageType(scope.row.alert_level) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column-time
-        prop="created_at"
-        :label="$t('Inbox.Date')"
-      />
-      <el-table-column
-        align="center"
-        :label="$t('Inbox.Sender')"
-        prop="creator.name"
-      >
+      <el-table-column-time prop="created_at" :label="$t('Inbox.Date')" />
+      <el-table-column align="center" :label="$t('Inbox.Sender')" prop="creator.name">
         <template slot-scope="scope">
           {{ `${scope.row.creator.name} (${scope.row.creator.login})` }}
         </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        :label="$t('Inbox.GroupReceiverTitle')"
-        prop="creator.name"
-      >
+      <el-table-column align="center" :label="$t('Inbox.GroupReceiverTitle')" prop="creator.name">
         <template slot-scope="scope">
           {{ receiverName(scope.row.types[0].type_id) }}
         </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        :label="$t('general.View')"
-        prop="already_receive_number"
-      >
+      <el-table-column align="center" :label="$t('general.View')" prop="already_receive_number">
         <template slot-scope="scope">
           {{ scope.row.already_receive_number }} / {{ scope.row.total_receive_number }}
         </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        :label="$t('general.Status')"
-      >
+      <el-table-column align="center" :label="$t('general.Status')">
         <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.close ? 'info' : 'success'"
-          >
+          <el-tag :type="scope.row.close ? 'info' : 'success'">
             {{ scope.row.close ? $t('Version.closed') : $t('Version.open') }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column
-        header-align="center"
-        :label="$t('general.Actions')"
-        width="300px"
-      >
+      <el-table-column header-align="center" :label="$t('general.Actions')" width="300px">
         <template slot-scope="scope">
           <el-button
             v-if="scope.row.alert_level.id < 100"
@@ -131,11 +94,7 @@
             :title="$t('Notify.confirmDelete')"
             @confirm="handleDelete(scope.row)"
           >
-            <el-button
-              slot="reference"
-              size="mini"
-              type="danger"
-            >
+            <el-button slot="reference" size="mini" type="danger">
               <em class="el-icon-delete" /> {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
@@ -164,11 +123,7 @@
       :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
-    <el-row
-      type="flex"
-      class="ps"
-      justify="end"
-    >
+    <el-row type="flex" class="ps" justify="end">
       {{ $t('Inbox.MessageNote') }}
     </el-row>
     <CreateMessage
@@ -221,49 +176,62 @@ export default {
       return this.messageList
     },
     options() {
-      return [{
-        id: 1,
-        label: this.$t('Inbox.Info'),
-        color: '#67c23a'
-      }, {
-        id: 2,
-        label: this.$t('Inbox.Warning'),
-        color: '#e6d53c'
-      }, {
-        id: 3,
-        label: this.$t('Inbox.Urgent'),
-        color: '#e6a23c'
-      }, {
-        id: 101,
-        label: this.$t('Inbox.NewVersion'),
-        color: ''
-      }, {
-        id: 102,
-        label: this.$t('Inbox.SystemAlert'),
-        color: '#f56c6c'
-      }, {
-        id: 103,
-        label: this.$t('Inbox.SystemWarning'),
-        color: '#e6d53c'
-      }]
+      return [
+        {
+          id: 1,
+          label: this.$t('Inbox.Info'),
+          color: '#67c23a'
+        },
+        {
+          id: 2,
+          label: this.$t('Inbox.Warning'),
+          color: '#e6d53c'
+        },
+        {
+          id: 3,
+          label: this.$t('Inbox.Urgent'),
+          color: '#e6a23c'
+        },
+        {
+          id: 101,
+          label: this.$t('Inbox.NewVersion'),
+          color: ''
+        },
+        {
+          id: 102,
+          label: this.$t('Inbox.SystemAlert'),
+          color: '#f56c6c'
+        },
+        {
+          id: 103,
+          label: this.$t('Inbox.SystemWarning'),
+          color: '#e6d53c'
+        }
+      ]
     },
     groupReceiver() {
-      return [{
-        id: 1,
-        label: this.$t('Inbox.GroupReceiver.All')
-      }, {
-        id: 2,
-        label: this.$t('Inbox.GroupReceiver.Project')
-      }, {
-        id: 3,
-        label: this.$t('Inbox.GroupReceiver.User')
-      }, {
-        id: 4,
-        label: this.$t('Inbox.GroupReceiver.Role')
-      }, {
-        id: 5,
-        label: this.$t('Inbox.GroupReceiver.ProjectOwner')
-      }]
+      return [
+        {
+          id: 1,
+          label: this.$t('Inbox.GroupReceiver.All')
+        },
+        {
+          id: 2,
+          label: this.$t('Inbox.GroupReceiver.Project')
+        },
+        {
+          id: 3,
+          label: this.$t('Inbox.GroupReceiver.User')
+        },
+        {
+          id: 4,
+          label: this.$t('Inbox.GroupReceiver.Role')
+        },
+        {
+          id: 5,
+          label: this.$t('Inbox.GroupReceiver.ProjectOwner')
+        }
+      ]
     }
   },
   watch: {
@@ -294,12 +262,23 @@ export default {
       this.params.search = keyword
       if (keyword === '') delete this.params.search
       await this.loadData()
-      this.initParams()
     },
     async changeFilter(filter) {
-      this.params = { ...this.params, ...filter }
+      if (filter) {
+        this.params = { ...this.params, ...filter }
+      } else {
+        this.params = {
+          limit: this.params.limit,
+          offset: this.params.offset
+        }
+      }
+      if (
+        Object.prototype.hasOwnProperty.call(this.params, 'include_system_message') &&
+        !this.params.include_system_message
+      ) {
+        delete this.params.include_system_message
+      }
       await this.loadData()
-      this.initParams()
     },
     async onPagination(listQuery) {
       const { limit, page } = listQuery
@@ -308,19 +287,15 @@ export default {
       this.params.limit = limit
       if (this.keyword !== '') this.params.search = this.keyword
       await this.loadData()
-      this.initParams()
-    },
-    initParams() {
-      this.params = params()
     },
     messageType(level) {
-      return this.options.find(x => x.id === level.id).label
+      return this.options.find((x) => x.id === level.id).label
     },
     tagColor(level) {
-      return this.options.find(x => x.id === level.id).color
+      return this.options.find((x) => x.id === level.id).color
     },
     receiverName(group_id) {
-      return this.groupReceiver.find(x => x.id === group_id).label
+      return this.groupReceiver.find((x) => x.id === group_id).label
     },
     createMessage() {
       this.$refs.createDialog.showDialog = true
@@ -362,6 +337,7 @@ export default {
         })
     },
     handleBack() {
+      this.$refs.filter.cleanFilter()
       this.$router.push({ name: 'Inbox' })
     }
   }
@@ -371,6 +347,6 @@ export default {
 <style lang="scss">
 .ps {
   /* color: #e66262;  */
-  margin-top: 12px
+  margin-top: 12px;
 }
 </style>

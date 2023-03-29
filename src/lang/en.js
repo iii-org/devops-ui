@@ -1439,7 +1439,8 @@ export default {
     Send: 'Send',
     NotifyClosed: 'Message closed successfully',
     SearchLabel: 'Search Title or Sender',
-    MentionMessage: '{name} mentioned you in {info}'
+    MentionMessage: '{name} mentioned you in {info}',
+    ReadAll: 'Read All'
   },
   Excalidraw: {
     Whiteboard: 'Whiteboard',
