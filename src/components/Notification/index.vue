@@ -93,9 +93,9 @@ export default {
       this.msgList = this.msgList
         .sort((a, b) => -(new Date(a.created_at) - new Date(b.created_at)))
       this.filterMsg()
-      this.setMessageIds(this.msgList.filter(x => x.users_can_read === true).map(a => a.id))
     },
     filterMsg() {
+      this.setMessageIds(this.msgList.filter(x => x.users_can_read === true).map(a => a.id))
       this.alert = this.msgList.filter((item) =>
         item.alert_level.id === 2 || item.alert_level.id === 3 ||
         item.alert_level.id === 102 || item.alert_level.id === 103 ||
