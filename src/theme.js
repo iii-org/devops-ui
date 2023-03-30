@@ -176,7 +176,8 @@ const theme = {
     none: 'none',
     spin: 'spin 1s linear infinite',
     ping: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite',
-    pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+    pulse:
+      'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
     bounce: 'bounce 1s infinite'
   },
   backdropBlur: {
@@ -212,7 +213,10 @@ const theme = {
     150: '1.5',
     200: '2'
   },
-  backdropGrayscale: { 0: '0', DEFAULT: '100%' },
+  backdropGrayscale: {
+    0: '0',
+    DEFAULT: '100%'
+  },
   backdropHueRotate: {
     0: '0deg',
     15: '15deg',
@@ -226,7 +230,10 @@ const theme = {
     '-30': '-30deg',
     '-15': '-15deg'
   },
-  backdropInvert: { 0: '0', DEFAULT: '100%' },
+  backdropInvert: {
+    0: '0',
+    DEFAULT: '100%'
+  },
   backdropOpacity: {
     0: '0',
     5: '0.05',
@@ -244,8 +251,17 @@ const theme = {
     95: '0.95',
     100: '1'
   },
-  backdropSaturate: { 0: '0', 50: '.5', 100: '1', 150: '1.5', 200: '2' },
-  backdropSepia: { 0: '0', DEFAULT: '100%' },
+  backdropSaturate: {
+    0: '0',
+    50: '.5',
+    100: '1',
+    150: '1.5',
+    200: '2'
+  },
+  backdropSepia: {
+    0: '0',
+    DEFAULT: '100%'
+  },
   backgroundColor: {
     transparent: 'transparent',
     current: 'currentColor',
@@ -377,16 +393,22 @@ const theme = {
   },
   backgroundImage: {
     none: 'none',
-    'gradient-to-t': 'linear-gradient(to top, var(--tw-gradient-stops))',
-    'gradient-to-tr': 'linear-gradient(to top right, var(--tw-gradient-stops))',
-    'gradient-to-r': 'linear-gradient(to right, var(--tw-gradient-stops))',
+    'gradient-to-t':
+      'linear-gradient(to top, var(--tw-gradient-stops))',
+    'gradient-to-tr':
+      'linear-gradient(to top right, var(--tw-gradient-stops))',
+    'gradient-to-r':
+      'linear-gradient(to right, var(--tw-gradient-stops))',
     'gradient-to-br':
       'linear-gradient(to bottom right, var(--tw-gradient-stops))',
-    'gradient-to-b': 'linear-gradient(to bottom, var(--tw-gradient-stops))',
+    'gradient-to-b':
+      'linear-gradient(to bottom, var(--tw-gradient-stops))',
     'gradient-to-bl':
       'linear-gradient(to bottom left, var(--tw-gradient-stops))',
-    'gradient-to-l': 'linear-gradient(to left, var(--tw-gradient-stops))',
-    'gradient-to-tl': 'linear-gradient(to top left, var(--tw-gradient-stops))'
+    'gradient-to-l':
+      'linear-gradient(to left, var(--tw-gradient-stops))',
+    'gradient-to-tl':
+      'linear-gradient(to top left, var(--tw-gradient-stops))'
   },
   backgroundOpacity: {
     0: '0',
@@ -416,7 +438,11 @@ const theme = {
     'right-top': 'right top',
     top: 'top'
   },
-  backgroundSize: { auto: 'auto', cover: 'cover', contain: 'contain' },
+  backgroundSize: {
+    auto: 'auto',
+    cover: 'cover',
+    contain: 'contain'
+  },
   blur: {
     0: '0',
     none: '0',
@@ -599,15 +625,24 @@ const theme = {
     '3xl': '1.5rem',
     full: '9999px'
   },
-  borderWidth: { 0: '0px', 2: '2px', 4: '4px', 8: '8px', DEFAULT: '1px' },
+  borderWidth: {
+    0: '0px',
+    2: '2px',
+    4: '4px',
+    8: '8px',
+    DEFAULT: '1px'
+  },
   boxShadow: {
     sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-    DEFAULT: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+    DEFAULT:
+      '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
     md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
     lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
     xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-    '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+    '2xl':
+      '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+    inner:
+      'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
     none: 'none'
   },
   caretColor: {
@@ -907,18 +942,40 @@ const theme = {
     95: '0.95',
     100: '1'
   },
-  divideWidth: { 0: '0px', 2: '2px', 4: '4px', 8: '8px', DEFAULT: '1px' },
+  divideWidth: {
+    0: '0px',
+    2: '2px',
+    4: '4px',
+    8: '8px',
+    DEFAULT: '1px'
+  },
   dropShadow: {
     sm: '0 1px 1px rgba(0,0,0,0.05)',
-    DEFAULT: ['0 1px 2px rgba(0, 0, 0, 0.1)', '0 1px 1px rgba(0, 0, 0, 0.06)'],
-    md: ['0 4px 3px rgba(0, 0, 0, 0.07)', '0 2px 2px rgba(0, 0, 0, 0.06)'],
-    lg: ['0 10px 8px rgba(0, 0, 0, 0.04)', '0 4px 3px rgba(0, 0, 0, 0.1)'],
-    xl: ['0 20px 13px rgba(0, 0, 0, 0.03)', '0 8px 5px rgba(0, 0, 0, 0.08)'],
-    '2xl': '0 25px 25px rgba(0, 0, 0, 0.15)',
+    DEFAULT: [
+      '0 1px 2px rgba(0, 0, 0, 0.1)',
+      '0 1px 1px rgba(0, 0, 0, 0.06)'
+    ],
+    md: [
+      '0 4px 3px rgba(0, 0, 0, 0.07)',
+      '0 2px 2px rgba(0, 0, 0, 0.06)'
+    ],
+    lg: [
+      '0 10px 8px rgba(0, 0, 0, 0.04)',
+      '0 4px 3px rgba(0, 0, 0, 0.1)'
+    ],
+    xl: [
+      '0 20px 13px rgba(0, 0, 0, 0.03)',
+      '0 8px 5px rgba(0, 0, 0, 0.08)'
+    ],
+    '2xl':
+      '0 25px 25px rgba(0, 0, 0, 0.15)',
     none: '0 0 #0000'
   },
   fill: { current: 'currentColor' },
-  grayscale: { 0: '0', DEFAULT: '100%' },
+  grayscale: {
+    0: '0',
+    DEFAULT: '100%'
+  },
   hueRotate: {
     0: '0deg',
     15: '15deg',
@@ -932,10 +989,21 @@ const theme = {
     '-30': '-30deg',
     '-15': '-15deg'
   },
-  invert: { 0: '0', DEFAULT: '100%' },
-  flex: { 1: '1 1 0%', auto: '1 1 auto', initial: '0 1 auto', none: 'none' },
+  invert: {
+    0: '0',
+    DEFAULT: '100%'
+  },
+  flex: {
+    1: '1 1 0%',
+    auto: '1 1 auto',
+    initial: '0 1 auto',
+    none: 'none'
+  },
   flexGrow: { 0: '0', DEFAULT: '1' },
-  flexShrink: { 0: '0', DEFAULT: '1' },
+  flexShrink: {
+    0: '0',
+    DEFAULT: '1'
+  },
   fontFamily: {
     sans: [
       'ui-sans-serif',
@@ -973,19 +1041,58 @@ const theme = {
     ]
   },
   fontSize: {
-    xs: ['0.75rem', { lineHeight: '1rem' }],
-    sm: ['0.875rem', { lineHeight: '1.25rem' }],
-    base: ['1rem', { lineHeight: '1.5rem' }],
-    lg: ['1.125rem', { lineHeight: '1.75rem' }],
-    xl: ['1.25rem', { lineHeight: '1.75rem' }],
-    '2xl': ['1.5rem', { lineHeight: '2rem' }],
-    '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
-    '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
-    '5xl': ['3rem', { lineHeight: '1' }],
-    '6xl': ['3.75rem', { lineHeight: '1' }],
-    '7xl': ['4.5rem', { lineHeight: '1' }],
-    '8xl': ['6rem', { lineHeight: '1' }],
-    '9xl': ['8rem', { lineHeight: '1' }]
+    xs: [
+      '0.75rem',
+      { lineHeight: '1rem' }
+    ],
+    sm: [
+      '0.875rem',
+      { lineHeight: '1.25rem' }
+    ],
+    base: [
+      '1rem',
+      { lineHeight: '1.5rem' }
+    ],
+    lg: [
+      '1.125rem',
+      { lineHeight: '1.75rem' }
+    ],
+    xl: [
+      '1.25rem',
+      { lineHeight: '1.75rem' }
+    ],
+    '2xl': [
+      '1.5rem',
+      { lineHeight: '2rem' }
+    ],
+    '3xl': [
+      '1.875rem',
+      { lineHeight: '2.25rem' }
+    ],
+    '4xl': [
+      '2.25rem',
+      { lineHeight: '2.5rem' }
+    ],
+    '5xl': [
+      '3rem',
+      { lineHeight: '1' }
+    ],
+    '6xl': [
+      '3.75rem',
+      { lineHeight: '1' }
+    ],
+    '7xl': [
+      '4.5rem',
+      { lineHeight: '1' }
+    ],
+    '8xl': [
+      '6rem',
+      { lineHeight: '1' }
+    ],
+    '9xl': [
+      '8rem',
+      { lineHeight: '1' }
+    ]
   },
   fontWeight: {
     thin: '100',
@@ -1421,17 +1528,31 @@ const theme = {
     '-full': '-100%'
   },
   keyframes: {
-    spin: { to: { transform: 'rotate(360deg)' }},
-    ping: { '75%, 100%': { transform: 'scale(2)', opacity: '0' }},
-    pulse: { '50%': { opacity: '.5' }},
+    spin: {
+      to: {
+        transform: 'rotate(360deg)'
+      }
+    },
+    ping: {
+      '75%, 100%': {
+        transform: 'scale(2)',
+        opacity: '0'
+      }
+    },
+    pulse: {
+      '50%': { opacity: '.5' }
+    },
     bounce: {
       '0%, 100%': {
-        transform: 'translateY(-25%)',
-        animationTimingFunction: 'cubic-bezier(0.8,0,1,1)'
+        transform:
+          'translateY(-25%)',
+        animationTimingFunction:
+          'cubic-bezier(0.8,0,1,1)'
       },
       '50%': {
         transform: 'none',
-        animationTimingFunction: 'cubic-bezier(0,0,0.2,1)'
+        animationTimingFunction:
+          'cubic-bezier(0,0,0.2,1)'
       }
     }
   },
@@ -1459,7 +1580,11 @@ const theme = {
     relaxed: '1.625',
     loose: '2'
   },
-  listStyleType: { none: 'none', disc: 'disc', decimal: 'decimal' },
+  listStyleType: {
+    none: 'none',
+    disc: 'disc',
+    decimal: 'decimal'
+  },
   margin: {
     0: '0px',
     1: '0.25rem',
@@ -1596,7 +1721,11 @@ const theme = {
     'screen-xl': '1280px',
     'screen-2xl': '1536px'
   },
-  minHeight: { 0: '0px', full: '100%', screen: '100vh' },
+  minHeight: {
+    0: '0px',
+    full: '100%',
+    screen: '100vh'
+  },
   minWidth: {
     0: '0px',
     300: '300px',
@@ -1650,9 +1779,18 @@ const theme = {
     none: '0'
   },
   outline: {
-    none: ['2px solid transparent', '2px'],
-    white: ['2px dotted white', '2px'],
-    black: ['2px dotted black', '2px']
+    none: [
+      '2px solid transparent',
+      '2px'
+    ],
+    white: [
+      '2px dotted white',
+      '2px'
+    ],
+    black: [
+      '2px dotted black',
+      '2px'
+    ]
   },
   padding: {
     0: '0px',
@@ -2096,7 +2234,13 @@ const theme = {
     testPlan: '#A57548',
     failManagement: '#FF7033'
   },
-  ringOffsetWidth: { 0: '0px', 1: '1px', 2: '2px', 4: '4px', 8: '8px' },
+  ringOffsetWidth: {
+    0: '0px',
+    1: '1px',
+    2: '2px',
+    4: '4px',
+    8: '8px'
+  },
   ringOpacity: {
     0: '0',
     5: '0.05',
@@ -2142,7 +2286,13 @@ const theme = {
     '-2': '-2deg',
     '-1': '-1deg'
   },
-  saturate: { 0: '0', 50: '.5', 100: '1', 150: '1.5', 200: '2' },
+  saturate: {
+    0: '0',
+    50: '.5',
+    100: '1',
+    150: '1.5',
+    200: '2'
+  },
   scale: {
     0: '0',
     50: '.5',
@@ -2241,8 +2391,14 @@ const theme = {
     '-2.5': '-0.625rem',
     '-3.5': '-0.875rem'
   },
-  stroke: { current: 'currentColor' },
-  strokeWidth: { 0: '0', 1: '1', 2: '2' },
+  stroke: {
+    current: 'currentColor'
+  },
+  strokeWidth: {
+    0: '0',
+    1: '1',
+    2: '2'
+  },
   textColor: {
     transparent: 'transparent',
     current: 'currentColor',
@@ -2426,17 +2582,20 @@ const theme = {
     all: 'all',
     DEFAULT:
       'background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter',
-    colors: 'background-color, border-color, color, fill, stroke',
+    colors:
+      'background-color, border-color, color, fill, stroke',
     opacity: 'opacity',
     shadow: 'box-shadow',
     transform: 'transform'
   },
   transitionTimingFunction: {
-    DEFAULT: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    DEFAULT:
+      'cubic-bezier(0.4, 0, 0.2, 1)',
     linear: 'linear',
     in: 'cubic-bezier(0.4, 0, 1, 1)',
     out: 'cubic-bezier(0, 0, 0.2, 1)',
-    'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)'
+    'in-out':
+      'cubic-bezier(0.4, 0, 0.2, 1)'
   },
   translate: {
     0: '0px',
