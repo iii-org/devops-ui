@@ -117,25 +117,40 @@
                 :old-value="originForm.description"
                 :issue-id="issueId"
                 :is-button-disabled="isButtonDisabled"
-              />
-              <IssueFiles
-                v-if="files.length > 0"
-                :is-button-disabled="isButtonDisabled"
-                :issue-file.sync="files"
-              />
-              <IssueCollection
-                v-if="test_files.length > 0"
-                :is-button-disabled="isButtonDisabled"
-                :issue-test.sync="test_files"
-                @update="updateTestCollection"
+                :project-id="formProjectId"
+                :mention-list.sync="descriptionMentionList"
               />
               <el-collapse
-                v-if="countRelationIssue > 0"
+                v-if="files.length > 0 || countRelationIssue > 0"
                 v-model="relationVisible"
-                v-loading="isLoadingFamily"
                 accordion
               >
-                <el-collapse-item :name="1">
+                <el-collapse-item
+                  v-if="files.length > 0"
+                  :title="$t('Issue.Files')+ '(' + files.length + ')'"
+                  :name="1"
+                >
+                  <IssueFiles
+                    :is-button-disabled="isButtonDisabled"
+                    :issue-file.sync="files"
+                  />
+                </el-collapse-item>
+                <el-collapse-item
+                  v-if="test_files.length > 0"
+                  :title="$t('Test.TestPlan.file_name')+ '(' + test_files.length + ')'"
+                  :name="2"
+                >
+                  <IssueCollection
+                    :is-button-disabled="isButtonDisabled"
+                    :issue-test.sync="test_files"
+                    @update="updateTestCollection"
+                  />
+                </el-collapse-item>
+                <el-collapse-item
+                  v-if="countRelationIssue > 0"
+                  v-loading="isLoadingFamily"
+                  :name="3"
+                >
                   <div slot="title">
                     {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
                     <el-button
@@ -166,7 +181,11 @@
               :span="24"
               class="moveEditor mb-3"
             >
-              <IssueNotesEditor ref="IssueNotesEditor" />
+              <IssueNotesEditor
+                ref="IssueNotesEditor"
+                :project-id="formProjectId"
+                :mention-list.sync="noteMentionList"
+              />
             </el-col>
             <el-col :span="24">
               <el-tabs
@@ -412,6 +431,7 @@ import {
   getIssueFamily
 } from '@/api/issue'
 import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
+import { createMessage } from '@/api_v2/monitoring'
 import { atob } from '@/utils/base64'
 import getPageTitle from '@/utils/getPageTitle'
 import { ContextMenu } from '@/mixins'
@@ -537,7 +557,9 @@ export default {
       issueProject: {},
       issueTabs: 'history',
       isDeleteIssueDialog: false,
-      checkDeleteWhiteBoard: false
+      checkDeleteWhiteBoard: false,
+      descriptionMentionList: [],
+      noteMentionList: []
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -580,6 +602,7 @@ export default {
       'userProjectList',
       'selectedProjectId',
       'test_filename',
+      'userName',
       'userRole',
       'forceTracker',
       'enableForceTracker'
@@ -617,7 +640,7 @@ export default {
         : false
     },
     formProjectId() {
-      return this.form.project_id ? this.form.project_id : this.selectedProjectId
+      return this.form.project_id || this.selectedProjectId
     },
     isHasWhiteBoard() {
       return this.issue.excalidraw && this.issue.excalidraw.length > 0
@@ -1031,10 +1054,11 @@ export default {
       // })
       const sendForm = new FormData()
       if (notes !== '') {
-        sendData['notes'] = notes
+        sendData['notes'] = notes.replace(/\$\$widget0\s/g, '').replace(/&nbsp\$\$/g, ' ')
         this.filterImage(sendData['notes'], sendForm, false)
       }
       if (sendData['description'] !== '') {
+        sendData['description'] = sendData['description'].replace(/\$\$widget0\s/g, '').replace(/&nbsp\$\$/g, ' ')
         this.filterImage(sendData['description'], sendForm, true)
       }
       Object.keys(sendData).forEach((objKey) => {
@@ -1050,10 +1074,27 @@ export default {
         this.showErrorAlert(this.errorMsg)
         return
       }
-      this.updateIssueForm(sendForm)
+      await this.updateIssueForm(sendForm)
+    },
+    async sendMentionMessage() {
+      const mentionList = [...new Set(this.noteMentionList.concat(this.descriptionMentionList))]
+      if (mentionList.length === 0) return
+      const link = location.href.split('?')[0]
+      const data = {
+        title: this.$t('Inbox.MentionMessage', {
+          name: this.userName,
+          info: this.$router.currentRoute.meta.subject
+        }),
+        message: `<a href="${link}" target="_blank">${link}</a>`,
+        type_parameters: JSON.stringify({ user_ids: mentionList }),
+        type_ids: '[3]',
+        alert_level: '1'
+      }
+      await createMessage(data)
     },
     async updateIssueForm(sendForm) {
       this.isLoading = true
+      await this.sendMentionMessage()
       const { issueId } = this
       let issueApi = null
       if (!this.issueId) {
@@ -1354,7 +1395,7 @@ export default {
 }
 
 .issueHeightEditor {
-  height: calc(95vh - 50px - 81px - 40px - 32px - 150px);
+  height: calc(95vh - 50px - 81px - 40px - 32px - 18rem);
   overflow-y: auto;
 }
 

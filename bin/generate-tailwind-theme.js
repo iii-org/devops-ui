@@ -17,7 +17,15 @@ try {
   // having prettier format the string for us
   fs.writeFileSync(
     path.resolve(process.cwd(), './src/theme.js'),
-    prettier.format(js, { parser: 'babel' }),
+    prettier.format(js, {
+      parser: 'babel',
+      singleQuote: true,
+      trailingComma: 'none',
+      semi: false,
+      bracketSpacing: true,
+      printWidth: 37,
+      proseWrap: 'never'
+    }),
     'utf-8'
   )
 } catch (err) {

@@ -26,3 +26,4 @@ export const patchService = (application_id, data) => request.patch(`/v2/deploy/
 export const deleteService = (application_id) => request.delete(`/v2/deploy/applications/${application_id}`)
 export const patchServiceRedeploy = (application_id) => request.patch(`/v2/deploy/applications/${application_id}/redeploy`)
 export const getReleaseEnvironments = (release_id) => request.get(`/v2/deploy/release/${release_id}`)
+export const isExposePortAvailable = (cluster_name, expose_port, data) => request.post(`/v2/deploy/clusters/${cluster_name}/outer_port/${expose_port}/can_use`, data)

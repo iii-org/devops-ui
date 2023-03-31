@@ -270,7 +270,9 @@ export default {
     UnassignedDate: '未指定日期',
     Expired: '已逾期',
     Unexpired: '未逾期',
-    DataGenerationTime: '資料產生時間'
+    DataGenerationTime: '資料產生時間',
+    Expand: '展開',
+    Fold: '收合'
   },
   Notify: {
     Updated: '已更新',
@@ -319,7 +321,8 @@ export default {
     RedmineMailConfirmWarning: '信箱（SMTP）設定修改，即將重啟Redmine，屆時將導致DevOps平台停止服務5-8分鐘，請問確定要執行修改並重啟Redmine嗎？',
     ExcalidrawAliveWarning: '白板伺服器失效，請洽III DevOps服務團隊',
     DeleteExcalidrawWarning: '一併"刪除"本議題之關聯白板',
-    ChangeClusterId: '[注意] 變更部署位置將重設原Volume設定，請問確認要變更嗎？'
+    ChangeClusterId: '[注意] 變更部署位置將重設原Volume設定，請問確認要變更嗎？',
+    ChangeReleaseId: '[注意] 變更釋出版本將重設原Environment設定，請問確認要變更嗎？'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -680,7 +683,8 @@ export default {
       Type: '類型',
       RangePlaceholder: '請輸入範圍,請以,隔開,如1,2,3',
       LimitNotes: '[注意] 欲設限之變數，記得以中括弧包起來，如[變數]',
-      EnterPositive: '請確認所輸入都是正整數!'
+      EnterPositive: '請確認所輸入都是正整數!',
+      MovementNotSaved: '異動未儲存'
     }
   },
   Wiki: {
@@ -1306,7 +1310,8 @@ export default {
     CopyApplicationIP: '複製服務連結',
     NameRule: `請輸入 2-30 英文為首之英數及'-'組合，注意英文須全為小寫且所設定之ID不可為全為數字。`,
     PathLimitWarning: '每個專案僅能設置5個外掛空間',
-    AtLeastContainer: '至少新增一個Container'
+    AtLeastContainer: '至少新增一個Container',
+    OuterPortOccupied: '外部端口已被占用'
   },
   Validation: {
     Input: '請輸入 {0}',
@@ -1425,7 +1430,9 @@ export default {
     AlertLevel: '訊息類別',
     Send: '傳送',
     NotifyClosed: '訊息已關閉',
-    SearchLabel: '搜尋訊息標題或寄送者'
+    SearchLabel: '搜尋訊息標題或寄送者',
+    MentionMessage: '{name} 在 {info} 提到你',
+    ReadAll: '閱讀全部'
   },
   Excalidraw: {
     Whiteboard: '協作白板',

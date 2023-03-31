@@ -270,7 +270,9 @@ export default {
     UnassignedDate: 'Unassigned Date',
     Expired: 'Expired',
     Unexpired: 'Unexpired',
-    DataGenerationTime: 'Data Generation Time'
+    DataGenerationTime: 'Data Generation Time',
+    Expand: 'Expand',
+    Fold: 'Fold'
   },
   Notify: {
     Updated: 'update successful',
@@ -321,7 +323,8 @@ export default {
     RedmineMailConfirmWarning: 'Mail(SMTP) setting modification will be restarted to Redmine, which will cause the DEVOPS platform to stop the service for 5-8 minutes. If it is necessary to perform modification and restart the redmine?',
     ExcalidrawAliveWarning: 'Excalidraw service failed, please contact DevOps for assistance.',
     DeleteExcalidrawWarning: 'Also "delete" the related excalidraw of this issue.',
-    ChangeClusterId: '[Note] Switching destination will cause the volumes reset, confirm to delete?'
+    ChangeClusterId: '[Note] Switching destination will cause the volumes reset, confirm to delete?',
+    ChangeReleaseId: '[Note] Switching release id will cause the environments reset, confirm to delete?'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -685,7 +688,8 @@ export default {
       Type: 'type',
       RangePlaceholder: 'Input range, separate by ",",like 1,2,3',
       LimitNotes: '[Attention] Want to limit the variable, make sure enclose it in brackets, such as [variable]',
-      EnterPositive: 'Please make sure the input is a positive integer!'
+      EnterPositive: 'Please make sure the input is a positive integer!',
+      MovementNotSaved: 'Movement not saved'
     }
   },
   Wiki: {
@@ -1314,7 +1318,8 @@ export default {
     CopyApplicationIP: 'Copy application IP',
     NameRule: `Please enter 2-30 English leading letters which combines with English, numbers or '-'. Note that the English must be all lowercase and the ID set cannot be all numbers.`,
     PathLimitWarning: 'Only 5 plug-in spaces can be set for each project',
-    AtLeastContainer: 'At least add one container'
+    AtLeastContainer: 'At least add one container',
+    OuterPortOccupied: 'The outer port is occupied'
   },
   Validation: {
     Input: 'Please Input {0}',
@@ -1434,7 +1439,9 @@ export default {
     AlertLevel: 'Alert Level',
     Send: 'Send',
     NotifyClosed: 'Message closed successfully',
-    SearchLabel: 'Search Title or Sender'
+    SearchLabel: 'Search Title or Sender',
+    MentionMessage: '{name} mentioned you in {info}',
+    ReadAll: 'Read All'
   },
   Excalidraw: {
     Whiteboard: 'Whiteboard',

@@ -1,6 +1,5 @@
 <template>
   <el-row class="el-upload-list">
-    <div class="text-sm mb-2">{{ $t('Issue.Files') }}</div>
     <el-row
       v-for="file in issueFile"
       :key="file.id"
@@ -87,7 +86,7 @@
             ref="image"
             :src="item.src"
             :alt="item.filename"
-            style="width:100%; padding:0 5rem;"
+            style="display: block; margin: auto; max-width: 100%;"
             @load="resizeImageHeight"
           >
         </el-carousel-item>
@@ -133,7 +132,7 @@ export default {
       },
       imageArray: [],
       imageIndex: 0,
-      imageHeight: '300',
+      imageHeight: 0,
       clientWidth: 0,
       scrollWidth: 0
     }

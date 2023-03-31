@@ -4,14 +4,13 @@
     icon="el-icon-refresh"
     class="buttonPrimaryReverse"
     :loading="listLoading"
-    @click="syncCalculateProjectList"
+    @click="updateProjectList"
   >
     {{ $t('Dashboard.ADMIN.UpdateNow') }}
   </el-button>
 </template>
 
 <script>
-import { updateCalculateProjectList } from '@/api_v2/projects'
 
 export default {
   name: 'UpdateButton',
@@ -22,15 +21,8 @@ export default {
     }
   },
   methods: {
-    syncCalculateProjectList() {
-      this.$emit('update:listLoading', true)
-      updateCalculateProjectList().then(() => {
-        this.$message({
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
-        this.$emit('update')
-      })
+    updateProjectList() {
+      this.$emit('update')
     }
   }
 }
