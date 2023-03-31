@@ -5,7 +5,7 @@
     </div>
     <el-popover
       v-model="tagListVisible"
-      trigger="manual"
+      :trigger="tagListVisible ? 'focus' : 'manual'"
       placement="top"
       width="auto"
       popper-class="p-0"
@@ -13,6 +13,7 @@
       <ul
         class="my-0 py-3"
         style="overflow-y: auto; max-height: 6rem;"
+        @scroll="onScroll"
       >
         <li
           v-for="(user,index) in assigned_to"
@@ -31,8 +32,7 @@
         :options="editorOptions"
         height="18rem"
         @change="onChange"
-        @keypress.native="onKeypress"
-        @blur="onBlur"
+        @keydown.native="onKeydown"
       />
     </el-popover>
   </div>
@@ -102,17 +102,17 @@ export default {
     async getUserList() {
       this.assigned_to = (await getProjectAssignable(this.projectId)).data.user_list
     },
-    onChange(event) {
-      this.editorType = event
+    onChange(editorType) {
+      this.editorType = editorType
       const notes = this.$refs.mdEditor.invoke('getMarkdown')
       this.tagList = this.tagList.filter((tag) => notes.includes(tag.name))
       this.$emit('update:mentionList', this.tagList.map((tag) => tag.id))
-      this.$emit('change', event)
+      this.$emit('change', editorType)
     },
-    onBlur() {
-      this.tagListVisible = false
+    onScroll() {
+      this.tagListVisible = true
     },
-    onKeypress(event) {
+    onKeydown(event) {
       if (event.code === 'Digit2' && event.shiftKey) this.tagListVisible = true
       else this.tagListVisible = false
     },

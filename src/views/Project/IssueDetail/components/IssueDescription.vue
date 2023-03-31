@@ -18,7 +18,7 @@
         <p>{{ $t('Issue.ResetESCTip') }}</p>
         <el-popover
           v-model="tagListVisible"
-          trigger="manual"
+          :trigger="tagListVisible ? 'focus' : 'manual'"
           placement="top"
           width="auto"
           popper-class="p-0"
@@ -26,6 +26,7 @@
           <ul
             class="my-0 py-3"
             style="overflow-y: auto; max-height: 6rem;"
+            @scroll="onScroll"
           >
             <li
               v-for="(user,index) in assigned_to"
@@ -45,9 +46,7 @@
             :options="editorOptions"
             height="18rem"
             @change="onChange"
-            @keypress.native="onKeypress"
-            @blur="onBlur"
-            @keydown.meta.esc.native="cancelInput"
+            @keydown.native="onKeydown"
           />
         </el-popover>
       </el-col>
@@ -177,18 +176,19 @@ export default {
     async getUserList() {
       this.assigned_to = (await getProjectAssignable(this.projectId)).data.user_list
     },
-    onChange(event) {
-      this.editorType = event
+    onChange(editorType) {
+      this.editorType = editorType
       const description = this.$refs.mdEditor.invoke('getMarkdown')
       this.tagList = this.tagList.filter((tag) => description.includes(tag.name))
       this.$emit('update:mentionList', this.tagList.map((tag) => tag.id))
       this.$emit('input', this.$refs.mdEditor.invoke('getMarkdown'))
     },
-    onBlur() {
-      this.tagListVisible = false
+    onScroll() {
+      this.tagListVisible = true
     },
-    onKeypress(event) {
-      if (event.code === 'Digit2' && event.shiftKey) this.tagListVisible = true
+    onKeydown(event) {
+      if (event.code === 'Escape' && event.metaKey) this.cancelInput()
+      else if (event.code === 'Digit2' && event.shiftKey) this.tagListVisible = true
       else this.tagListVisible = false
     },
     addTag(event) {
