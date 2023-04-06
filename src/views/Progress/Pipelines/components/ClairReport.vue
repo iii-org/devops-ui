@@ -20,6 +20,7 @@
         <tr>
           <th id="">{{ $t('DevOps.Tools') }}</th>
           <th id="">{{ $t('Clair.size') }}</th>
+          <th id="">{{ $t('Clair.critical') }}</th>
           <th id="">{{ $t('Clair.high') }}</th>
           <th id="">{{ $t('Clair.medium') }}</th>
           <th id="">{{ $t('Clair.low') }}</th>
@@ -30,6 +31,10 @@
           <template v-if="hasClairData">
             <td>
               <span v-if="hasEachItemData('size')">{{ clair[0].size }}</span>
+              <span v-else>-</span>
+            </td>
+            <td>
+              <span v-if="hasEachItemData('Critical')">{{ clair[0].Critical }}</span>
               <span v-else>-</span>
             </td>
             <td>
