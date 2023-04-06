@@ -79,7 +79,7 @@ export default {
               const rule = /@.*&nbsp/
               const matched = text.match(rule)
               const span = document.createElement('span')
-              span.innerHTML = `<a style="text-decoration: none; color: #4b96e6;">${matched[0]}</a>`
+              span.innerHTML = `<a style="text-decoration: none; cursor: default; color: #4b96e6;">${matched[0]}</a>`
               return span
             }
           }

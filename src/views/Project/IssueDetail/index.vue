@@ -1054,11 +1054,11 @@ export default {
       // })
       const sendForm = new FormData()
       if (notes !== '') {
-        sendData['notes'] = notes.replace(/\$\$widget0\s/g, '').replace(/&nbsp\$\$/g, ' ')
+        sendData['notes'] = notes.replace(/\$\$widget\d\s/g, '').replace(/&nbsp\$\$/g, ' ')
         this.filterImage(sendData['notes'], sendForm, false)
       }
       if (sendData['description'] !== '') {
-        sendData['description'] = sendData['description'].replace(/\$\$widget0\s/g, '').replace(/&nbsp\$\$/g, ' ')
+        sendData['description'] = sendData['description'].replace(/\$\$widget\d\s/g, '').replace(/&nbsp\$\$/g, ' ')
         this.filterImage(sendData['description'], sendForm, true)
       }
       Object.keys(sendData).forEach((objKey) => {
