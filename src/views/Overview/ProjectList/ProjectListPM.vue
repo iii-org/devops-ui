@@ -212,13 +212,7 @@
             :content="$t('general.Edit')"
             :open-delay="200"
           >
-            <el-button
-              size="mini"
-              type="primary"
-              class="el-icon-edit"
-              circle
-              @click="handleEdit(scope.row)"
-            />
+            <em class="ri-file-edit-line active icon" @click="handleEdit(scope.row)" />
           </el-tooltip>
           <el-tooltip
             v-if="scope.row.is_lock !== true"
@@ -226,12 +220,9 @@
             :content="$t('general.Delete')"
             :open-delay="200"
           >
-            <el-button
+            <em
               :disabled="permission(scope.row)"
-              size="mini"
-              type="danger"
-              class="el-icon-delete"
-              circle
+              class="ri-delete-bin-2-line danger icon"
               @click="handleDelete(scope.row)"
             />
           </el-tooltip>
@@ -241,12 +232,9 @@
             :content="$t('general.ForceDelete')"
             :open-delay="200"
           >
-            <el-button
+            <em
               :disabled="permission(scope.row)"
-              size="mini"
-              type="danger"
-              class="el-icon-delete"
-              circle
+              class="ri-delete-bin-2-line danger icon"
               @click="handleDelete(scope.row, true)"
             />
           </el-tooltip>
@@ -256,13 +244,7 @@
             :content="$t('general.Fix')"
             :open-delay="200"
           >
-            <el-button
-              size="mini"
-              type="success"
-              class="el-icon-refresh"
-              circle
-              @click="handleFix(scope.row.id)"
-            />
+            <em class="ri-refresh-fill active icon" @click="handleFix(scope.row.id)" />
           </el-tooltip>
           <el-tooltip
             v-if="scope.row.is_lock !== true"
@@ -270,12 +252,9 @@
             :content="!scope.row.disabled ? $t('general.Disable') : $t('general.Enable')"
             :open-delay="200"
           >
-            <el-button
-              size="mini"
+            <em
               :disabled="permission(scope.row)"
-              :type="getButtonType(scope.row.disabled)"
-              :class="scope.row.disabled ? 'el-icon-video-play' : 'el-icon-video-pause'"
-              circle
+              :class="scope.row.disabled ? 'ri-play-circle-line finished icon' : 'ri-pause-circle-line inProgress icon'"
               @click="handleToggle(scope.row)"
             />
           </el-tooltip>
@@ -575,6 +554,31 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+
+.icon {
+  font-size: large;
+  font-weight: bolder;
+  margin-right: 5px;
+  color: $info;
+  cursor: pointer;
+  &.active {
+    color: $active;
+  }
+  &.danger {
+    color: $danger;
+  }
+  &.finished {
+    color: $finished;
+  }
+  &.inProgress {
+    color: $inProgress;
+  }
+  &:hover {
+    color: $feature;
+  }
+}
+
 .status-bar-track {
   background: #f5f5f5;
   border-radius: 5px;
