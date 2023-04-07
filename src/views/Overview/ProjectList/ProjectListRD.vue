@@ -89,7 +89,7 @@
                   slot="reference"
                   :disabled="scope.row.disabled || scope.row.is_lock"
                   :underline="false"
-                  style="font-size: 22px"
+                  style="font-size: 16px; padding: 0 5px;"
                 >
                   <svg-icon icon-class="gitlab" />
                 </el-link>
@@ -99,7 +99,7 @@
                 v-if="scope.row.redmine_url"
                 target="_blank"
                 class="mr-1"
-                style="font-size: 22px"
+                style="font-size: 16px; padding: 0 5px;"
                 :underline="false"
                 :disabled="scope.row.disabled || scope.row.is_lock"
                 :href="scope.row.redmine_url"
@@ -110,7 +110,7 @@
               <el-link
                 v-if="scope.row.harbor_url"
                 target="_blank"
-                style="font-size: 22px"
+                style="font-size: 16px; padding: 0 5px;"
                 :underline="false"
                 :disabled="scope.row.disabled || scope.row.is_lock"
                 :href="scope.row.harbor_url"

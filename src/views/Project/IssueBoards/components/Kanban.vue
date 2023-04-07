@@ -772,7 +772,7 @@ export default {
       box-sizing: border-box;
       border: 1px solid #e9e9e9;
       @apply shadow-md bg-white rounded-md border-solid border border-gray-300 mx-auto;
-      font-size: 16px;
+      font-size: 14px;
 
       &-ban {
         pointer-events: none;
