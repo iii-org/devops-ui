@@ -117,7 +117,11 @@
                 >
                   <em>
                     <s>
-                      {{ filterValueName(detail.old_value) }}
+                      <Viewer
+                        ref="viewer"
+                        class="text"
+                        :initial-value="filterValueName(detail.old_value)"
+                      />
                     </s>
                   </em>
                 </p>
@@ -125,7 +129,11 @@
                   v-else
                   class="text-wrapper"
                 >
-                  {{ filterValueName(detail.old_value) }}
+                  <Viewer
+                    ref="viewer"
+                    class="text"
+                    :initial-value="filterValueName(detail.old_value)"
+                  />
                 </p>
               </el-col>
               <el-col
@@ -161,7 +169,11 @@
                 >
                   <em>
                     <s>
-                      {{ filterValueName(detail.new_value) }}
+                      <Viewer
+                        ref="viewer"
+                        class="text"
+                        :initial-value="filterValueName(detail.new_value)"
+                      />
                     </s>
                   </em>
                 </p>
@@ -169,7 +181,11 @@
                   v-else
                   class="text-wrapper"
                 >
-                  {{ filterValueName(detail.new_value) }}
+                  <Viewer
+                    ref="viewer"
+                    class="text"
+                    :initial-value="filterValueName(detail.new_value)"
+                  />
                 </p>
               </el-col>
             </el-row>
@@ -237,7 +253,7 @@ export default {
         if (this.filterJson(this.note.notes)) return
         this.$nextTick(() => {
           if (value.notes) {
-            this.$refs['viewer'].invoke('setMarkdown', value.notes)
+            this.$refs['viewer'].invoke('setHTML', value.notes)
           }
         })
       }

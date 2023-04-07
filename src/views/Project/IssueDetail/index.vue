@@ -183,6 +183,7 @@
             >
               <IssueNotesEditor
                 ref="IssueNotesEditor"
+                v-model="form.notes"
                 :project-id="formProjectId"
                 :mention-list.sync="noteMentionList"
               />
@@ -527,7 +528,8 @@ export default {
         done_ratio: 0,
         start_date: '',
         due_date: '',
-        description: ''
+        description: '',
+        notes: ''
       },
       files: [],
       test_files: [],
@@ -1033,33 +1035,33 @@ export default {
       return new File([u8arr], fileName, { type: mime })
     },
     filterImage(str, sendForm, checkDuplicate) {
-      const arr = str.split(/!\[(.+?)\)/g).filter((item) => (/(.+?)\]\(data:.+/g).test(item))
-      if (arr.length > 0) {
-        arr.forEach((item) => {
-          const fileArray = item.split('](')
-          const file = this.dataURLtoFile(fileArray[0], fileArray[1])
-          if (checkDuplicate && this.files.some((element) =>
-            file.name === element.filename && file.size === element.filesize
-          )) return
-          sendForm.append('upload_files', file)
-        })
-      }
+      const arr = str.split(/src="(.+?)>/g).filter((item) => (/data:.+/g).test(item))
+      if (arr.length === 0) return
+      arr.forEach((item) => {
+        const fileArray = item.split(/" alt="(.+?)"/)
+        const file = this.dataURLtoFile(fileArray[1], fileArray[0])
+        if (checkDuplicate && this.files.some((element) =>
+          file.name === element.filename && file.size === element.filesize
+        )) return
+        sendForm.append('upload_files', file)
+      })
     },
     async submitIssue() {
       this.tagsString = ''
       const sendData = Object.assign({}, this.form)
-      const notes = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')
       // Object.keys(sendData).map(item => {
       //   if (sendData[item] === '' || !sendData[item]) delete sendData[item]
       // })
       const sendForm = new FormData()
-      if (notes !== '') {
-        sendData['notes'] = notes.replace(/\$\$widget\d\s/g, '').replace(/&nbsp\$\$/g, ' ')
+      if (sendData['notes'] === '<p><br></p>') sendData['notes'] = ''
+      else if (sendData['notes'] !== '') {
         this.filterImage(sendData['notes'], sendForm, false)
+        sendData['notes'] = sendData['notes'].replace(/<a/g, '<a target="_blank"')
       }
-      if (sendData['description'] !== '') {
-        sendData['description'] = sendData['description'].replace(/\$\$widget\d\s/g, '').replace(/&nbsp\$\$/g, ' ')
+      if (sendData['description'] === '<p><br></p>') sendData['description'] = ''
+      else if (sendData['description'] !== '') {
         this.filterImage(sendData['description'], sendForm, true)
+        sendData['description'] = sendData['description'].replace(/<a/g, '<a target="_blank"')
       }
       Object.keys(sendData).forEach((objKey) => {
         if ((objKey === 'start_date' || objKey === 'end_date') && !sendData[objKey]) {
