@@ -204,6 +204,7 @@
       <el-table-column
         :label="$t('general.Actions')"
         header-align="center"
+        align="center"
       >
         <template slot-scope="scope">
           <el-tooltip
