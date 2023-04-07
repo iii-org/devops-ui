@@ -387,6 +387,7 @@ export default {
     Branch: '@:general.Branch',
     Commit: 'Commit',
     PackageCount: '套件數量',
+    CriticalSeverity: '嚴重',
     HighSeverity: '高風險',
     MediumSeverity: '中風險',
     LowSeverity: '低風險',

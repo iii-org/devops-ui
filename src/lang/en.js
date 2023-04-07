@@ -390,6 +390,7 @@ export default {
     Branch: '@:general.Branch',
     Commit: 'Commit',
     PackageCount: 'Package Count',
+    CriticalSeverity: 'Critical Severity',
     HighSeverity: 'High Severity',
     MediumSeverity: 'Medium Severity',
     LowSeverity: 'Low Severity',

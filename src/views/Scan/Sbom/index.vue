@@ -105,6 +105,17 @@
         </template>
       </el-table-column>
       <el-table-column
+        :label="$t('Sbom.CriticalSeverity')"
+        prop="scan_overview.Critical"
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.scan_overview && scope.row.scan_overview.Critical">
+            {{ scope.row.scan_overview.Critical }}
+          </span>
+          <span v-else>0</span>
+        </template>
+      </el-table-column>
+      <el-table-column
         :label="$t('Sbom.HighSeverity')"
         prop="scan_overview.High"
       >
