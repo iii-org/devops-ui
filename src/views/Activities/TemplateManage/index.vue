@@ -153,31 +153,19 @@
         align="center"
         :label="$t('general.Actions')"
       >
-        <template slot-scope="{ row }">
+        <template slot-scope="scope">
           <el-tooltip
-            :disabled="allProjectIds.includes(row.from_project_id)"
-            :content="$t('Activities.OriginalProjectNotExist')"
             placement="bottom"
+            :content="$t('general.Edit')"
           >
-            <span> <!-- Make sure that the disabled of the button cannot affect the tooltip -->
-              <el-button
-                size="mini"
-                class="buttonPrimaryReverse"
-                icon="el-icon-edit"
-                :disabled="!allProjectIds.includes(row.from_project_id)"
-                @click="handleEdit(row)"
-              >
-                {{ $t('general.Edit') }}
-              </el-button>
-            </span>
+            <em
+              class="ri-file-edit-line finished operate-button"
+              @click="handleEdit(scope.row)"
+            />
           </el-tooltip>
-          <el-popconfirm
-            :confirm-button-text="$t('general.Delete')"
-            :cancel-button-text="$t('general.Cancel')"
-            icon="el-icon-info"
-            icon-color="red"
-            :title="$t('Notify.confirmDelete')"
-            @confirm="handleDelete(row)"
+          <el-tooltip
+            placement="bottom"
+            :content="$t('general.Delete')"
           >
             <el-popconfirm
               :confirm-button-text="$t('general.Delete')"
@@ -201,7 +189,7 @@
     </el-table>
     <Pagination
       :total="filteredData.length"
-      :page.sync="listQuery.page"
+      :page.sync="listQuery.current"
       :limit="listQuery.limit"
       :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
@@ -216,30 +204,15 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import {
-  getTemplateFromProject,
-  deleteTemplateFromProject
-} from '@/api_v2/template'
-import {
-  BasicData,
-  Pagination,
-  SearchBar
-} from '@/mixins'
+import { getTemplateFromProject, deleteTemplateFromProject } from '@/api_v2/template'
+import { BasicData, Pagination, SearchBar } from '@/mixins'
 import { ElTableColumnTime } from '@/components'
 import TemplateDialog from './components/TemplateDialog'
 
 export default {
   name: 'TemplateManage',
-  components: {
-    ElTableColumnTime,
-    TemplateDialog
-  },
-  mixins: [
-    BasicData,
-    Pagination,
-    SearchBar
-  ],
+  components: { ElTableColumnTime, TemplateDialog },
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       dialogVisible: false,
@@ -248,12 +221,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['projectOptions']),
-    allProjectIds() {
-      return this.projectOptions.filter((obj) =>
-        obj.is_lock !== true && obj.disabled !== true
-      ).map((item) => item.id)
-    },
     existedTemplateIds() {
       return this.listData.map((item) => item.from_project_id)
     }

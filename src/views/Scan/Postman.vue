@@ -72,7 +72,11 @@
             <el-tooltip
               :id="`btn-postman-${scope.$index}`"
               placement="bottom"
+<<<<<<< HEAD
               :content="$t('general.Report')"
+=======
+              :content="$t('Postman.Postman')"
+>>>>>>> 7b6e71d1 (feat: modify table button layout)
             >
               <em
                 class="ri-file-list-2-line active operate-button"

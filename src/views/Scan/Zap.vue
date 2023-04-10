@@ -106,7 +106,11 @@
           <el-tooltip
             v-if="scope.row.status === 'Finished'"
             placement="bottom"
+<<<<<<< HEAD
             :content="$t('Log.fullLog')"
+=======
+            :content="$t('Dashboard.Report')"
+>>>>>>> 7b6e71d1 (feat: modify table button layout)
           >
             <em
               class="ri-external-link-line active operate-button"

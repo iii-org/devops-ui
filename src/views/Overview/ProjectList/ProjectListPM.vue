@@ -241,7 +241,11 @@
             placement="bottom"
             :content="$t('general.Fix')"
           >
+<<<<<<< HEAD
             <em class="ri-refresh-line active operate-button" @click="handleFix(scope.row.id)" />
+=======
+            <em class="ri-refresh-fill active operate-button" @click="handleFix(scope.row.id)" />
+>>>>>>> 7b6e71d1 (feat: modify table button layout)
           </el-tooltip>
           <el-tooltip
             v-if="scope.row.is_lock !== true"
@@ -252,7 +256,11 @@
               :disabled="permission(scope.row)"
               :class="scope.row.disabled
                 ? 'ri-play-circle-line finished operate-button'
+<<<<<<< HEAD
                 : 'ri-pause-circle-line danger operate-button'"
+=======
+                : 'ri-pause-circle-line inProgress operate-button'"
+>>>>>>> 7b6e71d1 (feat: modify table button layout)
               @click="handleToggle(scope.row)"
             />
           </el-tooltip>
