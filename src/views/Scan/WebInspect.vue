@@ -129,18 +129,23 @@
         :label="$t('WebInspect.Report')"
       >
         <template slot-scope="scope">
-          <el-link
-            :class="!scope.row.scan_id || scope.row.stats.status !== 'Complete' ? '' : 'linkTextColor'"
-            style="font-size: 16px"
-            :disabled="!scope.row.scan_id || scope.row.stats.status !== 'Complete'"
-            :underline="false"
-            @click="handleTestReportDetail(scope.row)"
+          <el-tooltip
+            v-if="scope.row.status === 'Finished'"
+            placement="bottom"
+            :content="$t('Dashboard.Report')"
           >
-            <em
-              class="el-icon-document"
-              style="font-size: 16px"
-            />
-          </el-link>
+            <div :class="!scope.row.scan_id || scope.row.stats.status !== 'Complete'
+              ? 'disabled'
+              : ''"
+            >
+              <em
+                :class="!scope.row.scan_id || scope.row.stats.status !== 'Complete'
+                  ? 'ri-file-list-2-line disabled operate-button'
+                  : 'ri-file-list-2-line active operate-button'"
+                @click="handleTestReportDetail(scope.row)"
+              />
+            </div>
+          </el-tooltip>
         </template>
       </el-table-column>
       <template slot="empty">
@@ -267,3 +272,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.disabled {
+  cursor: not-allowed;
+}
+</style>

@@ -185,33 +185,36 @@
         <el-table-column
           align="center"
           :label="$t('general.Actions')"
-          width="190"
         >
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              class="buttonPrimaryReverse"
-              @click="onTransferClick(scope.row.id)"
+            <el-tooltip
+              placement="bottom"
+              :content="$t('general.Transfer')"
             >
-              {{ $t('general.Transfer') }}
-            </el-button>
-            <el-popconfirm
-              :title="$t('Notify.confirmClose')"
-              :confirm-button-text="$t('general.Close')"
-              :cancel-button-text="$t('general.Cancel')"
-              icon="el-icon-info"
-              icon-color="red"
-              @confirm="onCloseClick(scope.row.id)"
+              <em
+                class="ri-file-transfer-line finished operate-button"
+                @click="onTransferClick(scope.row.id)"
+              />
+            </el-tooltip>
+            <el-tooltip
+              placement="bottom"
+              :content="$t('general.Close')"
             >
-              <el-button
-                slot="reference"
-                size="mini"
-                type="danger"
-                :disabled="!scope.row.is_closable"
+              <el-popconfirm
+                :title="$t('Notify.confirmClose')"
+                :confirm-button-text="$t('general.Close')"
+                :cancel-button-text="$t('general.Cancel')"
+                icon="el-icon-info"
+                icon-color="red"
+                @confirm="onCloseClick(scope.row.id)"
               >
-                {{ $t('general.Close') }}
-              </el-button>
-            </el-popconfirm>
+                <em
+                  slot="reference"
+                  class="ri-delete-bin-2-line danger operate-button"
+                  :disabled="!scope.row.is_closable"
+                />
+              </el-popconfirm>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>

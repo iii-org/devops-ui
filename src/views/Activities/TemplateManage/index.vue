@@ -154,31 +154,33 @@
         :label="$t('general.Actions')"
       >
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            class="buttonPrimaryReverse"
-            icon="el-icon-edit"
-            @click="handleEdit(scope.row)"
+          <el-tooltip
+            placement="bottom"
+            :content="$t('general.Edit')"
           >
-            {{ $t('general.Edit') }}
-          </el-button>
-          <el-popconfirm
-            :confirm-button-text="$t('general.Delete')"
-            :cancel-button-text="$t('general.Cancel')"
-            icon="el-icon-info"
-            icon-color="red"
-            :title="$t('Notify.confirmDelete')"
-            @confirm="handleDelete(scope.row)"
+            <em
+              class="ri-file-edit-line finished operate-button"
+              @click="handleEdit(scope.row)"
+            />
+          </el-tooltip>
+          <el-tooltip
+            placement="bottom"
+            :content="$t('general.Delete')"
           >
-            <el-button
-              slot="reference"
-              size="mini"
-              type="danger"
+            <el-popconfirm
+              :confirm-button-text="$t('general.Delete')"
+              :cancel-button-text="$t('general.Cancel')"
+              icon="el-icon-info"
+              icon-color="red"
+              :title="$t('Notify.confirmDelete')"
+              @confirm="handleDelete(scope.row)"
             >
-              <em class="el-icon-delete" />
-              {{ $t('general.Delete') }}
-            </el-button>
-          </el-popconfirm>
+              <em
+                slot="reference"
+                class="ri-delete-bin-2-line danger operate-button"
+              />
+            </el-popconfirm>
+          </el-tooltip>
         </template>
       </el-table-column>
       <template slot="empty">

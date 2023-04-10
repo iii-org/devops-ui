@@ -12,7 +12,13 @@
           :inactive-text="$t('general.Disable')"
           @change="toggleSwitch"
         />
-        <el-button class="buttonPrimary" :disabled="!isToggle" @click="handleSave">{{ $t('general.Save') }}</el-button>
+        <el-button
+          class="buttonPrimary"
+          :disabled="!isToggle"
+          @click="handleSave"
+        >
+          {{ $t('general.Save') }}
+        </el-button>
       </div>
     </div>
     <el-divider />
@@ -24,7 +30,12 @@
       border
       fit
     >
-      <el-table-column type="index" align="center" :label="$t('ProjectSettings.Index')" width="100" />
+      <el-table-column
+        type="index"
+        align="center"
+        :label="$t('ProjectSettings.Index')"
+        width="100"
+      />
       <el-table-column align="center" :label="$t('ProjectSettings.NotificationConditions')">
         <template slot-scope="scope">
           <span v-if="scope.row.condition === 'comming'">{{ $t('ProjectSettings.Comming') }}</span>
@@ -39,21 +50,24 @@
       </el-table-column>
       <el-table-column align="center" :label="$t('ProjectSettings.Status')">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.disabled ? 'danger' : 'success'">
+          <el-tag :type="scope.row.disabled ? 'warning' : 'success'">
             {{ scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('ProjectSettings.Actions')">
         <template slot-scope="scope">
-          <el-button size="mini" @click="toggleUsage(scope.row)">
-            <div class="flex items-center">
-              <span class="dot" :class="scope.row.disabled ? 'bg-success' : 'bg-danger'" />
-              <span class="ml-2" :class="scope.row.disabled ? 'text-success' : 'text-danger'">
-                {{ !scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
-              </span>
-            </div>
-          </el-button>
+          <el-tooltip
+            placement="bottom"
+            :content="!scope.row.disabled ? $t('general.Disable') : $t('general.Enable')"
+          >
+            <em
+              :class="scope.row.disabled
+                ? 'ri-record-circle-line finished operate-button'
+                : 'ri-pause-circle-line inProgress operate-button'"
+              @click="toggleUsage(scope.row)"
+            />
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>

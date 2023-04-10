@@ -1,22 +1,22 @@
 <template>
   <div>
     <div v-if="!isShowInput">
-      <el-tooltip :content="$t('Release.Tags')" placement="top">
+      <el-tooltip :content="$t('Release.Tags')" placement="bottom">
         <em
           v-show="scope.row.docker.length !== 0"
-          class="el-icon-price-tag cursor-pointer mr-2"
+          class="el-icon-price-tag operate-button finished mr-2"
           @click="showInput('IS_EDIT_TAG')"
         />
       </el-tooltip>
-      <el-tooltip :content="$t('general.Report')" placement="top">
+      <el-tooltip :content="$t('general.Report')" placement="bottom">
         <em
           v-show="scope.row.commit"
-          class="el-icon-tickets cursor-pointer"
+          class="el-icon-tickets operate-button active"
           @click="handleToTestReport(scope)"
         />
       </el-tooltip>
     </div>
-    <el-tooltip v-else placement="top">
+    <el-tooltip v-else placement="bottom">
       <template slot="content">
         <span>{{ $t('general.Edit') + $t('general.Tag') }}</span>
       </template>
@@ -26,14 +26,12 @@
       >
         <em
           slot="suffix"
-          class="el-icon-circle-plus cursor-pointer button"
-          :style="getStyle('buttonPrimary')"
+          class="el-icon-circle-plus operate-button finished"
           @click="saveTag()"
         />
         <em
           slot="suffix"
-          class="el-icon-error cursor-pointer button"
-          :style="getStyle('danger')"
+          class="el-icon-error operate-button danger"
           @click="init"
         />
       </el-input>
@@ -157,10 +155,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.button {
-  line-height: 40px;
-  font-size: 18px;
-}
-</style>

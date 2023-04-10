@@ -102,21 +102,18 @@
       <el-table-column
         align="center"
         :label="$t('Log.fullLog')"
-        min-width="50"
       >
         <template slot-scope="scope">
-          <el-link
+          <el-tooltip
             v-if="scope.row.status === 'Finished' && scope.row.has_report"
-            class="linkTextColor"
-            style="font-size: 16px"
-            :underline="false"
-            @click="fetchReportData(scope.row.id)"
+            placement="bottom"
+            :content="$t('Dashboard.Report')"
           >
             <em
-              class="el-icon-tickets"
-              style="font-size: 16px"
+              class="ri-external-link-line active operate-button"
+              @click="fetchReportData(scope.row.id)"
             />
-          </el-link>
+          </el-tooltip>
         </template>
       </el-table-column>
       <template slot="empty">

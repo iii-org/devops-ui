@@ -144,32 +144,35 @@
         <el-table-column
           align="center"
           :label="$t('general.Actions')"
-          width="190"
         >
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              class="buttonPrimary"
-              @click="onTransferClick(scope.row.id)"
+            <el-tooltip
+              placement="bottom"
+              :content="$t('general.Transfer')"
             >
-              {{ $t('general.Transfer') }}
-            </el-button>
-            <el-popconfirm
-              :title="$t('Notify.confirmClose')"
-              :confirm-button-text="$t('general.Close')"
-              :cancel-button-text="$t('general.Cancel')"
-              icon="el-icon-info"
-              icon-color="red"
-              @confirm="onCloseClick(scope.row.id)"
+              <em
+                class="ri-file-transfer-line finished operate-button"
+                @click="onTransferClick(scope.row.id)"
+              />
+            </el-tooltip>
+            <el-tooltip
+              placement="bottom"
+              :content="$t('general.Close')"
             >
-              <el-button
-                slot="reference"
-                size="mini"
-                type="danger"
+              <el-popconfirm
+                :title="$t('Notify.confirmClose')"
+                :confirm-button-text="$t('general.Close')"
+                :cancel-button-text="$t('general.Cancel')"
+                icon="el-icon-info"
+                icon-color="red"
+                @confirm="onCloseClick(scope.row.id)"
               >
-                {{ $t('general.Close') }}
-              </el-button>
-            </el-popconfirm>
+                <em
+                  slot="reference"
+                  class="ri-delete-bin-2-line danger operate-button"
+                />
+              </el-popconfirm>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -273,7 +276,7 @@ export default {
         status_id: 'open',
         project_id: this.selectedProject.id
       }
-      return getUserIssueList(this.userId, params)
+      return await getUserIssueList(this.userId, params)
         .then((res) => {
           const { issue_list, page } = res.data
           this.listQuery = page
@@ -353,7 +356,7 @@ export default {
       })
       this.isCheckedAllIssues = this.checkedIssues.length === this.listQuery.total
     },
-    handleAllIssuesChange(val) {
+    async handleAllIssuesChange(val) {
       const params = {
         offset: 0,
         from: 'assigned_to_id',
@@ -361,7 +364,7 @@ export default {
         project_id: this.selectedProject.id
       }
       this.listLoading = true
-      getUserIssueList(this.userId, params)
+      await getUserIssueList(this.userId, params)
         .then((res) => {
           const list = res.data.map((item) => item.id)
           list.forEach((id) => {

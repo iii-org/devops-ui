@@ -85,34 +85,38 @@
         <el-table-column
           align="center"
           :label="$t('general.Actions')"
-          width="390"
         >
           <template slot-scope="scope">
-            <el-button
-              v-permission="['Administrator','QA']"
-              size="mini"
-              class="buttonPrimaryReverse"
-              @click="handleParticipateDialog(scope.row.id)"
+            <el-tooltip
+              placement="bottom"
+              :content="$t('general.Participate')"
             >
-              <em class="el-icon-edit" />
-              {{ $t('general.Participate') }}
-            </el-button>
-            <el-button
-              v-permission="['Administrator','Project Manager', 'QA']"
-              class="buttonSecondaryReverse"
-              size="mini"
-              @click="handleIssueClick(scope.row)"
+              <em
+                v-permission="['Administrator','QA']"
+                class="ri-file-list-2-line active operate-button"
+                @click="handleParticipateDialog(scope.row.id)"
+              />
+            </el-tooltip>
+            <el-tooltip
+              placement="bottom"
+              :content="$t('Issue.Issue')"
             >
-              {{ $t('Issue.Issue') }}
-            </el-button>
-            <el-button
-              type="danger"
-              size="mini"
-              :disabled="scope.row.id === userId"
-              @click="handleDeleteClick(scope.row)"
+              <em
+                v-permission="['Administrator','Project Manager', 'QA']"
+                class="ri-file-copy-2-line active operate-button"
+                @click="handleIssueClick(scope.row)"
+              />
+            </el-tooltip>
+            <el-tooltip
+              placement="bottom"
+              :content="$t('general.Remove')"
             >
-              {{ $t('general.Remove') }}
-            </el-button>
+              <em
+                class="ri-delete-bin-2-line danger operate-button"
+                :disabled="scope.row.id === userId"
+                @click="handleDeleteClick(scope.row)"
+              />
+            </el-tooltip>
           </template>
         </el-table-column>
         <template slot="empty">

@@ -432,3 +432,40 @@
     cursor: pointer !important;
   }
 }
+
+/*
+* table operate button
+* search icon with keyword: 'ri' or 'el'
+* https://icon-sets.iconify.design
+*/
+.operate-button {
+  font-size: large;
+  font-weight: bolder;
+  margin-right: 5px;
+  color: $info;
+  cursor: pointer;
+  &.active {
+    color: $active;
+  }
+  &.danger {
+    color: $danger;
+  }
+  &.finished {
+    color: $finished;
+  }
+  &.inProgress {
+    color: $inProgress;
+  }
+  &.info {
+    color: $info;
+  }
+  &.help {
+    cursor: help;
+  }
+  &.disabled {
+    pointer-events: none;
+  }
+  &:hover {
+    color: $feature;
+  }
+}

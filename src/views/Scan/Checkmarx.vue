@@ -136,35 +136,32 @@
       <el-table-column
         :label="$t('CheckMarx.Report')"
         prop="report_ready"
-        width="100"
       >
         <template slot-scope="scope">
           <template v-if="canBeCanceled(scope.row)">
-            <el-link
-              type="danger"
-              style="font-size: 16px"
-              :underline="false"
-              icon="el-icon-close"
-              @click="cancelScans(scope.row)"
-            />
-            <div class="text-sm">
-              {{ $t('general.Cancel') }}
-            </div>
+            <el-tooltip
+              placement="bottom"
+              :content="$t('general.Cancel')"
+            >
+              <em
+                class="ri-close-circle-line danger operate-button"
+                @click="cancelScans(scope.row)"
+              />
+            </el-tooltip>
           </template>
           <div v-else-if="isException(scope.row)">-</div>
           <template v-else-if="isInProcess(scope.row)">
-            <el-link
-              :class="!scope.row.report_ready ? '' : 'linkTextColor'"
-              target="_blank"
-              style="font-size: 16px"
-              :disabled="!scope.row.report_ready"
-              :underline="false"
-              icon="el-icon-download"
-              @click="fetchTestReport(scope.row)"
-            />
-            <div class="text-sm">
-              {{ scope.row.report_ready ? '' : $t('CheckMarx.InProcess') }}
-            </div>
+            <el-tooltip
+              placement="bottom"
+              :content="scope.row.report_ready ? $t('File.Download') : $t('CheckMarx.InProcess')"
+            >
+              <em
+                :class="!scope.row.report_ready
+                  ? 'ri-error-warning-line help inProgress operate-button'
+                  : 'ri-download-line active operate-button'"
+                @click="fetchTestReport(scope.row)"
+              />
+            </el-tooltip>
           </template>
           <div v-else>-</div>
         </template>

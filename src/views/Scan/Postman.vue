@@ -79,14 +79,16 @@
           width="120"
         >
           <template slot-scope="scope">
-            <el-button
+            <el-tooltip
               :id="`btn-postman-${scope.$index}`"
-              size="mini"
-              class="buttonPrimaryReverse"
-              @click="handleClick('PostmanTestCase', scope.row.id)"
+              placement="bottom"
+              :content="$t('Postman.Postman')"
             >
-              {{ $t('Postman.Postman') }}
-            </el-button>
+              <em
+                class="ri-file-list-2-line active operate-button"
+                @click="handleClick('PostmanTestCase', scope.row.id)"
+              />
+            </el-tooltip>
           </template>
         </el-table-column>
         <template slot="empty">

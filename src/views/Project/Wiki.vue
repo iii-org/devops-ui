@@ -49,41 +49,44 @@
       <el-table-column
         align="center"
         :label="$t('general.Actions')"
-        width="300"
       >
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            class="buttonPrimaryReverse"
-            @click="handleDetail(scope.$index, scope.row)"
+          <el-tooltip
+            placement="bottom"
+            :content="$t('Wiki.Content')"
           >
-            <em class="el-icon-document" />
-            {{ $t('Wiki.Content') }}
-          </el-button>
-          <el-button
-            size="mini"
-            class="buttonSecondaryReverse"
-            @click="handleEdit(scope.$index, scope.row)"
+            <em
+              class="ri-file-list-2-line active operate-button"
+              @click="handleDetail(scope.$index, scope.row)"
+            />
+          </el-tooltip>
+          <el-tooltip
+            placement="bottom"
+            :content="$t('general.Edit')"
           >
-            <em class="el-icon-edit" />
-            {{ $t('general.Edit') }}
-          </el-button>
-          <el-popconfirm
-            :confirm-button-text="$t('general.Delete')"
-            :cancel-button-text="$t('general.Cancel')"
-            icon="el-icon-info"
-            icon-color="red"
-            :title="$t('Notify.confirmDelete')"
-            @confirm="handleDelete(scope.$index, scope.row)"
+            <em
+              class="ri-file-edit-line finished operate-button"
+              @click="handleEdit(scope.$index, scope.row)"
+            />
+          </el-tooltip>
+          <el-tooltip
+            placement="bottom"
+            :content="$t('general.Delete')"
           >
-            <el-button
-              slot="reference"
-              size="mini"
-              type="danger"
+            <el-popconfirm
+              :confirm-button-text="$t('general.Delete')"
+              :cancel-button-text="$t('general.Cancel')"
+              icon="el-icon-info"
+              icon-color="red"
+              :title="$t('Notify.confirmDelete')"
+              @confirm="handleDelete(scope.$index, scope.row)"
             >
-              <em class="el-icon-delete" /> {{ $t('general.Delete') }}
-            </el-button>
-          </el-popconfirm>
+              <em
+                slot="reference"
+                class="ri-delete-bin-2-line danger operate-button"
+              />
+            </el-popconfirm>
+          </el-tooltip>
         </template>
       </el-table-column>
       <template slot="empty">
