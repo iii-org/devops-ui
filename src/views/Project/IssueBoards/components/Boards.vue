@@ -336,7 +336,7 @@ export default {
   display: flex;
   justify-content: flex-start;
   flex-wrap: nowrap;
-  height: calc(100vh - 70px - 40px - 40px - 25px - 10px);
+  height: calc(100vh - 70px - 40px - 24px - 25px - 10px);
   overflow-x: auto;
   transition: width 1s;
 

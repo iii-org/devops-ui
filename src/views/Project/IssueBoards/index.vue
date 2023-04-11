@@ -2,7 +2,7 @@
   <div
     v-loading="isLoading"
     :element-loading-text="$t('Loading')"
-    style="height: 100%; padding: 20px;"
+    class="app-container"
   >
     <ProjectListSelector>
       <CustomFilter
