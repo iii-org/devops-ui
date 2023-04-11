@@ -50,7 +50,7 @@
       </el-table-column>
       <el-table-column align="center" :label="$t('ProjectSettings.Status')">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.disabled ? 'warning' : 'success'">
+          <el-tag :type="scope.row.disabled ? 'danger' : 'success'">
             {{ scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
           </el-tag>
         </template>
@@ -64,7 +64,7 @@
             <em
               :class="scope.row.disabled
                 ? 'ri-record-circle-line finished operate-button'
-                : 'ri-pause-circle-line inProgress operate-button'"
+                : 'ri-pause-circle-line danger operate-button'"
               @click="toggleUsage(scope.row)"
             />
           </el-tooltip>

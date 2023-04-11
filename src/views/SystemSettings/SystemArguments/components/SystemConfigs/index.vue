@@ -86,7 +86,7 @@
               <em
                 :class="!scope.row.content
                   ? 'ri-record-circle-line finished operate-button'
-                  : 'ri-pause-circle-line inProgress operate-button'"
+                  : 'ri-pause-circle-line danger operate-button'"
                 @click="scope.row.method(!scope.row.content)"
               />
             </div>

@@ -114,7 +114,7 @@
               placement="bottom"
             >
               <em
-                class="ri-terminal-box-line active operate-button"
+                class="ri-terminal-box-line info operate-button"
                 @click="onDetailsClick(scope.row)"
               />
             </el-tooltip>

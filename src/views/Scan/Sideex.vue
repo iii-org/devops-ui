@@ -107,7 +107,7 @@
           <el-tooltip
             v-if="scope.row.status === 'Finished' && scope.row.has_report"
             placement="bottom"
-            :content="$t('Dashboard.Report')"
+            :content="$t('Log.fullLog')"
           >
             <em
               class="ri-external-link-line active operate-button"

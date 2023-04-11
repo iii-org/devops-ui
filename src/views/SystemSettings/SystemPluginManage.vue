@@ -55,26 +55,27 @@
           align="center"
         >
           <template slot-scope="scope">
-            <el-button
+            <el-tooltip
               v-if="!scope.row.disabled"
-              size="mini"
-              class="buttonPrimaryReverse"
-              icon="el-icon-edit"
-              @click="handleEditClick(scope.row.name)"
+              placement="bottom"
+              :content="$t('general.Edit')"
             >
-              {{ $t('general.Edit') }}
-            </el-button>
-            <el-button
-              size="mini"
-              @click="handleActiveClick(scope.row)"
+              <em
+                class="ri-file-edit-line finished operate-button"
+                @click="handleEditClick(scope.row.name)"
+              />
+            </el-tooltip>
+            <el-tooltip
+              placement="bottom"
+              :content="!scope.row.disabled ? $t('general.Disable') : $t('general.Enable')"
             >
-              <div class="flex items-center">
-                <span class="dot" :class="scope.row.disabled ? 'bg-success' : 'bg-danger'" />
-                <span class="ml-2" :class="scope.row.disabled ? 'text-success' : 'text-danger'">
-                  {{ !scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
-                </span>
-              </div>
-            </el-button>
+              <em
+                :class="scope.row.disabled
+                  ? 'ri-record-circle-line finished operate-button'
+                  : 'ri-pause-circle-line danger operate-button'"
+                @click="handleActiveClick(scope.row)"
+              />
+            </el-tooltip>
           </template>
         </el-table-column>
         <template slot="empty">
@@ -321,9 +322,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.dot {
-  @apply rounded-full w-2 h-2;
-}
-</style>

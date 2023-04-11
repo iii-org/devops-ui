@@ -1054,7 +1054,7 @@ export default {
   },
   Log: {
     duration: '消耗時間',
-    fullLog: '報表',
+    fullLog: '報告',
     testId: '測試編號'
   },
   Clair: {

@@ -75,14 +75,13 @@
         />
         <el-table-column
           align="center"
-          :label="$t('general.Actions')"
-          width="120"
+          :label="$t('Log.fullLog')"
         >
           <template slot-scope="scope">
             <el-tooltip
               :id="`btn-postman-${scope.$index}`"
               placement="bottom"
-              :content="$t('Postman.Postman')"
+              :content="$t('general.Report')"
             >
               <em
                 class="ri-file-list-2-line active operate-button"

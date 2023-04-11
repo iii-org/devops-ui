@@ -96,7 +96,7 @@
                   slot="reference"
                   :underline="false"
                   :disabled="scope.row.disabled || scope.row.is_lock"
-                  style="font-size: 16px; padding: 0 5px;"
+                  style="font-size: 18px; padding: 0 3px;"
                 >
                   <svg-icon icon-class="gitlab" />
                 </el-link>
@@ -106,7 +106,7 @@
                 v-if="scope.row.redmine_url"
                 target="_blank"
                 class="mr-1"
-                style="font-size: 16px; padding: 0 5px;"
+                style="font-size: 18px; padding: 0 3px;"
                 :underline="false"
                 :disabled="scope.row.disabled || scope.row.is_lock"
                 :href="scope.row.redmine_url"
@@ -117,7 +117,7 @@
               <el-link
                 v-if="scope.row.harbor_url"
                 target="_blank"
-                style="font-size: 16px; padding: 0 5px;"
+                style="font-size: 18px; padding: 0 3px;"
                 :underline="false"
                 :disabled="scope.row.disabled || scope.row.is_lock"
                 :href="scope.row.harbor_url"
@@ -241,7 +241,7 @@
             placement="bottom"
             :content="$t('general.Fix')"
           >
-            <em class="ri-refresh-fill active operate-button" @click="handleFix(scope.row.id)" />
+            <em class="ri-refresh-line active operate-button" @click="handleFix(scope.row.id)" />
           </el-tooltip>
           <el-tooltip
             v-if="scope.row.is_lock !== true"
@@ -252,7 +252,7 @@
               :disabled="permission(scope.row)"
               :class="scope.row.disabled
                 ? 'ri-play-circle-line finished operate-button'
-                : 'ri-pause-circle-line inProgress operate-button'"
+                : 'ri-pause-circle-line danger operate-button'"
               @click="handleToggle(scope.row)"
             />
           </el-tooltip>

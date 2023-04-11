@@ -98,7 +98,7 @@
           <el-tooltip
             v-if="scope.row.scan_status === 'Success'"
             placement="bottom"
-            :content="$t('Dashboard.Report')"
+            :content="$t('Log.fullLog')"
           >
             <em
               class="ri-file-list-2-line active operate-button"
