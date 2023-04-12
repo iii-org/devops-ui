@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div class="text-sm mt-2 mb-3">
-      {{ $t('Issue.Notes') }}
-    </div>
     <el-popover
       v-model="tagListVisible"
       :trigger="tagListVisible ? 'focus' : 'manual'"
@@ -30,6 +27,7 @@
         ref="mdEditor"
         initial-edit-type="wysiwyg"
         :options="editorOptions"
+        class="mx-3"
         height="18rem"
         @change="onChange"
         @keydown.native="onKeydown"

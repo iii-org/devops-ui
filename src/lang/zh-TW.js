@@ -475,6 +475,7 @@ export default {
     EditIssue: '編輯議題',
     AddSubIssue: '新增子議題',
     CloseIssue: '關閉議題',
+    IssueSetting: '議題設定',
     IssueHookSetting: '程式關聯設定',
     CommitIssueHookSetting: '修改程式議題關聯',
     EditIssueHook: '修改議題關聯',

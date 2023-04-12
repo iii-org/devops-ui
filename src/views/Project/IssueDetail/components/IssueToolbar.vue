@@ -79,6 +79,16 @@
           <em class="el-icon-link" />
           Redmine
         </el-link>
+        <el-tooltip
+          :content="$t('Issue.IssueSetting')"
+          placement="bottom"
+        >
+          <Hamburger
+            :is-active="!isIssueFormOpened"
+            class="inline p-0"
+            @toggleClick="$emit('calcIssueFormWidth')"
+          />
+        </el-tooltip>
       </div>
     </div>
 
@@ -226,6 +236,7 @@
 import { mapGetters } from 'vuex'
 import { addIssue, updateIssue } from '@/api/issue'
 import { createExcalidraw } from '@/api_v2/excalidraw'
+import Hamburger from '@/components/Hamburger'
 import { AddIssue } from '@/components/Issue'
 import IssueFileUploader from './IssueFileUploader'
 import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
@@ -233,6 +244,7 @@ import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRe
 export default {
   name: 'IssueToolbar',
   components: {
+    Hamburger,
     AddIssue,
     IssueFileUploader,
     SettingRelationIssue
@@ -265,6 +277,10 @@ export default {
     projectId: {
       type: Number,
       default: null
+    },
+    isIssueFormOpened: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

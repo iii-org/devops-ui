@@ -82,7 +82,7 @@
         <el-col
           ref="mainIssueWrapper"
           :span="24"
-          :md="16"
+          :md="isIssueFormOpened ? 16 : 24"
         >
           <el-row>
             <el-col :span="24">
@@ -94,17 +94,19 @@
                 :issue-tracker="formTrackerName"
                 :row="issue"
                 :project-id="form.project_id"
+                :is-issue-form-opened="isIssueFormOpened"
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
                 @updateFamilyData="getIssueFamilyData(issue)"
                 @updateWhiteBoard="updateWhiteBoard"
+                @calcIssueFormWidth="calcIssueFormWidth"
               />
             </el-col>
           </el-row>
           <el-row
             ref="mainIssue"
             :gutter="10"
-            :class="scrollClass"
+            class="issueHeight"
             @scroll.native="onScrollIssue"
           >
             <el-col
@@ -120,6 +122,11 @@
                 :project-id="formProjectId"
                 :mention-list.sync="descriptionMentionList"
               />
+            </el-col>
+            <el-col
+              ref="IssueCollapse"
+              :span="24"
+            >
               <el-collapse
                 v-if="files.length > 0 || countRelationIssue > 0"
                 v-model="relationVisible"
@@ -128,7 +135,7 @@
                 <el-collapse-item
                   v-if="files.length > 0"
                   :title="$t('Issue.Files')+ '(' + files.length + ')'"
-                  :name="1"
+                  name="files"
                 >
                   <IssueFiles
                     :is-button-disabled="isButtonDisabled"
@@ -138,7 +145,7 @@
                 <el-collapse-item
                   v-if="test_files.length > 0"
                   :title="$t('Test.TestPlan.file_name')+ '(' + test_files.length + ')'"
-                  :name="2"
+                  name="testFiles"
                 >
                   <IssueCollection
                     :is-button-disabled="isButtonDisabled"
@@ -149,7 +156,7 @@
                 <el-collapse-item
                   v-if="countRelationIssue > 0"
                   v-loading="isLoadingFamily"
-                  :name="3"
+                  name="relatedIssue"
                 >
                   <div slot="title">
                     {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
@@ -179,20 +186,39 @@
             <el-col
               ref="moveEditor"
               :span="24"
-              class="moveEditor mb-3"
+              class="mb-3"
+              style="position: sticky; top: 0; z-index: 3;"
             >
-              <IssueNotesEditor
-                ref="IssueNotesEditor"
-                v-model="form.notes"
-                :project-id="formProjectId"
-                :mention-list.sync="noteMentionList"
-              />
+              <el-collapse
+                v-model="issueNotesEditorVisible"
+                accordion
+              >
+                <el-collapse-item
+                  :title="$t('Issue.Notes')"
+                  name="issueNotesEditor"
+                  :style="scrollType === 'bottom' ? 'display: block; text-align: center;' : ''"
+                >
+                  <template
+                    slot="title"
+                    :style="scrollType === 'bottom' ? 'display: block; text-align: center;' : ''"
+                  >
+                    {{ $t('Issue.Notes') }}
+                  </template>
+                  <IssueNotesEditor
+                    ref="IssueNotesEditor"
+                    v-model="form.notes"
+                    :project-id="formProjectId"
+                    :mention-list.sync="noteMentionList"
+                  />
+                </el-collapse-item>
+              </el-collapse>
             </el-col>
             <el-col :span="24">
               <el-tabs
                 ref="IssueNotesDialog"
                 v-model="issueTabs"
                 type="border-card"
+                class="mx-3"
               >
                 <el-tab-pane name="history">
                   <template slot="label">
@@ -242,9 +268,16 @@
                 </el-tab-pane>
               </el-tabs>
             </el-col>
+            <el-backtop
+              target=".issueHeight"
+              :visibility-height="500"
+              :right="issueFormWidth"
+              :bottom="50"
+            />
           </el-row>
         </el-col>
         <el-col
+          v-show="isIssueFormOpened"
           :span="24"
           :md="8"
           class="issueOptionHeight"
@@ -540,8 +573,7 @@ export default {
       tags: [],
       dialogHeight: '100%',
       editorHeight: '100px',
-      issueScrollTop: 0,
-      scrollClass: 'issueHeight',
+      scrollType: 'top',
       relationVisible: 0,
       relationIssue: {
         visible: false,
@@ -561,7 +593,10 @@ export default {
       isDeleteIssueDialog: false,
       checkDeleteWhiteBoard: false,
       descriptionMentionList: [],
-      noteMentionList: []
+      noteMentionList: [],
+      issueNotesEditorVisible: 'issueNotesEditor',
+      isIssueFormOpened: false,
+      issueFormWidth: 80
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -669,6 +704,27 @@ export default {
     },
     'issue.excalidraw'(val) {
       if (val.length === 0) this.issueTabs = 'history'
+    },
+    scrollType(val) {
+      const elCollapseItemHeader = this.$refs['mainIssueWrapper'].$el.getElementsByClassName('el-collapse-item__header')
+      const elCollapseItemArrow = this.$refs['mainIssueWrapper'].$el.getElementsByClassName('el-collapse-item__arrow')
+      if (val === 'top') {
+        this.issueNotesEditorVisible = 'issueNotesEditor'
+        Array.from(elCollapseItemHeader).forEach((item) => {
+          item.style.display = ''
+          item.style['text-align'] = ''
+          item.style['transition'] = 'display 3s text-align 3s'
+        })
+        Array.from(elCollapseItemArrow).forEach((item) => { item.style['margin-left'] = 'auto' })
+      } else {
+        this.issueNotesEditorVisible = ''
+        Array.from(elCollapseItemHeader).forEach((item) => {
+          item.style.display = 'block'
+          item.style['text-align'] = 'center'
+          item.style['transition'] = 'display 3s text-align 3s'
+        })
+        Array.from(elCollapseItemArrow).forEach((item) => { item.style['margin-left'] = '8px' })
+      }
     }
   },
   async mounted() {
@@ -1250,24 +1306,29 @@ export default {
       this.$nextTick(() => {
         const editorHeight =
           this.$refs['IssueNotesDialog'].$el.getBoundingClientRect().top -
-          this.$refs['IssueDescription'].$el.getBoundingClientRect().height
-        if (this.$refs['mainIssueWrapper'].$el.children.length <= 2 && editorHeight < 0) {
-          if (
-            this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options &&
-            this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options
-              .name === 'IssueNotesEditor'
-          ) {
-            this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
-            this.scrollClass = 'issueHeightEditor'
-          }
+          this.$refs['IssueDescription'].$el.getBoundingClientRect().height -
+          this.$refs['IssueCollapse'].$el.getBoundingClientRect().height
+
+        // console.log(this.$refs['IssueNotesDialog'].$el.getBoundingClientRect().top,
+        //   this.$refs['IssueDescription'].$el.getBoundingClientRect().height,
+        //   this.$refs['IssueCollapse'].$el.getBoundingClientRect().height)
+        // console.log(editorHeight)
+        if (editorHeight < 0) {
+          // if (
+          //   this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options &&
+          //   this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options
+          //     .name === 'IssueNotesEditor'
+          // ) {
+          //   this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
+          // }
+
+          this.scrollType = 'bottom'
         } else {
-          if (this.$refs['mainIssueWrapper'].$el.children.length >= 3 && editorHeight > 0) {
-            this.$refs['mainIssue'].$el.insertBefore(
-              this.$refs['mainIssueWrapper'].$el.getElementsByClassName('moveEditor')[0],
-              this.$refs['mainIssue'].$el.children[this.$refs['mainIssue'].$el.children.length - 1]
-            )
-            this.scrollClass = 'issueHeight'
-          }
+          //   this.$refs['mainIssue'].$el.insertBefore(
+          //     this.$refs['mainIssueWrapper'].$el.getElementsByClassName('moveEditor')[0],
+          //     this.$refs['mainIssue'].$el.children[this.$refs['mainIssue'].$el.children.length - 1]
+          //   )
+          this.scrollType = 'top'
         }
       })
     },
@@ -1378,6 +1439,12 @@ export default {
       input.remove()
       this.showSuccessMessage(message)
     },
+    calcIssueFormWidth() {
+      this.isIssueFormOpened = !this.isIssueFormOpened
+      this.$nextTick(() => {
+        this.issueFormWidth = this.isIssueFormOpened ? this.$refs.IssueForm.$el.clientWidth + 120 : 80
+      })
+    },
     showSuccessMessage(message) {
       this.$message({
         title: this.$t('general.Success'),
@@ -1391,13 +1458,12 @@ export default {
 <style lang="scss" scoped>
 @import 'src/styles/theme/variables.scss';
 
-.issueHeight {
-  height: calc(95vh - 50px - 81px - 40px - 32px);
-  overflow-y: auto;
+>>> div[role = 'tab'] {
+  width: 100%;
 }
 
-.issueHeightEditor {
-  height: calc(95vh - 50px - 81px - 40px - 32px - 18rem);
+.issueHeight {
+  height: calc(95vh - 50px - 81px - 40px - 32px);
   overflow-y: auto;
 }
 
