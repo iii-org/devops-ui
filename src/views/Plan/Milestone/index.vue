@@ -389,7 +389,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
+    ...mapGetters(['selectedProjectId', 'status', 'tracker', 'fixedVersionShowClosed']),
     contextOptions() {
       const result = {}
       const getOptions = ['assigned_to', 'fixed_version', 'tags']
