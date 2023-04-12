@@ -478,6 +478,7 @@ export default {
     EditIssue: 'Edit Issue',
     AddSubIssue: 'Add Sub Issue',
     CloseIssue: 'Close Issue',
+    IssueSetting: 'Issue Setting',
     IssueHookSetting: '@:Issue.CommitIssueHookSetting',
     CommitIssueHookSetting: 'Commit Issue Hook Setting',
     EditIssueHook: 'Edit Issue Hook',
