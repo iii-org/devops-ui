@@ -196,14 +196,7 @@
                 <el-collapse-item
                   :title="$t('Issue.Notes')"
                   name="issueNotesEditor"
-                  :style="scrollType === 'bottom' ? 'display: block; text-align: center;' : ''"
                 >
-                  <template
-                    slot="title"
-                    :style="scrollType === 'bottom' ? 'display: block; text-align: center;' : ''"
-                  >
-                    {{ $t('Issue.Notes') }}
-                  </template>
                   <IssueNotesEditor
                     ref="IssueNotesEditor"
                     v-model="form.notes"
@@ -706,24 +699,16 @@ export default {
       if (val.length === 0) this.issueTabs = 'history'
     },
     scrollType(val) {
-      const elCollapseItemHeader = this.$refs['mainIssueWrapper'].$el.getElementsByClassName('el-collapse-item__header')
-      const elCollapseItemArrow = this.$refs['mainIssueWrapper'].$el.getElementsByClassName('el-collapse-item__arrow')
+      const elCollapseItemHeader = Array.from(this.$refs['mainIssueWrapper'].$el.getElementsByClassName('el-collapse-item__header'))
+      const elCollapseItemArrow = Array.from(this.$refs['mainIssueWrapper'].$el.getElementsByClassName('el-collapse-item__arrow'))
       if (val === 'top') {
-        this.issueNotesEditorVisible = 'issueNotesEditor'
-        Array.from(elCollapseItemHeader).forEach((item) => {
-          item.style.display = ''
-          item.style['text-align'] = ''
-          item.style['transition'] = 'display 3s text-align 3s'
-        })
-        Array.from(elCollapseItemArrow).forEach((item) => { item.style['margin-left'] = 'auto' })
+        elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = ''
+        elCollapseItemArrow[elCollapseItemArrow.length - 1].style['margin-left'] = 'auto'
+        // this.issueNotesEditorVisible = 'issueNotesEditor'
       } else {
-        this.issueNotesEditorVisible = ''
-        Array.from(elCollapseItemHeader).forEach((item) => {
-          item.style.display = 'block'
-          item.style['text-align'] = 'center'
-          item.style['transition'] = 'display 3s text-align 3s'
-        })
-        Array.from(elCollapseItemArrow).forEach((item) => { item.style['margin-left'] = '8px' })
+        elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = 'center'
+        elCollapseItemArrow[elCollapseItemArrow.length - 1].style['margin-left'] = '8px'
+        // this.issueNotesEditorVisible = ''
       }
     }
   },
@@ -1308,11 +1293,6 @@ export default {
           this.$refs['IssueNotesDialog'].$el.getBoundingClientRect().top -
           this.$refs['IssueDescription'].$el.getBoundingClientRect().height -
           this.$refs['IssueCollapse'].$el.getBoundingClientRect().height
-
-        // console.log(this.$refs['IssueNotesDialog'].$el.getBoundingClientRect().top,
-        //   this.$refs['IssueDescription'].$el.getBoundingClientRect().height,
-        //   this.$refs['IssueCollapse'].$el.getBoundingClientRect().height)
-        // console.log(editorHeight)
         if (editorHeight < 0) {
           // if (
           //   this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options &&
@@ -1321,7 +1301,6 @@ export default {
           // ) {
           //   this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
           // }
-
           this.scrollType = 'bottom'
         } else {
           //   this.$refs['mainIssue'].$el.insertBefore(
@@ -1457,10 +1436,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import 'src/styles/theme/variables.scss';
-
->>> div[role = 'tab'] {
-  width: 100%;
-}
 
 .issueHeight {
   height: calc(95vh - 50px - 81px - 40px - 32px);
