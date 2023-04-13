@@ -178,8 +178,8 @@ export default {
         return obj.is_lock !== true && obj.disabled !== true
       })
       this.allProjects = filteredArray
-      const starred = filteredArray.filter((item) => item.starred)
-      const projects = filteredArray.filter((item) => !item.starred)
+      const starred = filteredArray.filter((item) => item.starred && !item.is_empty_project)
+      const projects = filteredArray.filter((item) => !item.starred && !item.is_empty_project)
       this.categoryProjectList = [
         {
           label: this.$t('Project.Starred'),
