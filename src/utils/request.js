@@ -24,35 +24,6 @@ const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API
 })
 
-const handleErrorMessage = (data) => {
-  let res_msg = ''
-  if (data.error.details && data.error.details.response && data.error.details.response.hasOwnProperty('errors')) {
-    // only for #3600 issue
-    res_msg = handleRedmineError(data.error.details.response.errors)
-  } else if (data.error.details) {
-    res_msg = handleRegularError(data.error)
-  } else {
-    res_msg = i18n.t(`errorMessage.${data.error.code}`)
-  }
-  return res_msg
-}
-
-const handleRedmineError = (errors) => {
-  let message = ''
-  for (const key in errors) {
-    message = errors[key]
-  }
-  return message
-}
-
-const handleRegularError = (error) => {
-  const details = {}
-  for (const key in error.details) {
-    details[key] = i18n.te(`errorDetail.${error.details[key]}`) ? i18n.t(`errorDetail.${error.details[key]}`) : error.details[key]
-  }
-  return i18n.t(`errorMessage.${error.code}`, details)
-}
-
 service.interceptors.request.use(
   config => {
     if (store.getters.token) {
@@ -95,5 +66,9 @@ service.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+const handleErrorMessage = (data) => {
+  return data.error.message ? data.error.message : i18n.t(`errorMessage.${data.error.code}`)
+}
 
 export default service
