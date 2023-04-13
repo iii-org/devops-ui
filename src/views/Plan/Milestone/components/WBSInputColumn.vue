@@ -1,6 +1,6 @@
 <template>
   <el-table-column v-bind="$props">
-    <template slot-scope="{row, $index, treeNode}">
+    <template slot-scope="{row, column, $index, treeNode}">
       <template v-if="prop==='name'&&!treeNode">
         <div class="el-table__root" />
       </template>
@@ -73,10 +73,21 @@
         </ul>
       </template>
       <template v-else-if="prop==='name'">
-        {{ row[prop] }} <el-tag v-for="item in row['tags']" :key="item.id">[{{ item.name }}]</el-tag>
+        <span>{{ row[prop] }}</span>
+        <el-tooltip
+          v-if="showIconRowId === row.id"
+          placement="bottom"
+          :content="$t('general.Edit')"
+        >
+          <em
+            class="ri-edit-box-line info operate-button"
+            @click.self="$emit('onCellClick', row, column)"
+          />
+        </el-tooltip>
+        <el-tag v-for="item in row['tags']" :key="item.id">[{{ item.name }}]</el-tag>
       </template>
       <template v-else>
-        {{ row[prop] }}
+        <span>{{ row[prop] }}</span>
       </template>
     </template>
   </el-table-column>
@@ -134,6 +145,10 @@ export default {
     },
     editRowId: {
       type: [String, Number],
+      default: null
+    },
+    showIconRowId: {
+      type: Number,
       default: null
     }
   },

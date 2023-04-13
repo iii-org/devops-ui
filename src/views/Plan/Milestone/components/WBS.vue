@@ -14,6 +14,8 @@
       :row-class-name="getRowClass"
       :tree-props="{children: 'children', hasChildren: 'has_children'}"
       @row-contextmenu="handleContextMenu"
+      @cell-mouse-enter="handleCellMouseEnter"
+      @cell-mouse-leave="handleCellMouseLeave"
       @cell-click="handleCellClick"
     >
       <WBSInputColumn
@@ -27,10 +29,12 @@
         show-overflow-tooltip
         sortable
         :has-child-edit="true"
+        :show-icon-row-id="showIconRowId"
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
+        @onCellClick="handeIssueNameCellClick"
       />
       <el-table-column width="50px">
         <template slot-scope="{row}">
@@ -443,7 +447,8 @@ export default {
       issueMatrixDialog: {
         visible: false,
         row: { id: null, name: null }
-      }
+      },
+      showIconRowId: null
     }
   },
   computed: {
@@ -738,6 +743,28 @@ export default {
       await this.removeIssue(row)
     },
     handleCellClick(row, column) {
+      console.log('cell')
+      console.log(row.editColumn)
+      console.log(column.property)
+      if (column.property === 'name' && !row.editColumn) {
+        this.$emit('onOpenIssueDetail', row.id)
+        return
+      }
+      if (!this.isButtonDisabled && column['property']) {
+        let columnName = column['property'].split('.')
+        if (columnName.length >= 2) {
+          columnName = columnName[0]
+        } else {
+          columnName = column['property']
+        }
+        this.$set(this.$data, 'editRowId', row.id)
+        this.$set(this.$data, 'isParentExist', Object.prototype.hasOwnProperty.call(row, 'parent_object'))
+        this.$set(row, 'originColumn', cloneDeep(row[columnName]))
+        this.$set(row, 'editColumn', columnName)
+      }
+    },
+    handeIssueNameCellClick(row, column) {
+      console.log('icon')
       if (!this.isButtonDisabled && column['property']) {
         let columnName = column['property'].split('.')
         if (columnName.length >= 2) {
@@ -1083,6 +1110,12 @@ export default {
     },
     getContextMenuCurrentValue(column, item) {
       return this.contextMenu.row[column].map((subItem) => subItem.id).includes(item.id)
+    },
+    handleCellMouseEnter(row) {
+      this.showIconRowId = row.id
+    },
+    handleCellMouseLeave(row) {
+      this.showIconRowId = null
     }
   }
 }

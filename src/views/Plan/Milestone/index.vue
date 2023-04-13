@@ -185,7 +185,10 @@
     <div
       ref="wrapper"
       class="wrapper"
-      :class="{'show-quick':quickAddTopicDialogVisible}"
+      :class="{
+        'show-quick':quickAddTopicDialogVisible,
+        'is-panel':issueDetail.visible
+      }"
     >
       <el-tabs
         v-model="activeTab"
@@ -206,6 +209,7 @@
             :fixed-version="fixed_version"
             :tags="tags"
             :table-height="tableHeight"
+            @onOpenIssueDetail="onRelationIssueDialog"
             @update-loading="handleUpdateLoading"
             @update-status="handleUpdateStatus"
             @update-selection-list="loadSelectionList"
@@ -245,6 +249,23 @@
           />
         </el-tab-pane>
       </el-tabs>
+      <transition name="slide-fade">
+        <div v-if="issueDetail.visible" class="rightPanel">
+          <div
+            class="handle-button"
+            :style="{'background-color':'#85c1e9'}"
+            @click="handleRightPanelVisible"
+          >
+            <em class="el-icon-d-arrow-right" />
+          </div>
+          <ProjectIssueDetail
+            :props-issue-id="issueDetail.id"
+            :is-in-dialog="true"
+            :is-from-board="true"
+            @delete="handleRelationDelete"
+          />
+        </div>
+      </transition>
     </div>
   </el-row>
 </template>
@@ -265,12 +286,14 @@ import { QuickAddIssue } from '@/components/Issue'
 import Board from '@/views/Plan/Milestone/components/Board'
 import Gantt from '@/views/Plan/Milestone/components/Gantt'
 import WBS from '@/views/Plan/Milestone/components/WBS'
+import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 import XLSX from 'xlsx'
 
 export default {
   name: 'ProjectMilestone',
   components: {
     ProjectListSelector,
+    ProjectIssueDetail,
     ElSelectAll,
     QuickAddIssue,
     Board,
@@ -385,7 +408,11 @@ export default {
       downloadLock: {
         is_lock: false
       },
-      intervalTimer: null
+      intervalTimer: null,
+      issueDetail: {
+        visible: false,
+        id: null
+      }
     }
   },
   computed: {
@@ -593,6 +620,17 @@ export default {
     filterClosedStatus(statusList) {
       if (this.displayClosed) return statusList
       return statusList.filter((item) => item.is_closed === false)
+    },
+    onRelationIssueDialog(id) {
+      this.$set(this.issueDetail, 'visible', true)
+      this.$set(this.issueDetail, 'id', id)
+    },
+    handleRelationDelete() {
+      this.$set(this.issueDetail, 'visible', false)
+      this.$set(this.issueDetail, 'id', null)
+    },
+    handleRightPanelVisible() {
+      this.$set(this.issueDetail, 'visible', false)
     }
   }
 }
@@ -605,6 +643,47 @@ export default {
   &.is-panel {
     width: calc(100% - 750px);
     transition: width 1s;
+  }
+}
+
+.rightPanel {
+  width: 100%;
+  max-width: 750px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: #fff;
+}
+
+.slide-fade-enter-active {
+  transition: all .5s ease-in-out;
+
+}
+.slide-fade-leave-active {
+  transition: all .5s ease-in-out;
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(800px);
+}
+
+.handle-button {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  left: -50px;
+  text-align: center;
+  font-size: 24px;
+  border-radius: 6px 0 0 6px !important;
+  z-index: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  color: #fff;
+  line-height: 50px;
+  i {
+    font-size: 24px;
+    line-height: 50px;
   }
 }
 </style>
