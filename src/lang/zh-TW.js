@@ -322,7 +322,8 @@ export default {
     ExcalidrawAliveWarning: '白板伺服器失效，請洽III DevOps服務團隊',
     DeleteExcalidrawWarning: '一併"刪除"本議題之關聯白板',
     ChangeClusterId: '[注意] 變更部署位置將重設原Volume設定，請問確認要變更嗎？',
-    ChangeReleaseId: '[注意] 變更釋出版本將重設原Environment設定，請問確認要變更嗎？'
+    ChangeReleaseId: '[注意] 變更釋出版本將重設原Environment設定，請問確認要變更嗎？',
+    DownloadFailed: '檔案下載失敗，請恰您的系統管理員。'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -1374,14 +1375,23 @@ export default {
     toClosedVersionErrorContent: '指定版本 {fixed_version} 的狀態為 關閉，因此無法變更。'
   },
   Status: {
+    Failed: '失敗',
+    Created: '已建立',
+    Queued: '排程中',
+    ResumeScanQueue: '恢復排程中',
+    Pending: '待定中',
+    Paused: '已暫停',
+    Running: '掃描中',
+    Complete: '掃描完成',
+    Interrupted: '已中斷',
+    Unknown: '未知狀態',
     Finished: '掃描完成',
     Scanning: '掃描中',
     Aborted: '已取消',
-    Failed: '失敗',
-    Complete: '@:Status.Finished',
-    Running: '@:Status.Scanning',
-    NotRunning: '準備中',
-    Interrupted: '已中斷'
+    Started: '開始掃描',
+    'Error Publishing Scan': '掃描錯誤',
+    'Generating Report': '產生報告中',
+    'Error Generating Report': '產生報告錯誤'
   },
   Gantt: {
     Now: '今天',
