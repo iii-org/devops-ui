@@ -743,9 +743,6 @@ export default {
       await this.removeIssue(row)
     },
     handleCellClick(row, column) {
-      console.log('cell')
-      console.log(row.editColumn)
-      console.log(column.property)
       if (column.property === 'name' && !row.editColumn) {
         this.$emit('onOpenIssueDetail', row.id)
         return
@@ -764,7 +761,6 @@ export default {
       }
     },
     handeIssueNameCellClick(row, column) {
-      console.log('icon')
       if (!this.isButtonDisabled && column['property']) {
         let columnName = column['property'].split('.')
         if (columnName.length >= 2) {

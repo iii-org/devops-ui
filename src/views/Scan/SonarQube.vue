@@ -10,16 +10,7 @@
         <em class="ri-external-link-line mr-1" />
         {{ $t('SonarQube.ViewReport') }}
       </el-button>
-      <el-button
-        v-if="hasPod"
-        slot="button"
-        class="buttonPrimary"
-        :disabled="selectedProjectId === -1"
-        @click="handleLogClick"
-      >
-        <em class="ri-computer-line mr-1" />
-        {{ $t('SonarQube.ScanLogs') }}
-      </el-button>
+      <ScanLogButton slot="button" />
       <el-input
         v-model="keyword"
         :placeholder="$t('Git.searchBranchOrCommitId')"
@@ -117,27 +108,21 @@
       :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
-    <PodLog
-      ref="podLogDialog"
-      :pod-name="focusPodName"
-      :container-name="focusContainerName"
-    />
   </div>
 </template>
 
 <script>
 import { getSonarQubeData } from '@/api/sonarQube'
-import { getSonarQubePod } from '@/api_v2/sonarQube'
 import { BasicData, Pagination, SearchBar } from '@/mixins'
 import { ProjectListSelector, ElTableColumnTime } from '@/components'
-import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
+import ScanLogButton from './ScanLogButton'
 
 export default {
   name: 'ScanSonarQube',
   components: {
     ProjectListSelector,
     ElTableColumnTime,
-    PodLog
+    ScanLogButton
   },
   mixins: [BasicData, Pagination, SearchBar],
   data() {
@@ -145,10 +130,7 @@ export default {
       searchKeys: ['branch', 'commit_id'],
       sqLink: function () {
         return ''
-      },
-      hasPod: false,
-      focusPodName: '',
-      focusContainerName: ''
+      }
     }
   },
   methods: {
@@ -157,10 +139,6 @@ export default {
         return []
       }
       const res = (await getSonarQubeData(this.selectedProject.name)).data
-      const resPod = (await getSonarQubePod(this.selectedProjectId)).data
-      this.hasPod = resPod.has_pod
-      this.focusPodName = resPod.pod_name
-      this.focusContainerName = resPod.container_name
       this.sqLink = res.link
       const data = res.history
       const ret = []
@@ -184,10 +162,6 @@ export default {
     },
     openSonarQube() {
       window.open(this.sqLink)
-    },
-    handleLogClick() {
-      this.$refs.podLogDialog.fetchData(this.focusPodName, this.focusContainerName)
-      this.$refs.podLogDialog.dialogVisible = true
     }
   }
 }

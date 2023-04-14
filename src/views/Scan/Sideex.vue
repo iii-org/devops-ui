@@ -1,16 +1,7 @@
 <template>
   <el-row class="app-container">
     <ProjectListSelector>
-      <el-button
-        v-if="pod.has_pod"
-        slot="button"
-        class="buttonPrimary"
-        :disabled="selectedProjectId === -1"
-        @click="handleLogClick"
-      >
-        <em class="ri-computer-line mr-1" />
-        {{ $t('SonarQube.ScanLogs') }}
-      </el-button>
+      <ScanLogButton slot="button" />
       <el-input
         v-model="keyword"
         :placeholder="$t('Git.searchBranchOrCommitId')"
@@ -127,24 +118,18 @@
       :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
-    <PodLog
-      ref="podLogDialog"
-      :pod-name="pod.pod_name"
-      :container-name="pod.container_name"
-    />
   </el-row>
 </template>
 
 <script>
 import { getSideexScans, getSideexReport } from '@/api/sideex'
-import { getSideexPod } from '@/api_v2/sideex'
 import { BasicData, Pagination, SearchBar } from '@/mixins'
 import {
   ProjectListSelector,
   ElTableColumnTime,
   ElTableColumnTag
 } from '@/components'
-import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
+import ScanLogButton from './ScanLogButton'
 import { getDurationTime } from '@/utils/handleTime'
 
 export default {
@@ -153,20 +138,18 @@ export default {
     ProjectListSelector,
     ElTableColumnTime,
     ElTableColumnTag,
-    PodLog
+    ScanLogButton
   },
   mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       confirmLoading: false,
-      searchKeys: ['branch', 'commit_id'],
-      pod: {}
+      searchKeys: ['branch', 'commit_id']
     }
   },
   methods: {
     async fetchData() {
       const res = await getSideexScans(this.selectedProjectId)
-      this.pod = (await getSideexPod(this.selectedProjectId)).data
       return this.handleScans(res.data)
     },
     handleScans(scans) {
@@ -187,10 +170,6 @@ export default {
     showFullLog(log) {
       const wnd = window.open(' ')
       wnd.document.write(log)
-    },
-    handleLogClick() {
-      this.$refs.podLogDialog.fetchData(this.pod.pod_name, this.pod.container_name)
-      this.$refs.podLogDialog.dialogVisible = true
     }
   }
 }

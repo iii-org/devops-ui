@@ -7,4 +7,3 @@ export const registerCheckMarxReport = (scan_id) => request.post(`/v2/checkmarx/
 export const getCheckMarxReportStatus = (report_id) => request.get(`/v2/checkmarx/report_status/${report_id}`)
 export const getCheckMarxReport = (report_id) => request.get(`/v2/checkmarx/report/${report_id}`, { responseType: 'blob' })
 export const cancelCheckMarxScans = (scan_id) => request.post(`/v2/checkmarx/scan/${scan_id}/cancel`)
-export const getCheckMarxPod = (project_id) => request.get(`/v2/project/${project_id}/plugin?plugin_name=checkmarx`)

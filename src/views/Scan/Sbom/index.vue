@@ -1,16 +1,7 @@
 <template>
   <el-row class="app-container">
     <ProjectListSelector>
-      <el-button
-        v-if="pod.has_pod"
-        slot="button"
-        class="buttonPrimary"
-        :disabled="selectedProjectId === -1"
-        @click="handleLogClick"
-      >
-        <em class="ri-computer-line mr-1" />
-        {{ $t('SonarQube.ScanLogs') }}
-      </el-button>
+      <ScanLogButton slot="button" />
       <el-input
         v-model="keyword"
         :placeholder="$t('Git.searchBranchOrCommitId')"
@@ -220,11 +211,6 @@
       :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
-    <PodLog
-      ref="podLogDialog"
-      :pod-name="pod.pod_name"
-      :container-name="pod.container_name"
-    />
   </el-row>
 </template>
 
@@ -232,20 +218,19 @@
 import {
   getSbomList,
   getSbomFile,
-  getSbomDownloadFile,
-  getSbomPod
+  getSbomDownloadFile
 } from '@/api_v2/sbom'
 import { BasicData, SearchBar, Pagination } from '@/mixins'
 import { ProjectListSelector, ElTableColumnTime } from '@/components'
-import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
 import * as elementTagType from '@/utils/elementTagType'
+import ScanLogButton from '../ScanLogButton'
 
 export default {
   name: 'Sbom',
   components: {
     ProjectListSelector,
     ElTableColumnTime,
-    PodLog,
+    ScanLogButton,
     Error: () => import('@/views/Error')
   },
   mixins: [BasicData, SearchBar, Pagination],
@@ -259,7 +244,6 @@ export default {
         search: this.keyword
       },
       sbomList: [],
-      pod: {},
       error: {},
       downloadLoading: false,
       downloadList: []
@@ -272,9 +256,6 @@ export default {
       this.storeKeyword()
       await this.loadData()
     }
-  },
-  async mounted() {
-    this.pod = (await getSbomPod(this.selectedProjectId)).data
   },
   methods: {
     async fetchData() {
@@ -314,10 +295,6 @@ export default {
           link.remove()
         })
         .catch(() => {})
-    },
-    handleLogClick() {
-      this.$refs.podLogDialog.fetchData(this.pod.pod_name, this.pod.container_name)
-      this.$refs.podLogDialog.dialogVisible = true
     },
     handleType(prop) {
       const location = 'sbom'

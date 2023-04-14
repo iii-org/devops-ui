@@ -324,7 +324,8 @@ export default {
     ExcalidrawAliveWarning: 'Excalidraw service failed, please contact DevOps for assistance.',
     DeleteExcalidrawWarning: 'Also "delete" the related excalidraw of this issue.',
     ChangeClusterId: '[Note] Switching destination will cause the volumes reset, confirm to delete?',
-    ChangeReleaseId: '[Note] Switching release id will cause the environments reset, confirm to delete?'
+    ChangeReleaseId: '[Note] Switching release id will cause the environments reset, confirm to delete?',
+    DownloadFailed: 'Download is failed, please contact your system administrator.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -1383,14 +1384,31 @@ export default {
     toClosedVersionErrorContent: 'You cannot change to version {fixed_version} that status is closed.'
   },
   Status: {
+    Failed: 'Failed',
+    Created: 'Created',
+    Queued: 'Queued',
+    ResumeScanQueue: 'ResumeScanQueue',
+    Pending: 'Pending',
+    Paused: 'Paused',
+    Running: 'Running',
+    Complete: 'Complete',
+    Interrupted: 'Interrupted',
+    Unknown: 'Unknown',
     Finished: 'Finished',
     Scanning: 'Scanning',
     Aborted: 'Aborted',
+<<<<<<< HEAD
     Failed: 'Failed',
     Complete: '@:Status.Finished',
     Running: '@:Status.Scanning',
     NotRunning: 'Not Running',
     Interrupted: 'Interrupted'
+=======
+    Started: 'Started',
+    'Error Publishing Scan': 'Scan Error',
+    'Generating Report': 'Generating',
+    'Error Generating Report': 'Generating Error'
+>>>>>>> e406ea9c (feat: modify webinspect component (#5120 #5121 #5122))
   },
   Gantt: {
     Now: 'Now',
