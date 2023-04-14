@@ -42,7 +42,8 @@ export default {
       msgIds: [],
       socket: io(`/v2/get_notification_message`, {
         reconnectionAttempts: 5
-      })
+      }),
+      dateNow: new Date().toJSON().slice(0, 10)
     }
   },
   computed: {
@@ -65,6 +66,15 @@ export default {
     setSocketListener() {
       this.socket.on('create_message', async (data) => {
         this.setNotificationList(data)
+        if (new Date(data.created_at).toISOString().slice(0, 10) >= this.dateNow) {
+          this.$notification.show('III DevOps', {
+            body: data.title,
+            badge: 'https://www.iiidevops.org/wp-content/uploads/2021/07/IIIDevOps-logo.png',
+            icon: 'https://www.iiidevops.org/wp-content/uploads/2021/07/IIIDevOps-logo.png'
+          }, {
+            onclick: () => this.readMessage(data)
+          })
+        }
       })
       this.onSocket('read_message')
       this.onSocket('delete_message')
