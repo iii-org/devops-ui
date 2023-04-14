@@ -622,8 +622,8 @@ export default {
       assigned_to: 'Assigned',
       fixed_version: 'Version',
       priority: '@:Issue.Priority',
-      due_date_start: '@:Issue.EndDate(>=)',
-      due_date_end: '@:Issue.EndDate(<=)'
+      due_date_start: '@:Issue.StartDate',
+      due_date_end: '@:Issue.EndDate'
     },
     Display: 'Display',
     DragTip: 'Drag to issue, it can change {key} to {value}.',
@@ -643,13 +643,13 @@ export default {
     UploadSuccess: 'Upload Success',
     List: 'Issue List',
     TransferIssueTo: 'Transfer {value} issues to？',
-    due_date_start: '@:Issue.EndDate(>=)',
-    due_date_end: '@:Issue.EndDate(<=)',
+    due_date_start: '@:Issue.StartDate',
+    due_date_end: '@:Issue.EndDate',
     CustomFilter: 'Custom Filter',
     CustomFilterName: 'Custom Filter Name',
     InputFilterName: 'Input Filter Name',
     RemoveCustomFilter: 'Are you sure to Remove Custom Filter?',
-    ImportParentIssueData: 'Import parent issue title and information'
+    ImportParentIssueData: 'Import Parent Issue Information'
   },
   Milestone: {
     Saving: 'Saving',
@@ -1389,7 +1389,7 @@ export default {
     Failed: 'Failed',
     Complete: '@:Status.Finished',
     Running: '@:Status.Scanning',
-    NotRunning: 'NotRunning',
+    NotRunning: 'Not Running',
     Interrupted: 'Interrupted'
   },
   Gantt: {
@@ -1493,12 +1493,12 @@ export default {
     Licenses: 'Licenses',
     Type: 'Type',
     CurrentVersion: 'Current Version',
-    FixedVersion: 'Fixed in Version',
+    FixedVersion: 'Fixed Version',
     Success: '@:general.Success',
     Complete: '@:Status.Finished',
-    Scanning: 'Scanning',
+    Scanning: '@:Status.Scanning',
     Queued: 'Queued',
-    'Not Scanned': 'NotRunning',
+    'Not Scanned': '@:Status.NotRunning',
     Size: 'Size'
   },
   RedmineMail: {

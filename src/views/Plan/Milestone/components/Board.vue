@@ -732,7 +732,7 @@ export default {
       this.$emit('relation-issue', false)
     },
     scrollTo(rowId, target) {
-      var element = document.getElementById('card_' + rowId + '_' + target)
+      const element = document.getElementById('card_' + rowId + '_' + target)
       this.$nextTick(() => {
         element.scrollIntoView({ behavior: 'smooth' })
       })
