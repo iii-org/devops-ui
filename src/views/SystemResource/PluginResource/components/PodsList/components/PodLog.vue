@@ -1,8 +1,14 @@
 <template>
-  <el-dialog :visible="dialogVisible" width="90%" top="3vh" :close-on-click-modal="false" @close="handleClose">
-    <span slot="title">
-      <span class="text-title">{{ containerName }}</span>
-    </span>
+  <el-dialog
+    :visible="dialogVisible"
+    width="90%"
+    top="3vh"
+    :close-on-click-modal="false"
+    @close="handleClose"
+  >
+    <div slot="title" class="container-name">
+      <div class="text-title">{{ containerName }}</div>
+    </div>
     <el-card
       id="podLogSection"
       shadow="never"
@@ -11,7 +17,8 @@
         background: '#222',
         height: 'calc(100vh - 250px)',
         overflow: 'auto',
-        'scroll-behavior': 'smooth'
+        'scroll-behavior': 'smooth',
+        'text-align': 'left'
       }"
     >
       <pre>{{ logData }}</pre>

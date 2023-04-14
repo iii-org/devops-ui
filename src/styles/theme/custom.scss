@@ -458,3 +458,9 @@
     color: $feature;
   }
 }
+
+.el-dialog__header {
+  > .container-name {
+    text-align: left;
+  }
+}
