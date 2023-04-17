@@ -743,6 +743,7 @@ export default {
       await this.removeIssue(row)
     },
     handleCellClick(row, column) {
+      if (row.create) return
       if (column.property === 'name' && !row.editColumn) {
         this.$emit('onOpenIssueDetail', row.id)
         return

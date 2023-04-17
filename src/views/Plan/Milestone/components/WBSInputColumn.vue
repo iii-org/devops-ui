@@ -20,6 +20,7 @@
         icon="el-icon-close"
         @click="handlerResetCreate(row, $index, treeNode)"
       />
+      <!-- 新增議題 -->
       <template v-if="row.create">
         <el-input v-if="number"
                   ref="input"
@@ -45,6 +46,7 @@
           </li>
         </ul>
       </template>
+      <!-- 編輯議題名稱 -->
       <template v-else-if="row.editColumn===prop&&row.id===editRowId&&editable(row)">
         <el-input v-if="number"
                   ref="input"
@@ -72,6 +74,7 @@
           </li>
         </ul>
       </template>
+      <!-- 議題名稱欄位正常狀態 -->
       <template v-else-if="prop==='name'">
         <span>{{ row[prop] }}</span>
         <el-tooltip
@@ -148,7 +151,7 @@ export default {
       default: null
     },
     showIconRowId: {
-      type: Number,
+      type: [String, Number],
       default: null
     }
   },
