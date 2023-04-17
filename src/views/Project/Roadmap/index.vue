@@ -5,41 +5,46 @@
     <el-row :gutter="10">
       <el-col :span="24">
         <el-card shadow="hover">
-          <el-collapse v-if="versionList.length" v-model="activeNames" accordion @change="onCollapseChange">
-            <el-collapse-item v-for="version in versionList" :key="version.id" :name="version.id">
-              <template slot="title">
-                <div class="flex items-center">
-                  <el-tag class="el-tag--circle mr-5" effect="dark" :type="getVersionTagType(version)" size="small">
-                    {{ version.name }}
-                  </el-tag>
-                  <div class="mr-7" style="width: 700px">
-                    <el-progress :percentage="getProgressPercentage(version)" :status="version.type" />
-                  </div>
-                  <div class="text-title">{{ version.close }}／{{ version.total_issue }}</div>
-                </div>
-              </template>
-              <el-row v-loading="contentLoading" :gutter="12">
-                <el-col :span="8">
-                  <el-table :data="workList[version.id]" style="width: 100%" stripe>
-                    <el-table-column :label="$t('Issue.List')">
-                      <template slot-scope="{row}">
-                        <div>
-                          <Priority v-if="row.priorityName" class="mr-2" :name="$t(`Issue.${row.priorityName}`)" :type="row.priorityName" />
-                          <Tracker :name="$t(`Issue.${row.trackerName}`)" :type="row.trackerName" />
-                          <div class="mt-2">
-                            <el-tag v-for="item in row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
-                            {{ row.name }}</div>
-                        </div>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </el-col>
-                <el-col :span="16">
-                  <WorkloadCard ref="issuePriority" :statistics-obj="version.workLoadData" />
-                </el-col>
-              </el-row>
-            </el-collapse-item>
-          </el-collapse>
+          <div v-if="versionList.length" style="overflow-y: scroll; max-height: calc(100vh - 230px);">
+            <el-collapse v-model="activeNames" accordion @change="onCollapseChange">
+              <ul v-infinite-scroll="fetchAll" :infinite-scroll-disabled="disabled">
+                <el-collapse-item v-for="version in versionList" :key="version.id" :name="version.id">
+                  <template slot="title">
+                    <div class="flex items-center">
+                      <el-tag class="el-tag--circle mr-5" effect="dark" :type="getVersionTagType(version)" size="small">
+                        {{ version.name }}
+                      </el-tag>
+                      <div class="mr-7" style="width: 700px">
+                        <el-progress :percentage="getProgressPercentage(version)" :status="version.type" />
+                      </div>
+                      <div class="text-title">{{ version.close }}／{{ version.total_issue }}</div>
+                    </div>
+                  </template>
+                  <el-row v-loading="contentLoading" :gutter="12">
+                    <el-col :span="8">
+                      <el-table :data="workList[version.id]" style="width: 100%" stripe>
+                        <el-table-column :label="$t('Issue.List')">
+                          <template slot-scope="{row}">
+                            <div>
+                              <Priority v-if="row.priorityName" class="mr-2" :name="$t(`Issue.${row.priorityName}`)" :type="row.priorityName" />
+                              <Tracker :name="$t(`Issue.${row.trackerName}`)" :type="row.trackerName" />
+                              <div class="mt-2">
+                                <el-tag v-for="item in row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
+                                {{ row.name }}</div>
+                            </div>
+                          </template>
+                        </el-table-column>
+                      </el-table>
+                    </el-col>
+                    <el-col :span="16">
+                      <WorkloadCard ref="issuePriority" :statistics-obj="version.workLoadData" />
+                    </el-col>
+                  </el-row>
+                </el-collapse-item>
+              </ul>
+            </el-collapse>
+            <p v-if="listLoading">{{ $t('Loading') }}</p>
+          </div>
           <el-empty v-else :description="$t('general.NoData')" />
         </el-card>
       </el-col>
@@ -75,6 +80,11 @@ export default {
       workLoad: '',
       activeNames: '',
       versionList: [],
+      versions: [],
+      splitarrayId: [],
+      splitCount: 10,
+      loadCount: 0,
+      noMore: false,
       workList: {},
       activeIndex: []
     }
@@ -83,37 +93,62 @@ export default {
     ...mapGetters(['selectedProject']),
     selectedProjectId() {
       return this.selectedProject.id
+    },
+    disabled () {
+      return this.loading || this.noMore
     }
   },
   watch: {
     selectedProjectId() {
-      this.fetchAll()
+      this.getVersionList()
+    },
+    loadCount() {
+      if (this.splitarrayId.length === this.loadCount) {
+        this.noMore = true
+      }
     }
   },
-  mounted() {
-    this.fetchAll()
+  created() {
+    this.getVersionList()
   },
   methods: {
-    async fetchAll() {
-      if (this.selectedProjectId === -1) return
+    async getVersionList() {
       this.listLoading = true
       const resVersion = await getProjectVersion(this.selectedProjectId)
-      const { versions } = resVersion.data
-      const resIssueProgress = await Promise.all(
-        versions.map(({ id }) => getProjectIssueProgress(this.selectedProjectId, { fixed_version_id: id }))
-      )
-      this.versionList = resIssueProgress.map(({ data }, idx) => {
-        const close = data.Closed || 0
-        const total_issue = Object.values(data).reduce((a, b) => a + b, 0)
-        return {
-          ...data,
-          id: versions[idx].id,
-          name: versions[idx].name,
-          workLoadData: {},
-          close,
-          total_issue
+      this.versions = resVersion.data.versions
+      if (this.versions.length && this.versions.length > this.splitCount) {
+        for (var i = 0; i < this.versions.length; i += this.splitCount) {
+          this.splitarrayId[this.splitarrayId.length] = this.versions.slice(i, i + this.splitCount)
         }
+      } else {
+        this.splitarrayId = [this.versions]
+      }
+      this.fetchAll()
+    },
+    async fetchAll() {
+      if (this.noMore) return
+      if (this.selectedProjectId === -1) return
+      this.listLoading = true
+      await Promise.all(
+        this.splitarrayId[this.loadCount].map(({ id }) => getProjectIssueProgress(this.selectedProjectId, { fixed_version_id: id }))
+      ).then((res) => {
+        if (this.loadCount >= this.splitarrayId.length) return
+        const newVersionList = res.map(({ data }, idx) => {
+          const close = data.Closed || 0
+          const total_issue = Object.values(data).reduce((a, b) => a + b, 0)
+          if (!this.splitarrayId[this.loadCount]) return
+          return {
+            ...data,
+            id: this.splitarrayId[this.loadCount][idx]?.id,
+            name: this.splitarrayId[this.loadCount][idx]?.name,
+            workLoadData: {},
+            close,
+            total_issue
+          }
+        })
+        this.versionList = [...this.versionList, ...newVersionList]
       })
+      this.loadCount++
       this.listLoading = false
     },
     getVersionTagType(version) {
