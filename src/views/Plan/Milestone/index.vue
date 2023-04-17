@@ -641,7 +641,6 @@ export default {
   height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
 
   &.is-panel {
-    width: calc(100% - 750px);
     transition: width 1s;
   }
 }
