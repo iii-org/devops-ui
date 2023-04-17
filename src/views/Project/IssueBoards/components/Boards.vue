@@ -310,7 +310,7 @@ export default {
     onRelationIssueDialog(id, element) {
       this.$set(this.relationIssue, 'visible', true)
       this.$set(this.relationIssue, 'id', id)
-      this.scrollTo(element)
+      setTimeout(() => this.scrollTo(element), 100)
     },
     handleRelationDelete() {
       this.$set(this.relationIssue, 'visible', false)
@@ -320,7 +320,7 @@ export default {
       this.$set(this.relationIssue, 'visible', false)
     },
     scrollTo(target) {
-      var element = document.getElementById('card' + target)
+      const element = document.getElementById('card' + target)
       this.$nextTick(() => {
         element.scrollIntoView({ behavior: 'smooth' })
       })
