@@ -259,6 +259,7 @@
             <em class="el-icon-d-arrow-right" />
           </div>
           <ProjectIssueDetail
+            ref="issueDetail"
             :props-issue-id="issueDetail.id"
             :is-in-dialog="true"
             :is-from-board="true"
@@ -286,7 +287,7 @@ import { QuickAddIssue } from '@/components/Issue'
 import Board from '@/views/Plan/Milestone/components/Board'
 import Gantt from '@/views/Plan/Milestone/components/Gantt'
 import WBS from '@/views/Plan/Milestone/components/WBS'
-import ProjectIssueDetail from '@/views/Project/IssueDetail/'
+import ProjectIssueDetail from '@/views/Project/IssueDetail'
 import XLSX from 'xlsx'
 
 export default {
@@ -489,6 +490,9 @@ export default {
     },
     handleUpdateLoading(value) {
       this.updateLoading = value
+      this.$nextTick(() => {
+        this.$refs.issueDetail.getData()
+      })
     },
     handleUpdateStatus(value) {
       this.lastUpdated = value
