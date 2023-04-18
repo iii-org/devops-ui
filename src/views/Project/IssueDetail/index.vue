@@ -97,7 +97,7 @@
                 :is-issue-form-opened="isIssueFormOpened"
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
-                @updateFamilyData="getIssueFamilyData(issue)"
+                @updateFamilyData="getIssueFamilyData()"
                 @updateWhiteBoard="updateWhiteBoard"
                 @calcIssueFormWidth="calcIssueFormWidth"
               />
@@ -110,11 +110,12 @@
             @scroll.native="onScrollIssue"
           >
             <el-col
-              ref="IssueDescription"
+              ref="IssueDescriptionWrapper"
               :span="24"
               class="mb-3"
             >
               <IssueDescription
+                ref="IssueDescription"
                 v-model="form.description"
                 :old-value="originForm.description"
                 :issue-id="issueId"
@@ -124,7 +125,7 @@
               />
             </el-col>
             <el-col
-              ref="IssueCollapse"
+              ref="IssueCollapseWrapper"
               :span="24"
             >
               <el-collapse
@@ -1291,8 +1292,8 @@ export default {
       this.$nextTick(() => {
         const editorHeight =
           this.$refs['IssueNotesDialog'].$el.getBoundingClientRect().top -
-          this.$refs['IssueDescription'].$el.getBoundingClientRect().height -
-          this.$refs['IssueCollapse'].$el.getBoundingClientRect().height
+          this.$refs['IssueDescriptionWrapper'].$el.getBoundingClientRect().height -
+          this.$refs['IssueCollapseWrapper'].$el.getBoundingClientRect().height
         if (editorHeight < 0) {
           // if (
           //   this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options &&
