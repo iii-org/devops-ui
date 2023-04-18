@@ -1077,16 +1077,32 @@ export default {
       return new File([u8arr], fileName, { type: mime })
     },
     filterImage(str, sendForm, checkDuplicate) {
-      const arr = str.split(/src="(.+?)>/g).filter((item) => (/data:.+/g).test(item))
-      if (arr.length === 0) return
-      arr.forEach((item) => {
-        const fileArray = item.split(/" alt="(.+?)"/)
-        const file = this.dataURLtoFile(fileArray[1], fileArray[0])
-        if (checkDuplicate && this.files.some((element) =>
-          file.name === element.filename && file.size === element.filesize
-        )) return
-        sendForm.append('upload_files', file)
-      })
+      // Prevent the previous description is markdown format and detect the image will report an error
+      if (!str.includes('<p>') && !str.includes('</p>')) {
+        const arr = str.split(/!\[(.+?)\)/g).filter((item) => (/(.+?)\]\(data:.+/g).test(item))
+        if (arr.length === 0) return
+        arr.forEach((item) => {
+          const fileArray = item.split('](')
+          const file = this.dataURLtoFile(fileArray[0], fileArray[1])
+          if (checkDuplicate && this.files.some((element) =>
+            file.name === element.filename && file.size === element.filesize
+          )) {
+            return
+          }
+          sendForm.append('upload_files', file)
+        })
+      } else {
+        const arr = str.split(/src="(.+?)>/g).filter((item) => (/data:.+/g).test(item))
+        if (arr.length === 0) return
+        arr.forEach((item) => {
+          const fileArray = item.split(/" alt="(.+?)"/)
+          const file = this.dataURLtoFile(fileArray[1], fileArray[0])
+          if (checkDuplicate && this.files.some((element) =>
+            file.name === element.filename && file.size === element.filesize
+          )) return
+          sendForm.append('upload_files', file)
+        })
+      }
     },
     async submitIssue() {
       this.tagsString = ''
