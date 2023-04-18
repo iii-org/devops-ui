@@ -206,7 +206,7 @@ export default {
         Failed: 'danger',
         Created: 'slow',
         Queued: 'warning',
-        ResumeScanQueue: 'warning',
+        ResumeScanQueued: 'warning',
         Pending: 'warning',
         Paused: 'warning',
         Running: 'slow',
