@@ -49,13 +49,14 @@
         >
           <template slot-scope="scope">
             <el-tag
+              class="mt-1"
               size="small"
               :type="mapStateType(scope.row.execution_state)"
               :effect="mapStateEffect(scope.row.execution_state)"
             >
               {{ scope.row.execution_state }}
             </el-tag>
-            <div class="mt-2">
+            <div>
               {{ `(${scope.row.status.success}/${scope.row.status.total})` }}
               <em
                 class="el-icon-circle-check"
