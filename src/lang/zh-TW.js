@@ -992,6 +992,7 @@ export default {
     EditTemplate: '修改自製範本',
     LocalProject: '本地專案',
     TemplateDescription: '範本簡述',
+    OriginalProjectNotExist: '原始專案已不存在',
     DuplicatedTemplate: '同一專案僅能生成一個範本，此專案"{0}"於日前已被轉成範本，若需同步程式碼，請至外層範本清單按下編輯鈕，即可執行。'
   },
   Maintenance: {
