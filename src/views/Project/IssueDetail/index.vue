@@ -82,7 +82,7 @@
         <el-col
           ref="mainIssueWrapper"
           :span="24"
-          :md="isIssueFormOpened ? 16 : 24"
+          :md="isFromBoard ? 24 : (isIssueFormOpened ? 16 : 24)"
         >
           <el-row>
             <el-col :span="24">
@@ -94,12 +94,13 @@
                 :issue-tracker="formTrackerName"
                 :row="issue"
                 :project-id="form.project_id"
+                :is-from-board="isFromBoard"
                 :is-issue-form-opened="isIssueFormOpened"
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
                 @updateFamilyData="getIssueFamilyData()"
                 @updateWhiteBoard="updateWhiteBoard"
-                @calcIssueFormWidth="calcIssueFormWidth"
+                @changeIssueFormOpened="changeIssueFormOpened"
               />
             </el-col>
           </el-row>
@@ -182,6 +183,24 @@
                     @popup-dialog="onRelationIssueDialog"
                   />
                 </el-collapse-item>
+                <el-collapse-item
+                  v-if="isFromBoard"
+                  :title="$t('general.AdvancedSettings')"
+                  name="issueForm"
+                >
+                  <IssueForm
+                    ref="IssueForm"
+                    class="mx-3 text-xs"
+                    :is-button-disabled="isButtonDisabled"
+                    :issue-id="issueId"
+                    :issue-project="issueProject"
+                    :is-from-board="isFromBoard"
+                    :form.sync="form"
+                    :parent="parent"
+                    :relations.sync="relations"
+                    :children-issue="children.length"
+                  />
+                </el-collapse-item>
               </el-collapse>
             </el-col>
             <el-col
@@ -262,12 +281,6 @@
                 </el-tab-pane>
               </el-tabs>
             </el-col>
-            <el-backtop
-              target=".issueHeight"
-              :visibility-height="500"
-              :right="issueFormWidth"
-              :bottom="50"
-            />
           </el-row>
         </el-col>
         <el-col
@@ -277,6 +290,7 @@
           class="issueOptionHeight"
         >
           <IssueForm
+            v-if="!isFromBoard"
             ref="IssueForm"
             :is-button-disabled="isButtonDisabled"
             :issue-id="issueId"
@@ -288,25 +302,31 @@
           />
         </el-col>
       </el-row>
-      <el-dialog
-        :visible.sync="relationIssue.visible"
-        width="90%"
-        top="3vh"
-        append-to-body
-        destroy-on-close
-        :before-close="handleRelationIssueDialogBeforeClose"
-      >
-        <ProjectIssueDetail
-          v-if="relationIssue.visible"
-          ref="children"
-          :is-open-matrix="isOpenMatrix"
-          :props-issue-id="relationIssue.id"
-          :is-in-dialog="true"
-          @update="showLoading"
-          @delete="handleRelationDelete"
-        />
-      </el-dialog>
     </el-card>
+    <el-backtop
+      target=".issueHeight"
+      :visibility-height="500"
+      :right="issueFormWidth"
+      :bottom="50"
+    />
+    <el-dialog
+      :visible.sync="relationIssue.visible"
+      width="90%"
+      top="3vh"
+      append-to-body
+      destroy-on-close
+      :before-close="handleRelationIssueDialogBeforeClose"
+    >
+      <ProjectIssueDetail
+        v-if="relationIssue.visible"
+        ref="children"
+        :is-open-matrix="isOpenMatrix"
+        :props-issue-id="relationIssue.id"
+        :is-in-dialog="true"
+        @update="showLoading"
+        @delete="handleRelationDelete"
+      />
+    </el-dialog>
     <el-dialog
       :visible.sync="relatedCollectionDialogVisible"
       :close-on-click-modal="false"
@@ -589,7 +609,7 @@ export default {
       descriptionMentionList: [],
       noteMentionList: [],
       issueNotesEditorVisible: 'issueNotesEditor',
-      isIssueFormOpened: false,
+      isIssueFormOpened: !this.isFromBoard,
       issueFormWidth: 80
     }
   },
@@ -704,11 +724,11 @@ export default {
       const elCollapseItemArrow = Array.from(this.$refs['mainIssueWrapper'].$el.getElementsByClassName('el-collapse-item__arrow'))
       if (val === 'top') {
         elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = ''
-        elCollapseItemArrow[elCollapseItemArrow.length - 1].style['margin-left'] = 'auto'
+        // elCollapseItemArrow[elCollapseItemArrow.length - 1].style['margin-left'] = 'auto'
         // this.issueNotesEditorVisible = 'issueNotesEditor'
       } else {
         elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = 'center'
-        elCollapseItemArrow[elCollapseItemArrow.length - 1].style['margin-left'] = '8px'
+        // elCollapseItemArrow[elCollapseItemArrow.length - 1].style['margin-left'] = '8px'
         // this.issueNotesEditorVisible = ''
       }
     }
@@ -716,6 +736,7 @@ export default {
   async mounted() {
     await this.fetchIssueLink()
     await this.getRelationProjectList()
+    await this.calcIssueFormWidth()
     this.storagePId = this.form.project_id
   },
   methods: {
@@ -1435,10 +1456,15 @@ export default {
       input.remove()
       this.showSuccessMessage(message)
     },
-    calcIssueFormWidth() {
+    changeIssueFormOpened() {
       this.isIssueFormOpened = !this.isIssueFormOpened
+      this.calcIssueFormWidth()
+    },
+    calcIssueFormWidth() {
       this.$nextTick(() => {
-        this.issueFormWidth = this.isIssueFormOpened ? this.$refs.IssueForm.$el.clientWidth + 120 : 80
+        this.issueFormWidth = !this.isFromBoard
+          ? (this.isIssueFormOpened ? this.$refs.IssueForm.$el.clientWidth + 130 : 100)
+          : 80
       })
     },
     showSuccessMessage(message) {
@@ -1451,6 +1477,7 @@ export default {
   }
 }
 </script>
+
 <style lang="scss" scoped>
 @import 'src/styles/theme/variables.scss';
 
@@ -1497,5 +1524,9 @@ export default {
 
 .previous {
   font-size: 0.75em;
+}
+
+>>> .el-collapse-item__arrow {
+  margin: 0 8px 0 8px;
 }
 </style>

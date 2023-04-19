@@ -80,14 +80,21 @@
           Redmine
         </el-link>
         <el-tooltip
+          v-if="!isFromBoard"
           :content="$t('Issue.IssueSetting')"
           placement="bottom"
+          class="ml-3 is-panel"
         >
-          <Hamburger
-            :is-active="!isIssueFormOpened"
-            class="inline p-0"
-            @toggleClick="$emit('calcIssueFormWidth')"
-          />
+          <div
+            class="handle-button p-3"
+            :style="{
+              'background-color':'#85c1e9',
+              'display': 'inline',
+            }"
+            @click="$emit('changeIssueFormOpened')"
+          >
+            <em :class="isIssueFormOpened ? 'el-icon-d-arrow-right' : 'el-icon-setting'" />
+          </div>
         </el-tooltip>
       </div>
     </div>
@@ -236,7 +243,6 @@
 import { mapGetters } from 'vuex'
 import { addIssue, updateIssue } from '@/api/issue'
 import { createExcalidraw } from '@/api_v2/excalidraw'
-import Hamburger from '@/components/Hamburger'
 import { AddIssue } from '@/components/Issue'
 import IssueFileUploader from './IssueFileUploader'
 import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
@@ -244,7 +250,6 @@ import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRe
 export default {
   name: 'IssueToolbar',
   components: {
-    Hamburger,
     AddIssue,
     IssueFileUploader,
     SettingRelationIssue
@@ -277,6 +282,10 @@ export default {
     projectId: {
       type: Number,
       default: null
+    },
+    isFromBoard: {
+      type: Boolean,
+      default: false
     },
     isIssueFormOpened: {
       type: Boolean,
@@ -443,3 +452,20 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.handle-button {
+  text-align: center;
+  font-size: 24px;
+  border-radius: 6px 0 0 6px !important;
+  z-index: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  color: #fff;
+  line-height: 50px;
+  i {
+  font-size: 24px;
+  line-height: 50px;
+  }
+}
+</style>
