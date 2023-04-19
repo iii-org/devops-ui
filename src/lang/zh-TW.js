@@ -1012,6 +1012,7 @@ export default {
   },
   Loading: '讀取中……',
   Updating: '更新中……',
+  LoadMore: '看更多',
   Harbor: {
     PushTime: '推送時間'
   },

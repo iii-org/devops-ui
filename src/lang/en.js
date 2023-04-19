@@ -1019,6 +1019,7 @@ export default {
   },
   Loading: 'Loading...',
   Updating: 'Updating...',
+  LoadMore: 'Load More',
   Harbor: {
     PushTime: 'Push Time'
   },
