@@ -725,6 +725,7 @@ export default {
       Overview: {
         NAME: '總覽',
         projects: '專案數',
+        closed: '@:Project.closed',
         overdue: '@:Project.overdue',
         not_started: '@:Project.not_started',
         in_progress: '@:Project.in_progress'

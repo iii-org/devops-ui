@@ -730,6 +730,7 @@ export default {
       Overview: {
         NAME: 'Overview',
         projects: 'Projects',
+        closed: '@:Project.closed',
         overdue: '@:Project.overdue',
         not_started: '@:Project.not_started',
         in_progress: '@:Project.in_progress'
