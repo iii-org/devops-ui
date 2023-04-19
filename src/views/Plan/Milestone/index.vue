@@ -209,6 +209,7 @@
             :fixed-version="fixed_version"
             :tags="tags"
             :table-height="tableHeight"
+            :issue-detail-opened-id="issueDetail.id"
             @onOpenIssueDetail="onRelationIssueDialog"
             @update-loading="handleUpdateLoading"
             @update-status="handleUpdateStatus"
@@ -250,7 +251,7 @@
         </el-tab-pane>
       </el-tabs>
       <transition name="slide-fade">
-        <div v-if="issueDetail.visible" class="rightPanel">
+        <div v-show="issueDetail.visible" class="rightPanel">
           <div
             class="handle-button"
             :style="{'background-color':'#85c1e9'}"
@@ -262,7 +263,7 @@
             ref="issueDetail"
             :props-issue-id="issueDetail.id"
             :is-in-dialog="true"
-            :is-from-board="true"
+            @update="handleRelationUpdate"
             @delete="handleRelationDelete"
           />
         </div>
@@ -629,12 +630,21 @@ export default {
       this.$set(this.issueDetail, 'visible', true)
       this.$set(this.issueDetail, 'id', id)
     },
+    handleRelationUpdate() {
+      this.$nextTick(() => {
+        this.$refs.WBS.loadData()
+      })
+    },
     handleRelationDelete() {
       this.$set(this.issueDetail, 'visible', false)
       this.$set(this.issueDetail, 'id', null)
+      this.$nextTick(() => {
+        this.$refs.WBS.loadData()
+      })
     },
     handleRightPanelVisible() {
       this.$set(this.issueDetail, 'visible', false)
+      this.$set(this.issueDetail, 'id', null)
     }
   }
 }
