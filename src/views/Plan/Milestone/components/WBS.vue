@@ -6,6 +6,7 @@
       :data="listData"
       :element-loading-text="$t('Loading')"
       :height="tableHeight"
+      :row-style="rowStyle"
       class="table-css"
       row-key="id"
       lazy
@@ -34,7 +35,7 @@
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
-        @onCellClick="handeIssueNameCellClick"
+        @onCellClick="handleIssueNameCellClick"
       />
       <el-table-column width="50px">
         <template slot-scope="{row}">
@@ -422,6 +423,10 @@ export default {
     displayClosed: {
       type: Boolean,
       default: false
+    },
+    issueDetailOpenedId: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -761,7 +766,7 @@ export default {
         this.$set(row, 'editColumn', columnName)
       }
     },
-    handeIssueNameCellClick(row, column) {
+    handleIssueNameCellClick(row, column) {
       if (!this.isButtonDisabled && column['property']) {
         let columnName = column['property'].split('.')
         if (columnName.length >= 2) {
@@ -1113,6 +1118,14 @@ export default {
     },
     handleCellMouseLeave(row) {
       this.showIconRowId = null
+    },
+    rowStyle({ row }) {
+      const style = {}
+      if (row.id === this.issueDetailOpenedId) {
+        style['background-color'] = '#e5e7eb'
+        style['color'] = '#409eff'
+      }
+      return style
     }
   }
 }
