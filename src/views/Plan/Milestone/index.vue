@@ -661,7 +661,6 @@ export default {
 
 .slide-fade-enter-active {
   transition: all .5s ease-in-out;
-
 }
 .slide-fade-leave-active {
   transition: all .5s ease-in-out;
