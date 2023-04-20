@@ -1,5 +1,17 @@
 <template>
   <el-row v-show="visible">
+    <div style="padding: 10px 5px; font-weight: bold">
+      <span>{{ $t('Issue.AddSubIssue') }}: </span>
+      <el-link
+        v-if="isTable"
+        :disabled="isLoading"
+        size="small"
+        @click="onAdvancedSettingsClick"
+      >
+        {{ $t('general.AdvancedSettings') }}
+      </el-link>
+    </div>
+
     <el-form
       ref="quickAddIssueForm"
       inline
@@ -8,7 +20,8 @@
     >
       <el-form-item prop="tracker_id">
         <el-select
-          v-model="tracker_id"
+          v-model="formData.tracker_id"
+          :size="isTable ? 'small' : ''"
           :placeholder="$t('Issue.SelectType')"
         >
           <el-option
@@ -27,37 +40,83 @@
       <el-form-item prop="name">
         <el-input
           v-model="formData.name"
+          :size="isTable ? 'small' : ''"
           :placeholder="$t('Issue.name')"
         />
       </el-form-item>
       <el-form-item>
         <el-button
-          class="buttonPrimary"
+          v-if="!isTable"
+          type="primary"
           :loading="isLoading"
           @click="onSaveClick"
         >
           {{ $t('general.Save') }}
         </el-button>
         <el-button
+          v-if="!isTable"
           :disabled="isLoading"
           class="buttonSecondaryReverse"
           @click="onAdvancedSettingsClick"
         >
           {{ $t('general.AdvancedSettings') }}
         </el-button>
+        <el-button
+          v-if="isTable"
+          type="success"
+          :loading="isLoading"
+          style="padding: 9px 8px;"
+          size="small"
+          icon="el-icon-check"
+          @click="onSaveClick"
+        />
+        <el-button
+          v-if="isTable"
+          :disabled="isLoading"
+          style="padding: 9px 8px;"
+          size="small"
+          icon="el-icon-close"
+          type="danger"
+          @click="$emit('close')"
+        />
       </el-form-item>
     </el-form>
     <el-dialog
-      :title="$t('Issue.AddIssue')"
       :visible.sync="showDialog"
       :close-on-click-modal="false"
+      :show-close="false"
       width="50%"
       top="5px"
     >
+      <template slot="title">
+        <el-row slot="title" type="flex" align="middle">
+          <el-col :xs="24" :md="16">
+            <span class="text-title">
+              {{ $t('Issue.AddIssue') }}
+            </span>
+          </el-col>
+          <el-col :xs="24" :md="8" class="text-right">
+            <el-button
+              v-if="parent.id"
+              class="buttonPrimary"
+              @click="handleAdvancedImport"
+            >
+              {{ $t('Issue.ImportParentIssueData') }}
+            </el-button>
+            <el-button
+              class="buttonSecondaryReverse"
+              @click="showDialog = false"
+            >
+              {{ $t('general.Close') }}
+            </el-button>
+          </el-col>
+        </el-row>
+      </template>
       <AddIssue
         ref="addIssueDialog"
         :project-id="projectId"
-        :parent-id="parentId"
+        :parent-id="parent.id"
+        :parent-name="parent.name"
         :prefill="formData"
         :save-data="handleIssueSave"
         import-from="list"
@@ -91,7 +150,7 @@ import { Tracker, AddIssue } from '@/components/Issue'
 
 const getDefaultFormData = () => ({
   tracker_id: null,
-  name: null,
+  name: '',
   assigned_to_id: null,
   status_id: 1,
   priority_id: 3
@@ -112,11 +171,18 @@ export default {
     filterConditions: {
       type: Object,
       default: () => ({})
+    },
+    parent: {
+      type: Object,
+      default: () => ({})
+    },
+    isTable: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      parentId: 0,
       formData: getDefaultFormData(),
       tracker_id: null,
       isLoading: false,
@@ -156,19 +222,20 @@ export default {
   },
   methods: {
     onSaveClick() {
-      this.formData.tracker_id = this.tracker_id
+      // this.formData.tracker_id = this.tracker_id
       this.$refs.quickAddIssueForm.validate(async (valid) => {
         if (!valid) return
         const sendData = Object.assign({}, this.formData, {
           project_id: this.projectId
         })
+        if (this.parent.hasOwnProperty('id')) this.$set(sendData, 'parent_id', this.parent.id)
         const formData = this.getFormData(sendData)
         this.handleIssueSave(formData)
       })
     },
     onAdvancedSettingsClick() {
       const { priority, status, tracker, fixed_version } = this.filterConditions
-      this.formData.tracker_id = this.tracker_id || tracker
+      if (tracker) this.formData.priority_id = tracker
       if (priority) this.formData.priority_id = priority
       if (status) this.formData.status_id = status
       if (fixed_version) this.formData.fixed_version_id = fixed_version
@@ -209,6 +276,39 @@ export default {
         formData.append(item, data[item])
       })
       return formData
+    },
+    setFormData(data) {
+      const {
+        project,
+        assigned_to,
+        fixed_version,
+        name,
+        tracker,
+        status,
+        priority,
+        estimated_hours,
+        done_ratio,
+        start_date,
+        due_date,
+        description
+      } = data
+      // this.formData = {}
+      this.formData.project_id = project ? project.id : ''
+      this.formData.assigned_to_id = assigned_to ? assigned_to.id : ''
+      this.formData.name = this.formData.name !== '' ? this.formData.name : name + ' (' + this.$t('Issue.Copy') + ')'
+      this.formData.fixed_version_id = fixed_version ? fixed_version.id : ''
+      this.formData.tracker_id = this.formData.tracker_id !== null ? this.formData.tracker_id : tracker.id
+      this.formData.status_id = status.id
+      this.formData.priority_id = priority.id
+      this.formData.estimated_hours = estimated_hours
+      this.formData.done_ratio = done_ratio
+      this.formData.start_date = start_date === null ? '' : start_date
+      this.formData.due_date = due_date === null ? '' : due_date
+      this.formData.description = description === null ? '' : description
+    },
+    handleAdvancedImport() {
+      this.setFormData(this.parent)
+      this.$refs['addIssueDialog'].handleImport()
     }
   }
 }

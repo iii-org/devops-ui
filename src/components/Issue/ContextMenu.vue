@@ -214,6 +214,10 @@ export default {
     selectionOptions: {
       type: Object,
       default: () => ({})
+    },
+    simpleAddIssue: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -581,7 +585,19 @@ export default {
         this.parentId = this.row.id
         this.parentName = this.row.name
       }
-      this.addTopicDialogVisible = true
+
+      if (!this.simpleAddIssue) {
+        this.addTopicDialogVisible = true
+        return
+      }
+
+      const store = this.$parent.$refs['issueList'].layout.store
+      const { expandRows } = store.states
+      const expandIndex = expandRows.findIndex(x => x.id === this.row.id)
+      if (expandIndex === -1) {
+        store.toggleRowExpansion(this.row)
+      }
+      this.row.showQuickAddIssue = true
     },
     loadingUpdate(value) {
       this.LoadingConfirm = value

@@ -17,6 +17,7 @@
       :project-id="projectId"
       :visible.sync="showQuickAddIssue"
       :filter-conditions="filterConditions"
+      @close="showQuickAddIssue = false"
       @update="updateIssueTables"
     />
 
@@ -39,6 +40,7 @@
           :filter-conditions-props="filterConditions"
           :display-closed-props="displayClosedIssue"
           :keyword-props="keyword"
+          :show-quick-add-issue="showQuickAddIssue"
           @update="updateIssueTables"
           @total="updateTotalCount(tab.id, $event)"
         />

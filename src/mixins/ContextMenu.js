@@ -29,7 +29,8 @@ export default {
           placeholder: 'Priority',
           tag: true
         }
-      ])
+      ]),
+      isTable: true
     }
   },
   computed: {
@@ -47,6 +48,7 @@ export default {
       this.handleContextMenu(row, column, event)
     },
     handleContextMenu(row, column, event) {
+      this.isTable = column !== ''
       event.preventDefault()
       const eventX = event.pageX
       const eventY = event.pageY
