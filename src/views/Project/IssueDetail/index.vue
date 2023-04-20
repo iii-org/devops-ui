@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" :style="isFromBoard ? 'padding: 0' : ''">
     <el-card
       v-loading="isLoading"
       :element-loading-text="$t('Loading')"
@@ -48,8 +48,18 @@
                 <el-button
                   class="el-icon-copy-document"
                   circle
+                  size="small"
                   @click="copyUrl"
                 />
+              </el-tooltip>
+              <el-tooltip v-if="isFromBoard" :content="$t('general.PopUp')" placement="bottom">
+                <el-button
+                  circle
+                  size="small"
+                  @click="$emit('popup')"
+                >
+                  <em class="ri-external-link-line" />
+                </el-button>
               </el-tooltip>
             </el-col>
           </el-row>
@@ -107,7 +117,7 @@
           <el-row
             ref="mainIssue"
             :gutter="10"
-            class="issueHeight"
+            :class="isFromBoard ? 'issueHeightBoard' :'issueHeight'"
             @scroll.native="onScrollIssue"
           >
             <el-col
@@ -305,7 +315,7 @@
       </el-row>
     </el-card>
     <el-backtop
-      target=".issueHeight"
+      :target="isFromBoard ? '.issueHeightBoard' : '.issueHeight'"
       :visibility-height="500"
       :right="issueFormWidth"
       :bottom="50"
@@ -1484,6 +1494,11 @@ export default {
 
 .issueHeight {
   height: calc(95vh - 50px - 81px - 40px - 32px);
+  overflow-y: auto;
+}
+
+.issueHeightBoard {
+  height: calc(100vh - 160px);
   overflow-y: auto;
 }
 
