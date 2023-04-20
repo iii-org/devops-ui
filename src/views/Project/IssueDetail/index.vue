@@ -1361,6 +1361,7 @@ export default {
       })
     },
     async getIssueFamilyData(row) {
+      if (!row.id) return
       try {
         this.isLoadingFamily = true
         const family = await getIssueFamily(row.id)
