@@ -464,3 +464,25 @@
     text-align: left;
   }
 }
+
+/*
+* toast-ui editor css
+*/
+.toastui-editor-popup-add-link .toastui-editor-popup-body,
+.toastui-editor-popup-add-image .toastui-editor-popup-body {
+  padding: 0 20px 10px !important;
+}
+.toastui-editor-popup-add-image .toastui-editor-tabs {
+  margin: 5px 0 !important;
+}
+.toastui-editor-popup-add-image .toastui-editor-tabs .tab-item {
+  width: 50px !important;
+  height: 30px !important;
+  line-height: 30px !important;
+}
+.toastui-editor-popup-body label {
+  margin: 5px 0 !important;
+}
+.toastui-editor-popup-body .toastui-editor-button-container {
+  margin-top: 10px !important;
+}
