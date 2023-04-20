@@ -472,12 +472,15 @@
 
 .el-divider--horizontal {
   margin: 12px 0px;
+}
 .el-dialog__header {
   > .container-name {
     text-align: left;
   }
 }
-
+.el-divider--horizontal {
+  margin: 12px 0px;
+}
 /*
 * toast-ui editor css
 */
@@ -498,7 +501,4 @@
 }
 .toastui-editor-popup-body .toastui-editor-button-container {
   margin-top: 10px !important;
-}
-.el-divider--horizontal {
-  margin: 12px 0px;
 }
