@@ -1402,18 +1402,15 @@ export default {
     Finished: 'Finished',
     Scanning: 'Scanning',
     Aborted: 'Aborted',
-<<<<<<< HEAD
     Failed: 'Failed',
     Complete: '@:Status.Finished',
     Running: '@:Status.Scanning',
     NotRunning: 'Not Running',
-    Interrupted: 'Interrupted'
-=======
+    Interrupted: 'Interrupted',
     Started: 'Started',
     'Error Publishing Scan': 'Scan Error',
     'Generating Report': 'Generating',
     'Error Generating Report': 'Generating Error'
->>>>>>> e406ea9c (feat: modify webinspect component (#5120 #5121 #5122))
   },
   Gantt: {
     Now: 'Now',
