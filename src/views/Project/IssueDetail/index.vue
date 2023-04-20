@@ -201,7 +201,7 @@
                 >
                   <IssueForm
                     ref="IssueForm"
-                    class="mx-3 text-xs"
+                    class="mx-3"
                     :is-button-disabled="isButtonDisabled"
                     :issue-id="issueId"
                     :issue-project="issueProject"
