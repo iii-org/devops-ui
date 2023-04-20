@@ -121,29 +121,15 @@
       >
         <template slot-scope="scope">
           <el-tooltip
-<<<<<<< HEAD
             v-if="scope.row.status === 'Finished'"
             placement="bottom"
             :content="$t('Dashboard.Report')"
           >
             <div :class="!scope.row.scan_id || scope.row.stats.status !== 'Complete'
-=======
-            placement="bottom"
-            :content="$t('Dashboard.Report')"
-          >
-            <div :class="!scope.row.scan_id || scope.row.report_status !== 'Finished'
->>>>>>> e406ea9c (feat: modify webinspect component (#5120 #5121 #5122))
               ? 'disabled'
               : ''"
             >
               <em
-<<<<<<< HEAD
-                :class="!scope.row.scan_id || scope.row.stats.status !== 'Complete'
-                  ? 'ri-file-list-2-line disabled operate-button'
-                  : 'ri-file-list-2-line active operate-button'"
-                @click="handleTestReportDetail(scope.row)"
-              />
-=======
                 :class="!scope.row.scan_id || scope.row.report_status !== 'Finished'
                   ? 'ri-file-list-2-line disabled operate-button'
                   : 'ri-file-list-2-line active operate-button'"
@@ -152,7 +138,6 @@
               <div class="text-xs">
                 {{ scope.row.report_status ? $t(`Status.${scope.row.report_status}`) : '' }}
               </div>
->>>>>>> e406ea9c (feat: modify webinspect component (#5120 #5121 #5122))
             </div>
           </el-tooltip>
         </template>
