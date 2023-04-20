@@ -272,7 +272,8 @@ export default {
     Unexpired: '未逾期',
     DataGenerationTime: '資料產生時間',
     Expand: '展開',
-    Fold: '收合'
+    Fold: '收合',
+    PopUp: '另開視窗'
   },
   Notify: {
     Updated: '已更新',

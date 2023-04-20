@@ -272,7 +272,8 @@ export default {
     Unexpired: 'Unexpired',
     DataGenerationTime: 'Data Generation Time',
     Expand: 'Expand',
-    Fold: 'Fold'
+    Fold: 'Fold',
+    PopUp: 'Pop Up'
   },
   Notify: {
     Updated: 'update successful',
