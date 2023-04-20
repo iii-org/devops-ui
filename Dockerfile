@@ -10,10 +10,6 @@ RUN yarn run build:prod
 
 FROM dockerhub/library/nginx:1.24-alpine-perl
 COPY --from=build-stage /app/dist /usr/share/nginx/html
-COPY --from=build-stage /app/default.conf /etc/nginx/conf.d/default.conf
-COPY --from=build-stage /app/default.conf.tmpl /etc/nginx/conf.d/default.conf.tmpl
-COPY --from=build-stage /app/run_ui.pl /run_ui.pl
-RUN chmod -R 775 /usr/share/nginx/html; chmod 775 /etc/nginx/conf.d/default.conf; chmod a+x /run_ui.pl
+COPY --from=build-stage /app/default.conf.template /etc/nginx/templates/default.conf.template
+RUN chmod -R 775 /usr/share/nginx/html
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-CMD ["/run_ui.pl"]
