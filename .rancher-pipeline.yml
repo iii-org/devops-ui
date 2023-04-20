@@ -245,6 +245,7 @@ stages:
     branch:
       include:
       - master
+      - develop
 - name: Test--ZAP
   iiidevops: zap
   steps:
