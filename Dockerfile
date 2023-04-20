@@ -11,5 +11,6 @@ RUN yarn run build:prod
 FROM dockerhub/library/nginx:1.24-alpine-perl
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 COPY --from=build-stage /app/default.conf.template /etc/nginx/templates/default.conf.template
+ENV API_URL=http://devopsapi-service:10009/
 RUN chmod -R 775 /usr/share/nginx/html
 EXPOSE 80
