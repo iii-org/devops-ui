@@ -185,6 +185,7 @@
                   />
                 </el-collapse-item>
                 <el-collapse-item
+                  v-if="isFromBoard"
                   :title="$t('general.AdvancedSettings')"
                   name="issueForm"
                 >
