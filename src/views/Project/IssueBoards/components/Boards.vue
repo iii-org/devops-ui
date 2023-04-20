@@ -34,13 +34,31 @@
           <em class="el-icon-d-arrow-right" />
         </div>
         <ProjectIssueDetail
+          ref="childrenDrawer"
           :props-issue-id="relationIssue.id"
           :is-in-dialog="true"
           :is-from-board="true"
+          @popup="handleRelationIssueDialogBeforeClose"
           @delete="handleRelationDelete"
         />
       </div>
     </transition>
+    <el-dialog
+      :visible.sync="isProjectDetailPopUp"
+      width="90%"
+      top="3vh"
+      append-to-body
+      destroy-on-close
+      :before-close="handleRelationIssueDialogBeforeClose"
+    >
+      <ProjectIssueDetail
+        ref="children"
+        :props-issue-id="relationIssue.id"
+        :is-in-dialog="true"
+        :is-from-board="false"
+        @delete="handleRelationDelete"
+      />
+    </el-dialog>
     <ContextMenu
       ref="contextmenu"
       :visible="contextMenu.visible"
@@ -117,6 +135,7 @@ export default {
     return {
       group: 'mission',
       contextMenu: contextMenu,
+      isProjectDetailPopUp: false,
       relationIssue: {
         visible: false,
         id: null
@@ -324,6 +343,30 @@ export default {
       this.$nextTick(() => {
         element.scrollIntoView({ behavior: 'smooth' })
       })
+    },
+    handlePopConfirm(done) {
+      this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel'),
+        type: 'warning'
+      })
+        .then(() => {
+          done()
+        })
+    },
+    handleRelationIssueDialogBeforeClose(done) {
+      const ref = done ? 'children' : 'childrenDrawer'
+      if (!done) {
+        done = () => {
+          this.relationIssue.visible = false
+          this.isProjectDetailPopUp = true
+        }
+      }
+      if (this.$refs[ref].hasUnsavedChanges()) {
+        this.handlePopConfirm(done)
+      } else {
+        done()
+      }
     }
   }
 }
@@ -403,18 +446,19 @@ $tag-options: (
 }
 
 .handle-button {
-  width: 50px;
+  width: 35px;
   height: 50px;
   position: absolute;
-  left: -50px;
+  left: -35px;
   text-align: center;
   font-size: 24px;
   border-radius: 6px 0 0 6px !important;
-  z-index: 0;
+  z-index: 1;
   pointer-events: auto;
   cursor: pointer;
   color: #fff;
   line-height: 50px;
+  background-color:'#85c1e9'
   i {
     font-size: 24px;
     line-height: 50px;
