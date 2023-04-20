@@ -263,6 +263,7 @@
             ref="issueDetail"
             :props-issue-id="issueDetail.id"
             :is-in-dialog="true"
+            :is-from-board="true"
             @update="handleRelationUpdate"
             @delete="handleRelationDelete"
           />

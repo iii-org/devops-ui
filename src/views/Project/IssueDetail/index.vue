@@ -130,7 +130,8 @@
               :span="24"
             >
               <el-collapse
-                v-if="files.length > 0 || countRelationIssue > 0"
+                v-if="files.length > 0 || test_files.length > 0 ||
+                  countRelationIssue > 0|| isFromBoard"
                 v-model="relationVisible"
                 accordion
               >
@@ -184,7 +185,6 @@
                   />
                 </el-collapse-item>
                 <el-collapse-item
-                  v-if="isFromBoard"
                   :title="$t('general.AdvancedSettings')"
                   name="issueForm"
                 >
