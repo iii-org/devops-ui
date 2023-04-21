@@ -27,8 +27,25 @@
       v-loading="listLoading"
       :data="listData"
       :element-loading-text="$t('Loading')"
+      :row-class-name="getRowClass"
       fit
     >
+      <el-table-column
+        type="expand"
+      >
+        <template slot-scope="scope">
+          <ProjectExpand
+            :sons="getChildProjects(scope.row.son_projects[0].sons)"
+            @setStar="setStar"
+            @updated="fetchData"
+            @handleClick="handleClick"
+            @handleEdit="handleEdit"
+            @handleDelete="handleDelete"
+            @handleFix="handleFix"
+            @handleToggle="handleToggle"
+          />
+        </template>
+      </el-table-column>
       <el-table-column
         width="60"
         align="center"
@@ -148,7 +165,6 @@
         prop="project_status"
         i18n-key="Project"
         :label="$t('Project.IssueStatus')"
-        size="medium"
         location="projectListPM"
         min-width="120"
       />
@@ -241,11 +257,7 @@
             placement="bottom"
             :content="$t('general.Fix')"
           >
-<<<<<<< HEAD
             <em class="ri-refresh-line active operate-button" @click="handleFix(scope.row.id)" />
-=======
-            <em class="ri-refresh-fill active operate-button" @click="handleFix(scope.row.id)" />
->>>>>>> 7b6e71d1 (feat: modify table button layout)
           </el-tooltip>
           <el-tooltip
             v-if="scope.row.is_lock !== true"
@@ -256,11 +268,7 @@
               :disabled="permission(scope.row)"
               :class="scope.row.disabled
                 ? 'ri-play-circle-line finished operate-button'
-<<<<<<< HEAD
                 : 'ri-pause-circle-line danger operate-button'"
-=======
-                : 'ri-pause-circle-line inProgress operate-button'"
->>>>>>> 7b6e71d1 (feat: modify table button layout)
               @click="handleToggle(scope.row)"
             />
           </el-tooltip>
@@ -314,7 +322,8 @@ import {
 
 const params = () => ({
   limit: 10,
-  offset: 0
+  offset: 0,
+  parent_son: true
 })
 
 export default {
@@ -326,7 +335,8 @@ export default {
     EditProjectDialog,
     DeleteProjectDialog,
     SearchFilter,
-    UpdateButton
+    UpdateButton,
+    ProjectExpand: () => import('./components/ProjectExpand')
   },
   filters: {
     statusFilter(status) {
@@ -412,7 +422,7 @@ export default {
       const ids = project.map(function (el) {
         return el.id
       })
-      const calculated = (await getCalculateProjectList(ids.join())).data
+      const calculated = await this.getCalculateProjectList(ids.join())
       for (const i in calculated.project_list) {
         calculated.project_list[i].id = parseInt(calculated.project_list[i].id)
       }
@@ -426,6 +436,16 @@ export default {
         })
       }
       this.listData = merged
+    },
+    async getCalculateProjectList(ids) {
+      this.listLoading = true
+      return await getCalculateProjectList(ids)
+        .then((res) => {
+          return res.data
+        })
+        .finally(() => {
+          this.listLoading = false
+        })
     },
     async onPagination(listQuery) {
       const { limit, page } = listQuery
@@ -554,6 +574,18 @@ export default {
         message: error,
         type: 'warning'
       })
+    },
+    getRowClass({ row }) {
+      return row.has_son ? '' : 'hide-expand'
+    },
+    getChildProjects(data) {
+      return data.map((item) => {
+        item.children = item.sons
+        if (item.sons.length > 0) {
+          this.getChildProjects(item.sons)
+        }
+        return item
+      })
     }
   }
 }
@@ -578,5 +610,13 @@ export default {
   top: 0;
   background: #3ecbbc;
   height: 4px;
+}
+
+::v-deep .hide-expand {
+  > .el-table__expand-column {
+    > .cell {
+      display: none;
+    }
+  }
 }
 </style>
