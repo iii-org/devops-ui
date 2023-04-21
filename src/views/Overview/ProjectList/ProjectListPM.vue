@@ -35,7 +35,7 @@
       >
         <template slot-scope="scope">
           <ProjectExpand
-            :sons="getChildProjects(scope.row.childs.childs)"
+            :children="scope.row.children"
             @setStar="setStar"
             @updated="fetchData"
             @handleClick="handleClick"
@@ -582,15 +582,6 @@ export default {
     },
     getRowClass({ row }) {
       return row.has_son ? '' : 'hide-expand'
-    },
-    getChildProjects(data) {
-      return data.map((item) => {
-        item.children = item.childs
-        if (item.childs.length > 0) {
-          this.getChildProjects(item.childs)
-        }
-        return item
-      })
     }
   }
 }

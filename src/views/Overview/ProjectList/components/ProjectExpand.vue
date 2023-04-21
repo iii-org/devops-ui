@@ -1,9 +1,9 @@
 <template>
-  <section v-if="sons.length > 0" style="margin-left: 50px;">
+  <section v-if="children.length > 0" style="margin-left: 50px;">
     <h4 class="ml-5 my-1">{{ $t('general.ChildrenProject') }}</h4>
     <el-tree
-      :data="sons"
-      :data-key="sons.id"
+      :data="children"
+      :data-key="children.id"
       :indent="50"
       icon-class="el-icon-arrow-right"
     >
@@ -203,7 +203,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'ProjectExpand',
   props: {
-    sons: {
+    children: {
       type: Array,
       default: () => {}
     }
