@@ -50,7 +50,7 @@
         </el-option-group>
       </el-select>
     </el-form-item>
-    <el-form-item v-else-if="target==='Children'" :label="$t('Issue.ParentIssue')">
+    <el-form-item v-else-if="target==='Children' && showParent" :label="$t('Issue.ParentIssue')">
       <p>
         <Status :name="$t(`Issue.${row.status.name}`)" :type="row.status.name" size="mini" />
         <Tracker :name="$t(`Issue.${row.tracker.name}`)" :type="row.tracker.name" />
@@ -79,6 +79,7 @@
         multiple
         :remote-method="getSearchIssue"
         :loading="issueLoading"
+        :size="showParent ? '' : 'small'"
       >
         <el-option-group
           v-for="group in issueList"
@@ -179,6 +180,10 @@ export default {
     target: {
       type: String,
       default: 'Parent'
+    },
+    showParent: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -245,6 +250,9 @@ export default {
           this.getIssueFamilyData(item)
         })
       }
+    },
+    isLoading() {
+      this.$emit('loading', this.isLoading)
     }
   },
   async mounted() {

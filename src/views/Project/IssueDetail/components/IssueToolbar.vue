@@ -12,40 +12,16 @@
             <em class="el-icon-upload" />
             {{ $t('Issue.UploadFiles') }}
           </el-link>
-          <el-popover
-            class="mr-1"
-            placement="bottom"
-            trigger="hover"
-            :open-delay="300"
-            :close-delay="50"
+          <el-link
+            slot="reference"
+            class="linkTextColor ml-3"
+            :underline="false"
+            :disabled="isButtonDisabled"
+            @click="$emit('add-sub-issue')"
           >
-            <div class="flex justify-center">
-              <el-button
-                class="mr-2"
-                icon="el-icon-edit"
-                size="mini"
-                @click="toggleRelationDialog()"
-              >
-                {{ $t('general.Settings', { name: $t('Issue.ChildrenIssue') }) }}
-              </el-button>
-              <el-button
-                icon="el-icon-plus"
-                size="mini"
-                @click="addTopicDialogVisible = true"
-              >
-                {{ $t('Issue.AddSubIssue') }}
-              </el-button>
-            </div>
-            <el-link
-              slot="reference"
-              class="linkTextColor ml-3"
-              :underline="false"
-              :disabled="isButtonDisabled"
-            >
-              <em class="el-icon-plus" />
-              {{ $t('Issue.AddSubIssue') }}
-            </el-link>
-          </el-popover>
+            <em class="el-icon-plus" />
+            {{ $t('Issue.AddSubIssue') }}
+          </el-link>
         </template>
         <el-link
           v-if="isExcalidrawEnable"
@@ -125,87 +101,6 @@
       </div>
     </el-dialog>
     <el-dialog
-      :visible.sync="addTopicDialogVisible"
-      width="50%"
-      top="5px"
-      :close-on-click-modal="false"
-      destroy-on-close
-      append-to-body
-      @close="handleClose"
-    >
-      <template slot="title">
-        {{ $t('Issue.AddIssue') }}
-        <el-button
-          class="buttonPrimary float-right mr-5"
-          @click="handleAdvancedImport"
-        >
-          {{ $t('Issue.ImportParentIssueData') }}
-        </el-button>
-      </template>
-      <AddIssue
-        ref="AddIssue"
-        :save-data="saveIssue"
-        :dialog-visible.sync="addTopicDialogVisible"
-        :project-id="projectId || selectedProjectId"
-        :parent-id="issueId"
-        :parent-name="issueName"
-        :prefill="form"
-        @loading="loadingUpdate($event, false)"
-        @add-topic-visible="emitAddTopicDialogVisible"
-      />
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          id="dialog-btn-cancel"
-          class="buttonSecondaryReverse"
-          @click="handleAdvancedClose"
-        >
-          {{ $t('general.Cancel') }}
-        </el-button>
-        <el-button
-          id="dialog-btn-confirm"
-          :loading="isLoading"
-          class="buttonPrimary"
-          @click="handleAdvancedSave"
-        >
-          {{ $t('general.Confirm') }}
-        </el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
-      :visible.sync="relationDialogVisible"
-      :close-on-click-modal="false"
-      width="80%"
-      :show-close="false"
-      append-to-body
-    >
-      <div slot="title">
-        <el-row slot="title" type="flex" align="middle">
-          <el-col :xs="24" :md="16">
-            <span class="text-title">
-              {{ $t('general.Settings', { name: $t('Issue.ChildrenIssue') }) }}
-            </span>
-          </el-col>
-          <el-col :xs="24" :md="8" class="text-right">
-            <el-button class="buttonPrimary" @click="onSaveCheckRelationIssue">
-              {{ $t('general.Save') }}
-            </el-button>
-            <el-button class="buttonSecondaryReverse" @click="toggleRelationDialog()">
-              {{ $t('general.Close') }}
-            </el-button>
-          </el-col>
-        </el-row>
-      </div>
-      <SettingRelationIssue
-        v-if="relationDialogVisible"
-        ref="settingRelationIssue"
-        :row.sync="row"
-        target="Children"
-      />
-    </el-dialog>
-    <el-dialog
       :visible.sync="excalidrawDialogVisible"
       :title="$t('Excalidraw.CreateBoard')"
       top="3vh"
@@ -216,7 +111,7 @@
       <el-input
         v-model="excalidrawName"
         v-loading="isLoading"
-        :placeholder="$t('RuleMsg.PleaseInput') + $t('Excalidraw.Name')"
+        :placeholder="`${$t('RuleMsg.PleaseInput')} ${$t('Excalidraw.Name')}`"
       />
       <span slot="footer" class="dialog-footer">
         <el-button
@@ -241,19 +136,13 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { addIssue, updateIssue } from '@/api/issue'
+import { updateIssue } from '@/api/issue'
 import { createExcalidraw } from '@/api_v2/excalidraw'
-import { AddIssue } from '@/components/Issue'
 import IssueFileUploader from './IssueFileUploader'
-import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
 
 export default {
   name: 'IssueToolbar',
-  components: {
-    AddIssue,
-    IssueFileUploader,
-    SettingRelationIssue
-  },
+  components: { IssueFileUploader },
   props: {
     issueLink: {
       type: String,
@@ -263,18 +152,18 @@ export default {
       type: [String, Number],
       default: null
     },
-    issueName: {
-      type: [String, Number],
-      default: null
-    },
+    // issueName: {
+    //   type: [String, Number],
+    //   default: null
+    // },
     issueTracker: {
       type: String,
       default: null
     },
-    row: {
-      type: Object,
-      default: () => ({})
-    },
+    // row: {
+    //   type: Object,
+    //   default: () => ({})
+    // },
     isButtonDisabled: {
       type: Boolean,
       default: false
@@ -291,13 +180,15 @@ export default {
       type: Boolean,
       default: false
     }
+    // isAddSubIssue: {
+    //   type: Boolean,
+    //   default: false
+    // }
   },
   data() {
     return {
       isLoading: false,
       uploadDialogVisible: false,
-      addTopicDialogVisible: false,
-      relationDialogVisible: false,
       excalidrawDialogVisible: false,
       excalidrawName: '',
       specialSymbols: '\ / : * ? " < > | # { } % ~ &',
@@ -341,88 +232,12 @@ export default {
       }
       this.loadingUpdate(false, true)
     },
-    async saveIssue(data) {
-      await addIssue(data)
-        .then((res) => {
-          // this.$message({
-          //   title: this.$t('general.Success'),
-          //   message: this.$t('Notify.Added'),
-          //   type: 'success'
-          // })
-          // this.addTopicDialogVisible = false
-          return res
-        })
-        .catch((error) => {
-          return error
-        })
-        .finally(() => {
-          this.$emit('updateFamilyData')
-        })
-    },
     handleCollectionDialog() {
       this.$emit('related-collection', 'relatedCollection')
-    },
-    emitAddTopicDialogVisible(visible) {
-      this.addTopicDialogVisible = visible
-    },
-    handleClose() {
-      this.form = {}
-      this.$emit('close-dialog', false)
-    },
-    handleAdvancedImport() {
-      this.form = this.row
-      this.$refs['AddIssue'].handleImport()
-    },
-    handleAdvancedClose() {
-      this.$refs['AddIssue'].handleClose()
-    },
-    handleAdvancedSave() {
-      this.$refs['AddIssue'].handleSave()
-    },
-    toggleRelationDialog() {
-      this.relationDialogVisible = !this.relationDialogVisible
     },
     toggleExcalidrawDialog() {
       this.excalidrawDialogVisible = !this.excalidrawDialogVisible
       this.excalidrawName = ''
-    },
-    onSaveCheckRelationIssue() {
-      this.$refs.settingRelationIssue.$refs.issueForm.validate((valid) => {
-        if (valid) {
-          this.onSaveRelationIssue()
-        }
-      })
-    },
-    getFormData(data) {
-      const formData = new FormData()
-      Object.keys(data).forEach((item) => {
-        formData.append(item, data[item])
-      })
-      return formData
-    },
-    async onSaveRelationIssue() {
-      try {
-        const getSettingRelationIssue = this.$refs['settingRelationIssue']
-        const updateApi = []
-        const appendFormData = this.getFormData({ parent_id: getSettingRelationIssue.row.id })
-        const removeFormData = this.getFormData({ parent_id: '' })
-        getSettingRelationIssue.children['append'].forEach((item) => {
-          updateApi.push(updateIssue(item, appendFormData))
-        })
-        getSettingRelationIssue.children['remove'].forEach((item) => {
-          updateApi.push(updateIssue(item, removeFormData))
-        })
-        await Promise.all(updateApi)
-        this.toggleRelationDialog()
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
-        this.$emit('updateFamilyData')
-      } catch (e) {
-        console.error(e)
-      }
     },
     async handleCreateExcalidraw() {
       this.isLoading = true

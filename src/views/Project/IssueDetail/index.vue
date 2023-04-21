@@ -100,15 +100,13 @@
                 :is-button-disabled="isButtonDisabled"
                 :issue-link="issue_link"
                 :issue-id="issueId"
-                :issue-name="issueName"
                 :issue-tracker="formTrackerName"
-                :row="issue"
                 :project-id="form.project_id"
                 :is-from-board="isFromBoard"
                 :is-issue-form-opened="isIssueFormOpened"
+                @add-sub-issue="toggleAddSubIssue"
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
-                @updateFamilyData="getIssueFamilyData()"
                 @updateWhiteBoard="updateWhiteBoard"
                 @changeIssueFormOpened="changeIssueFormOpened"
               />
@@ -120,6 +118,22 @@
             :class="isFromBoard ? 'issueHeightBoard' :'issueHeight'"
             @scroll.native="onScrollIssue"
           >
+            <el-collapse-transition>
+              <el-col
+                v-if="isAddSubIssue"
+                id="AddSubIssueWrapper"
+                ref="AddSubIssueWrapper"
+                :span="24"
+                class="mb-3"
+              >
+                <AddSubIssue
+                  ref="AddSubIssue"
+                  :parent-data="issue"
+                  @close="isAddSubIssue = !isAddSubIssue"
+                  @update="getIssueFamilyData(issue)"
+                />
+              </el-col>
+            </el-collapse-transition>
             <el-col
               ref="IssueDescriptionWrapper"
               :span="24"
@@ -201,7 +215,7 @@
                 >
                   <IssueForm
                     ref="IssueForm"
-                    class="mx-3"
+                    class="mx-3 text-xs"
                     :is-button-disabled="isButtonDisabled"
                     :issue-id="issueId"
                     :issue-project="issueProject"
@@ -506,7 +520,8 @@ import {
   IssueMatrix,
   IssueCollection,
   AdminCommitLog,
-  WhiteBoardTable
+  WhiteBoardTable,
+  AddSubIssue
 } from './components'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
 import variables from '@/styles/theme/variables.scss'
@@ -531,7 +546,8 @@ export default {
     RelatedCollectionDialog,
     IssueExpand,
     AdminCommitLog,
-    WhiteBoardTable
+    WhiteBoardTable,
+    AddSubIssue
   },
   mixins: [ContextMenu],
   props: {
@@ -621,7 +637,8 @@ export default {
       noteMentionList: [],
       issueNotesEditorVisible: 'issueNotesEditor',
       isIssueFormOpened: !this.isFromBoard,
-      issueFormWidth: 80
+      issueFormWidth: 80,
+      isAddSubIssue: false
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -719,6 +736,7 @@ export default {
     propsIssueId(val) {
       this.fetchIssueLink()
       this.$nextTick(() => this.$refs.IssueForm.$refs.form.clearValidate())
+      this.isAddSubIssue = false
     },
     'form.project_id': {
       handler(newPId, oldPId) {
@@ -1361,7 +1379,6 @@ export default {
       })
     },
     async getIssueFamilyData(row) {
-      if (!row.id) return
       try {
         this.isLoadingFamily = true
         const family = await getIssueFamily(row.id)
@@ -1485,6 +1502,13 @@ export default {
         message,
         type: 'success'
       })
+    },
+    toggleAddSubIssue() {
+      this.isAddSubIssue = !this.isAddSubIssue
+      this.$nextTick(() => {
+        const element = document.getElementById('AddSubIssueWrapper')
+        element.scrollIntoView({ behavior: 'smooth' })
+      })
     }
   }
 }
@@ -1545,5 +1569,16 @@ export default {
 
 >>> .el-collapse-item__arrow {
   margin: 0 8px 0 8px;
+}
+.slide-fade-enter-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+  // transform: translateY(3rem);
+  opacity: 0;
 }
 </style>

@@ -334,6 +334,7 @@ export default {
     handleRelationDelete() {
       this.$set(this.relationIssue, 'visible', false)
       this.$set(this.relationIssue, 'id', null)
+      this.isProjectDetailPopUp = false
     },
     handleRightPanelVisible() {
       this.$set(this.relationIssue, 'visible', false)

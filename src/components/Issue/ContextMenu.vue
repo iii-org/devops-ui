@@ -112,6 +112,7 @@
       :visible.sync="addTopicDialogVisible"
       :show-close="false"
       :close-on-click-modal="false"
+      :modal-append-to-body="false"
       width="50%"
       top="5px"
       destroy-on-close

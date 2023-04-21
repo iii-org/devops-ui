@@ -3,9 +3,9 @@
     <div style="padding: 10px 5px; font-weight: bold">
       <span>{{ $t('Issue.AddSubIssue') }}: </span>
       <el-link
-        v-if="isTable"
         :disabled="isLoading"
-        size="small"
+        class="link"
+        :size="isTable ? 'small' : ''"
         @click="onAdvancedSettingsClick"
       >
         {{ $t('general.AdvancedSettings') }}
@@ -53,14 +53,14 @@
         >
           {{ $t('general.Save') }}
         </el-button>
-        <el-button
+        <!-- <el-button
           v-if="!isTable"
           :disabled="isLoading"
           class="buttonSecondaryReverse"
           @click="onAdvancedSettingsClick"
         >
           {{ $t('general.AdvancedSettings') }}
-        </el-button>
+        </el-button> -->
         <el-button
           v-if="isTable"
           type="success"
@@ -71,7 +71,7 @@
           @click="onSaveClick"
         />
         <el-button
-          v-if="isTable"
+          v-if="isTable && showClose"
           :disabled="isLoading"
           style="padding: 9px 8px;"
           size="small"
@@ -84,6 +84,7 @@
     <el-dialog
       :visible.sync="showDialog"
       :close-on-click-modal="false"
+      :modal-append-to-body="false"
       :show-close="false"
       width="50%"
       top="5px"
@@ -179,6 +180,10 @@ export default {
     isTable: {
       type: Boolean,
       default: false
+    },
+    showClose: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -313,3 +318,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+.link {
+  color: $buttonPrimary
+}
+</style>
