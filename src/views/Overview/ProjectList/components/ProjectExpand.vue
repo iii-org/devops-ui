@@ -20,12 +20,12 @@
             <em
               v-if="data.starred"
               class="el-icon-star-on text-yellow-500 text-2xl cursor-pointer"
-              @click="$emit('setStar', data.id, false)"
+              @click.stop="$emit('setStar', data.id, false)"
             />
             <em
               v-else
               class="el-icon-star-off text-gray-400 text-xl cursor-pointer"
-              @click="$emit('setStar', data.id, true)"
+              @click.stop="$emit('setStar', data.id, true)"
             />
           </div>
         </template>
@@ -55,7 +55,7 @@
                   icon="el-icon-copy-document"
                   circle
                   size="mini"
-                  @click="copyUrl(`copy-${data.id}`)"
+                  @click.stop="copyUrl(`copy-${data.id}`)"
                 />
                 <a
                   :href="data.git_url"
@@ -108,7 +108,7 @@
               :class="data.disabled || data.is_lock ? '' : 'linkTextColor'"
               :underline="false"
               :disabled="data.disabled || data.is_lock"
-              @click="$emit('handleClick', data)"
+              @click.stop="$emit('handleClick', data)"
             >
               {{ data.display }}
             </el-link>
@@ -149,7 +149,7 @@
           >
             <em
               class="ri-file-edit-line finished operate-button"
-              @click="$emit('handleEdit', data)"
+              @click.stop="$emit('handleEdit', data)"
             />
           </el-tooltip>
           <el-tooltip
@@ -160,7 +160,7 @@
             <em
               :disabled="permission(data)"
               class="ri-delete-bin-2-line danger operate-button"
-              @click="$emit('handleDelete', data)"
+              @click.stop="$emit('handleDelete', data)"
             />
           </el-tooltip>
           <el-tooltip
@@ -171,7 +171,7 @@
             <em
               :disabled="permission(data)"
               class="ri-delete-bin-2-line danger operate-button"
-              @click="$emit('handleDelete', data, true)"
+              @click.stop="$emit('handleDelete', data, true)"
             />
           </el-tooltip>
           <el-tooltip
@@ -179,7 +179,7 @@
             placement="bottom"
             :content="$t('general.Fix')"
           >
-            <em class="ri-refresh-line active operate-button" @click="$emit('handleFix', data.id)" />
+            <em class="ri-refresh-line active operate-button" @click.stop="$emit('handleFix', data.id)" />
           </el-tooltip>
           <el-tooltip
             v-if="data.is_lock !== true"
@@ -191,7 +191,7 @@
               :class="data.disabled
                 ? 'ri-play-circle-line finished operate-button'
                 : 'ri-pause-circle-line danger operate-button'"
-              @click="$emit('handleToggle', data)"
+              @click.stop="$emit('handleToggle', data)"
             />
           </el-tooltip>
         </template>
