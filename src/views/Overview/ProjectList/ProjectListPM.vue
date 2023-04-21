@@ -323,7 +323,8 @@ import {
 const params = () => ({
   limit: 10,
   offset: 0,
-  parent_son: true
+  parent_son: true,
+  root: true
 })
 
 export default {
