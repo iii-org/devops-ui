@@ -260,15 +260,33 @@
             <em class="el-icon-d-arrow-right" />
           </div>
           <ProjectIssueDetail
-            ref="issueDetail"
+            ref="issueDetailDrawer"
             :props-issue-id="issueDetail.id"
             :is-in-dialog="true"
             :is-from-board="true"
+            @popup="handleRelationIssueDialogBeforeClose"
             @update="handleRelationUpdate"
             @delete="handleRelationDelete"
           />
         </div>
       </transition>
+      <el-dialog
+        :visible.sync="isProjectDetailPopUp"
+        width="90%"
+        top="3vh"
+        append-to-body
+        destroy-on-close
+        :before-close="handleRelationIssueDialogBeforeClose"
+      >
+        <ProjectIssueDetail
+          ref="issueDetailDialog"
+          :props-issue-id="issueDetail.id"
+          :is-in-dialog="true"
+          :is-from-board="false"
+          @update="handleRelationUpdate"
+          @delete="handleRelationDelete"
+        />
+      </el-dialog>
     </div>
   </el-row>
 </template>
@@ -415,7 +433,8 @@ export default {
       issueDetail: {
         visible: false,
         id: null
-      }
+      },
+      isProjectDetailPopUp: false
     }
   },
   computed: {
@@ -646,6 +665,30 @@ export default {
     handleRightPanelVisible() {
       this.$set(this.issueDetail, 'visible', false)
       this.$set(this.issueDetail, 'id', null)
+    },
+    handleRelationIssueDialogBeforeClose(done) {
+      const ref = done ? 'issueDetailDialog' : 'issueDetailDrawer'
+      if (!done) {
+        done = () => {
+          this.issueDetail.visible = false
+          this.isProjectDetailPopUp = true
+        }
+      }
+      if (this.$refs[ref].hasUnsavedChanges()) {
+        this.handlePopConfirm(done)
+      } else {
+        done()
+      }
+    },
+    handlePopConfirm(done) {
+      this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel'),
+        type: 'warning'
+      })
+        .then(() => {
+          done()
+        })
     }
   }
 }
