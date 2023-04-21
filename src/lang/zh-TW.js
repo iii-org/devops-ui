@@ -273,7 +273,8 @@ export default {
     DataGenerationTime: '資料產生時間',
     Expand: '展開',
     Fold: '收合',
-    PopUp: '另開視窗'
+    PopUp: '另開視窗',
+    ChildrenProject: '子專案'
   },
   Notify: {
     Updated: '已更新',

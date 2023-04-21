@@ -411,8 +411,12 @@ export default {
     },
     getParams() {
       if (this.keyword !== '') {
+        delete this.params.root
         this.params.search = this.keyword
-      } else delete this.params.search
+      } else {
+        delete this.params.search
+        this.params.root = true
+      }
       if (this.$refs.filter.isDisabled.length === 1) {
         this.params.disabled = this.$refs.filter.isDisabled[0]
       } else {

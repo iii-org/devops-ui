@@ -273,7 +273,8 @@ export default {
     DataGenerationTime: 'Data Generation Time',
     Expand: 'Expand',
     Fold: 'Fold',
-    PopUp: 'Pop Up'
+    PopUp: 'Pop Up',
+    ChildrenProject: 'Children Projects'
   },
   Notify: {
     Updated: 'update successful',

@@ -1,9 +1,6 @@
 <template>
   <section v-if="sons.length > 0" style="margin-left: 50px;">
-    <h4 class="ml-5 my-1">子專案</h4>
-    <!-- <el-row v-for="son in sons" :key="son.id">
-      <ul class="my-1">
-        <li class="flex justify-start items-center"> -->
+    <h4 class="ml-5 my-1">{{ $t('general.ChildrenProject') }}</h4>
     <el-tree
       :data="sons"
       :data-key="sons.id"
@@ -195,9 +192,6 @@
             />
           </el-tooltip>
         </template>
-        <!-- </li>
-      </ul>
-    </el-row> -->
       </div>
     </el-tree>
   </section>
