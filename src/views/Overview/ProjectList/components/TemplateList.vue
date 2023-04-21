@@ -26,13 +26,19 @@
           slot="label"
           class="flex items-center mb-2"
         >
-          <span class="mr-3">{{ $t('Project.TemplateName') }}</span>
+          <span class="mr-3">
+            {{ $t('Project.TemplateName') }}
+          </span>
           <el-radio-group
             v-model="focusSources"
             size="mini"
           >
-            <el-radio-button label="Public Templates">Public</el-radio-button>
-            <el-radio-button label="Local Templates">Local</el-radio-button>
+            <el-radio-button label="Public Templates">
+              Public
+            </el-radio-button>
+            <el-radio-button label="Local Templates">
+              Local
+            </el-radio-button>
           </el-radio-group>
         </div>
         <el-select
@@ -62,12 +68,15 @@
           slot="label"
           class="mb-2"
         >
-          <span>{{ $t('Project.Version') }}</span>
+          <span>
+            {{ $t('Project.Version') }}
+          </span>
         </div>
         <el-select
           v-model="form.tag_name"
-          style="width:100%"
           :disabled="!form.template_id"
+          style="width:100%"
+          clearable
           @change="handleVersionSelect"
         >
           <el-option
@@ -76,7 +85,9 @@
             :label="item.name"
             :value="item.name"
           >
-            <span>{{ item.name }}</span>
+            <span>
+              {{ item.name }}
+            </span>
           </el-option>
         </el-select>
       </el-form-item>
@@ -89,40 +100,29 @@
         <span v-html="focusTemplate.description" />
       </el-form-item>
     </el-col>
-    <div>
-      <el-col
-        v-for="(argument, idx) in form.argumentsForm"
-        :key="argument.key"
-        :span="8"
+    <el-col
+      v-for="(argument, idx) in form.argumentsForm"
+      :key="argument.key"
+      :span="8"
+    >
+      <el-form-item
+        :label="argument.display"
+        :prop="'argumentsForm.' + idx + '.value'"
+        :rules="databaseRules(argument)"
       >
-        <el-form-item
-          :label="argument.display"
-          :prop="'argumentsForm.' + idx + '.value'"
-          :rules="{
-            required: true,
-            message: $t('general.PleaseInput') + ' ' + argument.display,
-            trigger: 'blur'
-          }"
-        >
-          <el-input
-            v-if="argument.input_type === 'text'"
-            v-model="argument.value"
-            :placeholder="$t('general.PleaseInput')"
-          />
-          <el-input
-            v-else-if="argument.input_type === 'password'"
-            v-model="argument.value"
-            :placeholder="$t('general.PleaseInput')"
-            show-password
-          />
-        </el-form-item>
-      </el-col>
-    </div>
+        <el-input
+          v-model="argument.value"
+          :placeholder="$t('general.PleaseInput')"
+          :show-password="argument.input_type === 'password'"
+        />
+      </el-form-item>
+    </el-col>
   </el-row>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { passwordPolicyCheck } from '@/api/projects'
 import {
   getTemplateList,
   getTemplateParams,
@@ -212,10 +212,55 @@ export default {
     this.clearFocusTemplate()
   },
   methods: {
-    async init(isForceUpdate) {
-      if (this.userRole !== 'Engineer') {
-        this.getTemplateList(isForceUpdate)
+    databaseRules(argument) {
+      const rules = [
+        {
+          required: true,
+          message: `${this.$t('general.PleaseInput')} ${argument.display}`,
+          trigger: 'blur'
+        }
+      ]
+      if (argument.input_type === 'password') {
+        rules[1] = {
+          validator: this.validatePassword,
+          trigger: 'blur'
+        }
       }
+      return rules
+    },
+    async validatePassword(rule, value, callback) {
+      const data = {
+        db_type: '',
+        db_user: this.form.argumentsForm[0].value,
+        db_pswd: value
+      }
+      const database = this.focusTemplate.display.split('-').pop()
+      const databaseType = [
+        'MSSQL',
+        'MySQL',
+        'mariaDB',
+        'influxDB',
+        'Elasticsearch',
+        'mongoDB',
+        'SQLite',
+        'postgreSQL'
+      ]
+      data.db_type = databaseType.find((item) =>
+        item.toLowerCase() === database.toLowerCase()
+      )
+      if (!data.db_type) callback()
+      else {
+        await passwordPolicyCheck(data).then((res) => {
+          if (res.data.pass) {
+            callback()
+          } else {
+            callback(new Error(res.data.description))
+          }
+        })
+      }
+    },
+    init(isForceUpdate) {
+      if (this.userRole !== 'Engineer') this.getTemplateList(isForceUpdate)
     },
     getCachedTemplateId(path) {
       return this.activeTemplateList.find((item) => item.path === path).id
@@ -233,7 +278,9 @@ export default {
     },
     handleTemplateSelect() {
       if (this.form.template_id !== '') {
-        const idx = this.activeTemplateList.findIndex((item) => item.id === this.form.template_id)
+        const idx = this.activeTemplateList.findIndex((item) =>
+          item.id === this.form.template_id
+        )
         this.focusTemplate = this.activeTemplateList[idx]
         this.form.tag_name = this.versionList[0] ? this.versionList[0].name : ''
         this.setCachedTemplates()

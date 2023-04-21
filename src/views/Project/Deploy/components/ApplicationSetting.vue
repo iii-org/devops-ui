@@ -736,21 +736,27 @@ export default {
             trigger: 'blur'
           }
         ],
-        remote: [{
-          required: true,
-          message: this.$t(`Validation.Select`, [this.$t('Deploy.Location')]),
-          trigger: 'blur'
-        }],
-        cluster_id: [{
-          required: true,
-          message: this.$t(`Validation.Select`, [this.$t('Deploy.Cluster')]),
-          trigger: 'blur'
-        }],
-        registry_id: [{
-          required: true,
-          message: this.$t(`Validation.Select`, [this.$t('Deploy.Registry')]),
-          trigger: 'blur'
-        }],
+        remote: [
+          {
+            required: true,
+            message: this.$t(`Validation.Select`, [this.$t('Deploy.Location')]),
+            trigger: 'blur'
+          }
+        ],
+        cluster_id: [
+          {
+            required: true,
+            message: this.$t(`Validation.Select`, [this.$t('Deploy.Cluster')]),
+            trigger: 'blur'
+          }
+        ],
+        registry_id: [
+          {
+            required: true,
+            message: this.$t(`Validation.Select`, [this.$t('Deploy.Registry')]),
+            trigger: 'blur'
+          }
+        ],
         namespace: [
           {
             required: true,
