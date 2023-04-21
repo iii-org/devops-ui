@@ -69,26 +69,33 @@
         width="250"
       >
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            class="buttonPrimaryReverse"
-            @click="handleParticipateDialog(scope.row.id)"
+          <el-tooltip
+            placement="bottom"
+            :content="$t('general.Participate')"
           >
-            <em class="el-icon-edit" />
-            {{ $t('general.Participate') }}
-          </el-button>
-          <el-popconfirm
-            :title="$t('Notify.confirmDelete')"
-            :confirm-button-text="$t('general.Delete')"
-            :cancel-button-text="$t('general.Cancel')"
-            icon="el-icon-info"
-            icon-color="red"
-            @confirm="handleDelete(scope.row.id)"
+            <em
+              class="ri-file-edit-line finished operate-button"
+              @click="handleParticipateDialog(scope.row.id)"
+            />
+          </el-tooltip>
+          <el-tooltip
+            placement="bottom"
+            :content="$t('general.Delete')"
           >
-            <el-button slot="reference" size="mini" type="danger">
-              <em class="el-icon-delete" /> {{ $t('general.Delete') }}
-            </el-button>
-          </el-popconfirm>
+            <el-popconfirm
+              :title="$t('Notify.confirmDelete')"
+              :confirm-button-text="$t('general.Delete')"
+              :cancel-button-text="$t('general.Cancel')"
+              icon="el-icon-info"
+              icon-color="red"
+              @confirm="handleDelete(scope.row.id)"
+            >
+              <em
+                slot="reference"
+                class="ri-delete-bin-2-line danger operate-button"
+              />
+            </el-popconfirm>
+          </el-tooltip>
         </template>
       </el-table-column>
       <template slot="empty">

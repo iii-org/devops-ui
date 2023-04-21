@@ -111,18 +111,15 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" width="350">
+      <el-table-column :label="$t('general.Actions')" align="center">
         <template slot-scope="scope">
           <el-tooltip
             v-if="scope.row.software_name === 'SideeX'"
             placement="bottom"
             :content="$t('Test.TestFile.CreateTestData')"
           >
-            <el-link
-              type="primary"
-              style="font-size: 20px;"
-              icon="ri-exchange-funds-line"
-              :underline="false"
+            <em
+              class="ri-file-add-line finished operate-button"
               @click="handleCreateTestData(scope.row)"
             />
           </el-tooltip>
@@ -131,11 +128,8 @@
             placement="bottom"
             :content="$t('Test.TestFile.HistoryTestData')"
           >
-            <el-link
-              type="info"
-              style="font-size: 20px;"
-              icon="ri-history-line"
-              :underline="false"
+            <em
+              class="ri-history-line info operate-button"
               @click="handleHistoryTestData(scope.row)"
             />
           </el-tooltip>
@@ -149,26 +143,23 @@
             >
               <div>
                 <el-link
-                  style="display: block; font-size: 16px;"
+                  style="display: block; font-size: 14px;"
                   :underline="false"
                   @click="handleRelatedPlan(scope.row)"
                 >
                   {{ $t('Test.TestFile.SetPlan') }}
                 </el-link>
                 <el-link
-                  style="display: block; font-size: 16px;"
+                  style="display: block; font-size: 14px;"
                   :underline="false"
                   @click="handleCreatePlan(scope.row)"
                 >
                   {{ $t('Test.TestFile.AddPlan') }}
                 </el-link>
               </div>
-              <el-link
+              <em
                 slot="reference"
-                type="success"
-                style="font-size: 20px;"
-                icon="ri-links-line"
-                :underline="false"
+                class="ri-links-line active operate-button"
               />
             </el-popover>
           </el-tooltip>
@@ -184,12 +175,9 @@
               :title="$t('Issue.DeleteFile')"
               @confirm="deleteTestFile(scope.row.software_name, scope.row.file_name)"
             >
-              <el-link
+              <em
                 slot="reference"
-                type="danger"
-                style="font-size: 20px;"
-                icon="el-icon-delete"
-                :underline="false"
+                class="ri-delete-bin-2-line danger operate-button"
               />
             </el-popconfirm>
           </el-tooltip>

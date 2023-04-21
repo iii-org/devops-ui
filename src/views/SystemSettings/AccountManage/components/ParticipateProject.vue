@@ -61,43 +61,46 @@
       <el-table-column
         align="center"
         :label="$t('general.Actions')"
-        width="390"
       >
         <template slot-scope="scope">
-          <el-button
-            v-if="$route.params.user_id !== scope.row.owner_id"
-            class="buttonPrimaryReverse"
-            size="mini"
-            @click="handleParticipateDialog(scope.row.owner_id)"
+          <el-tooltip
+            placement="bottom"
+            :content="$t('general.Participate')"
           >
-            <em class="el-icon-edit" />
-            {{ $t('general.Participate') }}
-          </el-button>
-          <el-button
-            class="buttonPrimaryReverse"
-            size="mini"
-            @click="handleIssueClick(scope.row)"
+            <em
+              v-if="$route.params.user_id !== scope.row.owner_id"
+              class="ri-file-list-2-line active operate-button"
+              @click="handleParticipateDialog(scope.row.owner_id)"
+            />
+          </el-tooltip>
+          <el-tooltip
+            placement="bottom"
+            :content="$t('Issue.Issue')"
           >
-            {{ $t('Issue.Issue') }}
-          </el-button>
-          <el-popconfirm
-            :confirm-button-text="$t('general.Remove')"
-            :cancel-button-text="$t('general.Cancel')"
-            icon="el-icon-info"
-            icon-color="red"
-            :title="$t('Member.confirmRemove')"
-            @confirm="handleDelete(scope.row.id)"
+            <em
+              class="ri-file-copy-2-line active operate-button"
+              @click="handleIssueClick(scope.row)"
+            />
+          </el-tooltip>
+          <el-tooltip
+            placement="bottom"
+            :content="$t('general.Remove')"
           >
-            <el-button
-              slot="reference"
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              :disabled="isDisabled"
+            <el-popconfirm
+              :confirm-button-text="$t('general.Remove')"
+              :cancel-button-text="$t('general.Cancel')"
+              icon="el-icon-info"
+              icon-color="red"
+              :title="$t('Member.confirmRemove')"
+              @confirm="handleDelete(scope.row.id)"
             >
-              {{ $t('general.Remove') }}
-            </el-button>
-          </el-popconfirm>
+              <em
+                slot="reference"
+                class="ri-delete-bin-2-line danger operate-button"
+                :disabled="isDisabled"
+              />
+            </el-popconfirm>
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>

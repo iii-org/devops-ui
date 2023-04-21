@@ -144,49 +144,53 @@
         <el-table-column
           :label="$t('general.Actions')"
           align="center"
-          width="150"
         >
           <template slot-scope="scope">
             <div v-show="!scope.row.edit">
-              <el-button
-                size="mini"
-                type="primary"
-                icon="el-icon-edit"
-                circle
-                @click="handleEdit(scope)"
-              />
-              <el-popconfirm
-                confirm-button-text="Delete"
-                cancel-button-text="Cancel"
-                icon="el-icon-info"
-                icon-color="red"
-                title="Are you sure?"
-                @confirm="handleDelete(scope.row.id)"
+              <el-tooltip
+                placement="bottom"
+                :content="$t('general.Edit')"
               >
-                <el-button
-                  slot="reference"
-                  size="mini"
-                  type="danger"
-                  icon="el-icon-delete"
-                  circle
+                <em
+                  class="ri-file-edit-line finished operate-button"
+                  @click="handleEdit(scope)"
                 />
-              </el-popconfirm>
+              </el-tooltip>
+              <el-tooltip
+                placement="bottom"
+                :content="$t('general.Delete')"
+              >
+                <el-popconfirm
+                  :title="$t('Notify.confirmDelete')"
+                  :confirm-button-text="$t('general.Delete')"
+                  :cancel-button-text="$t('general.Cancel')"
+                  icon="el-icon-info"
+                  icon-color="red"
+                  @confirm="handleDelete(scope.row.id)"
+                >
+                  <em slot="reference" class="ri-delete-bin-2-line danger operate-button" />
+                </el-popconfirm>
+              </el-tooltip>
             </div>
             <div v-show="scope.row.edit">
-              <el-button
-                size="mini"
-                type="primary"
-                icon="el-icon-check"
-                circle
-                @click="handleSaveFile(scope.row)"
-              />
-              <el-button
-                size="mini"
-                type="danger"
-                icon="el-icon-close"
-                circle
-                @click="handleCancelFile(scope.row)"
-              />
+              <el-tooltip
+                placement="bottom"
+                :content="$t('general.ok')"
+              >
+                <em
+                  class="ri-checkbox-circle-line active operate-button"
+                  @click="handleSaveFile(scope.row)"
+                />
+              </el-tooltip>
+              <el-tooltip
+                placement="bottom"
+                :content="$t('general.Cancel')"
+              >
+                <em
+                  class="ri-close-circle-line danger operate-button"
+                  @click="handleCancelFile(scope.row)"
+                />
+              </el-tooltip>
             </div>
           </template>
         </el-table-column>

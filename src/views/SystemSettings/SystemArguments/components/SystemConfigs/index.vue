@@ -57,34 +57,44 @@
       <el-table-column
         :label="$t('general.Actions')"
         align="center"
-        width="120"
       >
         <template slot-scope="scope">
-          <el-button
+          <el-tooltip
             v-if="scope.row.type === 'string'"
-            size="mini"
-            type="primary"
-            icon="el-icon-edit"
-            @click="scope.row.method"
+            placement="bottom"
+            :content="$t('general.Edit')"
           >
-            {{ $t('general.Edit') }}
-          </el-button>
-          <el-button
+            <em
+              class="ri-file-edit-line finished operate-button"
+              @click="scope.row.method"
+            />
+          </el-tooltip>
+          <el-tooltip
             v-else
-            size="mini"
-            :disabled="gitlabDomainIP"
-            @click="scope.row.method(!scope.row.content)"
+            placement="bottom"
+            :content="!scope.row.content ? $t('general.Enable') : $t('general.Disable')"
           >
-            <div v-if="gitlabDomainIP">
-              {{ !scope.row.content ? $t('general.Enable') : $t('general.Disable') }}
-            </div>
-            <div v-else class="flex items-center">
-              <span class="dot" :class="!scope.row.content ? 'bg-success' : 'bg-danger'" />
-              <span class="ml-2" :class="!scope.row.content ? 'text-success' : 'text-danger'">
+            <div v-if="gitlabDomainIP" class="disabled">
+              <el-button
+                size="mini"
+                disabled
+              >
                 {{ !scope.row.content ? $t('general.Enable') : $t('general.Disable') }}
-              </span>
+              </el-button>
             </div>
-          </el-button>
+            <div v-else>
+              <em
+                :class="!scope.row.content
+                  ? 'ri-record-circle-line finished operate-button'
+<<<<<<< HEAD
+                  : 'ri-pause-circle-line danger operate-button'"
+=======
+                  : 'ri-pause-circle-line inProgress operate-button'"
+>>>>>>> 7b6e71d1 (feat: modify table button layout)
+                @click="scope.row.method(!scope.row.content)"
+              />
+            </div>
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>
@@ -191,5 +201,8 @@ export default {
 <style lang="scss" scoped>
 .dot {
   @apply rounded-full w-2 h-2;
+}
+.disabled {
+  cursor: not-allowed;
 }
 </style>

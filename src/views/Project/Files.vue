@@ -63,32 +63,35 @@
         width="240"
       >
         <template slot-scope="scope">
-          <el-button
-            :loading="isDownloading"
-            size="mini"
-            class="buttonPrimaryReverse"
-            icon="el-icon-download"
-            @click="handleDownload(scope.row)"
+          <el-tooltip
+            placement="bottom"
+            :content="$t('File.Download')"
           >
-            {{ $t('File.Download') }}
-          </el-button>
-
-          <el-popconfirm
-            :confirm-button-text="$t('general.Delete')"
-            :cancel-button-text="$t('general.Cancel')"
-            icon="el-icon-info"
-            icon-color="red"
-            :title="$t('Notify.confirmDelete')"
-            @confirm="handleDelete(scope.row)"
+            <em
+              :class="isDownloading
+                ? 'ri-loader-2-line active operate-button'
+                : 'ri-download-line active operate-button'"
+              @click="handleDownload(scope.row)"
+            />
+          </el-tooltip>
+          <el-tooltip
+            placement="bottom"
+            :content="$t('general.Delete')"
           >
-            <el-button
-              slot="reference"
-              size="mini"
-              type="danger"
+            <el-popconfirm
+              :confirm-button-text="$t('general.Delete')"
+              :cancel-button-text="$t('general.Cancel')"
+              icon="el-icon-info"
+              icon-color="red"
+              :title="$t('Notify.confirmDelete')"
+              @confirm="handleDelete(scope.row)"
             >
-              <em class="el-icon-delete" /> {{ $t('general.Delete') }}
-            </el-button>
-          </el-popconfirm>
+              <em
+                slot="reference"
+                class="ri-delete-bin-2-line danger operate-button"
+              />
+            </el-popconfirm>
+          </el-tooltip>
         </template>
       </el-table-column>
       <template slot="empty">

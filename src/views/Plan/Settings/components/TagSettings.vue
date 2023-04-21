@@ -3,7 +3,13 @@
     <div class="flex justify-between mt-3">
       <div class="font-medium text-lg">{{ $t('ProjectSettings.Tag') }}</div>
       <div>
-        <el-button class="buttonPrimary" :disabled="isAddingTag" @click="handleShowTagInput">+ {{ $t('ProjectSettings.AddCustomTag') }}</el-button>
+        <el-button
+          class="buttonPrimary"
+          :disabled="isAddingTag"
+          @click="handleShowTagInput"
+        >
+          + {{ $t('ProjectSettings.AddCustomTag') }}
+        </el-button>
       </div>
     </div>
     <el-divider />
@@ -17,8 +23,12 @@
             type="text"
             class="mr-3"
           />
-          <el-button class="buttonPrimary" @click="handleInputSave">{{ $t('general.Save') }}</el-button>
-          <el-button class="buttonSecondaryReverse" @click="handleInputCancel">{{ $t('general.Cancel') }}</el-button>
+          <el-button class="buttonPrimary" @click="handleInputSave">
+            {{ $t('general.Save') }}
+          </el-button>
+          <el-button class="buttonSecondaryReverse" @click="handleInputCancel">
+            {{ $t('general.Cancel') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -29,20 +39,37 @@
       fit
       @row-click="handleRowClick"
     >
-      <el-table-column type="index" align="center" :label="$t('ProjectSettings.Index')" width="100" />
+      <el-table-column
+        type="index"
+        align="center"
+        :label="$t('ProjectSettings.Index')"
+        width="100"
+      />
       <el-table-column align="center" :label="$t('ProjectSettings.Tag')">
         <template slot-scope="scope">
           <div v-show="scope.row.edit">
             <el-input v-model="scope.row.name" type="text" />
-            <el-button class="buttonPrimary" @click.stop="handleTableInputConfirm(scope)">{{ $t('general.ok') }}</el-button>
-            <el-button class="buttonSecondaryReverse" @click.stop="handleTableInputCancel(scope)">{{ $t('general.Cancel') }}</el-button>
+            <el-button class="buttonPrimary" @click.stop="handleTableInputConfirm(scope)">
+              {{ $t('general.ok') }}
+            </el-button>
+            <el-button class="buttonSecondaryReverse" @click.stop="handleTableInputCancel(scope)">
+              {{ $t('general.Cancel') }}
+            </el-button>
           </div>
           <span v-show="!scope.row.edit">{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Actions')">
         <template slot-scope="scope">
-          <el-button type="danger" @click.stop="handleTagDelete(scope.row)">{{ $t('general.Delete') }}</el-button>
+          <el-tooltip
+            placement="bottom"
+            :content="$t('general.Delete')"
+          >
+            <em
+              class="ri-delete-bin-2-line danger operate-button"
+              @click.stop="handleTagDelete(scope.row)"
+            />
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>

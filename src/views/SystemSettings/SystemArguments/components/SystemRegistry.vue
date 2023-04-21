@@ -60,28 +60,31 @@
       <el-table-column
         align="center"
         :label="$t('general.Actions')"
-        width="120"
       >
         <template slot-scope="scope">
-          <el-popconfirm
-            confirm-button-text="Delete"
-            cancel-button-text="Cancel"
-            icon="el-icon-info"
-            icon-color="red"
-            title="Are you sure?"
-            @confirm="handleDelete(scope.row.name)"
+          <el-tooltip
+            placement="bottom"
+            :content="$t('general.Delete')"
           >
-            <el-button
-              :id="`btn-delete-${scope.$index}`"
-              slot="reference"
-              size="mini"
-              type="danger"
-              :disabled="scope.row.status === 'Removing'"
-            >
-              <em class="el-icon-delete" />
-              {{ $t('general.Delete') }}
-            </el-button>
-          </el-popconfirm>
+            <template v-if="scope.row.status !== 'Removing'">
+              <el-popconfirm
+                :title="$t('Notify.confirmDelete')"
+                :confirm-button-text="$t('general.Delete')"
+                :cancel-button-text="$t('general.Cancel')"
+                icon="el-icon-info"
+                icon-color="red"
+                @confirm="handleDelete(scope.row.name)"
+              >
+                <em
+                  slot="reference"
+                  class="ri-delete-bin-2-line danger operate-button"
+                />
+              </el-popconfirm>
+            </template>
+            <div v-else class="disabled">
+              <em class="ri-delete-bin-2-line disabled operate-button" />
+            </div>
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>
@@ -206,3 +209,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.disabled {
+  cursor: not-allowed;
+}
+</style>

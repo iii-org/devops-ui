@@ -103,18 +103,20 @@
         min-width="50"
       >
         <template slot-scope="scope">
-          <el-link
+          <el-tooltip
             v-if="scope.row.status === 'Finished'"
-            class="linkTextColor"
-            style="font-size: 16px"
-            :underline="false"
-            @click="showFullLog(scope.row.full_log)"
+            placement="bottom"
+<<<<<<< HEAD
+            :content="$t('Log.fullLog')"
+=======
+            :content="$t('Dashboard.Report')"
+>>>>>>> 7b6e71d1 (feat: modify table button layout)
           >
             <em
-              class="el-icon-tickets"
-              style="font-size: 16px"
+              class="ri-external-link-line active operate-button"
+              @click="showFullLog(scope.row.full_log)"
             />
-          </el-link>
+          </el-tooltip>
         </template>
       </el-table-column>
       <template slot="empty">

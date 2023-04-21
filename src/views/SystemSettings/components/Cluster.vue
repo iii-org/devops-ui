@@ -106,29 +106,26 @@
           width="200"
         >
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              @click="editCluster(scope.row)"
+            <el-tooltip
+              placement="bottom"
+              :content="$t('general.Edit')"
             >
-              <span class="text-primary">
-                {{ $t('general.Edit') }}
-              </span>
-            </el-button>
-            <el-button
-              size="mini"
-              @click="toggleUsage(scope.row)"
-            >
-              <span
-                class="inline-block dot"
-                :class="scope.row.disabled ? 'bg-success' : 'bg-danger'"
+              <em
+                class="ri-file-edit-line finished operate-button"
+                @click="editCluster(scope.row)"
               />
-              <span
-                class="ml-2"
-                :class="scope.row.disabled ? 'text-success' : 'text-danger'"
-              >
-                {{ !scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
-              </span>
-            </el-button>
+            </el-tooltip>
+            <el-tooltip
+              placement="bottom"
+              :content="!scope.row.disabled ? $t('general.Disable') : $t('general.Enable')"
+            >
+              <em
+                :class="scope.row.disabled
+                  ? 'ri-record-circle-line finished operate-button'
+                  : 'ri-pause-circle-line danger operate-button'"
+                @click="toggleUsage(scope.row)"
+              />
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -242,10 +239,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.dot {
-  @apply rounded-full w-2 h-2;
-}
-
 >>> .el-table {
   .hide-expand-icon {
     .el-table__expand-column .cell {

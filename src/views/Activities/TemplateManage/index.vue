@@ -179,14 +179,10 @@
             :title="$t('Notify.confirmDelete')"
             @confirm="handleDelete(row)"
           >
-            <el-button
+            <em
               slot="reference"
-              size="mini"
-              type="danger"
-            >
-              <em class="el-icon-delete" />
-              {{ $t('general.Delete') }}
-            </el-button>
+              class="ri-delete-bin-2-line danger operate-button"
+            />
           </el-popconfirm>
         </template>
       </el-table-column>

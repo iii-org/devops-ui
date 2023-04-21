@@ -2,7 +2,7 @@
 
 // el-table
 .el-table {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .el-table .el-button {
@@ -66,6 +66,17 @@
 .el-table .cell {
   padding-left: 12px;
   padding-right: 12px;
+}
+
+.el-table__row {
+  > .el-table__cell {
+    padding: 1px 0px;
+    line-height: 45px;
+    height: 45px;
+  }
+  .el-link--inner {
+    font-size: 14px;
+  }
 }
 
 .el-table--border td:first-child .cell,
@@ -459,6 +470,9 @@
   }
 }
 
+.el-divider--horizontal {
+  margin: 12px 0px;
+}
 .el-dialog__header {
   > .container-name {
     text-align: left;

@@ -69,14 +69,17 @@
             width="200"
           >
             <template slot-scope="scope">
-              <el-button
-                :loading="scope.row.status === 'loading'"
-                size="mini"
-                class="buttonPrimaryReverse"
-                @click="handleCheck(scope.row.name)"
+              <el-tooltip
+                placement="bottom"
+                :content="$t('ServiceMonitoring.CheckNow')"
               >
-                {{ $t('ServiceMonitoring.CheckNow') }}
-              </el-button>
+                <em
+                  :class="scope.row.status === 'loading'
+                    ? 'ri-loader-2-line disabled operate-button'
+                    : 'ri-refresh-line finished operate-button'"
+                  @click="handleCheck(scope.row.name)"
+                />
+              </el-tooltip>
             </template>
           </el-table-column>
         </el-table>

@@ -49,13 +49,14 @@
         >
           <template slot-scope="scope">
             <el-tag
+              class="mt-1"
               size="small"
               :type="mapStateType(scope.row.execution_state)"
               :effect="mapStateEffect(scope.row.execution_state)"
             >
               {{ scope.row.execution_state }}
             </el-tag>
-            <div class="mt-2">
+            <div>
               {{ `(${scope.row.status.success}/${scope.row.status.total})` }}
               <em
                 class="el-icon-circle-check"
@@ -110,39 +111,47 @@
         >
           <template slot-scope="scope">
             <el-tooltip
-              class="item cursor-pointer"
               :content="$t('PipeLines.ExecuteDetail')"
               placement="bottom"
-              @click.native="onDetailsClick(scope.row)"
             >
-              <em class="ri-terminal-box-fill icon" />
+              <em
+<<<<<<< HEAD
+                class="ri-terminal-box-line info operate-button"
+=======
+                class="ri-terminal-box-line active operate-button"
+>>>>>>> 7b6e71d1 (feat: modify table button layout)
+                @click="onDetailsClick(scope.row)"
+              />
             </el-tooltip>
             <el-tooltip
               v-if="isAllowStop(scope.row.execution_state)"
-              class="item cursor-pointer"
               :content="$t('general.Stop')"
               placement="bottom"
-              @click.native="onActionClick(scope.row.id, 'stop')"
             >
-              <em class="ri-close-circle-fill icon danger" />
+              <em
+                class="ri-stop-circle-line inProgress operate-button"
+                @click="onActionClick(scope.row.id, 'stop')"
+              />
             </el-tooltip>
             <el-tooltip
               v-else-if="!isAllowStop(scope.row.execution_state) && scope.row.id === lastData.id"
-              class="item cursor-pointer"
               :content="$t('general.Rerun')"
               placement="bottom"
-              @click.native="onActionClick(scope.row.id, 'rerun')"
             >
-              <em class="ri-refresh-fill icon active" />
+              <em
+                class="ri-refresh-line finished operate-button"
+                @click="onActionClick(scope.row.id, 'rerun')"
+              />
             </el-tooltip>
             <el-tooltip
               v-show="scope.row.commit_id"
-              class="item cursor-pointer"
               :content="$t('PipeLines.Report')"
               placement="bottom"
-              @click.native="handleToTestReport(scope.row)"
             >
-              <em class="ri-file-list-2-fill icon" />
+              <em
+                class="ri-file-list-2-line active operate-button"
+                @click="handleToTestReport(scope.row)"
+              />
             </el-tooltip>
           </template>
         </el-table-column>

@@ -255,10 +255,10 @@ export default {
     async handleReadAll() {
       this.listLoading = true
       await setReadMessage(this.userId, { message_ids: this.messageIds }).then(() => {
-        const updateIds = 
+        const updateIds =
         this.messageList.filter(x => x.users_can_read === true).map(a => a.id)
         for (const msg_id of updateIds) {
-          const findChangeIndex = 
+          const findChangeIndex =
             this.messageList.findIndex(
               item => parseInt(msg_id) === parseInt(item.id)
             )
