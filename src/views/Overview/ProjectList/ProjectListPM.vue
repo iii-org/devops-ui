@@ -35,7 +35,7 @@
       >
         <template slot-scope="scope">
           <ProjectExpand
-            :sons="getChildProjects(scope.row.son_projects[0].sons)"
+            :sons="getChildProjects(scope.row.childs.childs)"
             @setStar="setStar"
             @updated="fetchData"
             @handleClick="handleClick"
@@ -585,9 +585,9 @@ export default {
     },
     getChildProjects(data) {
       return data.map((item) => {
-        item.children = item.sons
-        if (item.sons.length > 0) {
-          this.getChildProjects(item.sons)
+        item.children = item.childs
+        if (item.childs.length > 0) {
+          this.getChildProjects(item.childs)
         }
         return item
       })

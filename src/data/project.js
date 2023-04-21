@@ -47,8 +47,8 @@ function Project(project) {
   this.last_test_time = project.last_test_time
   this.last_test_result = project.last_test_result
 
-  // son project
-  this.son_projects = project.son_projects
+  // children project
+  this.childs = project.childs
   this.has_son = project.has_son
 }
 
