@@ -340,7 +340,7 @@ export default {
   float: right;
 
   .content {
-    background: mix($success, #ffffff, 70);
+    background: #d9f2e5;
   }
 }
 </style>
