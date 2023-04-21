@@ -53,14 +53,6 @@
         >
           {{ $t('general.Save') }}
         </el-button>
-        <!-- <el-button
-          v-if="!isTable"
-          :disabled="isLoading"
-          class="buttonSecondaryReverse"
-          @click="onAdvancedSettingsClick"
-        >
-          {{ $t('general.AdvancedSettings') }}
-        </el-button> -->
         <el-button
           v-if="isTable"
           type="success"
@@ -224,6 +216,10 @@ export default {
       }
       this.formData = getDefaultFormData()
     }
+  },
+  mounted() {
+    const { tracker } = this.filterConditions
+    if (tracker && this.trackerList.map(a => a.id).includes(tracker)) this.formData.tracker_id = tracker
   },
   methods: {
     onSaveClick() {

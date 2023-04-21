@@ -39,6 +39,7 @@ export default {
   components: { IssueExpand },
   methods: {
     handleExpandRow(row) {
+      console.log(row)
       if (row.family) {
         this.getIssueFamilyData(row)
       } else {
@@ -46,16 +47,24 @@ export default {
       }
     },
     async getIssueFamilyData(row) {
-      try {
-        await this.$set(row, 'isLoadingFamily', true)
-        const family = await getIssueFamily(row.id)
-        const data = family.data
-        this.formatIssueFamilyData(row, data)
-        this.$set(row, 'isLoadingFamily', false)
-      } catch (e) {
-        //   null
+      const store = this.$refs['issueList'].layout.store
+      const { expandRows } = store.states
+      const expandIndex = expandRows.findIndex(x => x.id === row.id)
+      if (expandIndex === -1) {
+        console.log('asd')
+        this.$set(row, 'showQuickAddIssue', false)
+      } else {
+        try {
+          await this.$set(row, 'isLoadingFamily', true)
+          const family = await getIssueFamily(row.id)
+          const data = family.data
+          this.formatIssueFamilyData(row, data)
+          this.$set(row, 'isLoadingFamily', false)
+        } catch (e) {
+          //   null
+        }
+        return Promise.resolve()
       }
-      return Promise.resolve()
     },
     formatIssueFamilyData(row, data) {
       if (data.hasOwnProperty('parent')) {

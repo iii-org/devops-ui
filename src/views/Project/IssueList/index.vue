@@ -80,11 +80,12 @@
     </ProjectListSelector>
     <el-divider />
     <QuickAddIssue
+      v-if="quickAddTopicDialogVisible"
       ref="quickAddIssue"
-      :save-data="saveIssue"
       :project-id="selectedProjectId"
       :visible.sync="quickAddTopicDialogVisible"
-      @add-issue="advancedAddIssue"
+      :filter-conditions="filterValue"
+      @update="saveIssue"
     />
     <div
       ref="wrapper"
@@ -122,6 +123,17 @@
             class-name="informationExpand"
           >
             <template slot-scope="{row}">
+              <el-row v-if="row.showQuickAddIssue" class="add-issue">
+                <QuickAddIssue
+                  :project-id="row.project.id"
+                  :visible.sync="row.showQuickAddIssue"
+                  :filter-conditions="filterValue"
+                  :parent="row"
+                  :is-table="true"
+                  @close="closeQuickAddIssue(row)"
+                  @update="loadData"
+                />
+              </el-row>
               <IssueExpand
                 :issue="row"
                 @on-context-menu="onContextMenu"
@@ -350,6 +362,7 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
+      :simple-add-issue="isTable"
       @backToFirstPage="backToFirstPage"
       @update="loadData"
       @update-row="getContextRow"
@@ -376,11 +389,11 @@ import {
 } from '@/mixins'
 import { ProjectListSelector } from '@/components'
 import {
-  QuickAddIssue,
   Priority,
   Status,
   Tracker
 } from '@/components/Issue'
+import QuickAddIssue from '@/views/MyWork/components/QuickAddIssue'
 import axios from 'axios'
 import XLSX from 'xlsx'
 
@@ -485,6 +498,11 @@ export default {
       return this.mainSelectedProjectId === -1
     }
   },
+  watch: {
+    'filterValue.tracker'() {
+      this.quickAddTopicDialogVisible = false
+    }
+  },
   methods: {
     async fetchAllDownloadData() {
       this.allDataLoading = true
@@ -507,6 +525,10 @@ export default {
             cancelToken: cancelTokenSource.token
           })
         listData = res.data.issue_list
+        listData = listData.map((element) => ({
+          ...element,
+          showQuickAddIssue: false
+        }))
         this.setNewListQuery(res.data.page)
       } catch (e) {
         // null
@@ -639,6 +661,16 @@ export default {
       }
       this.contextMenu ? result.push('context-menu') : result.push('cursor-pointer')
       return result.join(' ')
+    },
+    collapseExpandRow(issueId) {
+      const row = this.listData.find((item) => item.id === issueId)
+      this.$refs.issueList.toggleRowExpansion(row, false)
+    },
+    closeQuickAddIssue(row) {
+      this.$set(row, 'showQuickAddIssue', false)
+      if (!row.family) {
+        this.collapseExpandRow(row.id)
+      }
     }
   }
 }
@@ -692,5 +724,12 @@ export default {
 
 >>> .context-menu {
   cursor: context-menu;
+}
+.add-issue {
+  margin-left: 24px;
+  margin-right: 29px;
+  border: solid 1px #cbcbcb;
+  border-radius: 4px;
+  padding: 10px;
 }
 </style>

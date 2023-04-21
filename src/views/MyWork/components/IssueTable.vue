@@ -21,7 +21,7 @@
           <template slot-scope="{row}">
             <el-row v-if="row.showQuickAddIssue" class="add-issue">
               <QuickAddIssue
-                :project-id="projectId || row.project.id"
+                :project-id="row.project.id"
                 :visible.sync="row.showQuickAddIssue"
                 :filter-conditions="filterConditionsProps"
                 :parent="row"
@@ -425,6 +425,7 @@ export default {
       this.$refs.issueList.toggleRowExpansion(row, false)
     },
     closeQuickAddIssue(row) {
+      console.log('asd')
       this.$set(row, 'showQuickAddIssue', false)
       if (!row.family) {
         this.collapseExpandRow(row.id)
