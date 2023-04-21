@@ -155,20 +155,22 @@
       >
         <template slot-scope="{ row }">
           <el-tooltip
-            :disabled="allProjectIds.includes(row.from_project_id)"
-            :content="$t('Activities.OriginalProjectNotExist')"
+            v-if="allProjectIds.includes(row.from_project_id)"
             placement="bottom"
+            :content="$t('general.Edit')"
           >
-            <span> <!-- Make sure that the disabled of the button cannot affect the tooltip -->
-              <el-button
-                size="mini"
-                class="buttonPrimaryReverse"
-                icon="el-icon-edit"
-                :disabled="!allProjectIds.includes(row.from_project_id)"
-                @click="handleEdit(row)"
-              >
-                {{ $t('general.Edit') }}
-              </el-button>
+            <em
+              class="ri-file-edit-line finished operate-button"
+              @click="handleEdit(row)"
+            />
+          </el-tooltip>
+          <el-tooltip
+            v-else
+            placement="bottom"
+            :content="$t('Activities.OriginalProjectNotExist')"
+          >
+            <span class="disabled">
+              <em class="ri-file-edit-line disabled operate-button" />
             </span>
           </el-tooltip>
           <el-popconfirm
@@ -290,3 +292,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.disabled {
+  cursor: not-allowed;
+}
+</style>
