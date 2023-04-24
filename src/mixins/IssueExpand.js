@@ -39,7 +39,6 @@ export default {
   components: { IssueExpand },
   methods: {
     handleExpandRow(row) {
-      console.log(row)
       if (row.family) {
         this.getIssueFamilyData(row)
       } else {
@@ -51,7 +50,6 @@ export default {
       const { expandRows } = store.states
       const expandIndex = expandRows.findIndex(x => x.id === row.id)
       if (expandIndex === -1) {
-        console.log('asd')
         this.$set(row, 'showQuickAddIssue', false)
       } else {
         try {

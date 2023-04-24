@@ -1,7 +1,7 @@
 <template>
   <el-row v-show="visible">
     <div style="padding: 10px 5px; font-weight: bold">
-      <span>{{ $t('Issue.AddSubIssue') }}: </span>
+      <span>{{ subIssue ? $t('Issue.AddSubIssue') : $t('Issue.AddIssue') }}: </span>
       <el-link
         :disabled="isLoading"
         class="link"
@@ -176,6 +176,10 @@ export default {
     showClose: {
       type: Boolean,
       default: true
+    },
+    subIssue: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

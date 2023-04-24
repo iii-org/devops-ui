@@ -8,18 +8,19 @@
       @click="$emit('close')"
     />
     <el-tabs ref="tabs" type="border-card">
-      <el-tab-pane label="Add New Sub Issue">
+      <el-tab-pane :label="$t('general.AddNewSubIssue')">
         <QuickAddIssue
           :project-id="parentData.project.id"
           :visible="true"
           :parent="parentData"
           :is-table="true"
           :show-close="false"
+          :sub-issue="true"
           @close="$emit('close')"
           @update="$emit('update')"
         />
       </el-tab-pane>
-      <el-tab-pane label="Add Existing Issue">
+      <el-tab-pane :label="$t('general.AddExistingIssue')">
         <el-row>
           <el-col :span="20">
             <SettingRelationIssue

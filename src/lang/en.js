@@ -273,7 +273,9 @@ export default {
     DataGenerationTime: 'Data Generation Time',
     Expand: 'Expand',
     Fold: 'Fold',
-    PopUp: 'Pop Up'
+    PopUp: 'Pop Up',
+    AddNewSubIssue: 'Add New Sub-Issue',
+    AddExistingIssue: 'Add Existing Issue'
   },
   Notify: {
     Updated: 'update successful',

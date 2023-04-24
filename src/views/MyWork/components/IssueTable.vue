@@ -26,6 +26,7 @@
                 :filter-conditions="filterConditionsProps"
                 :parent="row"
                 :is-table="true"
+                :sub-issue="true"
                 @close="closeQuickAddIssue(row)"
                 @update="fetchData"
               />
@@ -425,7 +426,6 @@ export default {
       this.$refs.issueList.toggleRowExpansion(row, false)
     },
     closeQuickAddIssue(row) {
-      console.log('asd')
       this.$set(row, 'showQuickAddIssue', false)
       if (!row.family) {
         this.collapseExpandRow(row.id)

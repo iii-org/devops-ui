@@ -85,7 +85,7 @@
       :project-id="selectedProjectId"
       :visible.sync="quickAddTopicDialogVisible"
       :filter-conditions="filterValue"
-      @update="saveIssue"
+      @update="loadData"
     />
     <div
       ref="wrapper"
@@ -130,6 +130,7 @@
                   :filter-conditions="filterValue"
                   :parent="row"
                   :is-table="true"
+                  :sub-issue="true"
                   @close="closeQuickAddIssue(row)"
                   @update="loadData"
                 />
@@ -553,19 +554,19 @@ export default {
       }
       this.$router.push({ name: 'IssueDetail', params: { issueId: row.id, project: row.project }})
     },
-    async saveIssue(data) {
-      const res = await addIssue(data)
-      this.$message({
-        title: this.$t('general.Success'),
-        message: this.$t('Notify.Added'),
-        type: 'success'
-      })
-      this.backToFirstPage()
-      this.loadData()
-      this.addTopicDialogVisible = false
-      this.$refs['quickAddIssue'].form.name = ''
-      return res
-    },
+    // async saveIssue(data) {
+    //   const res = await addIssue(data)
+    //   this.$message({
+    //     title: this.$t('general.Success'),
+    //     message: this.$t('Notify.Added'),
+    //     type: 'success'
+    //   })
+    //   this.backToFirstPage()
+    //   this.loadData()
+    //   this.addTopicDialogVisible = false
+    //   this.$refs['quickAddIssue'].form.name = ''
+    //   return res
+    // },
     backToFirstPage() {
       this.listQuery.page = 1
       this.listQuery.offset = 0

@@ -273,7 +273,9 @@ export default {
     DataGenerationTime: '資料產生時間',
     Expand: '展開',
     Fold: '收合',
-    PopUp: '另開視窗'
+    PopUp: '另開視窗',
+    AddNewSubIssue: '新增子議題',
+    AddExistingIssue: '加入已有議題'
   },
   Notify: {
     Updated: '已更新',
