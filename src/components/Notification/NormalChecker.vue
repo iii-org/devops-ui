@@ -19,18 +19,18 @@
       </span>
       <el-dropdown-menu slot="dropdown" style="width: 300px; max-height: 50%" class="filter-list">
         <el-dropdown-item
-          v-for="msg in msgs"
+          v-for="msg in newMsgs"
           :key="msg.id"
           @click.native="showMessage(msg)"
         >
-          <div class="flex pr-3">
+          <div class="flex pr-3" style="font-size: 13px;">
             <em
-              class="ri-information-fill ri-lg mr-2"
-              style="align-self: center; color: #67c23a"
+              class="ri-information-fill ri-lg mr-2 ml-2"
+              style="align-self: center; color: #67c23a; font-size: 24px;"
             />
             <span>
               <div class="msg-text">{{ msg.title ? msg.title : 'No Title' }}</div>
-              <div style="color: #909399; line-height: 25px"> {{ getRelativeTime(msg.created_at) }} </div>
+              <div style="color: #909399; line-height: 20px"> {{ getRelativeTime(msg.created_at) }} </div>
             </span>
           </div>
           <el-divider class="divider" />
@@ -59,6 +59,14 @@ export default {
       default: () => []
     }
   },
+  computed: {
+    newMsgs() {
+      if (this.msgs.length > 10) {
+        return this.msgs.slice(0, 10)
+      }
+      return this.msgs
+    }
+  },
   methods: {
     showMessage(msg) {
       this.$emit('read', msg)
@@ -82,8 +90,9 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   width: 220px;
-  height: 30px;
+  line-height: 22px;
   font-weight: bold;
+  padding-right: 22px;
 }
 .dialog-title {
   font-weight: bold;

@@ -23,6 +23,7 @@ import { mapGetters, mapActions } from 'vuex'
 import { io } from 'socket.io-client'
 import MessageDialog from './components/MessageDialog.vue'
 import { setReadMessage } from '@/api_v2/monitoring'
+import { getLocalTime } from '@/utils/handleTime'
 
 export default {
   name: 'Notification',
@@ -66,7 +67,7 @@ export default {
     setSocketListener() {
       this.socket.on('create_message', async (data) => {
         this.setNotificationList(data)
-        if (new Date(data.created_at).toISOString().slice(0, 10) >= this.dateNow) {
+        if (getLocalTime(data.created_at).slice(0, 10) >= this.dateNow) {
           this.$notification.show('III DevOps', {
             body: data.title,
             badge: 'https://www.iiidevops.org/wp-content/uploads/2021/07/IIIDevOps-logo.png',

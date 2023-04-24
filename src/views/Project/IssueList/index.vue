@@ -373,7 +373,7 @@
 
 <script>
 import { getProjectIssueList } from '@/api_v2/projects'
-import { addIssue } from '@/api/issue'
+// import { addIssue } from '@/api/issue'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import {
   getStatusTagType,
