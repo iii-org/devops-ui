@@ -25,8 +25,13 @@
         v-for="tab in tabs"
         :key="tab.id"
         :name="tab.id"
-        :label="$t(`MyWork.${tab.name}`)"
       >
+        <span slot="label">
+          <span>{{ $t(`MyWork.${tab.name}`) }}</span>
+          <span class="text-xl font-bold">
+            ({{ tab.count }})
+          </span>
+        </span>
         <IssueTable
           :ref="tab.id"
           :from="tab.id"
@@ -215,6 +220,7 @@ export default {
     border-top: 5px solid #3e3f41;
     border-bottom-color: #e4ecf7 ;
     height: 45px;
+    font-size: 16px;
   }
   .el-tabs__nav {
     border: none;

@@ -216,7 +216,9 @@ export default {
       this.setChange(project.id)
     },
     handleMyWorkInitRoute() {
-      const storedProjectId = Number(sessionStorage.getItem('workProjectId'))
+      const storedProjectId =
+        Number(localStorage.getItem('projectId')) ||
+        Number(sessionStorage.getItem('workProjectId'))
       if (storedProjectId) {
         this.$emit('update:project-id', storedProjectId)
       } else {
