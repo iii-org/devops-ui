@@ -115,11 +115,7 @@
               placement="bottom"
             >
               <em
-<<<<<<< HEAD
-                class="ri-terminal-box-line info operate-button"
-=======
                 class="ri-terminal-box-line active operate-button"
->>>>>>> 7b6e71d1 (feat: modify table button layout)
                 @click="onDetailsClick(scope.row)"
               />
             </el-tooltip>
