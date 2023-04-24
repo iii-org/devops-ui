@@ -205,7 +205,6 @@
           <el-tooltip
             placement="bottom"
             :disabled="!scope.row.is_lock"
-
             :content="scope.row.lock_reason"
           >
             <el-tag v-if="scope.row.is_lock" type="info">
@@ -407,7 +406,7 @@ export default {
       if (filteredArray.length > 0) {
         this.getCalculateProjectData(filteredArray)
       }
-      return this.projectList
+      return this.listData
     },
     getParams() {
       if (this.keyword !== '') {

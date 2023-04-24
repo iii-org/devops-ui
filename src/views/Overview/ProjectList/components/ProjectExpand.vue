@@ -3,8 +3,9 @@
     <h4 class="ml-5 my-1">{{ $t('general.ChildrenProject') }}</h4>
     <el-tree
       :data="children"
-      :data-key="children.id"
+      node-key="id"
       :indent="50"
+      :expand-on-click-node="false"
       icon-class="el-icon-arrow-right"
     >
       <div
@@ -115,17 +116,6 @@
             <br>
           </div>
         </template>
-        <!-- issue status -->
-        <template>
-          <el-tag
-            type="success"
-            size="mini"
-            class="el-tag--circle mr-3"
-            effect="dark"
-          >
-            進行中
-          </el-tag>
-        </template>
         <!-- project manager -->
         <template>
           <el-tag
@@ -136,6 +126,31 @@
             <em class="el-icon-user-solid" />
             <span>{{ data.owner_name }}</span>
           </el-tag>
+        </template>
+        <!-- issue status -->
+        <template>
+          <el-tooltip
+            placement="bottom"
+            :disabled="!data.is_lock"
+            :content="data.lock_reason"
+          >
+            <el-tag
+              v-if="data.is_lock"
+              type="info"
+              size="mini"
+              class="mr-3"
+            >
+              {{ $t('errorDetail.locked') }}
+            </el-tag>
+            <el-tag
+              v-else
+              :type="data.disabled ? 'danger' : 'success'"
+              size="mini"
+              class="mr-3"
+            >
+              {{ data.disabled ? $t('general.Disable') : $t('general.Enable') }}
+            </el-tag>
+          </el-tooltip>
         </template>
         <!-- actions -->
         <template>
