@@ -36,6 +36,7 @@
                 v-model="form.name"
                 :old-value="originForm.name"
                 :issue-id="issueId"
+                :is-from-board="isFromBoard"
                 :is-button-disabled="isButtonDisabled"
               />
               <span
