@@ -750,14 +750,11 @@ export default {
     },
     scrollType(val) {
       const elCollapseItemHeader = Array.from(this.$refs['mainIssueWrapper'].$el.getElementsByClassName('el-collapse-item__header'))
-      const elCollapseItemArrow = Array.from(this.$refs['mainIssueWrapper'].$el.getElementsByClassName('el-collapse-item__arrow'))
       if (val === 'top') {
         elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = ''
-        // elCollapseItemArrow[elCollapseItemArrow.length - 1].style['margin-left'] = 'auto'
         // this.issueNotesEditorVisible = 'issueNotesEditor'
       } else {
         elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = 'center'
-        // elCollapseItemArrow[elCollapseItemArrow.length - 1].style['margin-left'] = '8px'
         // this.issueNotesEditorVisible = ''
       }
     }
@@ -777,6 +774,7 @@ export default {
     },
     async fetchIssueLink() {
       this.isLoading = true
+      this.$refs.mainIssue.$el.scrollTop = 0
       if (this.propsIssueId) {
         this.issueId = parseInt(this.propsIssueId)
         await this.fetchIssue()
@@ -1569,16 +1567,5 @@ export default {
 
 >>> .el-collapse-item__arrow {
   margin: 0 8px 0 8px;
-}
-.slide-fade-enter-active {
-  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
-}
-.slide-fade-leave-active {
-  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
-}
-.slide-fade-enter,
-.slide-fade-leave-to {
-  // transform: translateY(3rem);
-  opacity: 0;
 }
 </style>
