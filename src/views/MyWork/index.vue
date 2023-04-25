@@ -29,7 +29,7 @@
         <span slot="label">
           <span>{{ $t(`MyWork.${tab.name}`) }}</span>
           <span class="text-xl font-bold">
-            ({{ tab.count }})
+            ({{ tab.count !== '-' ? tab.count : 0 }})
           </span>
         </span>
         <IssueTable
@@ -91,6 +91,7 @@ export default {
       } else {
         this.clearFilter()
         this.$router.push({ name: this.$route.name })
+        sessionStorage.removeItem('workProjectId')
         return
       }
       const projectName = this.projectOptions.find((elm) => elm.id === this.projectId).name

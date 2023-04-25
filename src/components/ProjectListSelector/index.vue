@@ -216,9 +216,7 @@ export default {
       this.setChange(project.id)
     },
     handleMyWorkInitRoute() {
-      const storedProjectId =
-        Number(localStorage.getItem('projectId')) ||
-        Number(sessionStorage.getItem('workProjectId'))
+      const storedProjectId = Number(sessionStorage.getItem('workProjectId'))
       if (storedProjectId) {
         this.$emit('update:project-id', storedProjectId)
       } else {
@@ -265,6 +263,7 @@ export default {
     onProjectChange(projectId) {
       this.setSelectedProject(this.projectOptions.find((elm) => elm.id === projectId) || { id: -1 })
       localStorage.setItem('projectId', projectId)
+      sessionStorage.setItem('workProjectId', projectId)
     },
     async setStar(id, star) {
       if (star) {
