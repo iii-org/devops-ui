@@ -2,7 +2,7 @@
   <div
     v-loading="isLoading"
     :element-loading-text="$t('Loading')"
-    style="height: 100%; padding: 20px;"
+    class="app-container"
   >
     <ProjectListSelector>
       <CustomFilter
@@ -907,9 +907,11 @@ export default {
       Object.keys(data).forEach(key => {
         const splitKey = key.split('_id')
         if (splitKey.length > 1) {
-          const findObject = this[splitKey[0]].find(item => item.id === parseInt(data[key]) && item.login !== '-Me-')
-          if (findObject) {
-            data[splitKey[0]] = findObject
+          if (this[splitKey[0]]) {
+            const findObject = this[splitKey[0]].find(item => item.id === parseInt(data[key]) && item.login !== '-Me-')
+            if (findObject) {
+              data[splitKey[0]] = findObject
+            }
           }
         }
       })

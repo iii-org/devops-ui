@@ -2,7 +2,7 @@
 
 // el-table
 .el-table {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .el-table .el-button {
@@ -66,6 +66,17 @@
 .el-table .cell {
   padding-left: 12px;
   padding-right: 12px;
+}
+
+.el-table__row {
+  > .el-table__cell {
+    padding: 1px 0px;
+    line-height: 45px;
+    height: 45px;
+  }
+  .el-link--inner {
+    font-size: 14px;
+  }
 }
 
 .el-table--border td:first-child .cell,
@@ -420,4 +431,72 @@
   .el-table__row.imageList {
     cursor: pointer !important;
   }
+}
+
+/*
+* table operate button
+* search icon with keyword: 'ri' or 'el'
+* https://icon-sets.iconify.design
+*/
+.operate-button {
+  font-size: large;
+  font-weight: bolder;
+  margin-right: 5px;
+  color: $info;
+  cursor: pointer;
+  &.active {
+    color: $active;
+  }
+  &.danger {
+    color: $danger;
+  }
+  &.finished {
+    color: $finished;
+  }
+  &.inProgress {
+    color: $inProgress;
+  }
+  &.info {
+    color: $info;
+  }
+  &.help {
+    cursor: help;
+  }
+  &.disabled {
+    pointer-events: none;
+  }
+  &:hover {
+    color: $feature;
+  }
+}
+
+.el-divider--horizontal {
+  margin: 12px 0px;
+}
+.el-dialog__header {
+  > .container-name {
+    text-align: left;
+  }
+}
+
+/*
+* toast-ui editor css
+*/
+.toastui-editor-popup-add-link .toastui-editor-popup-body,
+.toastui-editor-popup-add-image .toastui-editor-popup-body {
+  padding: 0 20px 10px !important;
+}
+.toastui-editor-popup-add-image .toastui-editor-tabs {
+  margin: 5px 0 !important;
+}
+.toastui-editor-popup-add-image .toastui-editor-tabs .tab-item {
+  width: 50px !important;
+  height: 30px !important;
+  line-height: 30px !important;
+}
+.toastui-editor-popup-body label {
+  margin: 5px 0 !important;
+}
+.toastui-editor-popup-body .toastui-editor-button-container {
+  margin-top: 10px !important;
 }

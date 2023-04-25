@@ -17,21 +17,21 @@
       :project-id="projectId"
       :visible.sync="showQuickAddIssue"
       :filter-conditions="filterConditions"
+      @close="showQuickAddIssue = false"
       @update="updateIssueTables"
     />
-
-    <TabsHeader
-      :tabs="tabs"
-      :active-tab.sync="activeTab"
-    />
-
     <el-tabs v-model="activeTab">
       <el-tab-pane
         v-for="tab in tabs"
         :key="tab.id"
         :name="tab.id"
-        :label="tab.name"
       >
+        <span slot="label">
+          <span>{{ $t(`MyWork.${tab.name}`) }}</span>
+          <span class="text-xl font-bold">
+            ({{ tab.count !== '-' ? tab.count : 0 }})
+          </span>
+        </span>
         <IssueTable
           :ref="tab.id"
           :from="tab.id"
@@ -39,6 +39,7 @@
           :filter-conditions-props="filterConditions"
           :display-closed-props="displayClosedIssue"
           :keyword-props="keyword"
+          :show-quick-add-issue="showQuickAddIssue"
           @update="updateIssueTables"
           @total="updateTotalCount(tab.id, $event)"
         />
@@ -56,11 +57,11 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { CreateProjectDialog } from '@/views/Overview/ProjectList/components'
-import { PageHeader, QuickAddIssue, TabsHeader, IssueTable } from './components'
+import { PageHeader, QuickAddIssue, IssueTable } from './components'
 
 export default {
   name: 'MyWork',
-  components: { PageHeader, QuickAddIssue, TabsHeader, IssueTable, CreateProjectDialog },
+  components: { PageHeader, QuickAddIssue, IssueTable, CreateProjectDialog },
   data() {
     return {
       projectId: null,
@@ -90,6 +91,7 @@ export default {
       } else {
         this.clearFilter()
         this.$router.push({ name: this.$route.name })
+        sessionStorage.removeItem('workProjectId')
         return
       }
       const projectName = this.projectOptions.find((elm) => elm.id === this.projectId).name
@@ -209,7 +211,47 @@ export default {
 </script>
 
 <style lang="scss" scoped>
->>> .el-tabs__header {
+@import 'src/styles/theme/variables.scss';
+
+::v-deep .el-tabs__header {
+  margin: 0;
+  .el-tabs__item.is-active {
+    background: #e4ecf7 ;
+    color: #3e3f41;
+    border-top: 5px solid #3e3f41;
+    border-bottom-color: #e4ecf7 ;
+    height: 45px;
+    font-size: 16px;
+  }
+  .el-tabs__nav {
+    border: none;
+  }
+  .el-tabs__item {
+    padding: 0 0 0 20px;
+    background: #3e3f41;
+    color: #e4ecf7 ;
+    border-radius: 5px;
+    width: 125%;
+    &:hover {
+      color: $linkTextColor;
+    }
+    &.is-top:nth-child(2) {
+      padding: 0 0 0 20px;
+    }
+  }
+}
+
+::v-deep .el-tabs__active-bar {
   display: none;
+}
+
+::v-deep .el-tabs__content {
+  background: #e4ecf7 ;
+  border-radius: 3px;
+}
+
+::v-deep .el-tab-pane {
+  margin: 15px;
+  background: #e4ecf7 ;
 }
 </style>

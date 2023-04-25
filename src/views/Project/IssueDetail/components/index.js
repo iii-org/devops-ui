@@ -10,6 +10,7 @@ import IssueMatrix from './IssueMatrix'
 import IssueCollection from './IssueCollection'
 import AdminCommitLog from './AdminCommitLog'
 import WhiteBoardTable from './WhiteBoardTable'
+import AddSubIssue from './AddSubIssue'
 
 export {
   IssueFiles,
@@ -23,5 +24,6 @@ export {
   IssueMatrix,
   IssueCollection,
   AdminCommitLog,
-  WhiteBoardTable
+  WhiteBoardTable,
+  AddSubIssue
 }

@@ -78,3 +78,4 @@ export const getIssueListLockStatus = () => request.get('/lock', { params: { nam
 export const getRootProjectId = (project_id) => request.get(`/project/${project_id}/root_project`)
 export const getCommitRelation = (commit_id) => request.get(`/issue/relation?commit_id=${commit_id}`)
 export const patchCommitRelation = (params) => request.patch(`/issue/relation`, { ...params })
+export const passwordPolicyCheck = (params) => request.post(`/db/pswd/policy/check`, { ...params })

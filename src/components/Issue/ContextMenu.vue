@@ -112,6 +112,7 @@
       :visible.sync="addTopicDialogVisible"
       :show-close="false"
       :close-on-click-modal="false"
+      :modal-append-to-body="false"
       width="50%"
       top="5px"
       destroy-on-close
@@ -214,6 +215,10 @@ export default {
     selectionOptions: {
       type: Object,
       default: () => ({})
+    },
+    simpleAddIssue: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -559,7 +564,7 @@ export default {
       this.form = {}
       this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
-      this.form.name = (copy && this.parentId === 0) ? name + '(' + this.$t('Issue.Copy') + ')' : name
+      this.form.name = (copy && this.parentId === 0) ? name + ' (' + this.$t('Issue.Copy') + ')' : name
       this.form.fixed_version_id = fixed_version ? fixed_version.id : ''
       this.form.tracker_id = tracker.id
       this.form.status_id = status.id
@@ -581,7 +586,19 @@ export default {
         this.parentId = this.row.id
         this.parentName = this.row.name
       }
-      this.addTopicDialogVisible = true
+
+      if (!this.simpleAddIssue || copy) {
+        this.addTopicDialogVisible = true
+        return
+      }
+
+      const store = this.$parent.$refs['issueList'].layout.store
+      const { expandRows } = store.states
+      const expandIndex = expandRows.findIndex(x => x.id === this.row.id)
+      if (expandIndex === -1) {
+        store.toggleRowExpansion(this.row)
+      }
+      this.row.showQuickAddIssue = true
     },
     loadingUpdate(value) {
       this.LoadingConfirm = value

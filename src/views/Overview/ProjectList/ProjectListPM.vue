@@ -96,7 +96,7 @@
                   slot="reference"
                   :underline="false"
                   :disabled="scope.row.disabled || scope.row.is_lock"
-                  style="font-size: 22px"
+                  style="font-size: 18px; padding: 0 3px;"
                 >
                   <svg-icon icon-class="gitlab" />
                 </el-link>
@@ -106,7 +106,7 @@
                 v-if="scope.row.redmine_url"
                 target="_blank"
                 class="mr-1"
-                style="font-size: 22px"
+                style="font-size: 18px; padding: 0 3px;"
                 :underline="false"
                 :disabled="scope.row.disabled || scope.row.is_lock"
                 :href="scope.row.redmine_url"
@@ -117,7 +117,7 @@
               <el-link
                 v-if="scope.row.harbor_url"
                 target="_blank"
-                style="font-size: 22px"
+                style="font-size: 18px; padding: 0 3px;"
                 :underline="false"
                 :disabled="scope.row.disabled || scope.row.is_lock"
                 :href="scope.row.harbor_url"
@@ -148,6 +148,7 @@
         prop="project_status"
         i18n-key="Project"
         :label="$t('Project.IssueStatus')"
+        size="medium"
         location="projectListPM"
         min-width="120"
       />
@@ -188,7 +189,7 @@
           <el-tooltip
             placement="bottom"
             :disabled="!scope.row.is_lock"
-            :open-delay="200"
+
             :content="scope.row.lock_reason"
           >
             <el-tag v-if="scope.row.is_lock" type="info">
@@ -203,71 +204,65 @@
       <el-table-column
         :label="$t('general.Actions')"
         header-align="center"
-        width="320"
+        align="center"
       >
         <template slot-scope="scope">
-          <el-button
-            v-if="userRole !== 'QA' && scope.row.is_lock!==true"
-            size="mini"
-            class="buttonPrimaryReverse"
-            icon="el-icon-edit"
-            @click="handleEdit(scope.row)"
-          >
-            {{ $t('general.Edit') }}
-          </el-button>
-          <el-button
-            v-if="scope.row.is_lock!==true"
-            :disabled="permission(scope.row)"
-            size="mini"
-            type="danger"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-          >
-            {{ $t('general.Delete') }}
-          </el-button>
-          <el-button
-            v-if="scope.row.is_lock===true"
-            :disabled="permission(scope.row)"
-            size="mini"
-            type="danger"
-            class="text-error"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row, true)"
-          >
-            {{ $t('general.ForceDelete') }}
-          </el-button>
-          <el-button
-            v-if="scope.row.is_lock===true"
-            size="mini"
-            type="success"
-            class="text-success"
-            icon="el-icon-refresh"
-            @click="handleFix(scope.row.id)"
-          >
-            {{ $t('general.Fix') }}
-          </el-button>
           <el-tooltip
+            v-if="userRole !== 'QA' && scope.row.is_lock !== true"
             placement="bottom"
-            :disabled="!permission(scope.row)"
-            :open-delay="200"
-            :content="scope.row.disabled ?
-              $t('Dashboard.ADMIN.ProjectList.enable_tooltip') :
-              $t('Dashboard.ADMIN.ProjectList.disable_tooltip')"
+            :content="$t('general.Edit')"
           >
-            <span>
-              <el-button
-                v-if="scope.row.is_lock!==true"
-                size="mini"
-                :disabled="permission(scope.row)"
-                :type="getButtonType(scope.row.disabled)"
-                :icon="scope.row.disabled ? 'el-icon-video-play' : 'el-icon-video-pause'"
-                @click="handleToggle(scope.row)"
-              >
-                <span :class="scope.row.disabled ? 'text-success' : 'text-danger'">
-                  {{ !scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
-                </span>
-              </el-button>
-            </span>
+            <em class="ri-file-edit-line finished operate-button" @click="handleEdit(scope.row)" />
+          </el-tooltip>
+          <el-tooltip
+            v-if="scope.row.is_lock !== true"
+            placement="bottom"
+            :content="$t('general.Delete')"
+          >
+            <em
+              :disabled="permission(scope.row)"
+              class="ri-delete-bin-2-line danger operate-button"
+              @click="handleDelete(scope.row)"
+            />
+          </el-tooltip>
+          <el-tooltip
+            v-if="scope.row.is_lock === true"
+            placement="bottom"
+            :content="$t('general.ForceDelete')"
+          >
+            <em
+              :disabled="permission(scope.row)"
+              class="ri-delete-bin-2-line danger operate-button"
+              @click="handleDelete(scope.row, true)"
+            />
+          </el-tooltip>
+          <el-tooltip
+            v-if="scope.row.is_lock === true"
+            placement="bottom"
+            :content="$t('general.Fix')"
+          >
+<<<<<<< HEAD
+            <em class="ri-refresh-line active operate-button" @click="handleFix(scope.row.id)" />
+=======
+            <em class="ri-refresh-fill active operate-button" @click="handleFix(scope.row.id)" />
+>>>>>>> 7b6e71d1 (feat: modify table button layout)
+          </el-tooltip>
+          <el-tooltip
+            v-if="scope.row.is_lock !== true"
+            placement="bottom"
+            :content="!scope.row.disabled ? $t('general.Disable') : $t('general.Enable')"
+          >
+            <em
+              :disabled="permission(scope.row)"
+              :class="scope.row.disabled
+                ? 'ri-play-circle-line finished operate-button'
+<<<<<<< HEAD
+                : 'ri-pause-circle-line danger operate-button'"
+=======
+                : 'ri-pause-circle-line inProgress operate-button'"
+>>>>>>> 7b6e71d1 (feat: modify table button layout)
+              @click="handleToggle(scope.row)"
+            />
           </el-tooltip>
         </template>
       </el-table-column>

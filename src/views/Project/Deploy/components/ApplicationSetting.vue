@@ -736,21 +736,27 @@ export default {
             trigger: 'blur'
           }
         ],
-        remote: [{
-          required: true,
-          message: this.$t(`Validation.Select`, [this.$t('Deploy.Location')]),
-          trigger: 'blur'
-        }],
-        cluster_id: [{
-          required: true,
-          message: this.$t(`Validation.Select`, [this.$t('Deploy.Cluster')]),
-          trigger: 'blur'
-        }],
-        registry_id: [{
-          required: true,
-          message: this.$t(`Validation.Select`, [this.$t('Deploy.Registry')]),
-          trigger: 'blur'
-        }],
+        remote: [
+          {
+            required: true,
+            message: this.$t(`Validation.Select`, [this.$t('Deploy.Location')]),
+            trigger: 'blur'
+          }
+        ],
+        cluster_id: [
+          {
+            required: true,
+            message: this.$t(`Validation.Select`, [this.$t('Deploy.Cluster')]),
+            trigger: 'blur'
+          }
+        ],
+        registry_id: [
+          {
+            required: true,
+            message: this.$t(`Validation.Select`, [this.$t('Deploy.Registry')]),
+            trigger: 'blur'
+          }
+        ],
         namespace: [
           {
             required: true,
@@ -1055,12 +1061,13 @@ export default {
     },
     handleConfirm(application_id) {
       if (this.deployForm.applications.length === 0) return false
-      Promise.all([
+      const validate = [
         this.$refs['deployForm'].validate(),
         this.$refs['network'].map((item) => item.validate()),
-        this.$refs['volume'].map((item) => item.validate()),
         this.$refs['environment'].map((item) => item.validate())
-      ].flatMap((item) => item)).then(async() => {
+      ]
+      if (this.$refs['volume']) validate.push(this.$refs['volume'].map((item) => item.validate()))
+      Promise.all(validate.flatMap((item) => item)).then(async() => {
         const data = Object.assign({}, this.deployForm)
         if (!data.remote) {
           delete data.namespace

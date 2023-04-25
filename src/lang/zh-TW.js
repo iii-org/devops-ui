@@ -272,7 +272,10 @@ export default {
     Unexpired: '未逾期',
     DataGenerationTime: '資料產生時間',
     Expand: '展開',
-    Fold: '收合'
+    Fold: '收合',
+    PopUp: '另開視窗',
+    AddNewSubIssue: '新增子議題',
+    AddExistingIssue: '加入已有議題'
   },
   Notify: {
     Updated: '已更新',
@@ -322,7 +325,8 @@ export default {
     ExcalidrawAliveWarning: '白板伺服器失效，請洽III DevOps服務團隊',
     DeleteExcalidrawWarning: '一併"刪除"本議題之關聯白板',
     ChangeClusterId: '[注意] 變更部署位置將重設原Volume設定，請問確認要變更嗎？',
-    ChangeReleaseId: '[注意] 變更釋出版本將重設原Environment設定，請問確認要變更嗎？'
+    ChangeReleaseId: '[注意] 變更釋出版本將重設原Environment設定，請問確認要變更嗎？',
+    DownloadFailed: '檔案下載失敗，請恰您的系統管理員。'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -387,6 +391,7 @@ export default {
     Branch: '@:general.Branch',
     Commit: 'Commit',
     PackageCount: '套件數量',
+    CriticalSeverity: '嚴重',
     HighSeverity: '高風險',
     MediumSeverity: '中風險',
     LowSeverity: '低風險',
@@ -474,6 +479,7 @@ export default {
     EditIssue: '編輯議題',
     AddSubIssue: '新增子議題',
     CloseIssue: '關閉議題',
+    IssueSetting: '議題設定',
     IssueHookSetting: '程式關聯設定',
     CommitIssueHookSetting: '修改程式議題關聯',
     EditIssueHook: '修改議題關聯',
@@ -722,6 +728,7 @@ export default {
       Overview: {
         NAME: '總覽',
         projects: '專案數',
+        closed: '@:Project.closed',
         overdue: '@:Project.overdue',
         not_started: '@:Project.not_started',
         in_progress: '@:Project.in_progress'
@@ -988,6 +995,7 @@ export default {
     EditTemplate: '修改自製範本',
     LocalProject: '本地專案',
     TemplateDescription: '範本簡述',
+    OriginalProjectNotExist: '原始專案已不存在',
     DuplicatedTemplate: '同一專案僅能生成一個範本，此專案"{0}"於日前已被轉成範本，若需同步程式碼，請至外層範本清單按下編輯鈕，即可執行。'
   },
   Maintenance: {
@@ -1009,6 +1017,7 @@ export default {
   },
   Loading: '讀取中……',
   Updating: '更新中……',
+  LoadMore: '看更多',
   Harbor: {
     PushTime: '推送時間'
   },
@@ -1054,7 +1063,7 @@ export default {
   },
   Log: {
     duration: '消耗時間',
-    fullLog: '報表',
+    fullLog: '報告',
     testId: '測試編號'
   },
   Clair: {
@@ -1372,14 +1381,24 @@ export default {
     toClosedVersionErrorContent: '指定版本 {fixed_version} 的狀態為 關閉，因此無法變更。'
   },
   Status: {
+    Failed: '失敗',
+    Created: '已建立',
+    Queued: '排程中',
+    ResumeScanQueued: '恢復排程中',
+    ResumingScan: '恢復掃描',
+    Pending: '待定中',
+    Paused: '已暫停',
+    Running: '掃描中',
+    Complete: '掃描完成',
+    Interrupted: '已中斷',
+    Unknown: '未知狀態',
     Finished: '掃描完成',
     Scanning: '掃描中',
     Aborted: '已取消',
-    Failed: '失敗',
-    Complete: '@:Status.Finished',
-    Running: '@:Status.Scanning',
-    NotRunning: '準備中',
-    Interrupted: '已中斷'
+    Started: '開始掃描',
+    'Error Publishing Scan': '掃描錯誤',
+    'Generating Report': '產生報告中',
+    'Error Generating Report': '產生報告錯誤'
   },
   Gantt: {
     Now: '今天',

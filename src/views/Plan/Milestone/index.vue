@@ -185,7 +185,10 @@
     <div
       ref="wrapper"
       class="wrapper"
-      :class="{'show-quick':quickAddTopicDialogVisible}"
+      :class="{
+        'show-quick':quickAddTopicDialogVisible,
+        'is-panel':issueDetail.visible
+      }"
     >
       <el-tabs
         v-model="activeTab"
@@ -206,6 +209,8 @@
             :fixed-version="fixed_version"
             :tags="tags"
             :table-height="tableHeight"
+            :issue-detail-opened-id="issueDetail.id"
+            @onOpenIssueDetail="onRelationIssueDialog"
             @update-loading="handleUpdateLoading"
             @update-status="handleUpdateStatus"
             @update-selection-list="loadSelectionList"
@@ -245,6 +250,43 @@
           />
         </el-tab-pane>
       </el-tabs>
+      <transition name="slide-fade">
+        <div v-show="issueDetail.visible" class="rightPanel">
+          <div
+            class="handle-button"
+            :style="{'background-color':'#85c1e9'}"
+            @click="handleRightPanelVisible"
+          >
+            <em class="el-icon-d-arrow-right" />
+          </div>
+          <ProjectIssueDetail
+            ref="issueDetailDrawer"
+            :props-issue-id="issueDetail.id"
+            :is-in-dialog="true"
+            :is-from-board="true"
+            @popup="handleRelationIssueDialogBeforeClose"
+            @update="handleRelationUpdate"
+            @delete="handleRelationDelete"
+          />
+        </div>
+      </transition>
+      <el-dialog
+        :visible.sync="isProjectDetailPopUp"
+        width="90%"
+        top="3vh"
+        append-to-body
+        destroy-on-close
+        :before-close="handleRelationIssueDialogBeforeClose"
+      >
+        <ProjectIssueDetail
+          ref="issueDetailDialog"
+          :props-issue-id="issueDetail.id"
+          :is-in-dialog="true"
+          :is-from-board="false"
+          @update="handleRelationUpdate"
+          @delete="handleRelationDelete"
+        />
+      </el-dialog>
     </div>
   </el-row>
 </template>
@@ -265,12 +307,14 @@ import { QuickAddIssue } from '@/components/Issue'
 import Board from '@/views/Plan/Milestone/components/Board'
 import Gantt from '@/views/Plan/Milestone/components/Gantt'
 import WBS from '@/views/Plan/Milestone/components/WBS'
+import ProjectIssueDetail from '@/views/Project/IssueDetail'
 import XLSX from 'xlsx'
 
 export default {
   name: 'ProjectMilestone',
   components: {
     ProjectListSelector,
+    ProjectIssueDetail,
     ElSelectAll,
     QuickAddIssue,
     Board,
@@ -385,11 +429,16 @@ export default {
       downloadLock: {
         is_lock: false
       },
-      intervalTimer: null
+      intervalTimer: null,
+      issueDetail: {
+        visible: false,
+        id: null
+      },
+      isProjectDetailPopUp: false
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
+    ...mapGetters(['selectedProjectId', 'status', 'tracker', 'fixedVersionShowClosed']),
     contextOptions() {
       const result = {}
       const getOptions = ['assigned_to', 'fixed_version', 'tags']
@@ -462,6 +511,9 @@ export default {
     },
     handleUpdateLoading(value) {
       this.updateLoading = value
+      this.$nextTick(() => {
+        this.$refs.issueDetail.getData()
+      })
     },
     handleUpdateStatus(value) {
       this.lastUpdated = value
@@ -593,6 +645,50 @@ export default {
     filterClosedStatus(statusList) {
       if (this.displayClosed) return statusList
       return statusList.filter((item) => item.is_closed === false)
+    },
+    onRelationIssueDialog(id) {
+      this.$set(this.issueDetail, 'visible', true)
+      this.$set(this.issueDetail, 'id', id)
+    },
+    handleRelationUpdate() {
+      this.$nextTick(() => {
+        this.$refs.WBS.loadData()
+      })
+    },
+    handleRelationDelete() {
+      this.$set(this.issueDetail, 'visible', false)
+      this.$set(this.issueDetail, 'id', null)
+      this.$nextTick(() => {
+        this.$refs.WBS.loadData()
+      })
+    },
+    handleRightPanelVisible() {
+      this.$set(this.issueDetail, 'visible', false)
+      this.$set(this.issueDetail, 'id', null)
+    },
+    handleRelationIssueDialogBeforeClose(done) {
+      const ref = done ? 'issueDetailDialog' : 'issueDetailDrawer'
+      if (!done) {
+        done = () => {
+          this.issueDetail.visible = false
+          this.isProjectDetailPopUp = true
+        }
+      }
+      if (this.$refs[ref].hasUnsavedChanges()) {
+        this.handlePopConfirm(done)
+      } else {
+        done()
+      }
+    },
+    handlePopConfirm(done) {
+      this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel'),
+        type: 'warning'
+      })
+        .then(() => {
+          done()
+        })
     }
   }
 }
@@ -603,8 +699,47 @@ export default {
   height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
 
   &.is-panel {
-    width: calc(100% - 750px);
     transition: width 1s;
+  }
+}
+
+.rightPanel {
+  width: 100%;
+  max-width: 750px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: #fff;
+}
+
+.slide-fade-enter-active {
+  transition: all .5s ease-in-out;
+}
+.slide-fade-leave-active {
+  transition: all .5s ease-in-out;
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(800px);
+}
+
+.handle-button {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  left: -50px;
+  text-align: center;
+  font-size: 24px;
+  border-radius: 6px 0 0 6px !important;
+  z-index: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  color: #fff;
+  line-height: 50px;
+  i {
+    font-size: 24px;
+    line-height: 50px;
   }
 }
 </style>

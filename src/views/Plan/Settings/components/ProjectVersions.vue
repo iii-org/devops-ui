@@ -64,25 +64,20 @@
         <el-table-column
           :label="$t('general.Actions')"
           align="center"
-          width="210"
         >
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              class="buttonPrimaryReverse"
-              icon="el-icon-edit"
-              @click="handleEdit(scope.row)"
+            <el-tooltip
+              placement="bottom"
+              :content="$t('general.Edit')"
             >
-              {{ $t('general.Edit') }}
-            </el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.row)"
+              <em class="ri-file-edit-line finished operate-button" @click="handleEdit(scope.row)" />
+            </el-tooltip>
+            <el-tooltip
+              placement="bottom"
+              :content="$t('general.Delete')"
             >
-              {{ $t('general.Delete') }}
-            </el-button>
+              <em class="ri-delete-bin-2-line danger operate-button" @click="handleDelete(scope.row)" />
+            </el-tooltip>
           </template>
         </el-table-column>
         <template slot="empty">

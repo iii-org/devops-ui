@@ -1,6 +1,6 @@
 <template>
   <el-table-column v-bind="$props">
-    <template slot-scope="{row, $index, treeNode}">
+    <template slot-scope="{row, column, $index, treeNode}">
       <template v-if="prop==='name'&&!treeNode">
         <div class="el-table__root" />
       </template>
@@ -20,6 +20,7 @@
         icon="el-icon-close"
         @click="handlerResetCreate(row, $index, treeNode)"
       />
+      <!-- 新增議題 -->
       <template v-if="row.create">
         <el-input v-if="number"
                   ref="input"
@@ -45,6 +46,7 @@
           </li>
         </ul>
       </template>
+      <!-- 編輯議題名稱 -->
       <template v-else-if="row.editColumn===prop&&row.id===editRowId&&editable(row)">
         <el-input v-if="number"
                   ref="input"
@@ -72,11 +74,23 @@
           </li>
         </ul>
       </template>
+      <!-- 議題名稱欄位正常狀態 -->
       <template v-else-if="prop==='name'">
-        {{ row[prop] }} <el-tag v-for="item in row['tags']" :key="item.id">[{{ item.name }}]</el-tag>
+        <span>{{ row[prop] }}</span>
+        <el-tooltip
+          v-if="showIconRowId === row.id"
+          placement="bottom"
+          :content="$t('general.Edit')"
+        >
+          <em
+            class="ri-edit-box-line info operate-button"
+            @click.self="$emit('onCellClick', row, column)"
+          />
+        </el-tooltip>
+        <el-tag v-for="item in row['tags']" :key="item.id">[{{ item.name }}]</el-tag>
       </template>
       <template v-else>
-        {{ row[prop] }}
+        <span>{{ row[prop] }}</span>
       </template>
     </template>
   </el-table-column>
@@ -133,6 +147,10 @@ export default {
       default: null
     },
     editRowId: {
+      type: [String, Number],
+      default: null
+    },
+    showIconRowId: {
       type: [String, Number],
       default: null
     }

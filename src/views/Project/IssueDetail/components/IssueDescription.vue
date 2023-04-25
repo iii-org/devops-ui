@@ -142,10 +142,11 @@ export default {
           {
             rule: /@.*&nbsp/,
             toDOM(text) {
+              text = text.replace(/\$\$widget\d\s/, '').replace(/\s\$\$/, '&nbsp')
               const rule = /@.*&nbsp/
               const matched = text.match(rule)
               const span = document.createElement('span')
-              span.innerHTML = `<a style="text-decoration: none; color: #4b96e6;">${matched[0]}</a>`
+              span.innerHTML = `<a style="text-decoration: none; cursor: default; color: #4b96e6;">${matched[0]}</a>`
               return span
             }
           }
@@ -181,7 +182,7 @@ export default {
       const description = this.$refs.mdEditor.invoke('getMarkdown')
       this.tagList = this.tagList.filter((tag) => description.includes(tag.name))
       this.$emit('update:mentionList', this.tagList.map((tag) => tag.id))
-      this.$emit('input', this.$refs.mdEditor.invoke('getMarkdown'))
+      this.$emit('input', this.$refs.mdEditor.invoke('getHTML'))
     },
     onScroll() {
       this.tagListVisible = true

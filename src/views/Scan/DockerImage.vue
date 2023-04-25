@@ -93,21 +93,18 @@
       <el-table-column
         align="center"
         :label="$t('Log.fullLog')"
-        min-width="50"
       >
         <template slot-scope="scope">
-          <el-link
+          <el-tooltip
             v-if="scope.row.scan_status === 'Success'"
-            class="linkTextColor"
-            style="font-size: 16px"
-            :underline="false"
-            @click="handleToTestReport(scope.row)"
+            placement="bottom"
+            :content="$t('Dashboard.Report')"
           >
             <em
-              class="el-icon-tickets"
-              style="font-size: 16px"
+              class="ri-file-list-2-line active operate-button"
+              @click="handleToTestReport(scope.row)"
             />
-          </el-link>
+          </el-tooltip>
         </template>
       </el-table-column>
       <template slot="empty">

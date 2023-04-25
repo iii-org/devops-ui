@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" :style="isFromBoard ? 'padding: 0' : ''">
     <el-card
       v-loading="isLoading"
       :element-loading-text="$t('Loading')"
@@ -36,6 +36,7 @@
                 v-model="form.name"
                 :old-value="originForm.name"
                 :issue-id="issueId"
+                :is-from-board="isFromBoard"
                 :is-button-disabled="isButtonDisabled"
               />
               <span
@@ -48,8 +49,18 @@
                 <el-button
                   class="el-icon-copy-document"
                   circle
+                  size="small"
                   @click="copyUrl"
                 />
+              </el-tooltip>
+              <el-tooltip v-if="isFromBoard" :content="$t('general.PopUp')" placement="bottom">
+                <el-button
+                  circle
+                  size="small"
+                  @click="$emit('popup')"
+                >
+                  <em class="ri-external-link-line" />
+                </el-button>
               </el-tooltip>
             </el-col>
           </el-row>
@@ -82,7 +93,7 @@
         <el-col
           ref="mainIssueWrapper"
           :span="24"
-          :md="16"
+          :md="isFromBoard ? 24 : (isIssueFormOpened ? 16 : 24)"
         >
           <el-row>
             <el-col :span="24">
@@ -90,29 +101,47 @@
                 :is-button-disabled="isButtonDisabled"
                 :issue-link="issue_link"
                 :issue-id="issueId"
-                :issue-name="issueName"
                 :issue-tracker="formTrackerName"
-                :row="issue"
                 :project-id="form.project_id"
+                :is-from-board="isFromBoard"
+                :is-issue-form-opened="isIssueFormOpened"
+                @add-sub-issue="toggleAddSubIssue"
                 @is-loading="showLoading"
                 @related-collection="toggleDialogVisible"
-                @updateFamilyData="getIssueFamilyData(issue)"
                 @updateWhiteBoard="updateWhiteBoard"
+                @changeIssueFormOpened="changeIssueFormOpened"
               />
             </el-col>
           </el-row>
           <el-row
             ref="mainIssue"
             :gutter="10"
-            :class="scrollClass"
+            :class="isFromBoard ? 'issueHeightBoard' :'issueHeight'"
             @scroll.native="onScrollIssue"
           >
+            <el-collapse-transition>
+              <el-col
+                v-if="isAddSubIssue"
+                id="AddSubIssueWrapper"
+                ref="AddSubIssueWrapper"
+                :span="24"
+                class="mb-3"
+              >
+                <AddSubIssue
+                  ref="AddSubIssue"
+                  :parent-data="issue"
+                  @close="isAddSubIssue = !isAddSubIssue"
+                  @update="getIssueFamilyData(issue)"
+                />
+              </el-col>
+            </el-collapse-transition>
             <el-col
-              ref="IssueDescription"
+              ref="IssueDescriptionWrapper"
               :span="24"
               class="mb-3"
             >
               <IssueDescription
+                ref="IssueDescription"
                 v-model="form.description"
                 :old-value="originForm.description"
                 :issue-id="issueId"
@@ -120,15 +149,21 @@
                 :project-id="formProjectId"
                 :mention-list.sync="descriptionMentionList"
               />
+            </el-col>
+            <el-col
+              ref="IssueCollapseWrapper"
+              :span="24"
+            >
               <el-collapse
-                v-if="files.length > 0 || countRelationIssue > 0"
+                v-if="files.length > 0 || test_files.length > 0 ||
+                  countRelationIssue > 0|| isFromBoard"
                 v-model="relationVisible"
                 accordion
               >
                 <el-collapse-item
                   v-if="files.length > 0"
                   :title="$t('Issue.Files')+ '(' + files.length + ')'"
-                  :name="1"
+                  name="files"
                 >
                   <IssueFiles
                     :is-button-disabled="isButtonDisabled"
@@ -138,7 +173,7 @@
                 <el-collapse-item
                   v-if="test_files.length > 0"
                   :title="$t('Test.TestPlan.file_name')+ '(' + test_files.length + ')'"
-                  :name="2"
+                  name="testFiles"
                 >
                   <IssueCollection
                     :is-button-disabled="isButtonDisabled"
@@ -149,7 +184,7 @@
                 <el-collapse-item
                   v-if="countRelationIssue > 0"
                   v-loading="isLoadingFamily"
-                  :name="3"
+                  name="relatedIssue"
                 >
                   <div slot="title">
                     {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
@@ -174,24 +209,55 @@
                     @popup-dialog="onRelationIssueDialog"
                   />
                 </el-collapse-item>
+                <el-collapse-item
+                  v-if="isFromBoard"
+                  :title="$t('general.AdvancedSettings')"
+                  name="issueForm"
+                >
+                  <IssueForm
+                    ref="IssueForm"
+                    class="mx-3 text-xs"
+                    :is-button-disabled="isButtonDisabled"
+                    :issue-id="issueId"
+                    :issue-project="issueProject"
+                    :is-from-board="isFromBoard"
+                    :form.sync="form"
+                    :parent="parent"
+                    :relations.sync="relations"
+                    :children-issue="children.length"
+                  />
+                </el-collapse-item>
               </el-collapse>
             </el-col>
             <el-col
               ref="moveEditor"
               :span="24"
-              class="moveEditor mb-3"
+              class="mb-3"
+              style="position: sticky; top: 0; z-index: 3;"
             >
-              <IssueNotesEditor
-                ref="IssueNotesEditor"
-                :project-id="formProjectId"
-                :mention-list.sync="noteMentionList"
-              />
+              <el-collapse
+                v-model="issueNotesEditorVisible"
+                accordion
+              >
+                <el-collapse-item
+                  :title="$t('Issue.Notes')"
+                  name="issueNotesEditor"
+                >
+                  <IssueNotesEditor
+                    ref="IssueNotesEditor"
+                    v-model="form.notes"
+                    :project-id="formProjectId"
+                    :mention-list.sync="noteMentionList"
+                  />
+                </el-collapse-item>
+              </el-collapse>
             </el-col>
             <el-col :span="24">
               <el-tabs
                 ref="IssueNotesDialog"
                 v-model="issueTabs"
                 type="border-card"
+                class="mx-3"
               >
                 <el-tab-pane name="history">
                   <template slot="label">
@@ -244,11 +310,13 @@
           </el-row>
         </el-col>
         <el-col
+          v-show="isIssueFormOpened"
           :span="24"
           :md="8"
           class="issueOptionHeight"
         >
           <IssueForm
+            v-if="!isFromBoard"
             ref="IssueForm"
             :is-button-disabled="isButtonDisabled"
             :issue-id="issueId"
@@ -260,25 +328,31 @@
           />
         </el-col>
       </el-row>
-      <el-dialog
-        :visible.sync="relationIssue.visible"
-        width="90%"
-        top="3vh"
-        append-to-body
-        destroy-on-close
-        :before-close="handleRelationIssueDialogBeforeClose"
-      >
-        <ProjectIssueDetail
-          v-if="relationIssue.visible"
-          ref="children"
-          :is-open-matrix="isOpenMatrix"
-          :props-issue-id="relationIssue.id"
-          :is-in-dialog="true"
-          @update="showLoading"
-          @delete="handleRelationDelete"
-        />
-      </el-dialog>
     </el-card>
+    <el-backtop
+      :target="isFromBoard ? '.issueHeightBoard' : '.issueHeight'"
+      :visibility-height="500"
+      :right="issueFormWidth"
+      :bottom="50"
+    />
+    <el-dialog
+      :visible.sync="relationIssue.visible"
+      width="90%"
+      top="3vh"
+      append-to-body
+      destroy-on-close
+      :before-close="handleRelationIssueDialogBeforeClose"
+    >
+      <ProjectIssueDetail
+        v-if="relationIssue.visible"
+        ref="children"
+        :is-open-matrix="isOpenMatrix"
+        :props-issue-id="relationIssue.id"
+        :is-in-dialog="true"
+        @update="showLoading"
+        @delete="handleRelationDelete"
+      />
+    </el-dialog>
     <el-dialog
       :visible.sync="relatedCollectionDialogVisible"
       :close-on-click-modal="false"
@@ -447,7 +521,8 @@ import {
   IssueMatrix,
   IssueCollection,
   AdminCommitLog,
-  WhiteBoardTable
+  WhiteBoardTable,
+  AddSubIssue
 } from './components'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
 import variables from '@/styles/theme/variables.scss'
@@ -472,7 +547,8 @@ export default {
     RelatedCollectionDialog,
     IssueExpand,
     AdminCommitLog,
-    WhiteBoardTable
+    WhiteBoardTable,
+    AddSubIssue
   },
   mixins: [ContextMenu],
   props: {
@@ -527,7 +603,8 @@ export default {
         done_ratio: 0,
         start_date: '',
         due_date: '',
-        description: ''
+        description: '',
+        notes: ''
       },
       files: [],
       test_files: [],
@@ -538,8 +615,7 @@ export default {
       tags: [],
       dialogHeight: '100%',
       editorHeight: '100px',
-      issueScrollTop: 0,
-      scrollClass: 'issueHeight',
+      scrollType: 'top',
       relationVisible: 0,
       relationIssue: {
         visible: false,
@@ -559,7 +635,11 @@ export default {
       isDeleteIssueDialog: false,
       checkDeleteWhiteBoard: false,
       descriptionMentionList: [],
-      noteMentionList: []
+      noteMentionList: [],
+      issueNotesEditorVisible: 'issueNotesEditor',
+      isIssueFormOpened: !this.isFromBoard,
+      issueFormWidth: 80,
+      isAddSubIssue: false
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -656,7 +736,7 @@ export default {
     },
     propsIssueId(val) {
       this.fetchIssueLink()
-      this.$nextTick(() => this.$refs.IssueForm.$refs.form.clearValidate())
+      this.isAddSubIssue = false
     },
     'form.project_id': {
       handler(newPId, oldPId) {
@@ -667,6 +747,16 @@ export default {
     },
     'issue.excalidraw'(val) {
       if (val.length === 0) this.issueTabs = 'history'
+    },
+    scrollType(val) {
+      const elCollapseItemHeader = Array.from(this.$refs['mainIssueWrapper'].$el.getElementsByClassName('el-collapse-item__header'))
+      if (val === 'top') {
+        elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = ''
+        // this.issueNotesEditorVisible = 'issueNotesEditor'
+      } else {
+        elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = 'center'
+        // this.issueNotesEditorVisible = ''
+      }
     }
   },
   async mounted() {
@@ -699,6 +789,7 @@ export default {
           this['removeFileName']()
         }
       }
+      this.initIssueStatus()
       this.isLoading = false
     },
     async fetchIssue(isOnlyUpload) {
@@ -1033,11 +1124,26 @@ export default {
       return new File([u8arr], fileName, { type: mime })
     },
     filterImage(str, sendForm, checkDuplicate) {
-      const arr = str.split(/!\[(.+?)\)/g).filter((item) => (/(.+?)\]\(data:.+/g).test(item))
-      if (arr.length > 0) {
+      // Prevent the previous description is markdown format and detect the image will report an error
+      if (!str.includes('<p>') && !str.includes('</p>')) {
+        const arr = str.split(/!\[(.+?)\)/g).filter((item) => (/(.+?)\]\(data:.+/g).test(item))
+        if (arr.length === 0) return
         arr.forEach((item) => {
           const fileArray = item.split('](')
           const file = this.dataURLtoFile(fileArray[0], fileArray[1])
+          if (checkDuplicate && this.files.some((element) =>
+            file.name === element.filename && file.size === element.filesize
+          )) {
+            return
+          }
+          sendForm.append('upload_files', file)
+        })
+      } else {
+        const arr = str.split(/src="(.+?)>/g).filter((item) => (/data:.+/g).test(item))
+        if (arr.length === 0) return
+        arr.forEach((item) => {
+          const fileArray = item.split(/" alt="(.+?)"/)
+          const file = this.dataURLtoFile(fileArray[1], fileArray[0])
           if (checkDuplicate && this.files.some((element) =>
             file.name === element.filename && file.size === element.filesize
           )) return
@@ -1048,18 +1154,19 @@ export default {
     async submitIssue() {
       this.tagsString = ''
       const sendData = Object.assign({}, this.form)
-      const notes = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')
       // Object.keys(sendData).map(item => {
       //   if (sendData[item] === '' || !sendData[item]) delete sendData[item]
       // })
       const sendForm = new FormData()
-      if (notes !== '') {
-        sendData['notes'] = notes.replace(/\$\$widget0\s/g, '').replace(/&nbsp\$\$/g, ' ')
+      if (sendData['notes'] === '<p><br></p>') sendData['notes'] = ''
+      else if (sendData['notes'] !== '') {
         this.filterImage(sendData['notes'], sendForm, false)
+        sendData['notes'] = sendData['notes'].replace(/<a/g, '<a target="_blank"')
       }
-      if (sendData['description'] !== '') {
-        sendData['description'] = sendData['description'].replace(/\$\$widget0\s/g, '').replace(/&nbsp\$\$/g, ' ')
+      if (sendData['description'] === '<p><br></p>') sendData['description'] = ''
+      else if (sendData['description'] !== '') {
         this.filterImage(sendData['description'], sendForm, true)
+        sendData['description'] = sendData['description'].replace(/<a/g, '<a target="_blank"')
       }
       Object.keys(sendData).forEach((objKey) => {
         if ((objKey === 'start_date' || objKey === 'end_date') && !sendData[objKey]) {
@@ -1248,24 +1355,23 @@ export default {
       this.$nextTick(() => {
         const editorHeight =
           this.$refs['IssueNotesDialog'].$el.getBoundingClientRect().top -
-          this.$refs['IssueDescription'].$el.getBoundingClientRect().height
-        if (this.$refs['mainIssueWrapper'].$el.children.length <= 2 && editorHeight < 0) {
-          if (
-            this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options &&
-            this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options
-              .name === 'IssueNotesEditor'
-          ) {
-            this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
-            this.scrollClass = 'issueHeightEditor'
-          }
+          this.$refs['IssueDescriptionWrapper'].$el.getBoundingClientRect().height -
+          this.$refs['IssueCollapseWrapper'].$el.getBoundingClientRect().height
+        if (editorHeight < 0) {
+          // if (
+          //   this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options &&
+          //   this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options
+          //     .name === 'IssueNotesEditor'
+          // ) {
+          //   this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
+          // }
+          this.scrollType = 'bottom'
         } else {
-          if (this.$refs['mainIssueWrapper'].$el.children.length >= 3 && editorHeight > 0) {
-            this.$refs['mainIssue'].$el.insertBefore(
-              this.$refs['mainIssueWrapper'].$el.getElementsByClassName('moveEditor')[0],
-              this.$refs['mainIssue'].$el.children[this.$refs['mainIssue'].$el.children.length - 1]
-            )
-            this.scrollClass = 'issueHeight'
-          }
+          //   this.$refs['mainIssue'].$el.insertBefore(
+          //     this.$refs['mainIssueWrapper'].$el.getElementsByClassName('moveEditor')[0],
+          //     this.$refs['mainIssue'].$el.children[this.$refs['mainIssue'].$el.children.length - 1]
+          //   )
+          this.scrollType = 'top'
         }
       })
     },
@@ -1376,16 +1482,45 @@ export default {
       input.remove()
       this.showSuccessMessage(message)
     },
+    changeIssueFormOpened() {
+      this.isIssueFormOpened = !this.isIssueFormOpened
+      this.calcIssueFormWidth()
+    },
+    calcIssueFormWidth() {
+      this.$nextTick(() => {
+        const clientWidth = this.$refs.IssueForm.$el.clientWidth
+        if (this.isFromBoard) {
+          this.issueFormWidth = 80
+        } else {
+          this.issueFormWidth = this.isIssueFormOpened ? clientWidth + 130 : 100
+        }
+      })
+    },
+    initIssueStatus() {
+      this.calcIssueFormWidth()
+      this.$nextTick(() => {
+        if (this.$refs.mainIssue.$el.scrollTop > 0) this.$refs.mainIssue.$el.scrollTop = 0
+        this.$refs.IssueForm.$refs.form.clearValidate()
+      })
+    },
     showSuccessMessage(message) {
       this.$message({
         title: this.$t('general.Success'),
         message,
         type: 'success'
       })
+    },
+    toggleAddSubIssue() {
+      this.isAddSubIssue = !this.isAddSubIssue
+      this.$nextTick(() => {
+        const element = document.getElementById('AddSubIssueWrapper')
+        element.scrollIntoView({ behavior: 'smooth' })
+      })
     }
   }
 }
 </script>
+
 <style lang="scss" scoped>
 @import 'src/styles/theme/variables.scss';
 
@@ -1394,8 +1529,8 @@ export default {
   overflow-y: auto;
 }
 
-.issueHeightEditor {
-  height: calc(95vh - 50px - 81px - 40px - 32px - 18rem);
+.issueHeightBoard {
+  height: calc(100vh - 160px);
   overflow-y: auto;
 }
 
@@ -1437,5 +1572,9 @@ export default {
 
 .previous {
   font-size: 0.75em;
+}
+
+>>> .el-collapse-item__arrow {
+  margin: 0 8px 0 8px;
 }
 </style>

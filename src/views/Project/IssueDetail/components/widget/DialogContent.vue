@@ -117,7 +117,7 @@
                 >
                   <em>
                     <s>
-                      {{ filterValueName(detail.old_value) }}
+                      <Viewer :initial-value="filterValueName(detail.old_value)" />
                     </s>
                   </em>
                 </p>
@@ -125,7 +125,7 @@
                   v-else
                   class="text-wrapper"
                 >
-                  {{ filterValueName(detail.old_value) }}
+                  <Viewer :initial-value="filterValueName(detail.old_value)" />
                 </p>
               </el-col>
               <el-col
@@ -161,7 +161,7 @@
                 >
                   <em>
                     <s>
-                      {{ filterValueName(detail.new_value) }}
+                      <Viewer :initial-value="filterValueName(detail.new_value)" />
                     </s>
                   </em>
                 </p>
@@ -169,7 +169,7 @@
                   v-else
                   class="text-wrapper"
                 >
-                  {{ filterValueName(detail.new_value) }}
+                  <Viewer :initial-value="filterValueName(detail.new_value)" />
                 </p>
               </el-col>
             </el-row>
@@ -340,7 +340,7 @@ export default {
   float: right;
 
   .content {
-    background: mix($success, #ffffff, 70);
+    background: #d9f2e5;
   }
 }
 </style>

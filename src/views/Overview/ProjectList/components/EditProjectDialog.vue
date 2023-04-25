@@ -96,7 +96,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col v-if="isHasFatherProject" :span="24">
+          <el-col :span="24">
             <el-form-item :label="$t('Project.ParentProject')">
               <el-col
                 :xl="18"
@@ -281,9 +281,6 @@ export default {
     isInheritanceMemberChange() {
       return (this.originProject.parent_id === this.form.parent_id &&
       this.originProject.is_inheritance_member) || !this.form.parent_id
-    },
-    isHasFatherProject() {
-      return this.projectOptions.some((item) => item.id === this.form.parent_id)
     }
   },
   watch: {

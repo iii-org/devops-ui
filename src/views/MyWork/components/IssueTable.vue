@@ -19,7 +19,20 @@
       >
         <el-table-column type="expand">
           <template slot-scope="{row}">
+            <el-row v-if="row.showQuickAddIssue" class="add-issue">
+              <QuickAddIssue
+                :project-id="row.project.id"
+                :visible.sync="row.showQuickAddIssue"
+                :filter-conditions="filterConditionsProps"
+                :parent="row"
+                :is-table="true"
+                :sub-issue="true"
+                @close="closeQuickAddIssue(row)"
+                @update="fetchData"
+              />
+            </el-row>
             <IssueExpand
+              style="margin-right: 20px;"
               :issue="row"
               @update-list="fetchData"
               @on-context-menu="onContextMenu"
@@ -171,6 +184,7 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
+      :simple-add-issue="isTable"
       @update="updateAllIssueTables"
       @update-row="getContextRow"
     />
@@ -186,7 +200,7 @@ import { Status, Tracker, Priority, IssueExpand } from '@/components/Issue'
 
 export default {
   name: 'MyWorkIssueTable',
-  components: { Status, Tracker, Priority, IssueExpand },
+  components: { Status, Tracker, Priority, IssueExpand, QuickAddIssue: () => import('@/views/MyWork/components/QuickAddIssue') },
   mixins: [ContextMenu, Pagination, CancelRequest],
   props: {
     from: {
@@ -208,6 +222,10 @@ export default {
     keywordProps: {
       type: String,
       default: ''
+    },
+    showQuickAddIssue: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -215,7 +233,8 @@ export default {
       listLoading: false,
       listData: [],
       sort: '',
-      expandedRow: []
+      expandedRow: [],
+      simpleAddIssue: false
     }
   },
   computed: {
@@ -268,6 +287,10 @@ export default {
       await getUserIssueList(this.userId, this.getParams(), { cancelToken: this.cancelToken })
         .then((res) => {
           this.listData = res.data.issue_list
+          this.listData = this.listData.map((element) => ({
+            ...element,
+            showQuickAddIssue: false
+          }))
           this.setNewListQuery(res.data.page)
           this.listLoading = false
         })
@@ -376,6 +399,8 @@ export default {
         } catch (e) {
           return Promise.resolve()
         }
+      } else {
+        this.$set(row, 'showQuickAddIssue', false)
       }
       return Promise.resolve()
     },
@@ -399,6 +424,12 @@ export default {
     collapseExpandRow(issueId) {
       const row = this.listData.find((item) => item.id === issueId)
       this.$refs.issueList.toggleRowExpansion(row, false)
+    },
+    closeQuickAddIssue(row) {
+      this.$set(row, 'showQuickAddIssue', false)
+      if (!row.family) {
+        this.collapseExpandRow(row.id)
+      }
     }
   }
 }
@@ -448,5 +479,12 @@ export default {
 
 >>> .context-menu {
   cursor: context-menu;
+}
+.add-issue {
+  margin-left: 24px;
+  margin-right: 29px;
+  border: solid 1px #cbcbcb;
+  border-radius: 4px;
+  padding: 10px;
 }
 </style>

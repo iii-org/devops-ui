@@ -2,16 +2,7 @@
   <el-row class="app-container">
     <el-col>
       <ProjectListSelector>
-        <el-button
-          v-if="pod.has_pod"
-          slot="button"
-          class="buttonPrimary"
-          :disabled="selectedProjectId === -1"
-          @click="handleLogClick"
-        >
-          <em class="ri-computer-line mr-1" />
-          {{ $t('SonarQube.ScanLogs') }}
-        </el-button>
+        <ScanLogButton slot="button" />
         <el-input
           v-model="keyword"
           :placeholder="$t('Git.searchBranchOrCommitId')"
@@ -75,18 +66,19 @@
         />
         <el-table-column
           align="center"
-          :label="$t('general.Actions')"
-          width="120"
+          :label="$t('Log.fullLog')"
         >
           <template slot-scope="scope">
-            <el-button
+            <el-tooltip
               :id="`btn-postman-${scope.$index}`"
-              size="mini"
-              class="buttonPrimaryReverse"
-              @click="handleClick('PostmanTestCase', scope.row.id)"
+              placement="bottom"
+              :content="$t('general.Report')"
             >
-              {{ $t('Postman.Postman') }}
-            </el-button>
+              <em
+                class="ri-file-list-2-line active operate-button"
+                @click="handleClick('PostmanTestCase', scope.row.id)"
+              />
+            </el-tooltip>
           </template>
         </el-table-column>
         <template slot="empty">
@@ -100,11 +92,6 @@
         :layout="'total, sizes, prev, pager, next'"
         @pagination="onPagination"
       />
-      <PodLog
-        ref="podLogDialog"
-        :pod-name="pod.pod_name"
-        :container-name="pod.container_name"
-      />
     </el-col>
   </el-row>
 </template>
@@ -112,17 +99,16 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getPostmanResult } from '@/api/postman'
-import { getPostmanPod } from '@/api_v2/postman'
 import { BasicData, SearchBar, Pagination } from '@/mixins'
 import { ProjectListSelector, ElTableColumnTime } from '@/components'
-import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
+import ScanLogButton from './ScanLogButton'
 
 export default {
   name: 'Postman',
   components: {
     ProjectListSelector,
     ElTableColumnTime,
-    PodLog
+    ScanLogButton
   },
   mixins: [BasicData, SearchBar, Pagination],
   data() {
@@ -130,8 +116,7 @@ export default {
       storageName: 'postman',
       storageType: ['SearchBar'],
       dialogVisible: false,
-      searchKeys: ['branch', 'commit_id'],
-      pod: {}
+      searchKeys: ['branch', 'commit_id']
     }
   },
   computed: {
@@ -139,15 +124,10 @@ export default {
   },
   methods: {
     async fetchData() {
-      this.pod = (await getPostmanPod(this.selectedProjectId)).data
       return (await getPostmanResult(this.selectedProjectId)).data
     },
     handleClick(target, id) {
       this.$router.push({ name: target, params: { id, projectName: this.selectedProject.name }})
-    },
-    handleLogClick() {
-      this.$refs.podLogDialog.fetchData(this.pod.pod_name, this.pod.container_name)
-      this.$refs.podLogDialog.dialogVisible = true
     }
   }
 }

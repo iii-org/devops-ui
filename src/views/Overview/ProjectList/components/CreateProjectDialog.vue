@@ -328,8 +328,8 @@ export default {
         this.clearTemplate()
       })
     },
-    async handleConfirm() {
-      this.$refs.createProjectForm.validate(async (valid) => {
+    handleConfirm() {
+      this.$refs.createProjectForm.validate((valid) => {
         if (!valid) return
         this.isLoading = true
         const sendData = this.handleSendData()

@@ -1,16 +1,7 @@
 <template>
   <el-row class="app-container">
     <ProjectListSelector>
-      <el-button
-        v-if="pod.has_pod"
-        slot="button"
-        class="buttonPrimary"
-        :disabled="selectedProjectId === -1"
-        @click="handleLogClick"
-      >
-        <em class="ri-computer-line mr-1" />
-        {{ $t('SonarQube.ScanLogs') }}
-      </el-button>
+      <ScanLogButton slot="button" />
       <el-input
         v-model="keyword"
         class="mr-3"
@@ -59,7 +50,7 @@
             class="linkTextColor"
             target="_blank"
             style="font-size: 16px"
-            :href="scope.row.issue_link"
+            :href="scope.row.commit_url"
           >
             <svg-icon
               class="mr-1"
@@ -71,53 +62,53 @@
       <el-table-column
         align="center"
         :label="$t('general.Status')"
-        prop="stats.status"
+        prop="status"
         min-width="130"
       >
         <template slot-scope="scope">
           <el-tag
-            v-if="scope.row.stats.status"
+            v-if="scope.row.status"
             class="el-tag--circle"
-            :type="mapStatusTagType(scope.row.stats.status)"
+            :type="mapStatusTagType(scope.row.status)"
             effect="dark"
           >
-            {{ $t(`Status.${scope.row.stats.status}`) }}
+            {{ $t(`Status.${scope.row.status}`) }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column
         align="center"
         :label="$t('WebInspect.Critical')"
-        prop="stats.criticalCount"
-      />
+      >
+        <template slot-scope="scope">
+          {{ typeof scope.row.state.critical === 'number' ? scope.row.state.critical : '-' }}
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         :label="$t('WebInspect.HighSeverity')"
-        prop="stats.highCount"
-      />
+        prop="state.high"
+      >
+        <template slot-scope="scope">
+          {{ typeof scope.row.state.high === 'number' ? scope.row.state.high : '-' }}
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         :label="$t('WebInspect.MediumSeverity')"
-        prop="stats.mediumCount"
-      />
+        prop="state.medium"
+      >
+        <template slot-scope="scope">
+          {{ typeof scope.row.state.medium === 'number' ? scope.row.state.medium : '-' }}
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         :label="$t('WebInspect.LowSeverity')"
-        prop="stats.lowCount"
-      />
-      <el-table-column
-        align="center"
-        :label="$t('WebInspect.InfoSeverity')"
-        prop="stats.infoCount"
-      />
-      <el-table-column
-        align="center"
-        :label="$t('WebInspect.BpSeverity')"
-        prop="stats.bpCount"
+        prop="state.low"
       >
         <template slot-scope="scope">
-          <span v-if="scope.row.stats.bpCount">{{ scope.row.stats.bpCount }}</span>
-          <span v-else>-</span>
+          {{ typeof scope.row.state.low === 'number' ? scope.row.state.low : '-' }}
         </template>
       </el-table-column>
       <el-table-column-time
@@ -129,18 +120,25 @@
         :label="$t('WebInspect.Report')"
       >
         <template slot-scope="scope">
-          <el-link
-            :class="!scope.row.scan_id || scope.row.stats.status !== 'Complete' ? '' : 'linkTextColor'"
-            style="font-size: 16px"
-            :disabled="!scope.row.scan_id || scope.row.stats.status !== 'Complete'"
-            :underline="false"
-            @click="handleTestReportDetail(scope.row)"
+          <el-tooltip
+            placement="bottom"
+            :content="$t('Dashboard.Report')"
           >
-            <em
-              class="el-icon-document"
-              style="font-size: 16px"
-            />
-          </el-link>
+            <div :class="!scope.row.scan_id || scope.row.report_status !== 'Finished'
+              ? 'disabled'
+              : ''"
+            >
+              <em
+                :class="!scope.row.scan_id || scope.row.report_status !== 'Finished'
+                  ? 'ri-file-list-2-line disabled operate-button'
+                  : 'ri-file-list-2-line active operate-button'"
+                @click="handleDownloadReport(scope.row)"
+              />
+              <div class="text-xs">
+                {{ scope.row.report_status ? $t(`Status.${scope.row.report_status}`) : '' }}
+              </div>
+            </div>
+          </el-tooltip>
         </template>
       </el-table-column>
       <template slot="empty">
@@ -152,118 +150,78 @@
       :page="listQuery.page"
       :limit="listQuery.limit"
       :layout="'total, sizes, prev, pager, next'"
-      @pagination="onPagination"
-    />
-    <PodLog
-      ref="podLogDialog"
-      :pod-name="pod.pod_name"
-      :container-name="pod.container_name"
+      @pagination="handleCurrentChange"
     />
   </el-row>
 </template>
 
 <script>
-import { getWebInspectScans, getWebInspectStats, getWebInspectStatus } from '@/api/webInspect'
-import { getWebInspectPod } from '@/api_v2/webInspect'
+import { getWebInspectScans, getWebInspectReport } from '@/api/webInspect'
 import { BasicData, Pagination, SearchBar } from '@/mixins'
 import { ProjectListSelector, ElTableColumnTime } from '@/components'
-import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
+import { downloadFileFromBinary } from '@/utils/downloadFile'
+import ScanLogButton from './ScanLogButton'
 
 export default {
   name: 'ScanWebInspect',
   components: {
     ProjectListSelector,
     ElTableColumnTime,
-    PodLog
+    ScanLogButton
   },
   mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
-      confirmLoading: false,
       searchKeys: ['branch', 'commit_id'],
       pod: {}
     }
   },
-  watch: {
-    listData() {
-      this.updateWebInspectScans()
-    }
-  },
   methods: {
     async fetchData() {
-      let scansData = []
-      this.listLoading = true
-      this.pod = (await getWebInspectPod(this.selectedProjectId)).data
-      try {
-        const rName = this.selectedProject.name
-        if (!rName) return []
-        const res = await getWebInspectScans(rName)
-        scansData = this.handleScans(res.data)
-      } catch (err) {
-        console.error(err)
-      } finally {
-        this.listLoading = false
-      }
-      return scansData
+      return await getWebInspectScans(this.selectedProjectId, this.listQuery)
+        .then((res) => {
+          return res.data
+        })
+        .catch((err) => {
+          console.error(err)
+        })
     },
-    handleScans(scans) {
-      const sortedScans = scans.map((scan) => {
-        const result = scan
-        if (result.stats === 'None') result.stats = {}
-        return result
-      })
-      sortedScans.sort((a, b) => new Date(b.run_at) - new Date(a.run_at))
-      return sortedScans
-    },
-    updateWebInspectScans() {
-      this.listData.forEach((item) => {
-        if (!item.finished) this.fetchStatus(item.scan_id)
-      })
-    },
-    async fetchStatus(wiScanId) {
-      this.listLoading = true
-      getWebInspectStatus(wiScanId).then((res) => {
-        const idx = this.listData.findIndex((item) => item.scan_id === wiScanId)
-        this.$set(this.listData[idx].stats, 'status', res.data.status)
-        if (res.data.status === 'Complete') this.fetchStats(wiScanId)
-      })
-      this.listLoading = false
-    },
-    async fetchStats(wiScanId) {
-      this.listLoading = true
-      await getWebInspectStats(wiScanId).then((res) => {
-        const idx = this.listData.findIndex((item) => item.scan_id === wiScanId)
-        // res data from WI length is 6, while WIE is 7
-        if (res.data.severity_count.length === 7) {
-          this.$set(this.listData[idx], 'stats', res.data.severity_count)
-        } else {
-          this.$set(this.listData[idx].stats, 'criticalCount', res.data.severity_count[4])
-          this.$set(this.listData[idx].stats, 'highCount', res.data.severity_count[3])
-          this.$set(this.listData[idx].stats, 'mediumCount', res.data.severity_count[2])
-          this.$set(this.listData[idx].stats, 'lowCount', res.data.severity_count[1])
-          this.$set(this.listData[idx].stats, 'infoCount', res.data.severity_count[0])
-        }
-        this.listData[idx].stats.status = 'Complete'
-      })
-      this.listLoading = false
-    },
-    handleTestReportDetail(row) {
-      const { scan_id, run_at } = row
-      this.$router.push({ name: 'WIEReportViewer', params: { scanId: scan_id, run_at }})
+    async handleDownloadReport(row) {
+      const { scan_id } = row
+      await getWebInspectReport(this.selectedProjectId, { scan_id })
+        .then((res) => {
+          downloadFileFromBinary(res, 'WebInspect_Report.pdf')
+        })
+        .catch((err) => {
+          console.error(err)
+          this.$message({
+            title: this.$t('general.Error'),
+            message: this.$t('Notify.DownloadFailed'),
+            type: 'error'
+          })
+        })
     },
     mapStatusTagType(status) {
       const mapKey = {
-        Complete: 'success',
+        Failed: 'danger',
+        Created: 'slow',
+        Queued: 'warning',
+        ResumeScanQueued: 'warning',
+        Pending: 'warning',
+        Paused: 'warning',
         Running: 'slow',
-        NotRunning: 'warning',
-        Interrupted: 'danger'
+        Complete: 'success',
+        Interrupted: 'info',
+        Unknown: 'danger'
       }
       return mapKey[status] || 'slow'
-    },
-    handleLogClick() {
-      this.$refs.podLogDialog.fetchData(this.pod.pod_name, this.pod.container_name)
-      this.$refs.podLogDialog.dialogVisible = true
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.disabled {
+  cursor: not-allowed;
+}
+</style>

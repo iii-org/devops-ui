@@ -1,16 +1,7 @@
 <template>
   <el-row class="app-container">
     <ProjectListSelector>
-      <el-button
-        v-if="pod.has_pod"
-        slot="button"
-        class="buttonPrimary"
-        :disabled="selectedProjectId === -1"
-        @click="handleLogClick"
-      >
-        <em class="ri-computer-line mr-1" />
-        {{ $t('SonarQube.ScanLogs') }}
-      </el-button>
+      <ScanLogButton slot="button" />
       <el-input
         v-model="keyword"
         :placeholder="$t('Git.searchBranchOrCommitId')"
@@ -144,11 +135,6 @@
       :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
     />
-    <PodLog
-      ref="podLogDialog"
-      :pod-name="pod.pod_name"
-      :container-name="pod.container_name"
-    />
   </el-row>
 </template>
 
@@ -159,9 +145,8 @@ import {
   getCmasScansStatus,
   getCmasReport
 } from '@/api/cmas'
-import { getCmasPod } from '@/api_v2/cmas'
 import { ProjectListSelector, ElTableColumnTime } from '@/components'
-import PodLog from '@/views/SystemResource/PluginResource/components/PodsList/components/PodLog'
+import ScanLogButton from './ScanLogButton'
 import * as elementTagType from '@/utils/elementTagType'
 
 export default {
@@ -169,7 +154,7 @@ export default {
   components: {
     ProjectListSelector,
     ElTableColumnTime,
-    PodLog
+    ScanLogButton
   },
   mixins: [BasicData, Pagination, SearchBar],
   data() {
@@ -177,8 +162,7 @@ export default {
     this.MOEA = ['L3', 'L2', 'L1']
     this.OWASP = [this.$t('general.High'), this.$t('general.Medium'), this.$t('general.Low')]
     return {
-      searchKeys: ['branch', 'commit_id'],
-      pod: {}
+      searchKeys: ['branch', 'commit_id']
     }
   },
   computed: {
@@ -206,7 +190,6 @@ export default {
     async fetchData() {
       if (this.selectedRepositoryId === -1) return
       const res = await getCmasScans(this.selectedRepositoryId)
-      this.pod = (await getCmasPod(this.selectedProjectId)).data
       return res.data
     },
     updateCmasScanStatus(listData) {
@@ -255,10 +238,6 @@ export default {
     getTagEffect(status) {
       const tagMap = { Building: 'light' }
       return tagMap[status] || 'dark'
-    },
-    handleLogClick() {
-      this.$refs.podLogDialog.fetchData(this.pod.pod_name, this.pod.container_name)
-      this.$refs.podLogDialog.dialogVisible = true
     }
   }
 }

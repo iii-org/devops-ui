@@ -26,6 +26,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
 import duration from 'dayjs/plugin/duration'
 import 'dayjs/locale/zh-tw'
+import VueNativeNotification from 'vue-native-notification'
 
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
@@ -52,6 +53,11 @@ Vue.use(VueShowdown, {
 })
 Vue.use(VueGtag, {
   config: { id: process.env.VUE_APP_GTM_TAG }
+})
+Vue.use(VueNativeNotification, {
+  // Automatic permission request before
+  // showing notification (default: true)
+  requestOnNotify: true
 })
 
 // Vue Filters

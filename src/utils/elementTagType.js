@@ -60,7 +60,8 @@ export const checkMarx = {
   Finished: 'success',
   default: 'slow',
   Canceled: 'warning',
-  PreScan: 'slow'
+  PreScan: 'slow',
+  Deleted: 'danger'
 }
 
 export const sbom = {

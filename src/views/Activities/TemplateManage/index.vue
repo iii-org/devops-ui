@@ -153,31 +153,38 @@
         align="center"
         :label="$t('general.Actions')"
       >
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            class="buttonPrimaryReverse"
-            icon="el-icon-edit"
-            @click="handleEdit(scope.row)"
+        <template slot-scope="{ row }">
+          <el-tooltip
+            v-if="allProjectIds.includes(row.from_project_id)"
+            placement="bottom"
+            :content="$t('general.Edit')"
           >
-            {{ $t('general.Edit') }}
-          </el-button>
+            <em
+              class="ri-file-edit-line finished operate-button"
+              @click="handleEdit(row)"
+            />
+          </el-tooltip>
+          <el-tooltip
+            v-else
+            placement="bottom"
+            :content="$t('Activities.OriginalProjectNotExist')"
+          >
+            <span class="disabled">
+              <em class="ri-file-edit-line disabled operate-button" />
+            </span>
+          </el-tooltip>
           <el-popconfirm
             :confirm-button-text="$t('general.Delete')"
             :cancel-button-text="$t('general.Cancel')"
             icon="el-icon-info"
             icon-color="red"
             :title="$t('Notify.confirmDelete')"
-            @confirm="handleDelete(scope.row)"
+            @confirm="handleDelete(row)"
           >
-            <el-button
+            <em
               slot="reference"
-              size="mini"
-              type="danger"
-            >
-              <em class="el-icon-delete" />
-              {{ $t('general.Delete') }}
-            </el-button>
+              class="ri-delete-bin-2-line danger operate-button"
+            />
           </el-popconfirm>
         </template>
       </el-table-column>
@@ -187,7 +194,7 @@
     </el-table>
     <Pagination
       :total="filteredData.length"
-      :page.sync="listQuery.current"
+      :page.sync="listQuery.page"
       :limit="listQuery.limit"
       :layout="'total, sizes, prev, pager, next'"
       @pagination="onPagination"
@@ -202,15 +209,30 @@
 </template>
 
 <script>
-import { getTemplateFromProject, deleteTemplateFromProject } from '@/api_v2/template'
-import { BasicData, Pagination, SearchBar } from '@/mixins'
+import { mapGetters } from 'vuex'
+import {
+  getTemplateFromProject,
+  deleteTemplateFromProject
+} from '@/api_v2/template'
+import {
+  BasicData,
+  Pagination,
+  SearchBar
+} from '@/mixins'
 import { ElTableColumnTime } from '@/components'
 import TemplateDialog from './components/TemplateDialog'
 
 export default {
   name: 'TemplateManage',
-  components: { ElTableColumnTime, TemplateDialog },
-  mixins: [BasicData, Pagination, SearchBar],
+  components: {
+    ElTableColumnTime,
+    TemplateDialog
+  },
+  mixins: [
+    BasicData,
+    Pagination,
+    SearchBar
+  ],
   data() {
     return {
       dialogVisible: false,
@@ -219,6 +241,12 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['projectOptions']),
+    allProjectIds() {
+      return this.projectOptions.filter((obj) =>
+        obj.is_lock !== true && obj.disabled !== true
+      ).map((item) => item.id)
+    },
     existedTemplateIds() {
       return this.listData.map((item) => item.from_project_id)
     }
@@ -264,3 +292,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.disabled {
+  cursor: not-allowed;
+}
+</style>

@@ -263,6 +263,7 @@ export default {
     onProjectChange(projectId) {
       this.setSelectedProject(this.projectOptions.find((elm) => elm.id === projectId) || { id: -1 })
       localStorage.setItem('projectId', projectId)
+      sessionStorage.setItem('workProjectId', projectId)
     },
     async setStar(id, star) {
       if (star) {

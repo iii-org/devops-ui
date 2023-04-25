@@ -272,7 +272,10 @@ export default {
     Unexpired: 'Unexpired',
     DataGenerationTime: 'Data Generation Time',
     Expand: 'Expand',
-    Fold: 'Fold'
+    Fold: 'Fold',
+    PopUp: 'Pop Up',
+    AddNewSubIssue: 'Add New Sub-Issue',
+    AddExistingIssue: 'Add Existing Issue'
   },
   Notify: {
     Updated: 'update successful',
@@ -324,7 +327,8 @@ export default {
     ExcalidrawAliveWarning: 'Excalidraw service failed, please contact DevOps for assistance.',
     DeleteExcalidrawWarning: 'Also "delete" the related excalidraw of this issue.',
     ChangeClusterId: '[Note] Switching destination will cause the volumes reset, confirm to delete?',
-    ChangeReleaseId: '[Note] Switching release id will cause the environments reset, confirm to delete?'
+    ChangeReleaseId: '[Note] Switching release id will cause the environments reset, confirm to delete?',
+    DownloadFailed: 'Download is failed, please contact your system administrator.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -390,6 +394,7 @@ export default {
     Branch: '@:general.Branch',
     Commit: 'Commit',
     PackageCount: 'Package Count',
+    CriticalSeverity: 'Critical Severity',
     HighSeverity: 'High Severity',
     MediumSeverity: 'Medium Severity',
     LowSeverity: 'Low Severity',
@@ -477,6 +482,7 @@ export default {
     EditIssue: 'Edit Issue',
     AddSubIssue: 'Add Sub Issue',
     CloseIssue: 'Close Issue',
+    IssueSetting: 'Issue Setting',
     IssueHookSetting: '@:Issue.CommitIssueHookSetting',
     CommitIssueHookSetting: 'Commit Issue Hook Setting',
     EditIssueHook: 'Edit Issue Hook',
@@ -620,8 +626,8 @@ export default {
       assigned_to: 'Assigned',
       fixed_version: 'Version',
       priority: '@:Issue.Priority',
-      due_date_start: '@:Issue.EndDate(>=)',
-      due_date_end: '@:Issue.EndDate(<=)'
+      due_date_start: '@:Issue.StartDate',
+      due_date_end: '@:Issue.EndDate'
     },
     Display: 'Display',
     DragTip: 'Drag to issue, it can change {key} to {value}.',
@@ -641,13 +647,13 @@ export default {
     UploadSuccess: 'Upload Success',
     List: 'Issue List',
     TransferIssueTo: 'Transfer {value} issues to？',
-    due_date_start: '@:Issue.EndDate(>=)',
-    due_date_end: '@:Issue.EndDate(<=)',
+    due_date_start: '@:Issue.StartDate',
+    due_date_end: '@:Issue.EndDate',
     CustomFilter: 'Custom Filter',
     CustomFilterName: 'Custom Filter Name',
     InputFilterName: 'Input Filter Name',
     RemoveCustomFilter: 'Are you sure to Remove Custom Filter?',
-    ImportParentIssueData: 'Import parent issue title and information'
+    ImportParentIssueData: 'Import Parent Issue Information'
   },
   Milestone: {
     Saving: 'Saving',
@@ -727,6 +733,7 @@ export default {
       Overview: {
         NAME: 'Overview',
         projects: 'Projects',
+        closed: '@:Project.closed',
         overdue: '@:Project.overdue',
         not_started: '@:Project.not_started',
         in_progress: '@:Project.in_progress'
@@ -994,6 +1001,7 @@ export default {
     EditTemplate: 'Edit Template',
     LocalProject: 'Local Project',
     TemplateDescription: 'Template Description',
+    OriginalProjectNotExist: 'The original project no longer exists',
     DuplicatedTemplate: 'One project only relates to one template, The project "{0}" has been used to a template, you can click \'edit\' on the template list if source code sync is needed.'
   },
   Maintenance: {
@@ -1016,6 +1024,7 @@ export default {
   },
   Loading: 'Loading...',
   Updating: 'Updating...',
+  LoadMore: 'Load More',
   Harbor: {
     PushTime: 'Push Time'
   },
@@ -1381,14 +1390,25 @@ export default {
     toClosedVersionErrorContent: 'You cannot change to version {fixed_version} that status is closed.'
   },
   Status: {
+    Failed: 'Failed',
+    Created: 'Created',
+    Queued: 'Queued',
+    ResumeScanQueued: 'Resume Scan Queued',
+    ResumingScan: 'Resuming Scan',
+    Pending: 'Pending',
+    Paused: 'Paused',
+    Running: 'Running',
+    Complete: 'Complete',
+    Interrupted: 'Interrupted',
+    Unknown: 'Unknown',
     Finished: 'Finished',
     Scanning: 'Scanning',
     Aborted: 'Aborted',
-    Failed: 'Failed',
-    Complete: '@:Status.Finished',
-    Running: '@:Status.Scanning',
-    NotRunning: 'NotRunning',
-    Interrupted: 'Interrupted'
+    NotRunning: 'Not Running',
+    Started: 'Started',
+    'Error Publishing Scan': 'Scan Error',
+    'Generating Report': 'Generating',
+    'Error Generating Report': 'Generating Error'
   },
   Gantt: {
     Now: 'Now',
@@ -1491,12 +1511,12 @@ export default {
     Licenses: 'Licenses',
     Type: 'Type',
     CurrentVersion: 'Current Version',
-    FixedVersion: 'Fixed in Version',
+    FixedVersion: 'Fixed Version',
     Success: '@:general.Success',
     Complete: '@:Status.Finished',
-    Scanning: 'Scanning',
+    Scanning: '@:Status.Scanning',
     Queued: 'Queued',
-    'Not Scanned': 'NotRunning',
+    'Not Scanned': '@:Status.NotRunning',
     Size: 'Size'
   },
   RedmineMail: {

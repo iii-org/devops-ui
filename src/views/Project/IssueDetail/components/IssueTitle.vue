@@ -3,7 +3,11 @@
     <span class="el-input inline">
       <input
         v-model="newValue"
-        v-autowidth="{maxWidth: '960px', minWidth: '20px', comfortZone: 0}"
+        v-autowidth="{
+          maxWidth: this.isFromBoard ? '480px' : '960px',
+          minWidth: '20px',
+          comfortZone: 0
+        }"
         type="text"
         :placeholder="$t('general.Title')"
         class="el-input__inner text-xl"
@@ -11,8 +15,15 @@
       >
     </span>
   </span>
-  <span v-else-if="isButtonDisabled">{{ value }}</span>
-  <span v-else @click="edit=true">{{ value }}</span>
+  <span v-else-if="isButtonDisabled">
+    {{ value }}
+  </span>
+  <span
+    v-else
+    @click="edit=true"
+  >
+    {{ value }}
+  </span>
 </template>
 
 <script>
@@ -35,6 +46,10 @@ export default {
     issueId: {
       type: [String, Number],
       default: null
+    },
+    isFromBoard: {
+      type: Boolean,
+      default: false
     },
     isButtonDisabled: {
       type: Boolean,
@@ -72,9 +87,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.inline{
-  display: inline;
-}
-</style>
