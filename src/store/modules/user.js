@@ -125,6 +125,9 @@ const actions = {
 
   setMessageIds({ commit }, messageIds) {
     commit('SET_MESSAGE_IDS', messageIds)
+  },
+  setUserName({ commit }, userName) {
+    commit('SET_USER_NAME', userName)
   }
 }
 
