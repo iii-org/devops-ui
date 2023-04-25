@@ -564,7 +564,7 @@ export default {
       this.form = {}
       this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
-      this.form.name = (copy && this.parentId === 0) ? name + '(' + this.$t('Issue.Copy') + ')' : name
+      this.form.name = (copy && this.parentId === 0) ? name + ' (' + this.$t('Issue.Copy') + ')' : name
       this.form.fixed_version_id = fixed_version ? fixed_version.id : ''
       this.form.tracker_id = tracker.id
       this.form.status_id = status.id
@@ -587,7 +587,7 @@ export default {
         this.parentName = this.row.name
       }
 
-      if (!this.simpleAddIssue) {
+      if (!this.simpleAddIssue || copy) {
         this.addTopicDialogVisible = true
         return
       }
