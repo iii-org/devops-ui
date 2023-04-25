@@ -606,7 +606,8 @@ export default {
         point: 0,
         start_date: '',
         due_date: '',
-        create: true
+        create: true,
+        description: ''
       }
       for (const data in form) {
         if (!prefill) break
