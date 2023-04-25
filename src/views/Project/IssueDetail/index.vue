@@ -736,7 +736,6 @@ export default {
     },
     propsIssueId(val) {
       this.fetchIssueLink()
-      this.$nextTick(() => this.$refs.IssueForm.$refs.form.clearValidate())
       this.isAddSubIssue = false
     },
     'form.project_id': {
@@ -763,7 +762,6 @@ export default {
   async mounted() {
     await this.fetchIssueLink()
     await this.getRelationProjectList()
-    await this.calcIssueFormWidth()
     this.storagePId = this.form.project_id
   },
   methods: {
@@ -775,7 +773,6 @@ export default {
     },
     async fetchIssueLink() {
       this.isLoading = true
-      this.$refs.mainIssue.$el.scrollTop = 0
       if (this.propsIssueId) {
         this.issueId = parseInt(this.propsIssueId)
         await this.fetchIssue()
@@ -792,6 +789,7 @@ export default {
           this['removeFileName']()
         }
       }
+      this.initIssueStatus()
       this.isLoading = false
     },
     async fetchIssue(isOnlyUpload) {
@@ -1490,9 +1488,19 @@ export default {
     },
     calcIssueFormWidth() {
       this.$nextTick(() => {
-        this.issueFormWidth = !this.isFromBoard
-          ? (this.isIssueFormOpened ? this.$refs.IssueForm.$el.clientWidth + 130 : 100)
-          : 80
+        const clientWidth = this.$refs.IssueForm.$el.clientWidth
+        if (this.isFromBoard) {
+          this.issueFormWidth = 80
+        } else {
+          this.issueFormWidth = this.isIssueFormOpened ? clientWidth + 130 : 100
+        }
+      })
+    },
+    initIssueStatus() {
+      this.calcIssueFormWidth()
+      this.$nextTick(() => {
+        if (this.$refs.mainIssue.$el.scrollTop > 0) this.$refs.mainIssue.$el.scrollTop = 0
+        this.$refs.IssueForm.$refs.form.clearValidate()
       })
     },
     showSuccessMessage(message) {
