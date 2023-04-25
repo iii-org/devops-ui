@@ -156,7 +156,6 @@ export default {
             }
             await updateUser(this.userId, data)
               .then(() => {
-                console.log(this.userProfileForm.userName)
                 this.setUserName(this.userProfileForm.userName)
                 this.$message({
                   title: this.$t('general.Success'),
