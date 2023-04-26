@@ -64,11 +64,7 @@
             <em
               :class="scope.row.disabled
                 ? 'ri-record-circle-line finished operate-button'
-<<<<<<< HEAD
                 : 'ri-pause-circle-line danger operate-button'"
-=======
-                : 'ri-pause-circle-line inProgress operate-button'"
->>>>>>> 7b6e71d1 (feat: modify table button layout)
               @click="toggleUsage(scope.row)"
             />
           </el-tooltip>
