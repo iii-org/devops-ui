@@ -98,11 +98,7 @@
           <el-tooltip
             v-if="scope.row.scan_status === 'Success'"
             placement="bottom"
-<<<<<<< HEAD
-            :content="$t('Log.fullLog')"
-=======
             :content="$t('Dashboard.Report')"
->>>>>>> 7b6e71d1 (feat: modify table button layout)
           >
             <em
               class="ri-file-list-2-line active operate-button"
