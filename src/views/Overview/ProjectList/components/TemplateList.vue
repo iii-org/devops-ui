@@ -234,7 +234,6 @@ export default {
         db_user: this.form.argumentsForm[0].value,
         db_pswd: value
       }
-      const database = this.focusTemplate.display.split('-').pop()
       const databaseType = [
         'MSSQL',
         'MySQL',
@@ -246,8 +245,9 @@ export default {
         'postgreSQL'
       ]
       data.db_type = databaseType.find((item) =>
-        item.toLowerCase() === database.toLowerCase()
+        this.focusTemplate.display.toLowerCase().includes(item.toLowerCase())
       )
+      console.log(data.db_type)
       if (!data.db_type) callback()
       else {
         await passwordPolicyCheck(data).then((res) => {
