@@ -247,7 +247,6 @@ export default {
       data.db_type = databaseType.find((item) =>
         this.focusTemplate.display.toLowerCase().includes(item.toLowerCase())
       )
-      console.log(data.db_type)
       if (!data.db_type) callback()
       else {
         await passwordPolicyCheck(data).then((res) => {
