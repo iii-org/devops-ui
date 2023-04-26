@@ -240,23 +240,6 @@
           </el-table-column>
         </el-table>
       </div>
-      <transition name="slide-fade">
-        <div v-if="relationIssue.visible" class="rightPanel">
-          <div
-            class="handle-button"
-            :style="{'background-color':'#85c1e9'}"
-            @click="handleRightPanelVisible"
-          >
-            <em class="el-icon-d-arrow-right" />
-          </div>
-          <ProjectIssueDetail
-            :props-issue-id="relationIssue.id"
-            :is-in-dialog="true"
-            :is-from-board="true"
-            @delete="handleRelationDelete"
-          />
-        </div>
-      </transition>
       <ContextMenu
         ref="contextmenu"
         :visible="contextMenu.visible"
@@ -275,7 +258,6 @@ import { updateIssue, getIssueFamily } from '@/api/issue'
 import { CancelRequest } from '@/mixins'
 import { Tracker, Priority, Status, ContextMenu } from '@/components/Issue'
 import { Kanban } from '@/views/Project/IssueBoards/components'
-import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 import { io } from 'socket.io-client'
 import { isTimeValid, getLocalTime } from '@/utils/handleTime'
 
@@ -294,7 +276,6 @@ export default {
   components: {
     ContextMenu,
     Kanban,
-    ProjectIssueDetail,
     // eslint-disable-next-line vue/no-unused-components
     Tracker, Priority, Status
   },
@@ -358,10 +339,6 @@ export default {
       updatedData: {},
       elementIds: [],
       tableKey: 0,
-      relationIssue: {
-        visible: false,
-        id: null
-      },
       filterOptions: [{
         id: 1,
         label: this.$t('Issue.FilterDimensions.status'),
@@ -717,19 +694,8 @@ export default {
       return res.data
     },
     onRelationIssueDialog(id, rowId, element) {
-      this.$set(this.relationIssue, 'visible', true)
-      this.$set(this.relationIssue, 'id', id)
-      this.$emit('relation-issue', true)
-      if (rowId) this.scrollTo(rowId, element)
-    },
-    handleRelationDelete() {
-      this.$set(this.relationIssue, 'visible', false)
-      this.$set(this.relationIssue, 'id', null)
-      this.$emit('relation-issue', false)
-    },
-    handleRightPanelVisible() {
-      this.$set(this.relationIssue, 'visible', false)
-      this.$emit('relation-issue', false)
+      this.$emit('relation-issue', id)
+      if (rowId) window.setTimeout(() => this.scrollTo(rowId, element), 1000)
     },
     scrollTo(rowId, target) {
       const element = document.getElementById('card_' + rowId + '_' + target)
@@ -1107,48 +1073,6 @@ export default {
 
 >>> .cursor-context-menu {
   cursor: context-menu;
-}
-
-.rightPanel {
-  width: 100%;
-  max-width: 750px;
-  height: 100vh;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  right: 0;
-  background: #fff;
-}
-
-.slide-fade-enter-active {
-  transition: all .5s ease-in-out;
-
-}
-.slide-fade-leave-active {
-  transition: all .5s ease-in-out;
-}
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
-  transform: translateX(800px);
-}
-
-.handle-button {
-  width: 50px;
-  height: 50px;
-  position: absolute;
-  left: -50px;
-  text-align: center;
-  font-size: 24px;
-  border-radius: 6px 0 0 6px !important;
-  z-index: 0;
-  pointer-events: auto;
-  cursor: pointer;
-  color: #fff;
-  line-height: 50px;
-  i {
-    font-size: 24px;
-    line-height: 50px;
-  }
 }
 
 .socket-button {

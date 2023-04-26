@@ -234,20 +234,12 @@ export default {
         db_user: this.form.argumentsForm[0].value,
         db_pswd: value
       }
-      const database = this.focusTemplate.display.split('-').pop()
       const databaseType = [
-        'MSSQL',
-        'MySQL',
-        'mariaDB',
-        'influxDB',
-        'Elasticsearch',
-        'mongoDB',
-        'SQLite',
-        'postgreSQL'
+        'mariadb',
+        'postgres',
+        'mssql'
       ]
-      data.db_type = databaseType.find((item) =>
-        item.toLowerCase() === database.toLowerCase()
-      )
+      data.db_type = databaseType.find((item) => this.focusTemplate.name.includes(item))
       if (!data.db_type) callback()
       else {
         await passwordPolicyCheck(data).then((res) => {
