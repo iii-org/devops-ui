@@ -246,7 +246,7 @@
             :tags="tags"
             :group-by="groupBy"
             @row-list="setGroupByRow"
-            @relation-issue="onRelationIssue"
+            @relation-issue="onRelationIssueDialog"
           />
         </el-tab-pane>
       </el-tabs>
@@ -331,7 +331,6 @@ export default {
       lastUpdated: null,
       activeNames: '',
       tableHeight: 0,
-      relationIssue: false,
       form: {},
       groupBy: {
         dimension: 'status',
@@ -506,14 +505,10 @@ export default {
     }
   },
   methods: {
-    onRelationIssue(value) {
-      this.relationIssue = value
-    },
     handleUpdateLoading(value) {
       this.updateLoading = value
       this.$nextTick(() => {
-        if (!this.$refs.issueDetail) return
-        this.$refs.issueDetail.getData()
+        this.$refs.issueDetailDialog.getData()
       })
     },
     handleUpdateStatus(value) {
@@ -698,8 +693,10 @@ export default {
 <style lang="scss" scoped>
 .wrapper {
   height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
-
+  transition: width 1s;
+  width: 100%;
   &.is-panel {
+    width: calc(100% - 750px);
     transition: width 1s;
   }
 }
@@ -726,10 +723,10 @@ export default {
 }
 
 .handle-button {
-  width: 50px;
+  width: 35px;
   height: 50px;
   position: absolute;
-  left: -50px;
+  left: -35px;
   text-align: center;
   font-size: 24px;
   border-radius: 6px 0 0 6px !important;

@@ -1488,10 +1488,10 @@ export default {
     },
     calcIssueFormWidth() {
       this.$nextTick(() => {
-        const clientWidth = this.$refs.IssueForm.$el.clientWidth
         if (this.isFromBoard) {
           this.issueFormWidth = 80
         } else {
+          const clientWidth = this.$refs.IssueForm.$el.clientWidth
           this.issueFormWidth = this.isIssueFormOpened ? clientWidth + 130 : 100
         }
       })
