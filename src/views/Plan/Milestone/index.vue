@@ -512,6 +512,7 @@ export default {
     handleUpdateLoading(value) {
       this.updateLoading = value
       this.$nextTick(() => {
+        if (!this.$refs.issueDetail) return
         this.$refs.issueDetail.getData()
       })
     },
