@@ -28,7 +28,7 @@
       >
         <span slot="label">
           <span>{{ $t(`MyWork.${tab.name}`) }}</span>
-          <span class="text-xl font-bold">
+          <span class="text-lg font-bold">
             ({{ tab.count !== '-' ? tab.count : 0 }})
           </span>
         </span>
