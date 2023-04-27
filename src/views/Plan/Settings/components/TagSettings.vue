@@ -233,7 +233,7 @@ export default {
     },
     async handleTableDraggingChange(event) {
       const { oldIndex, newIndex } = event
-      if (oldIndex === newIndex) {
+      if (oldIndex === newIndex || !this.checkBeforeDragging(event)) {
         this.updateData()
         return
       }
@@ -248,6 +248,11 @@ export default {
         .finally(() => {
           this.updateData()
         })
+    },
+    checkBeforeDragging(event) {
+      const { oldIndex, newIndex } = event
+      return this.originData[oldIndex].name === this.listData[oldIndex].name &&
+        this.originData[newIndex].name === this.listData[newIndex].name
     },
     getToTagId(event) {
       const { oldIndex, newIndex } = event
