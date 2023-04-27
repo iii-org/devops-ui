@@ -150,6 +150,7 @@
         :is-create="showDialog"
         :form="form"
         @clearTemplate="clearTemplate"
+        @resetTemplate="resetTemplate"
       />
     </el-form>
     <span
@@ -377,6 +378,13 @@ export default {
       this.form.template_id = ''
       this.form.tag_name = ''
       this.form.argumentsForm = []
+    },
+    resetTemplate() {
+      this.$refs.createProjectForm.clearValidate([
+        'argumentsForm.0.value',
+        'argumentsForm.1.value',
+        'argumentsForm.2.value'
+      ])
     },
     async refreshTemplate() {
       await refreshRancherCatalogs()

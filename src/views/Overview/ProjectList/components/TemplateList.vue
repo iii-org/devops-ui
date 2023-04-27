@@ -297,6 +297,7 @@ export default {
       } else {
         this.fetchTemplateParams()
       }
+      this.$emit('resetTemplate')
     },
     fetchTemplateParams() {
       this.isLoadingTemplate = true
@@ -314,7 +315,7 @@ export default {
           this.clearFocusTemplate()
           console.error('fetchTemplateParams error', err)
         })
-        .then(() => {
+        .finally(() => {
           this.isLoadingTemplate = false
         })
     },
@@ -334,7 +335,7 @@ export default {
           this.clearFocusTemplate()
           console.error(err)
         })
-        .then(() => {
+        .finally(() => {
           this.isLoadingTemplate = false
         })
     },
