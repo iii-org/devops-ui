@@ -21,20 +21,13 @@
         <span>{{ $t('general.Edit') + $t('general.Tag') }}</span>
       </template>
       <el-input
+        ref="input"
         v-model="inputValue"
         :placeholder="$t('general.Input', { item: $t('general.Tag') })"
-      >
-        <em
-          slot="suffix"
-          class="el-icon-circle-plus operate-button finished"
-          @click="saveTag()"
-        />
-        <em
-          slot="suffix"
-          class="el-icon-error operate-button danger"
-          @click="init"
-        />
-      </el-input>
+        @keyup.enter.native="saveTag"
+        @keyup.esc.native="init"
+        @blur="init"
+      />
     </el-tooltip>
   </div>
 </template>
@@ -76,6 +69,9 @@ export default {
     showInput() {
       this.isShowInput = true
       this.$emit('onShowAll')
+      this.$nextTick(() => {
+        this.$refs.input.focus()
+      })
     },
     getStyle(colorCode) {
       const color = variables[`${colorCode}`]
