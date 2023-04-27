@@ -79,3 +79,4 @@ export const getRootProjectId = (project_id) => request.get(`/project/${project_
 export const getCommitRelation = (commit_id) => request.get(`/issue/relation?commit_id=${commit_id}`)
 export const patchCommitRelation = (params) => request.patch(`/issue/relation`, { ...params })
 export const passwordPolicyCheck = (params) => request.post(`/db/pswd/policy/check`, { ...params })
+export const passwordPolicyList = () => request.get(`/db/pswd/policy/type_list`)

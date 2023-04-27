@@ -217,8 +217,7 @@ export default {
   },
   methods: {
     async init(isForceUpdate) {
-      const policyList = await passwordPolicyList()
-      this.databaseType = policyList.data
+      this.databaseType = (await passwordPolicyList()).data
       if (this.userRole !== 'Engineer') {
         await this.getTemplateList(isForceUpdate)
       }
