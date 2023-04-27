@@ -21,7 +21,7 @@
     >
       <WBSInputColumn
         v-if="columns.indexOf('name')>=0"
-        min-width="28%"
+        min-width="250px"
         :label="$t('Issue.name')"
         prop="name"
         :edit-row-id="editRowId"
@@ -85,7 +85,7 @@
       />
       <WBSSelectColumn
         v-if="columns.indexOf('fixed_version')>=0"
-        min-width="9%"
+        min-width="110px"
         :label="$t('Issue.fixed_version')"
         prop-key="fixed_version"
         prop="fixed_version.id"
@@ -101,7 +101,7 @@
       />
       <WBSDateColumn
         v-if="columns.indexOf('StartDate')>=0"
-        min-width="9%"
+        min-width="125px"
         :label="$t('Issue.StartDate')"
         prop="start_date"
         :edit-row-id="editRowId"
@@ -115,7 +115,7 @@
       />
       <WBSDateColumn
         v-if="columns.indexOf('EndDate')>=0"
-        min-width="9%"
+        min-width="125px"
         :label="$t('Issue.EndDate')"
         prop="due_date"
         :edit-row-id="editRowId"
@@ -129,7 +129,7 @@
       />
       <WBSSelectColumn
         v-if="columns.indexOf('priority')>=0"
-        min-width="9%"
+        min-width="110px"
         :label="$t('Issue.priority')"
         prop-key="priority"
         prop="priority.id"
@@ -145,7 +145,7 @@
       />
       <WBSSelectColumn
         v-if="columns.indexOf('assigned_to')>=0"
-        min-width="9%"
+        min-width="125px"
         :label="$t('Issue.assigned_to')"
         prop-key="assigned_to"
         prop="assigned_to.id"
@@ -161,7 +161,7 @@
       />
       <WBSInputColumn
         v-if="columns.indexOf('DoneRatio')>=0"
-        width="100px"
+        width="130px"
         :label="$t('Issue.DoneRatio_sm')"
         prop="done_ratio"
         :edit-row-id="editRowId"
