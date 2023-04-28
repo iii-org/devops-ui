@@ -239,11 +239,9 @@ export default {
       return rules
     },
     async validatePassword(rule, value, callback) {
-      const data = {
-        db_type: '',
-        db_user: this.form.argumentsForm[0].value,
-        db_pswd: value
-      }
+      const data = { db_pswd: value }
+      data.db_user = this.form.argumentsForm[0].input_type === 'password' ? null
+        : this.form.argumentsForm[0].value
       data.db_type = this.databaseType.find((item) => this.focusTemplate.name.includes(item))
       if (!data.db_type) callback()
       else {
