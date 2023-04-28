@@ -647,7 +647,8 @@ export default {
       this.$set(this.issueDetail, 'id', id)
     },
     handleRelationUpdate() {
-      this.$nextTick(() => {
+      this.$nextTick(async () => {
+        await this.loadSelectionList()
         this.$refs.WBS.loadData()
       })
     },
