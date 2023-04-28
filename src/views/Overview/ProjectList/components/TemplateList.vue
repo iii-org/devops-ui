@@ -122,7 +122,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { passwordPolicyCheck } from '@/api/projects'
+import {
+  passwordPolicyCheck,
+  passwordPolicyList
+} from '@/api/projects'
 import {
   getTemplateList,
   getTemplateParams,
@@ -144,6 +147,7 @@ export default {
   data() {
     return {
       templateList: [],
+      databaseType: [],
       focusTemplate: {},
       isLoadingTemplate: false,
       isClickUpdateTemplate: false,
@@ -212,6 +216,12 @@ export default {
     this.clearFocusTemplate()
   },
   methods: {
+    async init(isForceUpdate) {
+      this.databaseType = (await passwordPolicyList()).data
+      if (this.userRole !== 'Engineer') {
+        await this.getTemplateList(isForceUpdate)
+      }
+    },
     databaseRules(argument) {
       const rules = [
         {
@@ -229,17 +239,10 @@ export default {
       return rules
     },
     async validatePassword(rule, value, callback) {
-      const data = {
-        db_type: '',
-        db_user: this.form.argumentsForm[0].value,
-        db_pswd: value
-      }
-      const databaseType = [
-        'mariadb',
-        'postgres',
-        'mssql'
-      ]
-      data.db_type = databaseType.find((item) => this.focusTemplate.name.includes(item))
+      const data = { db_pswd: value }
+      data.db_user = this.form.argumentsForm[0].input_type === 'password' ? null
+        : this.form.argumentsForm[0].value
+      data.db_type = this.databaseType.find((item) => this.focusTemplate.name.includes(item))
       if (!data.db_type) callback()
       else {
         await passwordPolicyCheck(data).then((res) => {
@@ -250,9 +253,6 @@ export default {
           }
         })
       }
-    },
-    init(isForceUpdate) {
-      if (this.userRole !== 'Engineer') this.getTemplateList(isForceUpdate)
     },
     getCachedTemplateId(path) {
       return this.activeTemplateList.find((item) => item.path === path).id
@@ -295,6 +295,7 @@ export default {
       } else {
         this.fetchTemplateParams()
       }
+      this.$emit('resetTemplate')
     },
     fetchTemplateParams() {
       this.isLoadingTemplate = true
@@ -312,7 +313,7 @@ export default {
           this.clearFocusTemplate()
           console.error('fetchTemplateParams error', err)
         })
-        .then(() => {
+        .finally(() => {
           this.isLoadingTemplate = false
         })
     },
@@ -332,7 +333,7 @@ export default {
           this.clearFocusTemplate()
           console.error(err)
         })
-        .then(() => {
+        .finally(() => {
           this.isLoadingTemplate = false
         })
     },
