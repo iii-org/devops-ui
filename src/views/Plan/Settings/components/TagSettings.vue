@@ -39,7 +39,7 @@
         v-loading="listLoading"
         :data="listData"
         row-key="id"
-        height="405"
+        height="500"
         border
         fit
         @row-click="handleRowClick"

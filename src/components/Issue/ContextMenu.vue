@@ -24,6 +24,36 @@
         </contextmenu-submenu>
         <contextmenu-submenu
           v-permission="permission"
+          title="新標籤"
+        >
+          <contextmenu-item class="tag-contextmenu-item">
+            <el-select
+              v-model="searchTag"
+              multiple
+              filterable
+              clearable
+              remote
+              placeholder="搜尋標籤名"
+              size="mini"
+              :remote-method="remoteMethod"
+              @click.stop.native="() => { return 'Just try to keep the contextmenu' }"
+            />
+            <ul
+              v-for="tag in tagOptions"
+              :key="tag.id"
+              :class="{ current: getContextMenuCurrentValue(filterColumnOptions[2], tag), [tag.class]: tag.class }"
+              style="padding-left: 0; color: #333;"
+            >
+              <li class="tag" @click="onUpdate(`tags_id`, tag)">
+                <em v-if="getContextMenuCurrentValue(filterColumnOptions[2], tag)" class="el-icon-check" />
+                <em v-if="tag.id === 'null'" class="el-icon-circle-close" />
+                {{ tag.name }}
+              </li>
+            </ul>
+          </contextmenu-item>
+        </contextmenu-submenu>
+        <contextmenu-submenu
+          v-permission="permission"
           :title="$t('Issue.DoneRatio')"
           :disabled="row.has_children || isForceParent"
         >
@@ -155,7 +185,7 @@
       />
       <span slot="footer" class="dialog-footer">
         <el-button id="dialog-btn-cancel" class="buttonSecondaryReverse" @click="handleAdvancedClose">{{ $t('general.Cancel') }}</el-button>
-        <el-button id="dialog-btn-confirm" :loading="LoadingConfirm" class="buttonPrimary" @click="handleAdvancedSave">
+        <el-button id="dialog-btn-confirm" :loading="loadingConfirm" class="buttonPrimary" @click="handleAdvancedSave">
           {{ $t('general.Confirm') }}
         </el-button>
       </span>
@@ -238,7 +268,7 @@ export default {
       fixed_version: [],
       tags: [],
       addTopicDialogVisible: false,
-      LoadingConfirm: false,
+      loadingConfirm: false,
       parentId: 0,
       parentName: null,
       form: {},
@@ -247,7 +277,9 @@ export default {
       errorMsg: [],
       strictTracker: [],
       forceTracker: [],
-      enableForceTracker: false
+      enableForceTracker: false,
+      searchTag: '',
+      tagOptions: []
     }
   },
   computed: {
@@ -361,6 +393,7 @@ export default {
           }
         }
       }
+      this.setDefaultTagOptions()
     },
     async getClosable() {
       const closable = await getCheckIssueClosable(this.row.id)
@@ -600,10 +633,10 @@ export default {
       this.row.showQuickAddIssue = true
     },
     loadingUpdate(value) {
-      this.LoadingConfirm = value
+      this.loadingConfirm = value
     },
     async saveIssue(data) {
-      this.LoadingConfirm = true
+      this.loadingConfirm = true
       const res = await addIssue(data)
       // this.$message({
       //   title: this.$t('general.Success'),
@@ -614,8 +647,20 @@ export default {
       this.$emit('update', Number(data.get('assigned_to_id')))
       this.addTopicDialogVisible = false
       // this.$refs['quickAddIssue'].form.name = ''
-      this.LoadingConfirm = false
+      this.loadingConfirm = false
       return res
+    },
+    remoteMethod(query) {
+      if (query !== '') {
+        this.tagOptions = this.tags.filter(tag => {
+          return tag.name.toLowerCase().indexOf(query.toLowerCase()) > -1
+        })
+      } else {
+        this.setDefaultTagOptions()
+      }
+    },
+    setDefaultTagOptions() {
+      this.tagOptions = this.tags.slice(0, 5)
     }
   }
 }
@@ -636,5 +681,21 @@ export default {
 
 .current {
   @apply font-bold text-success #{!important};
+}
+
+.tag-contextmenu-item {
+  width: 200px;
+  background-color: #ffffff;
+  color: #333;
+}
+
+.tag {
+  list-style: none;
+  text-align: left;
+  padding: 5px 14px;
+  font-size: 14px;
+  &:hover {
+    background: #46a0fc;
+  }
 }
 </style>
