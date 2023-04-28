@@ -1,7 +1,6 @@
 <template>
   <div class="app-container" :style="isFromBoard ? 'padding: 0' : ''">
     <el-card
-      v-loading="isLoading"
       :element-loading-text="$t('Loading')"
       :body-style="{ 'min-height': '80vh' }"
     >
@@ -29,7 +28,9 @@
                   :type="tracker"
                 />
               </template>
-              <template v-else>{{ $t('Issue.Issue') }}</template>
+              <template v-else>
+                {{ $t('Issue.Issue') }}
+              </template>
               #{{ issueId }} -
               <IssueTitle
                 ref="IssueTitle"
@@ -38,6 +39,7 @@
                 :issue-id="issueId"
                 :is-from-board="isFromBoard"
                 :is-button-disabled="isButtonDisabled"
+                @update="historyUpdate(issueId)"
               />
               <span
                 v-if="!isLoading && issueId"
@@ -148,6 +150,7 @@
                 :is-button-disabled="isButtonDisabled"
                 :project-id="formProjectId"
                 :mention-list.sync="descriptionMentionList"
+                @update="historyUpdate(issueId)"
               />
             </el-col>
             <el-col
@@ -259,7 +262,10 @@
                 type="border-card"
                 class="mx-3"
               >
-                <el-tab-pane name="history">
+                <el-tab-pane
+                  v-loading="isLoading"
+                  name="history"
+                >
                   <template slot="label">
                     <span>
                       <em class="ri-history-line" />
@@ -995,6 +1001,14 @@ export default {
           type: 'error'
         })
       }
+      this.isLoading = false
+    },
+    async historyUpdate() {
+      this.isLoading = true
+      let data = {}
+      const issue = await getIssue(this.issueId)
+      data = issue.data
+      this.initIssueDetails(data)
       this.isLoading = false
     },
     async handleUpdated(issue_id) {
