@@ -26,8 +26,14 @@
         :placeholder="$t('general.Input', { item: $t('general.Tag') })"
         @keyup.enter.native="saveTag"
         @keyup.esc.native="init"
-        @blur="init"
-      />
+      >
+        <em
+          slot="suffix"
+          class="el-icon-error operate-button danger"
+          style="padding-top: 10px"
+          @click="init"
+        />
+      </el-input>
     </el-tooltip>
   </div>
 </template>
