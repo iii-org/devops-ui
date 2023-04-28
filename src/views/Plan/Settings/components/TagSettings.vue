@@ -40,10 +40,15 @@
         :data="listData"
         row-key="id"
         height="500"
-        border
         fit
         @row-click="handleRowClick"
       >
+        <el-table-column align="center" width="25">
+          <svg-icon
+            icon-class="draggable"
+            class="text-lg mr-2"
+          />
+        </el-table-column>
         <el-table-column
           type="index"
           align="center"
