@@ -25,6 +25,7 @@
     "echarts": "^5.0.2",
     "element-ui": "^2.15.5",
     "element-ui-el-table-draggable": "^1.2.9",
+    "file-saver": "^2.0.5",
     "fuse.js": "^6.4.3",
     "gantt-elastic": "^1.0.12",
     "gantt-elastic-header": "^0.1.11",

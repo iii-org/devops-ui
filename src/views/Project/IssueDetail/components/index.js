@@ -11,6 +11,7 @@ import IssueCollection from './IssueCollection'
 import AdminCommitLog from './AdminCommitLog'
 import WhiteBoardTable from './WhiteBoardTable'
 import AddSubIssue from './AddSubIssue'
+import AddToCalendar from './AddToCalendar'
 
 export {
   IssueFiles,
@@ -25,5 +26,6 @@ export {
   IssueCollection,
   AdminCommitLog,
   WhiteBoardTable,
-  AddSubIssue
+  AddSubIssue,
+  AddToCalendar
 }

@@ -57,6 +57,24 @@
         <contextmenu-item v-permission="permission" @click="advancedAddIssue(true)">{{
           $t('Issue.CopyIssue')
         }}</contextmenu-item>
+        <contextmenu-submenu title="Add to Calendar">
+          <contextmenu-item v-permission="permission" @click="addToCalendar('google')">
+            <svg-icon icon-class="google" class="text-md" />
+            <span>Google</span>
+          </contextmenu-item>
+          <contextmenu-item v-permission="permission" @click="addToCalendar('microsoft')">
+            <svg-icon icon-class="microsoft" class="text-md" />
+            <span>Outlook.com</span>
+          </contextmenu-item>
+          <contextmenu-item v-permission="permission" @click="addToCalendar('office365')">
+            <svg-icon icon-class="office365" class="text-md" />
+            <span>Microsoft 365</span>
+          </contextmenu-item>
+          <contextmenu-item v-permission="permission" @click="addToCalendar('ics')">
+            <svg-icon icon-class="ical" class="text-md" />
+            <span>ICalendar</span>
+          </contextmenu-item>
+        </contextmenu-submenu>
       </template>
     </contextmenu>
     <el-dialog
@@ -175,6 +193,9 @@ import 'v-contextmenu/dist/index.css'
 import { AddIssue } from './'
 import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
 import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
+import { getLocalTime } from '@/utils/handleTime'
+import { calendarUrl } from '@/utils/addToCalendar'
+import { ics } from '@/utils/ics'
 
 const getAPI = {
   fixed_version: [getProjectVersion, 'versions'],
@@ -617,6 +638,30 @@ export default {
       // this.$refs['quickAddIssue'].form.name = ''
       this.LoadingConfirm = false
       return res
+    },
+    addToCalendar(type) {
+      if (type) {
+        const { id, name, start_date, due_date, tracker } = this.row
+        if (name) {
+          const title = `${tracker.name} #${id}: ${name}`
+          const link = `${window.location.origin}/#/project/issues/${id}`
+          const description = title.link(link)
+          const data = {
+            type: type,
+            title: name,
+            details: description,
+            start: start_date,
+            end: due_date
+          }
+          if (type === 'ics') {
+            const cal = ics()
+            cal.addEvent(name, description, '', getLocalTime(start_date), getLocalTime(due_date))
+            cal.download('issue-' + (id || name))
+            return
+          }
+          window.open(calendarUrl(data))
+        }
+      }
     }
   }
 }
