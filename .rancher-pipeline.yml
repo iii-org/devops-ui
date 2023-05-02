@@ -33,7 +33,7 @@ stages:
       - master
       - echart
       - develop
-      - Bug-QuickAddIssueOnBoard
+      - bugquickaddissueonboard
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -86,7 +86,7 @@ stages:
       - keycloak
       - tablelayout
       - projectlist
-      - Bug-QuickAddIssueOnBoard
+      - bugquickaddissueonboard
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -113,7 +113,7 @@ stages:
       - keycloak
       - tablelayout
       - projectlist
-      - Bug-QuickAddIssueOnBoard
+      - bugquickaddissueonboard
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -136,7 +136,7 @@ stages:
       - keycloak
       - tablelayout
       - projectlist
-      - Bug-QuickAddIssueOnBoard
+      - bugquickaddissueonboard
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -175,7 +175,7 @@ stages:
       - keycloak
       - tablelayout
       - projectlist
-      - Bug-QuickAddIssueOnBoard
+      - bugquickaddissueonboard
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -207,7 +207,7 @@ stages:
       - keycloak
       - tablelayout
       - projectlist
-      - Bug-QuickAddIssueOnBoard
+      - bugquickaddissueonboard
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -237,7 +237,7 @@ stages:
       - keycloak
       - tablelayout
       - projectlist
-      - Bug-QuickAddIssueOnBoard
+      - bugquickaddissueonboard
 - name: Test--Anchore SBOM
   iiidevops: anchore
   steps:
