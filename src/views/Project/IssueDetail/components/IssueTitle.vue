@@ -1,7 +1,7 @@
 <template>
   <span
     v-if="edit"
-    v-loading="loading"
+    v-loading="isLoading"
     class="p-3"
   >
     <span class="el-input inline">
@@ -32,13 +32,16 @@
       />
     </span>
   </span>
-  <span v-else-if="isButtonDisabled">
+  <span
+    v-else-if="isButtonDisabled"
+    class="cursor-not-allowed"
+  >
     {{ value }}
   </span>
   <span
     v-else
-    class="title p-1"
-    @click="edit=true"
+    class="title cursor-text p-1"
+    @click="edit = true"
   >
     {{ value }}
   </span>
@@ -77,7 +80,7 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      isLoading: false,
       edit: false,
       newValue: this.value
     }
@@ -101,14 +104,14 @@ export default {
   },
   methods: {
     async updateTitle() {
-      this.loading = true
+      this.isLoading = true
       const sendForm = new FormData()
       sendForm.append('name', this.newValue)
       await updateIssue(this.issueId, sendForm).then(() => {
         this.$emit('update')
         this.edit = false
       })
-      this.loading = false
+      this.isLoading = false
     },
     cancelInput() {
       this.newValue = this.oldValue
@@ -121,7 +124,6 @@ export default {
 <style lang="scss" scoped>
 .title:hover {
   background-color: mix(#808080, #ffffff, 30);
-  cursor: pointer;
 }
 
 .el-button--success{

@@ -1,21 +1,26 @@
 <template>
-  <el-row>
+  <el-row v-loading="isLoading">
     <el-col>
       <el-row class="text-sm mt-2 mb-3">
         {{ $t('Issue.Description') }}
-        <el-button
-          v-if="!edit"
-          :class="isButtonDisabled ? 'buttonInfoReverse' : 'buttonSecondaryReverse'"
-          :disabled="isButtonDisabled"
-          icon="el-icon-edit"
-          size="mini"
-          @click="edit=true"
-        >
-          {{ $t('general.Edit') }}
-        </el-button>
+        <span v-if="edit">
+          <el-button
+            class="action"
+            type="success"
+            size="mini"
+            icon="el-icon-check"
+            @click="updateDescription"
+          />
+          <el-button
+            class="action"
+            type="danger"
+            size="mini"
+            icon="el-icon-close"
+            @click="cancelInput"
+          />
+        </span>
       </el-row>
       <el-col v-if="edit">
-        <p>{{ $t('Issue.ResetESCTip') }}</p>
         <el-popover
           v-model="tagListVisible"
           :trigger="tagListVisible ? 'focus' : 'manual'"
@@ -26,7 +31,7 @@
           <ul
             class="my-0 py-3"
             style="overflow-y: auto; max-height: 6rem;"
-            @scroll="onScroll"
+            @scroll="tagListVisible = true"
           >
             <li
               v-for="(user,index) in assigned_to"
@@ -44,32 +49,40 @@
             initial-edit-type="wysiwyg"
             :initial-value="value"
             :options="editorOptions"
-            height="18rem"
+            height="12rem"
             @change="onChange"
             @keydown.native="onKeydown"
           />
         </el-popover>
       </el-col>
-      <el-col v-else>
-        <Viewer
-          ref="mdViewer"
-          :key="componentKey"
-          :initial-value="value"
-          :class="ellipsisStatus ? 'break-word whitespace-normal overflow-hidden text-ellipsis' : null"
-          :style="ellipsisStatus ? 'display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;' : null"
-          @load="isFolded"
-        />
-        <el-link
-          v-if="isViewerFolded"
-          :icon="ellipsisStatus ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"
-          class="table m-auto mt-1 mb-3"
-          type="info"
-          :underline="false"
-          @click="ellipsisStatus = !ellipsisStatus"
+      <template v-else>
+        <el-col
+          class="px-3 mr-1"
+          :class="isButtonDisabled ? 'cursor-not-allowed' : 'cursor-text description'"
         >
-          {{ ellipsisStatus ? $t('general.Expand') : $t('general.Fold') }}
-        </el-link>
-      </el-col>
+          <Viewer
+            ref="mdViewer"
+            :key="componentKey"
+            :initial-value="value ? value : '<p><br></p>'"
+            :class="ellipsisStatus ? 'break-word whitespace-normal overflow-hidden text-ellipsis' : null"
+            :style="ellipsisStatus ? 'display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;' : null"
+            @load="isFolded"
+            @click.native="edit = !isButtonDisabled"
+          />
+        </el-col>
+        <el-col>
+          <el-link
+            v-if="isViewerFolded"
+            :icon="ellipsisStatus ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"
+            class="table m-auto mt-1 mb-3"
+            type="info"
+            :underline="false"
+            @click="ellipsisStatus = !ellipsisStatus"
+          >
+            {{ ellipsisStatus ? $t('general.Expand') : $t('general.Fold') }}
+          </el-link>
+        </el-col>
+      </template>
     </el-col>
   </el-row>
 </template>
@@ -77,11 +90,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getProjectAssignable } from '@/api/projects'
+import { updateIssue } from '@/api/issue'
 import '@toast-ui/editor/dist/toastui-editor.css'
 import '@toast-ui/editor/dist/toastui-editor-viewer.css'
 import '@toast-ui/editor/dist/i18n/zh-tw'
 import { Editor, Viewer } from '@toast-ui/vue-editor'
-import { query } from 'vue-gtag'
 
 export default {
   name: 'IssueDescription',
@@ -114,6 +127,7 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       edit: false,
       componentKey: 0,
       assigned_to: [],
@@ -164,9 +178,9 @@ export default {
     }
   },
   mounted() {
-    if (!this.issueId || !this.oldValue || this.oldValue === '') {
-      this.edit = true
-    }
+    // if (!this.issueId || !this.oldValue || this.oldValue === '') {
+    //   this.edit = true
+    // }
     this.getUserList()
   },
   methods: {
@@ -184,12 +198,8 @@ export default {
       this.$emit('update:mentionList', this.tagList.map((tag) => tag.id))
       this.$emit('input', this.$refs.mdEditor.invoke('getHTML'))
     },
-    onScroll() {
-      this.tagListVisible = true
-    },
     onKeydown(event) {
-      if (event.code === 'Escape' && event.metaKey) this.cancelInput()
-      else if (event.code === 'Digit2' && event.shiftKey) this.tagListVisible = true
+      if (event.code === 'Digit2' && event.shiftKey) this.tagListVisible = true
       else this.tagListVisible = false
     },
     addTag(event) {
@@ -210,6 +220,23 @@ export default {
         editor.replaceSelection(outputText, [start[0], start[1] - 1], end)
       }
     },
+    async updateDescription() {
+      this.isLoading = true
+      const sendForm = new FormData()
+      let value = this.value
+      if (value === '<p><br></p>') value = ''
+      else if (value !== '') {
+        this.$emit('filterImage', [value, sendForm, true])
+        value = value.replace(/<a/g, '<a target="_blank"')
+      }
+      sendForm.append('description', value)
+      await updateIssue(this.issueId, sendForm).then(() => {
+        this.$emit('update')
+        this.edit = false
+      })
+      this.$emit('sendMentionMessage')
+      this.isLoading = false
+    },
     cancelInput() {
       this.$refs.mdEditor.invoke('setMarkdown', this.oldValue)
       this.edit = !this.issueId
@@ -219,8 +246,41 @@ export default {
 }
 </script>
 
-<style scoped>
-.text-wrapper {
-  white-space: pre-wrap;
+<style lang="scss" scoped>
+.description:hover {
+  background-color: mix(#808080, #ffffff, 30);
+}
+
+.el-button--success{
+  color: #85ce61;
+  border: 1px solid #989898;
+  background: none;
+  -webkit-transition: all .6s ease;
+  transition: all .6s ease;
+  &:hover {
+    color: #fff;
+    border: 1px solid #67c23a;
+    background: #67c23a;
+  }
+}
+
+.el-button--danger{
+  color: #F56C6C;
+  border: 1px solid #989898;
+  background: none;
+  -webkit-transition: all .6s ease;
+  transition: all .6s ease;
+  &:hover {
+    color: #fff;
+    border: 1px solid #F56C6C;
+    background: #F56C6C;
+  }
+}
+
+.action {
+  margin: 0;
+  &.el-button--mini {
+    padding: 5px;
+  }
 }
 </style>

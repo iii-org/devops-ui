@@ -1,6 +1,7 @@
 <template>
   <div class="app-container" :style="isFromBoard ? 'padding: 0' : ''">
     <el-card
+      v-loading="isLoading"
       :element-loading-text="$t('Loading')"
       :body-style="{ 'min-height': '80vh' }"
     >
@@ -39,7 +40,7 @@
                 :issue-id="issueId"
                 :is-from-board="isFromBoard"
                 :is-button-disabled="isButtonDisabled"
-                @update="historyUpdate(issueId)"
+                @update="historyUpdate"
               />
               <span
                 v-if="!isLoading && issueId"
@@ -150,7 +151,9 @@
                 :is-button-disabled="isButtonDisabled"
                 :project-id="formProjectId"
                 :mention-list.sync="descriptionMentionList"
-                @update="historyUpdate(issueId)"
+                @filterImage="filterImage"
+                @sendMentionMessage="sendMentionMessage"
+                @update="historyUpdate"
               />
             </el-col>
             <el-col
@@ -236,24 +239,19 @@
               ref="moveEditor"
               :span="24"
               class="mb-3"
-              style="position: sticky; top: 0; z-index: 3;"
+              style="position: sticky; top: 0; z-index: 3; background-color: white"
             >
-              <el-collapse
-                v-model="issueNotesEditorVisible"
-                accordion
-              >
-                <el-collapse-item
-                  :title="$t('Issue.Notes')"
-                  name="issueNotesEditor"
-                >
-                  <IssueNotesEditor
-                    ref="IssueNotesEditor"
-                    v-model="form.notes"
-                    :project-id="formProjectId"
-                    :mention-list.sync="noteMentionList"
-                  />
-                </el-collapse-item>
-              </el-collapse>
+              <IssueNotesEditor
+                ref="IssueNotesEditor"
+                v-model="form.notes"
+                :issue-id="issueId"
+                :is-button-disabled="isButtonDisabled"
+                :project-id="formProjectId"
+                :mention-list.sync="noteMentionList"
+                @filterImage="filterImage"
+                @sendMentionMessage="sendMentionMessage"
+                @update="historyUpdate"
+              />
             </el-col>
             <el-col :span="24">
               <el-tabs
@@ -263,7 +261,7 @@
                 class="mx-3"
               >
                 <el-tab-pane
-                  v-loading="isLoading"
+                  v-loading="historyLoading"
                   name="history"
                 >
                   <template slot="label">
@@ -621,7 +619,6 @@ export default {
       tags: [],
       dialogHeight: '100%',
       editorHeight: '100px',
-      scrollType: 'top',
       relationVisible: 0,
       relationIssue: {
         visible: false,
@@ -642,10 +639,10 @@ export default {
       checkDeleteWhiteBoard: false,
       descriptionMentionList: [],
       noteMentionList: [],
-      issueNotesEditorVisible: 'issueNotesEditor',
       isIssueFormOpened: !this.isFromBoard,
       issueFormWidth: 80,
-      isAddSubIssue: false
+      isAddSubIssue: false,
+      historyLoading: false
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -753,16 +750,6 @@ export default {
     },
     'issue.excalidraw'(val) {
       if (val.length === 0) this.issueTabs = 'history'
-    },
-    scrollType(val) {
-      const elCollapseItemHeader = Array.from(this.$refs['mainIssueWrapper'].$el.getElementsByClassName('el-collapse-item__header'))
-      if (val === 'top') {
-        elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = ''
-        // this.issueNotesEditorVisible = 'issueNotesEditor'
-      } else {
-        elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = 'center'
-        // this.issueNotesEditorVisible = ''
-      }
     }
   },
   async mounted() {
@@ -1004,15 +991,15 @@ export default {
       this.isLoading = false
     },
     async historyUpdate() {
-      this.isLoading = true
+      this.historyLoading = true
       let data = {}
       const issue = await getIssue(this.issueId)
       data = issue.data
       this.initIssueDetails(data)
-      this.isLoading = false
+      this.historyLoading = false
     },
     async handleUpdated(issue_id) {
-      this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
+      // this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
       this.$refs.IssueTitle.edit = false
       this.$refs.IssueDescription.edit = false
       this.test_files = []
@@ -1137,10 +1124,11 @@ export default {
       while (n--) { u8arr[n] = bstr.charCodeAt(n) }
       return new File([u8arr], fileName, { type: mime })
     },
-    filterImage(str, sendForm, checkDuplicate) {
+    filterImage(object) {
+      const [value, sendForm, checkDuplicate] = object
       // Prevent the previous description is markdown format and detect the image will report an error
-      if (!str.includes('<p>') && !str.includes('</p>')) {
-        const arr = str.split(/!\[(.+?)\)/g).filter((item) => (/(.+?)\]\(data:.+/g).test(item))
+      if (!value.includes('<p>') && !value.includes('</p>')) {
+        const arr = value.split(/!\[(.+?)\)/g).filter((item) => (/(.+?)\]\(data:.+/g).test(item))
         if (arr.length === 0) return
         arr.forEach((item) => {
           const fileArray = item.split('](')
@@ -1153,7 +1141,7 @@ export default {
           sendForm.append('upload_files', file)
         })
       } else {
-        const arr = str.split(/src="(.+?)>/g).filter((item) => (/data:.+/g).test(item))
+        const arr = value.split(/src="(.+?)>/g).filter((item) => (/data:.+/g).test(item))
         if (arr.length === 0) return
         arr.forEach((item) => {
           const fileArray = item.split(/" alt="(.+?)"/)
@@ -1174,12 +1162,12 @@ export default {
       const sendForm = new FormData()
       if (sendData['notes'] === '<p><br></p>') sendData['notes'] = ''
       else if (sendData['notes'] !== '') {
-        this.filterImage(sendData['notes'], sendForm, false)
+        this.filterImage({ value: sendData['notes'], sendForm, checkDuplicate: false })
         sendData['notes'] = sendData['notes'].replace(/<a/g, '<a target="_blank"')
       }
       if (sendData['description'] === '<p><br></p>') sendData['description'] = ''
       else if (sendData['description'] !== '') {
-        this.filterImage(sendData['description'], sendForm, true)
+        this.filterImage({ value: sendData['description'], sendForm, checkDuplicate: true })
         sendData['description'] = sendData['description'].replace(/<a/g, '<a target="_blank"')
       }
       Object.keys(sendData).forEach((objKey) => {
@@ -1319,9 +1307,10 @@ export default {
       this.listLoading = false
     },
     hasUnsavedChanges() {
-      const isNotesChanged = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown') !== ''
+      // const isNotesChanged = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown') !== ''
       // const isFilesChanged = this.$refs.IssueFileUploader.uploadFileList.length > 0
-      return this.isFormDataChanged() || isNotesChanged
+      return this.isFormDataChanged()
+      // || isNotesChanged
     },
     isFormDataChanged() {
       if (Object.keys(this.originForm).length === 0) return false
@@ -1379,13 +1368,11 @@ export default {
           // ) {
           //   this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
           // }
-          this.scrollType = 'bottom'
         } else {
           //   this.$refs['mainIssue'].$el.insertBefore(
           //     this.$refs['mainIssueWrapper'].$el.getElementsByClassName('moveEditor')[0],
           //     this.$refs['mainIssue'].$el.children[this.$refs['mainIssue'].$el.children.length - 1]
           //   )
-          this.scrollType = 'top'
         }
       })
     },
