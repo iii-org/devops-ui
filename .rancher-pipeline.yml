@@ -87,6 +87,7 @@ stages:
       - tablelayout
       - projectlist
       - bugquickaddissueonboard
+      - feature29
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -114,6 +115,7 @@ stages:
       - tablelayout
       - projectlist
       - bugquickaddissueonboard
+      - feature29
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -137,6 +139,7 @@ stages:
       - tablelayout
       - projectlist
       - bugquickaddissueonboard
+      - feature29
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -176,6 +179,7 @@ stages:
       - tablelayout
       - projectlist
       - bugquickaddissueonboard
+      - feature29
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -208,6 +212,7 @@ stages:
       - tablelayout
       - projectlist
       - bugquickaddissueonboard
+      - feature29
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -238,6 +243,7 @@ stages:
       - tablelayout
       - projectlist
       - bugquickaddissueonboard
+      - feature29
 - name: Test--Anchore SBOM
   iiidevops: anchore
   steps:
