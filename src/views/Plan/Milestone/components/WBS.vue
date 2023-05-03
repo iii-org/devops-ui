@@ -279,7 +279,7 @@
         >
           {{ $t('Issue.CopyIssue') }}
         </contextmenu-item>
-        <contextmenu-submenu title="Add to Calendar">
+        <contextmenu-submenu :title="$t('Issue.AddToCalendar')">
           <contextmenu-item v-permission="permission" @click="addToCalendar('google', contextMenu.row)">
             <svg-icon icon-class="google" class="text-md" />
             <span>Google</span>

@@ -1,5 +1,5 @@
 <template>
-  <el-tooltip content="Add to calendar" placement="right">
+  <el-tooltip :content="$t('Issue.AddToCalendar')" placement="right">
     <el-dropdown trigger="hover">
       <el-button circle size="small">
         <em class="el-icon-date" />

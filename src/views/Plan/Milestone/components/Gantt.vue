@@ -5,7 +5,7 @@
       class="content"
     >
       <el-col
-        v-loading="listLoading"
+        v-loading="listLoading || isExportGantt"
         :element-loading-text="$t('Loading')"
         :span="24"
       >
@@ -13,11 +13,20 @@
           v-if="listData.length > 0"
           class="gantt-chart"
         >
+          <el-button
+            type="text"
+            :disabled="isExportGantt"
+            :icon="isExportGantt ? 'el-icon-loading' : 'el-icon-full-screen'"
+            @click="downloadPng"
+          >
+            {{ $t('Milestone.PreviewGantt') }}
+          </el-button>
           <gantt-elastic
             ref="gantt"
             :tasks="listData"
             :options="options"
             @chart-task-click="onTaskClick"
+            @options-changed="styleUpdate"
           >
             <gantt-header
               ref="header"
@@ -94,6 +103,30 @@
         @delete="handleRelationUpdate"
       />
     </el-dialog>
+    <el-dialog
+      :visible.sync="isDownload"
+      width="95%"
+      top="3vh"
+      :append-to-body="false"
+      @closed="isDownload = false"
+    >
+      <template slot="title">
+        <el-button
+          type="text"
+          :disabled="isExportGantt"
+          :icon="isExportGantt ? 'el-icon-loading' : 'el-icon-download'"
+          @click="exportPdf"
+        >
+          {{ $t('File.Download') }} PNG
+        </el-button>
+      </template>
+      <gantt-elastic
+        ref="ganttDownload"
+        v-loading="listLoading || isExportGantt"
+        :tasks="listData"
+        :options="optionsDownload"
+      />
+    </el-dialog>
   </div>
 </template>
 
@@ -107,6 +140,7 @@ import { CancelRequest } from '@/mixins'
 import { AddIssue } from '@/components/Issue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail'
 import theme from '@/theme.js'
+import html2canvas from 'html2canvas'
 
 export default {
   name: 'Gantt',
@@ -175,7 +209,19 @@ export default {
           'Before/After': this.$t('Gantt.TimelineLength'),
           'Display task list': this.$t('Gantt.DisplayTaskList')
         }
-      }
+      },
+      calLocale: {
+        name: 'zh-tw',
+        weekdays: ['週日', '週一', '週二', '週三', '週四', '週五', '週六'],
+        weekdaysShort: ['週日', '週一', '週二', '週三', '週四', '週五', '週六'],
+        weekdaysMin: ['週日', '週一', '週二', '週三', '週四', '週五', '週六'],
+        months: ['一月', '二月', '三月', '四月', '五月', '六月', ' 七月', '八月', '九月', '十月', '十一月', '十二月'],
+        monthsShort: ['一月', '二月', '三月', '四月', '五月', '六月', ' 七月', '八月', '九月', '十月', '十一月', '十二月']
+      },
+      savedOptions: {},
+      isDownload: false,
+      optionsDownload: {},
+      isExportGantt: false
     }
   },
   computed: {
@@ -219,13 +265,14 @@ export default {
     options() {
       const _this = this
       return {
-        maxHeight: this.tableHeight - 125,
+        locale: this.$i18n.locale === 'zh-TW' ? this.calLocale : { name: 'en' },
+        maxHeight: this.tableHeight - 150,
         title: {
           label: '',
           html: false
         },
         row: {
-          height: 24
+          height: 20
         },
         calendar: {
           hour: {
@@ -254,7 +301,9 @@ export default {
             {
               id: 2,
               label: this.$t('Issue.name'),
-              value: (issue) => `${issue.has_children ? `<em class="el-icon-caret-right" />` : '　'} ${issue.name}`,
+              value: (issue) => `${issue.has_children && issue.children.length === 0
+                ? '<em class="el-icon-caret-right" />' : ''}
+                <span style="${issue.has_children && issue.children.length === 0 ? 'color: #3498db;' : ''}; font-family: 'Helvetica Neue', sans-serif;">${issue.name}</span>`,
               width: 200,
               expander: true,
               html: true,
@@ -314,13 +363,12 @@ export default {
             // }
           ]
         }
-        // locale: { code: this.$i18n.locale.toLowerCase() }
       }
     }
   },
   watch: {
     tableHeight(value) {
-      this.options.maxHeight = value - 125
+      this.options.maxHeight = value - 150
     },
     dateRange: {
       deep: true,
@@ -335,10 +383,15 @@ export default {
   },
   created() {
     this.loadData()
+    this.getOptionSaved()
+  },
+  beforeDestroy() {
+    if (Object.keys(this.options).length !== 0 && this.options.hasOwnProperty('times')) localStorage.setItem('gantt', JSON.stringify(this.options))
   },
   methods: {
     async loadData() {
       await this.fetchData()
+      await this.getOptionSaved()
     },
     setHeaders() {
       this.$refs.header.opts = {
@@ -569,6 +622,51 @@ export default {
       } else {
         done()
       }
+    },
+    getOptionSaved() {
+      const target = JSON.parse(localStorage.getItem('gantt'))
+      if (target) {
+        if (target.times) {
+          this.options.times = target.times
+        } else {
+          localStorage.removeItem('gantt')
+          return
+        }
+        if (target.scope) this.options.scope = target.scope
+        this.options.taskList.display = target.taskList.display
+        this.options.taskList.percent = target.taskList.percent
+        this.options.row = target.row
+      }
+    },
+    styleUpdate(events) {
+      if (events.hasOwnProperty('times') && events.hasOwnProperty('scope')) {
+        this.options.times = events.times
+        this.options.scope = events.scope
+        this.options.taskList = events.taskList
+        this.options.row = events.row
+        this.savedOptions = events
+        if (Object.keys(this.options).length !== 0 && this.options.hasOwnProperty('times')) localStorage.setItem('gantt', JSON.stringify(this.options))
+      }
+    },
+    downloadPng() {
+      this.isExportGantt = true
+      this.optionsDownload = Object.assign({}, this.options)
+      this.optionsDownload.maxHeight = 1000000
+      this.optionsDownload.maxRows = 1000
+      this.isDownload = true
+      this.isExportGantt = false
+    },
+    async exportPdf() {
+      this.isExportGantt = true
+      const container = this.$refs.ganttDownload.$el
+      await html2canvas(container).then(function (canvas) {
+        const link = document.createElement('a')
+        link.download = 'html_image.jpg'
+        link.href = canvas.toDataURL('image/png', 1.0)
+        link.target = '_blank'
+        link.click()
+      })
+      this.isExportGantt = false
     }
   }
 }

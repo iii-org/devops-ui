@@ -275,7 +275,9 @@ export default {
     Fold: '收合',
     PopUp: '另開視窗',
     AddNewSubIssue: '新增子議題',
-    AddExistingIssue: '加入已有議題'
+    AddExistingIssue: '加入已有議題',
+    GenerateExcel: '產生Excel報表',
+    DownloadExcel: '下載Excel報表'
   },
   Notify: {
     Updated: '已更新',
@@ -648,13 +650,15 @@ export default {
     CustomFilterName: '自定義條件名稱',
     InputFilterName: '請輸入篩選條件名稱',
     RemoveCustomFilter: '確認要移除自定義條件嗎?',
-    ImportParentIssueData: '匯入父議題標題與敍述'
+    ImportParentIssueData: '匯入父議題標題與敍述',
+    AddToCalendar: '將添加到日曆'
   },
   Milestone: {
     Saving: '儲存中',
     Success: '儲存@:general.Success',
     Error: '儲存@:general.Error',
-    Display: '@:(Issue.Display)欄位'
+    Display: '@:(Issue.Display)欄位',
+    PreviewGantt: '預覽甘特圖'
   },
   Test: {
     TestPlan: {

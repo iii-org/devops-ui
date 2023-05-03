@@ -275,7 +275,9 @@ export default {
     Fold: 'Fold',
     PopUp: 'Pop Up',
     AddNewSubIssue: 'Add New Sub-Issue',
-    AddExistingIssue: 'Add Existing Issue'
+    AddExistingIssue: 'Add Existing Issue',
+    GenerateExcel: 'Generate Excel',
+    DownloadExcel: 'Download Excel'
   },
   Notify: {
     Updated: 'update successful',
@@ -653,13 +655,15 @@ export default {
     CustomFilterName: 'Custom Filter Name',
     InputFilterName: 'Input Filter Name',
     RemoveCustomFilter: 'Are you sure to Remove Custom Filter?',
-    ImportParentIssueData: 'Import Parent Issue Information'
+    ImportParentIssueData: 'Copy Parent Details',
+    AddToCalendar: 'Add to Calendar'
   },
   Milestone: {
     Saving: 'Saving',
     Success: '@:general.Success',
     Error: '@:general.Error',
-    Display: '@:Issue.Display Column'
+    Display: '@:Issue.Display Column',
+    PreviewGantt: 'Preview Gantt'
   },
   Test: {
     TestPlan: {

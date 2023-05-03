@@ -34,7 +34,7 @@
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
       >
-        <el-popover v-if="activeTab === 'WBS'">
+        <el-popover v-if="activeTab === 'WBS' || activeTab === 'Gantt'">
           <el-form>
             <el-form-item label="展開層數">
               <el-select v-model="downloadForm.levels">
@@ -52,7 +52,7 @@
                 class="buttonPrimary"
                 @click="generateReport"
               >
-                產生Excel報表
+                {{ $t('general.GenerateExcel') }}
               </el-button>
             </el-form-item>
             <template v-if="downloadInfo.create_at">
@@ -63,7 +63,7 @@
                   class="buttonSecondary"
                   @click="downloadReport"
                 >
-                  下載Excel報表
+                  {{ $t('general.DownloadExcel') }}
                 </el-button>
               </el-form-item>
               <div v-if="!downloadLock.is_lock">
@@ -72,7 +72,7 @@
             </template>
           </el-form>
           <el-button
-            v-if="activeTab === 'WBS'"
+            v-if="activeTab === 'WBS' || activeTab === 'Gantt'"
             slot="reference"
             icon="el-icon-download"
             class="buttonPrimaryReverse"
