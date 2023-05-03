@@ -19,6 +19,10 @@ const calendars = {
 
       if (start && end) {
         parameters.dates = `${start}/${end}`
+      } else if (start) {
+        parameters.dates = `${start}/${start}`
+      } else if (end) {
+        parameters.dates = `${end}/${end}`
       }
 
       return parameters
