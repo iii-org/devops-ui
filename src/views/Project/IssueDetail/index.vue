@@ -1,16 +1,8 @@
 <template>
   <div class="app-container" :style="isFromBoard ? 'padding: 0' : ''">
-    <el-card
-      v-loading="isLoading"
-      :element-loading-text="$t('Loading')"
-      :body-style="{ 'min-height': '80vh' }"
-    >
+    <el-card v-loading="isLoading" :element-loading-text="$t('Loading')" :body-style="{ 'min-height': '80vh' }">
       <el-row slot="header">
-        <el-row
-          type="flex"
-          align="bottom"
-          justify="space-between"
-        >
+        <el-row type="flex" align="bottom" justify="space-between">
           <el-row>
             <el-col class="text-xl mr-3">
               <el-button
@@ -24,10 +16,7 @@
                 {{ $t('general.Back') }}
               </el-button>
               <template v-if="tracker">
-                <Tracker
-                  :name="$t(`Issue.${tracker}`)"
-                  :type="tracker"
-                />
+                <Tracker :name="$t(`Issue.${tracker}`)" :type="tracker" />
               </template>
               <template v-else>
                 {{ $t('Issue.Issue') }}
@@ -42,35 +31,24 @@
                 :is-button-disabled="isButtonDisabled"
                 @update="historyUpdate"
               />
-              <span
-                v-if="!isLoading && issueId"
-                class="text-base mr-3"
-              >
-                {{ $t('Issue.AddBy', { user: author, created_date: getRelativeTime(created_date)}) }}
+              <span v-if="!isLoading && issueId" class="text-base mr-3">
+                {{ $t('Issue.AddBy', { user: author, created_date: getRelativeTime(created_date) }) }}
               </span>
               <el-tooltip class="item" :content="$t('general.CopyUrl')" placement="bottom">
-                <el-button
-                  class="el-icon-copy-document"
-                  circle
-                  size="small"
-                  @click="copyUrl"
-                />
+                <el-button class="el-icon-copy-document" circle size="small" @click="copyUrl" />
               </el-tooltip>
               <el-tooltip v-if="isFromBoard" :content="$t('general.PopUp')" placement="bottom">
-                <el-button
-                  circle
-                  size="small"
-                  @click="$emit('popup')"
-                >
+                <el-button circle size="small" @click="$emit('popup')">
                   <em class="ri-external-link-line" />
                 </el-button>
               </el-tooltip>
+              <AddToCalendar
+                :issue-id="issueId"
+                :form="form"
+              />
             </el-col>
           </el-row>
-          <el-col
-            :span="6"
-            class="text-right"
-          >
+          <el-col :span="6" class="text-right">
             <el-button
               v-if="!isFromBoard"
               size="medium"
@@ -93,11 +71,7 @@
         </el-row>
       </el-row>
       <el-row :gutter="20">
-        <el-col
-          ref="mainIssueWrapper"
-          :span="24"
-          :md="isFromBoard ? 24 : (isIssueFormOpened ? 16 : 24)"
-        >
+        <el-col ref="mainIssueWrapper" :span="24" :md="isFromBoard ? 24 : isIssueFormOpened ? 16 : 24">
           <el-row>
             <el-col :span="24">
               <IssueToolbar
@@ -119,17 +93,11 @@
           <el-row
             ref="mainIssue"
             :gutter="10"
-            :class="isFromBoard ? 'issueHeightBoard' :'issueHeight'"
+            :class="isFromBoard ? 'issueHeightBoard' : 'issueHeight'"
             @scroll.native="onScrollIssue"
           >
             <el-collapse-transition>
-              <el-col
-                v-if="isAddSubIssue"
-                id="AddSubIssueWrapper"
-                ref="AddSubIssueWrapper"
-                :span="24"
-                class="mb-3"
-              >
+              <el-col v-if="isAddSubIssue" id="AddSubIssueWrapper" ref="AddSubIssueWrapper" :span="24" class="mb-3">
                 <AddSubIssue
                   ref="AddSubIssue"
                   :parent-data="issue"
@@ -138,11 +106,7 @@
                 />
               </el-col>
             </el-collapse-transition>
-            <el-col
-              ref="IssueDescriptionWrapper"
-              :span="24"
-              class="mb-3"
-            >
+            <el-col ref="IssueDescriptionWrapper" :span="24" class="mb-3">
               <IssueDescription
                 ref="IssueDescription"
                 v-model="form.description"
@@ -156,29 +120,22 @@
                 @update="historyUpdate"
               />
             </el-col>
-            <el-col
-              ref="IssueCollapseWrapper"
-              :span="24"
-            >
+            <el-col ref="IssueCollapseWrapper" :span="24">
               <el-collapse
-                v-if="files.length > 0 || test_files.length > 0 ||
-                  countRelationIssue > 0|| isFromBoard"
+                v-if="files.length > 0 || test_files.length > 0 || countRelationIssue > 0 || isFromBoard"
                 v-model="relationVisible"
                 accordion
               >
                 <el-collapse-item
                   v-if="files.length > 0"
-                  :title="$t('Issue.Files')+ '(' + files.length + ')'"
+                  :title="$t('Issue.Files') + '(' + files.length + ')'"
                   name="files"
                 >
-                  <IssueFiles
-                    :is-button-disabled="isButtonDisabled"
-                    :issue-file.sync="files"
-                  />
+                  <IssueFiles :is-button-disabled="isButtonDisabled" :issue-file.sync="files" />
                 </el-collapse-item>
                 <el-collapse-item
                   v-if="test_files.length > 0"
-                  :title="$t('Test.TestPlan.file_name')+ '(' + test_files.length + ')'"
+                  :title="$t('Test.TestPlan.file_name') + '(' + test_files.length + ')'"
                   name="testFiles"
                 >
                   <IssueCollection
@@ -187,11 +144,7 @@
                     @update="updateTestCollection"
                   />
                 </el-collapse-item>
-                <el-collapse-item
-                  v-if="countRelationIssue > 0"
-                  v-loading="isLoadingFamily"
-                  name="relatedIssue"
-                >
+                <el-collapse-item v-if="countRelationIssue > 0" v-loading="isLoadingFamily" name="relatedIssue">
                   <div slot="title">
                     {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
                     <el-button
@@ -215,11 +168,7 @@
                     @popup-dialog="onRelationIssueDialog"
                   />
                 </el-collapse-item>
-                <el-collapse-item
-                  v-if="isFromBoard"
-                  :title="$t('general.AdvancedSettings')"
-                  name="issueForm"
-                >
+                <el-collapse-item v-if="isFromBoard" :title="$t('general.AdvancedSettings')" name="issueForm">
                   <IssueForm
                     ref="IssueForm"
                     class="mx-3 text-xs"
@@ -291,10 +240,7 @@
                     :height="dialogHeight"
                   />
                 </el-tab-pane>
-                <el-tab-pane
-                  v-if="isHasWhiteBoard"
-                  name="whiteBoard"
-                >
+                <el-tab-pane v-if="isHasWhiteBoard" name="whiteBoard">
                   <template slot="label">
                     <span>
                       <em class="el-icon-data-line" />
@@ -313,12 +259,7 @@
             </el-col>
           </el-row>
         </el-col>
-        <el-col
-          v-show="isIssueFormOpened"
-          :span="24"
-          :md="8"
-          class="issueOptionHeight"
-        >
+        <el-col v-show="isIssueFormOpened" :span="24" :md="8" class="issueOptionHeight">
           <IssueForm
             v-if="!isFromBoard"
             ref="IssueForm"
@@ -379,18 +320,9 @@
       destroy-on-close
       :title="$t('Issue.TraceabilityMatrix') + '(#' + issue.id + ' - ' + issue.name + ')'"
     >
-      <IssueMatrix
-        v-if="issueMatrixDialog.visible"
-        :row.sync="issue"
-        @update-issue="handleUpdated"
-      />
+      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />
     </el-dialog>
-    <el-dialog
-      :visible.sync="isShowDialog"
-      append-to-body
-      destroy-on-close
-      width="30%"
-    >
+    <el-dialog :visible.sync="isShowDialog" append-to-body destroy-on-close width="30%">
       <span>
         <em class="el-icon-warning" :style="getStyle('danger')" />
         {{ $t('Notify.ChangeProject') }}
@@ -404,50 +336,32 @@
         </el-button>
       </span>
     </el-dialog>
-    <el-dialog
-      :visible.sync="isDeleteIssueDialog"
-      append-to-body
-      destroy-on-close
-      width="30%"
-    >
+    <el-dialog :visible.sync="isDeleteIssueDialog" append-to-body destroy-on-close width="30%">
       <span class="block text-center text-lg font-bold">
         <em class="el-icon-warning" :style="getStyle('danger')" />
         {{ this.$t(`Issue.${hasChildrenIssue ? 'ConfirmDeleteIssue' : 'DeleteIssue'}`, { issueName: issueName }) }}
       </span>
       <ul v-if="hasChildrenIssue">
-        <li
-          v-for="item in children"
-          :key="item.id"
-          class="p-1"
-        >
-          <Status
-            class="mx-1"
-            size="mini"
-            :name="$t(`Issue.${item.status.name}`)"
-          />
-          <Tracker
-            size="mini"
-            :name="$t(`Issue.${item.tracker.name}`)"
-          />
+        <li v-for="item in children" :key="item.id" class="p-1">
+          <Status class="mx-1" size="mini" :name="$t(`Issue.${item.status.name}`)" />
+          <Tracker size="mini" :name="$t(`Issue.${item.tracker.name}`)" />
           <span>
             {{ `#${item.id} - ` }}
           </span>
           <span v-if="item.tags && item.tags.length > 0">
             <span v-for="tag in item.tags" :key="tag.id">
-              <el-tag
-                class="mx-1"
-                type="mini"
-              >
+              <el-tag class="mx-1" type="mini">
                 {{ tag.name }}
               </el-tag>
             </span>
           </span>
           <span>
             {{
-              `${item.name} ${(
-                item.assigned_to && Object.keys(item.assigned_to).length > 0 ?
-                  `(${$t(`Issue.assigned_to`)}:${item.assigned_to.name} - ${item.assigned_to.login})` : ''
-              )}`
+              `${item.name} ${
+                item.assigned_to && Object.keys(item.assigned_to).length > 0
+                  ? `(${$t(`Issue.assigned_to`)}:${item.assigned_to.name} - ${item.assigned_to.login})`
+                  : ''
+              }`
             }}
           </span>
         </li>
@@ -459,11 +373,7 @@
           {{ $t('Notify.DeleteExcalidrawWarning') }}
         </span>
         <ul class="mt-0">
-          <li
-            v-for="item in issue.excalidraw"
-            :key="item.id"
-            class="p-1"
-          >
+          <li v-for="item in issue.excalidraw" :key="item.id" class="p-1">
             <el-link type="primary" @click="editWhiteBoard(item)">
               {{ item.name }}
             </el-link>
@@ -493,10 +403,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
-import {
-  addProjectTags,
-  getRootProjectId
-} from '@/api/projects'
+import { addProjectTags, getRootProjectId } from '@/api/projects'
 import { getHasSon, getProjectRelation } from '@/api_v2/projects'
 import {
   getIssue,
@@ -526,7 +433,8 @@ import {
   IssueCollection,
   AdminCommitLog,
   WhiteBoardTable,
-  AddSubIssue
+  AddSubIssue,
+  AddToCalendar
 } from './components'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
 import variables from '@/styles/theme/variables.scss'
@@ -537,7 +445,6 @@ export default {
   name: 'ProjectIssueDetail',
   components: {
     IssueCollection,
-    // eslint-disable-next-line vue/no-unused-components
     Status,
     Tracker,
     IssueTitle,
@@ -552,7 +459,8 @@ export default {
     IssueExpand,
     AdminCommitLog,
     WhiteBoardTable,
-    AddSubIssue
+    AddSubIssue,
+    AddToCalendar
   },
   mixins: [ContextMenu],
   props: {
@@ -718,9 +626,7 @@ export default {
       return getTrackerName.name
     },
     isButtonDisabled() {
-      return this.$route.params.hasOwnProperty('disableButton')
-        ? this.$route.params.disableButton
-        : false
+      return this.$route.params.hasOwnProperty('disableButton') ? this.$route.params.disableButton : false
     },
     formProjectId() {
       return this.form.project_id || this.selectedProjectId
@@ -750,6 +656,18 @@ export default {
     },
     'issue.excalidraw'(val) {
       if (val.length === 0) this.issueTabs = 'history'
+    },
+    scrollType(val) {
+      const elCollapseItemHeader = Array.from(
+        this.$refs['mainIssueWrapper'].$el.getElementsByClassName('el-collapse-item__header')
+      )
+      if (val === 'top') {
+        elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = ''
+        // this.issueNotesEditorVisible = 'issueNotesEditor'
+      } else {
+        elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = 'center'
+        // this.issueNotesEditorVisible = ''
+      }
     }
   },
   async mounted() {
@@ -875,16 +793,17 @@ export default {
       this.view = data
       if (
         (Object.keys(data.project).length > 0 &&
-        this.selectedProjectId !== data.project.id &&
-        !this.projectRelationList.includes(data.project.id)) ||
-        !this.isFromBoard) {
-      // Cori keeps both but remove the code from develop
-      //        !this.getRelationProjectList().includes(data.project.id) &&
-      //        !this.isFromBoard
-      //       ( !this.projectRelationList.includes(data.project.id) || (
-      //        !this.getRelationProjectList().includes(data.project.id) &&
-      //        !this.isFromBoard))
-      // )
+          this.selectedProjectId !== data.project.id &&
+          !this.projectRelationList.includes(data.project.id)) ||
+        !this.isFromBoard
+      ) {
+        // Cori keeps both but remove the code from develop
+        //        !this.getRelationProjectList().includes(data.project.id) &&
+        //        !this.isFromBoard
+        //       ( !this.projectRelationList.includes(data.project.id) || (
+        //        !this.getRelationProjectList().includes(data.project.id) &&
+        //        !this.isFromBoard))
+        // )
         // this.onProjectChange(data.project.id)
       }
       if (this.$refs.IssueForm) {
@@ -1121,7 +1040,9 @@ export default {
       const bstr = atob(arr[1])
       let n = bstr.length
       const u8arr = new Uint8Array(n)
-      while (n--) { u8arr[n] = bstr.charCodeAt(n) }
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
       return new File([u8arr], fileName, { type: mime })
     },
     filterImage(object) {
@@ -1133,9 +1054,10 @@ export default {
         arr.forEach((item) => {
           const fileArray = item.split('](')
           const file = this.dataURLtoFile(fileArray[0], fileArray[1])
-          if (checkDuplicate && this.files.some((element) =>
-            file.name === element.filename && file.size === element.filesize
-          )) {
+          if (
+            checkDuplicate &&
+            this.files.some((element) => file.name === element.filename && file.size === element.filesize)
+          ) {
             return
           }
           sendForm.append('upload_files', file)
@@ -1146,10 +1068,12 @@ export default {
         arr.forEach((item) => {
           const fileArray = item.split(/" alt="(.+?)"/)
           const file = this.dataURLtoFile(fileArray[1], fileArray[0])
-          if (checkDuplicate && this.files.some((element) =>
-            file.name === element.filename && file.size === element.filesize
-          )) return
-          sendForm.append('upload_files', file)
+          if (
+            checkDuplicate &&
+            this.files.some((element) => file.name === element.filename && file.size === element.filesize)
+          ) {
+            return sendForm.append('upload_files', file)
+          }
         })
       }
     },
@@ -1338,10 +1262,9 @@ export default {
           confirmButtonText: this.$t('general.Confirm'),
           cancelButtonText: this.$t('general.Cancel'),
           type: 'warning'
+        }).then(() => {
+          done()
         })
-          .then(() => {
-            done()
-          })
       } else {
         done()
       }
