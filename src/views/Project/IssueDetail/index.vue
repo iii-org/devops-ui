@@ -1160,16 +1160,16 @@ export default {
       //   if (sendData[item] === '' || !sendData[item]) delete sendData[item]
       // })
       const sendForm = new FormData()
-      if (sendData['notes'] === '<p><br></p>') sendData['notes'] = ''
-      else if (sendData['notes'] !== '') {
-        this.filterImage({ value: sendData['notes'], sendForm, checkDuplicate: false })
-        sendData['notes'] = sendData['notes'].replace(/<a/g, '<a target="_blank"')
-      }
-      if (sendData['description'] === '<p><br></p>') sendData['description'] = ''
-      else if (sendData['description'] !== '') {
-        this.filterImage({ value: sendData['description'], sendForm, checkDuplicate: true })
-        sendData['description'] = sendData['description'].replace(/<a/g, '<a target="_blank"')
-      }
+      // if (sendData['notes'] === '<p><br></p>') sendData['notes'] = ''
+      // else if (sendData['notes'] !== '') {
+      //   this.filterImage({ value: sendData['notes'], sendForm, checkDuplicate: false })
+      //   sendData['notes'] = sendData['notes'].replace(/<a/g, '<a target="_blank"')
+      // }
+      // if (sendData['description'] === '<p><br></p>') sendData['description'] = ''
+      // else if (sendData['description'] !== '') {
+      //   this.filterImage({ value: sendData['description'], sendForm, checkDuplicate: true })
+      //   sendData['description'] = sendData['description'].replace(/<a/g, '<a target="_blank"')
+      // }
       Object.keys(sendData).forEach((objKey) => {
         if ((objKey === 'start_date' || objKey === 'end_date') && !sendData[objKey]) {
           sendForm.append(objKey, '')
