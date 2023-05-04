@@ -78,6 +78,7 @@
       :close-on-click-modal="false"
       :modal-append-to-body="false"
       :show-close="false"
+      append-to-body
       width="50%"
       top="5px"
     >
