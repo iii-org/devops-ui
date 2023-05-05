@@ -27,8 +27,25 @@
       v-loading="listLoading"
       :data="listData"
       :element-loading-text="$t('Loading')"
+      :row-class-name="getRowClass"
       fit
     >
+      <el-table-column
+        type="expand"
+      >
+        <template slot-scope="scope">
+          <ProjectExpand
+            :children="scope.row.children"
+            @setStar="setStar"
+            @updated="fetchData"
+            @handleClick="handleClick"
+            @handleEdit="handleEdit"
+            @handleDelete="handleDelete"
+            @handleFix="handleFix"
+            @handleToggle="handleToggle"
+          />
+        </template>
+      </el-table-column>
       <el-table-column
         width="60"
         align="center"
@@ -148,7 +165,6 @@
         prop="project_status"
         i18n-key="Project"
         :label="$t('Project.IssueStatus')"
-        size="medium"
         location="projectListPM"
         min-width="120"
       />
@@ -189,7 +205,6 @@
           <el-tooltip
             placement="bottom"
             :disabled="!scope.row.is_lock"
-
             :content="scope.row.lock_reason"
           >
             <el-tag v-if="scope.row.is_lock" type="info">
@@ -241,7 +256,7 @@
             placement="bottom"
             :content="$t('general.Fix')"
           >
-            <em class="ri-refresh-fill active operate-button" @click="handleFix(scope.row.id)" />
+            <em class="ri-refresh-line active operate-button" @click="handleFix(scope.row.id)" />
           </el-tooltip>
           <el-tooltip
             v-if="scope.row.is_lock !== true"
@@ -306,7 +321,9 @@ import {
 
 const params = () => ({
   limit: 10,
-  offset: 0
+  offset: 0,
+  parent_son: true,
+  root: true
 })
 
 export default {
@@ -318,7 +335,8 @@ export default {
     EditProjectDialog,
     DeleteProjectDialog,
     SearchFilter,
-    UpdateButton
+    UpdateButton,
+    ProjectExpand: () => import('./components/ProjectExpand')
   },
   filters: {
     statusFilter(status) {
@@ -388,12 +406,16 @@ export default {
       if (filteredArray.length > 0) {
         this.getCalculateProjectData(filteredArray)
       }
-      return this.projectList
+      return this.listData
     },
     getParams() {
       if (this.keyword !== '') {
+        delete this.params.root
         this.params.search = this.keyword
-      } else delete this.params.search
+      } else {
+        delete this.params.search
+        this.params.root = true
+      }
       if (this.$refs.filter.isDisabled.length === 1) {
         this.params.disabled = this.$refs.filter.isDisabled[0]
       } else {
@@ -404,7 +426,7 @@ export default {
       const ids = project.map(function (el) {
         return el.id
       })
-      const calculated = (await getCalculateProjectList(ids.join())).data
+      const calculated = await this.getCalculateProjectList(ids.join())
       for (const i in calculated.project_list) {
         calculated.project_list[i].id = parseInt(calculated.project_list[i].id)
       }
@@ -418,6 +440,16 @@ export default {
         })
       }
       this.listData = merged
+    },
+    async getCalculateProjectList(ids) {
+      this.listLoading = true
+      return await getCalculateProjectList(ids)
+        .then((res) => {
+          return res.data
+        })
+        .finally(() => {
+          this.listLoading = false
+        })
     },
     async onPagination(listQuery) {
       const { limit, page } = listQuery
@@ -546,6 +578,9 @@ export default {
         message: error,
         type: 'warning'
       })
+    },
+    getRowClass({ row }) {
+      return row.has_son ? '' : 'hide-expand'
     }
   }
 }
@@ -570,5 +605,13 @@ export default {
   top: 0;
   background: #3ecbbc;
   height: 4px;
+}
+
+::v-deep .hide-expand {
+  > .el-table__expand-column {
+    > .cell {
+      display: none;
+    }
+  }
 }
 </style>

@@ -127,6 +127,7 @@ export const updateProjectTags = (tag_id, data) =>
   request.put(`/v2/tags/${tag_id}`, data, {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
+export const updateProjectTagsOrder = (data) => request.put(`/v2/tags/order`, data)
 
 export const postIssueListDownload = (project_id, data) =>
   request.post(`/v2/project/${project_id}/download/execute`, data)

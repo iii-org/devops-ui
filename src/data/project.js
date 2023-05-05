@@ -46,6 +46,10 @@ function Project(project) {
   this.next_d_time = project.next_d_time
   this.last_test_time = project.last_test_time
   this.last_test_result = project.last_test_result
+
+  // children project
+  this.children = project.children
+  this.has_son = project.has_son
 }
 
 export default Project

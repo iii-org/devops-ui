@@ -277,7 +277,8 @@ export default {
     AddNewSubIssue: 'Add New Sub-Issue',
     AddExistingIssue: 'Add Existing Issue',
     GenerateExcel: 'Generate Excel',
-    DownloadExcel: 'Download Excel'
+    DownloadExcel: 'Download Excel',
+    ChildrenProject: 'Children Projects'
   },
   Notify: {
     Updated: 'update successful',

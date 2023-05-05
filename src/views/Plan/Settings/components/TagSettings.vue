@@ -32,56 +32,75 @@
         </el-form-item>
       </el-form>
     </div>
-    <el-table
-      :data="listData"
-      height="405"
-      border
-      fit
-      @row-click="handleRowClick"
+    <el-table-draggable
+      @onEnd="handleTableDraggingChange"
     >
-      <el-table-column
-        type="index"
-        align="center"
-        :label="$t('ProjectSettings.Index')"
-        width="100"
-      />
-      <el-table-column align="center" :label="$t('ProjectSettings.Tag')">
-        <template slot-scope="scope">
-          <div v-show="scope.row.edit">
-            <el-input v-model="scope.row.name" type="text" />
-            <el-button class="buttonPrimary" @click.stop="handleTableInputConfirm(scope)">
-              {{ $t('general.ok') }}
-            </el-button>
-            <el-button class="buttonSecondaryReverse" @click.stop="handleTableInputCancel(scope)">
-              {{ $t('general.Cancel') }}
-            </el-button>
-          </div>
-          <span v-show="!scope.row.edit">{{ scope.row.name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('general.Actions')">
-        <template slot-scope="scope">
-          <el-tooltip
-            placement="bottom"
-            :content="$t('general.Delete')"
-          >
-            <em
-              class="ri-delete-bin-2-line danger operate-button"
-              @click.stop="handleTagDelete(scope.row)"
-            />
-          </el-tooltip>
-        </template>
-      </el-table-column>
-    </el-table>
+      <el-table
+        v-loading="listLoading"
+        :data="listData"
+        row-key="id"
+        height="500"
+        fit
+        @row-click="handleRowClick"
+      >
+        <el-table-column align="center" width="25">
+          <svg-icon
+            icon-class="draggable"
+            class="text-lg mr-2"
+          />
+        </el-table-column>
+        <el-table-column
+          type="index"
+          align="center"
+          :label="$t('ProjectSettings.Index')"
+          width="100"
+        />
+        <el-table-column align="center" :label="$t('ProjectSettings.Tag')">
+          <template slot-scope="scope">
+            <div v-show="scope.row.edit">
+              <el-input v-model="scope.row.name" type="text" />
+              <el-button class="buttonPrimary" @click.stop="handleTableInputConfirm(scope)">
+                {{ $t('general.ok') }}
+              </el-button>
+              <el-button class="buttonSecondaryReverse" @click.stop="handleTableInputCancel(scope)">
+                {{ $t('general.Cancel') }}
+              </el-button>
+            </div>
+            <span v-show="!scope.row.edit">{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('general.Actions')">
+          <template slot-scope="scope">
+            <el-tooltip
+              placement="bottom"
+              :content="$t('general.Delete')"
+            >
+              <em
+                class="ri-delete-bin-2-line danger operate-button"
+                @click.stop="handleTagDelete(scope.row)"
+              />
+            </el-tooltip>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-table-draggable>
   </div>
 </template>
 
 <script>
 import { BasicData } from '@/mixins'
-import { getTagsByProject, addProjectTags, deleteProjectTags, updateProjectTags } from '@/api/projects'
+import {
+  getTagsByProject,
+  addProjectTags,
+  deleteProjectTags,
+  updateProjectTags,
+  updateProjectTagsOrder
+} from '@/api_v2/projects'
+import ElTableDraggable from 'el-table-draggable'
 
 export default {
   name: 'TagSettings',
+  components: { ElTableDraggable },
   mixins: [BasicData],
   data() {
     return {
@@ -92,11 +111,24 @@ export default {
       }
     }
   },
+  computed: {
+    lastTagId() {
+      return this.originData[this.originData.length - 1].id
+    }
+  },
   methods: {
     async fetchData() {
-      const res = await getTagsByProject(this.selectedProjectId)
-      this.setOriginData(res.data.tags)
-      return this.handleRowData(res.data.tags)
+      this.listLoading = true
+      let tags = []
+      await getTagsByProject(this.selectedProjectId)
+        .then((res) => {
+          tags = res.data.tags
+          this.setOriginData(tags)
+        })
+        .finally(() => {
+          this.listLoading = false
+        })
+      return this.handleRowData(tags)
     },
     async addProjectTags(formData) {
       await addProjectTags(formData)
@@ -203,20 +235,65 @@ export default {
         message: this.$t('ProjectSettings.TagUpdateMessage'),
         type: 'success'
       })
+    },
+    async handleTableDraggingChange(event) {
+      const { oldIndex, newIndex } = event
+      if (oldIndex === newIndex || !this.checkBeforeDragging(event)) {
+        this.updateData()
+        return
+      }
+      const sendData = {
+        tag_id: Number(this.originData[oldIndex].id),
+        to_tag_id: this.getToTagId(event)
+      }
+      if (sendData.to_tag_id === null) {
+        delete sendData.to_tag_id
+      }
+      await updateProjectTagsOrder(sendData)
+        .finally(() => {
+          this.updateData()
+        })
+    },
+    checkBeforeDragging(event) {
+      const { oldIndex, newIndex } = event
+      return this.originData[oldIndex].name === this.listData[oldIndex].name &&
+        this.originData[newIndex].name === this.listData[newIndex].name
+    },
+    getToTagId(event) {
+      const { oldIndex, newIndex } = event
+      if (newIndex + 1 === this.originData.length) {
+        return null
+      }
+      return oldIndex > newIndex
+        ? Number(this.originData[newIndex].id)
+        : Number(this.originData[newIndex + 1].id)
+    },
+    async updateData() {
+      this.listLoading = true
+      this.$nextTick(async () => {
+        this.listData = await this.fetchData()
+      })
+      this.listLoading = false
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
->>> .el-input {
+::v-deep .el-input {
   width: 300px;
 }
 
->>> .el-table__row > td:nth-child(2) {
-  cursor: pointer;
+::v-deep .el-table__row {
+  cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
   &:hover {
     background: #e4ecf7;
+  }
+  > td:nth-child(2) {
+    cursor: text;
   }
 }
 </style>
