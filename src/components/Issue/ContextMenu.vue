@@ -41,11 +41,11 @@
             <ul
               v-for="tag in tagOptions"
               :key="tag.id"
-              :class="{ current: getContextMenuCurrentValue(filterColumnOptions[2], tag), [tag.class]: tag.class }"
+              :class="{ current: getContextMenuCurrentValue(getTagFilterColumnOptions, tag), [tag.class]: tag.class }"
               style="padding-left: 0; color: #333;"
             >
               <li class="tag" @click="onUpdate(`tags_id`, tag)">
-                <em v-if="getContextMenuCurrentValue(filterColumnOptions[2], tag)" class="el-icon-check" />
+                <em v-if="getContextMenuCurrentValue(getTagFilterColumnOptions, tag)" class="el-icon-check" />
                 <em v-if="tag.id === 'null'" class="el-icon-circle-close" />
                 {{ tag.name }}
               </li>
@@ -311,6 +311,9 @@ export default {
     isForceParent() {
       if (!this.enableForceTracker || !this.row.id) return false
       return this.forceTracker.findIndex((tracker) => tracker.id === this.row.tracker.id) !== -1 && !this.row.has_father
+    },
+    getTagFilterColumnOptions() {
+      return this.filterColumnOptions.find((option) => option.value === 'tags')
     }
   },
   watch: {
