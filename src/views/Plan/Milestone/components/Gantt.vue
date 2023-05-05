@@ -27,6 +27,7 @@
             :options="options"
             @chart-task-click="onTaskClick"
             @options-changed="styleUpdate"
+            @taskList-task-click="onTaskListTaskClick"
           >
             <gantt-header
               ref="header"
@@ -125,6 +126,7 @@
         v-loading="listLoading || isExportGantt"
         :tasks="listData"
         :options="optionsDownload"
+        @taskList-task-click="onTaskListTaskClick"
       />
     </el-dialog>
   </div>
@@ -179,6 +181,24 @@ export default {
   },
   data() {
     this.bg = Object.freeze(theme.backgroundColor)
+    this.calLocale = {
+      'zh-TW': {
+        name: 'zh-tw',
+        weekdays: ['週日', '週一', '週二', '週三', '週四', '週五', '週六'],
+        weekdaysShort: ['週日', '週一', '週二', '週三', '週四', '週五', '週六'],
+        weekdaysMin: ['週日', '週一', '週二', '週三', '週四', '週五', '週六'],
+        months: ['一月', '二月', '三月', '四月', '五月', '六月', ' 七月', '八月', '九月', '十月', '十一月', '十二月'],
+        monthsShort: ['一月', '二月', '三月', '四月', '五月', '六月', ' 七月', '八月', '九月', '十月', '十一月', '十二月']
+      },
+      en: {
+        name: 'en',
+        weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        weekdaysMin: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+        months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      }
+    }
     return {
       listLoading: false,
       contentLoading: false,
@@ -210,18 +230,76 @@ export default {
           'Display task list': this.$t('Gantt.DisplayTaskList')
         }
       },
-      calLocale: {
-        name: 'zh-tw',
-        weekdays: ['週日', '週一', '週二', '週三', '週四', '週五', '週六'],
-        weekdaysShort: ['週日', '週一', '週二', '週三', '週四', '週五', '週六'],
-        weekdaysMin: ['週日', '週一', '週二', '週三', '週四', '週五', '週六'],
-        months: ['一月', '二月', '三月', '四月', '五月', '六月', ' 七月', '八月', '九月', '十月', '十一月', '十二月'],
-        monthsShort: ['一月', '二月', '三月', '四月', '五月', '六月', ' 七月', '八月', '九月', '十月', '十一月', '十二月']
-      },
-      savedOptions: {},
       isDownload: false,
       optionsDownload: {},
-      isExportGantt: false
+      isExportGantt: false,
+      options: {
+        locale: this.calLocale[this.$i18n.locale],
+        maxHeight: this.tableHeight - 150,
+        title: {
+          label: '',
+          html: false
+        },
+        row: {
+          height: 20
+        },
+        calendar: {
+          hour: {
+            display: false
+          }
+        },
+        chart: {
+          progress: {
+            bar: false
+          },
+          expander: {
+            display: true
+          }
+        },
+        taskList: {
+          expander: {
+            straight: false
+          },
+          columns: [
+            {
+              id: 1,
+              label: 'ID',
+              value: 'id',
+              width: 40
+            },
+            {
+              id: 2,
+              label: this.$t('Issue.name'),
+              value: (issue) => `${issue.has_children && issue.children.length === 0
+                ? '<em class="el-icon-caret-right" />' : ''}
+                <span
+                  style="${issue.has_children && issue.children.length === 0 ? 'color: #3498db;' : ''};
+                  font-family: 'Helvetica Neue', sans-serif;">${issue.name}
+                </span>`,
+              width: 200,
+              expander: true,
+              html: true,
+              style: {
+                'task-list-item-value-container': {
+                  cursor: 'pointer'
+                }
+              }
+            },
+            {
+              id: 3,
+              label: this.$t('Issue.StartDate'),
+              value: (task) => isTimeValid(task.start) ? getLocalTime(task.start, 'YYYY-MM-DD') : null,
+              width: 78
+            },
+            {
+              id: 4,
+              label: this.$t('Issue.EndDate'),
+              value: (task) => isTimeValid(task.end) ? getLocalTime(task.end, 'YYYY-MM-DD') : null,
+              width: 78
+            }
+          ]
+        }
+      }
     }
   },
   computed: {
@@ -261,109 +339,6 @@ export default {
         }
       }
       return !!this.keyword
-    },
-    options() {
-      const _this = this
-      return {
-        locale: this.$i18n.locale === 'zh-TW' ? this.calLocale : { name: 'en' },
-        maxHeight: this.tableHeight - 150,
-        title: {
-          label: '',
-          html: false
-        },
-        row: {
-          height: 20
-        },
-        calendar: {
-          hour: {
-            display: false
-          }
-        },
-        chart: {
-          progress: {
-            bar: false
-          },
-          expander: {
-            display: true
-          }
-        },
-        taskList: {
-          expander: {
-            straight: false
-          },
-          columns: [
-            {
-              id: 1,
-              label: 'ID',
-              value: 'id',
-              width: 40
-            },
-            {
-              id: 2,
-              label: this.$t('Issue.name'),
-              value: (issue) => `${issue.has_children && issue.children.length === 0
-                ? '<em class="el-icon-caret-right" />' : ''}
-                <span style="${issue.has_children && issue.children.length === 0 ? 'color: #3498db;' : ''}; font-family: 'Helvetica Neue', sans-serif;">${issue.name}</span>`,
-              width: 200,
-              expander: true,
-              html: true,
-              events: {
-                click({ data }) {
-                  if (data.has_children) {
-                    _this.getIssueFamilyData(data)
-                  }
-                }
-              },
-              style: {
-                'task-list-item-value-container': {
-                  cursor: 'pointer'
-                }
-              }
-            },
-            // {
-            //   id: 3,
-            //   label: this.$t('Issue.assigned_to'),
-            //   value: (task) => task.assigned_to.name,
-            //   width: 130,
-            //   html: true
-            // },
-            {
-              id: 4,
-              label: this.$t('Issue.StartDate'),
-              value: (task) => isTimeValid(task.start) ? getLocalTime(task.start, 'YYYY-MM-DD') : null,
-              width: 78
-            },
-            {
-              id: 5,
-              label: this.$t('Issue.EndDate'),
-              value: (task) => isTimeValid(task.end) ? getLocalTime(task.end, 'YYYY-MM-DD') : null,
-              width: 78
-            }
-            // {
-            //   id: 6,
-            //   label: this.$t('Issue.tracker'),
-            //   value: (task) => this.$t(`Issue.${task.tracker.name}`),
-            //   width: 68
-            // },
-            // {
-            //   id: 7,
-            //   label: '%',
-            //   value: 'progress',
-            //   width: 35,
-            //   style: {
-            //     'task-list-header-label': {
-            //       'text-align': 'center',
-            //       width: '100%'
-            //     },
-            //     'task-list-item-value-container': {
-            //       'text-align': 'center',
-            //       width: '100%'
-            //     }
-            //   }
-            // }
-          ]
-        }
-      }
     }
   },
   watch: {
@@ -379,6 +354,7 @@ export default {
     },
     '$i18n.locale'() {
       this.setHeaders()
+      this.options.locale = this.calLocale[this.$i18n.locale]
     }
   },
   created() {
@@ -407,6 +383,9 @@ export default {
           'Display task list': this.$t('Gantt.DisplayTaskList')
         }
       }
+      this.options.taskList.columns[1].label = this.$t('Issue.name')
+      this.options.taskList.columns[2].label = this.$t('Issue.StartDate')
+      this.options.taskList.columns[3].label = this.$t('Issue.EndDate')
     },
     getParams() {
       const result = {
@@ -639,13 +618,15 @@ export default {
       }
     },
     styleUpdate(events) {
-      if (events.hasOwnProperty('times') && events.hasOwnProperty('scope')) {
+      if (events.hasOwnProperty('times') &&
+        events.hasOwnProperty('scope') &&
+        events.hasOwnProperty('taskList') &&
+        events.hasOwnProperty('row')) {
         this.options.times = events.times
         this.options.scope = events.scope
         this.options.taskList = events.taskList
         this.options.row = events.row
-        this.savedOptions = events
-        if (Object.keys(this.options).length !== 0 && this.options.hasOwnProperty('times')) localStorage.setItem('gantt', JSON.stringify(this.options))
+        localStorage.setItem('gantt', JSON.stringify(this.options))
       }
     },
     downloadPng() {
@@ -659,14 +640,19 @@ export default {
     async exportPdf() {
       this.isExportGantt = true
       const container = this.$refs.ganttDownload.$el
+      const time = (new Date()).toLocaleString()
+      const fileName = `${this.selectedProject.name} (${time}).png`
       await html2canvas(container).then(function (canvas) {
         const link = document.createElement('a')
-        link.download = 'html_image.jpg'
+        link.download = fileName
         link.href = canvas.toDataURL('image/png', 1.0)
         link.target = '_blank'
         link.click()
       })
       this.isExportGantt = false
+    },
+    onTaskListTaskClick({ data }) {
+      this.getIssueFamilyData(data)
     }
   }
 }
