@@ -18,7 +18,9 @@
               <template v-if="tracker">
                 <Tracker :name="$t(`Issue.${tracker}`)" :type="tracker" />
               </template>
-              <template v-else>{{ $t('Issue.Issue') }}</template>
+              <template v-else>
+                {{ $t('Issue.Issue') }}
+              </template>
               #{{ issueId }} -
               <IssueTitle
                 ref="IssueTitle"
@@ -27,6 +29,7 @@
                 :issue-id="issueId"
                 :is-from-board="isFromBoard"
                 :is-button-disabled="isButtonDisabled"
+                @update="historyUpdate"
               />
               <span v-if="!isLoading && issueId" class="text-base mr-3">
                 {{ $t('Issue.AddBy', { user: author, created_date: getRelativeTime(created_date) }) }}
@@ -112,6 +115,9 @@
                 :is-button-disabled="isButtonDisabled"
                 :project-id="formProjectId"
                 :mention-list.sync="descriptionMentionList"
+                @filterImage="filterImage"
+                @sendMentionMessage="sendMentionMessage"
+                @update="historyUpdate"
               />
             </el-col>
             <el-col ref="IssueCollapseWrapper" :span="24">
@@ -174,25 +180,40 @@
                     :parent="parent"
                     :relations.sync="relations"
                     :children-issue="children.length"
+                    @update="historyUpdate"
                   />
                 </el-collapse-item>
               </el-collapse>
             </el-col>
-            <el-col ref="moveEditor" :span="24" class="mb-3" style="position: sticky; top: 0; z-index: 3">
-              <el-collapse v-model="issueNotesEditorVisible" accordion>
-                <el-collapse-item :title="$t('Issue.Notes')" name="issueNotesEditor">
-                  <IssueNotesEditor
-                    ref="IssueNotesEditor"
-                    v-model="form.notes"
-                    :project-id="formProjectId"
-                    :mention-list.sync="noteMentionList"
-                  />
-                </el-collapse-item>
-              </el-collapse>
+            <el-col
+              ref="moveEditor"
+              :span="24"
+              class="mb-3"
+              style="position: sticky; top: 0; z-index: 3; background-color: white"
+            >
+              <IssueNotesEditor
+                ref="IssueNotesEditor"
+                v-model="form.notes"
+                :issue-id="issueId"
+                :is-button-disabled="isButtonDisabled"
+                :project-id="formProjectId"
+                :mention-list.sync="noteMentionList"
+                @filterImage="filterImage"
+                @sendMentionMessage="sendMentionMessage"
+                @update="historyUpdate"
+              />
             </el-col>
             <el-col :span="24">
-              <el-tabs ref="IssueNotesDialog" v-model="issueTabs" type="border-card" class="mx-3">
-                <el-tab-pane name="history">
+              <el-tabs
+                ref="IssueNotesDialog"
+                v-model="issueTabs"
+                type="border-card"
+                class="mx-3"
+              >
+                <el-tab-pane
+                  v-loading="historyLoading"
+                  name="history"
+                >
                   <template slot="label">
                     <span>
                       <em class="ri-history-line" />
@@ -250,6 +271,7 @@
             :parent="parent"
             :relations.sync="relations"
             :children-issue="children.length"
+            @update="historyUpdate"
           />
         </el-col>
       </el-row>
@@ -507,7 +529,6 @@ export default {
       tags: [],
       dialogHeight: '100%',
       editorHeight: '100px',
-      scrollType: 'top',
       relationVisible: 0,
       relationIssue: {
         visible: false,
@@ -528,10 +549,10 @@ export default {
       checkDeleteWhiteBoard: false,
       descriptionMentionList: [],
       noteMentionList: [],
-      issueNotesEditorVisible: 'issueNotesEditor',
       isIssueFormOpened: !this.isFromBoard,
       issueFormWidth: 80,
-      isAddSubIssue: false
+      isAddSubIssue: false,
+      historyLoading: false
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -890,8 +911,17 @@ export default {
       }
       this.isLoading = false
     },
+    async historyUpdate() {
+      this.historyLoading = true
+      let data = {}
+      const issue = await getIssue(this.issueId)
+      data = issue.data
+      this.initIssueDetails(data)
+      await this.getIssueFamilyData(data)
+      this.historyLoading = false
+    },
     async handleUpdated(issue_id) {
-      this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
+      // this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
       this.$refs.IssueTitle.edit = false
       this.$refs.IssueDescription.edit = false
       this.test_files = []
@@ -1018,10 +1048,11 @@ export default {
       }
       return new File([u8arr], fileName, { type: mime })
     },
-    filterImage(str, sendForm, checkDuplicate) {
+    filterImage(object) {
+      const [value, sendForm, checkDuplicate] = object
       // Prevent the previous description is markdown format and detect the image will report an error
-      if (!str.includes('<p>') && !str.includes('</p>')) {
-        const arr = str.split(/!\[(.+?)\)/g).filter((item) => /(.+?)\]\(data:.+/g.test(item))
+      if (!value.includes('<p>') && !value.includes('</p>')) {
+        const arr = value.split(/!\[(.+?)\)/g).filter((item) => (/(.+?)\]\(data:.+/g).test(item))
         if (arr.length === 0) return
         arr.forEach((item) => {
           const fileArray = item.split('](')
@@ -1035,7 +1066,7 @@ export default {
           sendForm.append('upload_files', file)
         })
       } else {
-        const arr = str.split(/src="(.+?)>/g).filter((item) => /data:.+/g.test(item))
+        const arr = value.split(/src="(.+?)>/g).filter((item) => (/data:.+/g).test(item))
         if (arr.length === 0) return
         arr.forEach((item) => {
           const fileArray = item.split(/" alt="(.+?)"/)
@@ -1056,16 +1087,16 @@ export default {
       //   if (sendData[item] === '' || !sendData[item]) delete sendData[item]
       // })
       const sendForm = new FormData()
-      if (sendData['notes'] === '<p><br></p>') sendData['notes'] = ''
-      else if (sendData['notes'] !== '') {
-        this.filterImage(sendData['notes'], sendForm, false)
-        sendData['notes'] = sendData['notes'].replace(/<a/g, '<a target="_blank"')
-      }
-      if (sendData['description'] === '<p><br></p>') sendData['description'] = ''
-      else if (sendData['description'] !== '') {
-        this.filterImage(sendData['description'], sendForm, true)
-        sendData['description'] = sendData['description'].replace(/<a/g, '<a target="_blank"')
-      }
+      // if (sendData['notes'] === '<p><br></p>') sendData['notes'] = ''
+      // else if (sendData['notes'] !== '') {
+      //   this.filterImage({ value: sendData['notes'], sendForm, checkDuplicate: false })
+      //   sendData['notes'] = sendData['notes'].replace(/<a/g, '<a target="_blank"')
+      // }
+      // if (sendData['description'] === '<p><br></p>') sendData['description'] = ''
+      // else if (sendData['description'] !== '') {
+      //   this.filterImage({ value: sendData['description'], sendForm, checkDuplicate: true })
+      //   sendData['description'] = sendData['description'].replace(/<a/g, '<a target="_blank"')
+      // }
       Object.keys(sendData).forEach((objKey) => {
         if ((objKey === 'start_date' || objKey === 'end_date') && !sendData[objKey]) {
           sendForm.append(objKey, '')
@@ -1203,9 +1234,10 @@ export default {
       this.listLoading = false
     },
     hasUnsavedChanges() {
-      const isNotesChanged = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown') !== ''
+      // const isNotesChanged = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown') !== ''
       // const isFilesChanged = this.$refs.IssueFileUploader.uploadFileList.length > 0
-      return this.isFormDataChanged() || isNotesChanged
+      return this.isFormDataChanged()
+      // || isNotesChanged
     },
     isFormDataChanged() {
       if (Object.keys(this.originForm).length === 0) return false
@@ -1262,13 +1294,11 @@ export default {
           // ) {
           //   this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
           // }
-          this.scrollType = 'bottom'
         } else {
           //   this.$refs['mainIssue'].$el.insertBefore(
           //     this.$refs['mainIssueWrapper'].$el.getElementsByClassName('moveEditor')[0],
           //     this.$refs['mainIssue'].$el.children[this.$refs['mainIssue'].$el.children.length - 1]
           //   )
-          this.scrollType = 'top'
         }
       })
     },

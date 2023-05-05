@@ -5,8 +5,23 @@
       class="dialog_wrapper"
       :style="{height:height}"
     >
+      <el-radio-group
+        v-model="status"
+        class="flex justify-center pb-3"
+        size="mini"
+      >
+        <el-radio-button label="all">
+          全部
+        </el-radio-button>
+        <el-radio-button label="status">
+          狀態
+        </el-radio-button>
+        <el-radio-button label="message">
+          訊息
+        </el-radio-button>
+      </el-radio-group>
       <DialogContent
-        v-for="(item,idx) in data"
+        v-for="(item,idx) in filteredIssueHistory"
         :key="idx"
         :note="item"
         :right="filterAuthor(item)"
@@ -37,10 +52,24 @@ export default {
       default: '250px'
     }
   },
+  data() {
+    return {
+      status: 'all'
+    }
+  },
   computed: {
     ...mapGetters(['userId']),
-    filteredIssueNotes() {
-      return this.data.filter(note => note.notes !== '')
+    filteredIssueHistory() {
+      return this.data.filter((note) => {
+        switch (this.status) {
+          case 'all':
+            return note
+          case 'status':
+            return note.details.length > 0 && note.notes === ''
+          case 'message':
+            return note.notes !== ''
+        }
+      })
     }
   },
   watch: {

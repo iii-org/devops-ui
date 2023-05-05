@@ -271,8 +271,10 @@ export default {
       this.setFilterValue()
     },
     handleAdvancedSave() {
-      this.$refs['AddIssue'].handleSave()
-      this.setFilterValue()
+      const result = this.$refs['AddIssue'].handleSave()
+      if (result) {
+        this.setFilterValue()
+      }
     },
     advancedAddIssue() {
       this.addTopicDialogVisible = true

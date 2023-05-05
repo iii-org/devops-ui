@@ -1,44 +1,79 @@
 <template>
-  <div>
-    <el-popover
-      v-model="tagListVisible"
-      :trigger="tagListVisible ? 'focus' : 'manual'"
-      placement="top"
-      width="auto"
-      popper-class="p-0"
-    >
-      <ul
-        class="my-0 py-3"
-        style="overflow-y: auto; max-height: 6rem;"
-        @scroll="onScroll"
+  <el-row v-loading="isLoading">
+    <el-col>
+      <el-row class="text-sm mt-2 mb-3">
+        {{ $t('Issue.Notes') }}
+        <span v-if="edit">
+          <el-button
+            class="action"
+            type="success"
+            size="mini"
+            icon="el-icon-check"
+            @click="updateNotes"
+          />
+          <el-button
+            class="action"
+            type="danger"
+            size="mini"
+            icon="el-icon-close"
+            @click="cancelInput"
+          />
+        </span>
+      </el-row>
+    </el-col>
+    <el-col v-if="edit">
+      <el-popover
+        v-model="tagListVisible"
+        :trigger="tagListVisible ? 'focus' : 'manual'"
+        placement="top"
+        width="auto"
+        popper-class="p-0"
       >
-        <li
-          v-for="(user,index) in assigned_to"
-          :key="user.id"
-          :class="{ 'mt-2': index !== 0}"
-          class="cursor-pointer"
-          @click="addTag"
+        <ul
+          class="my-0 py-3"
+          style="overflow-y: auto; max-height: 6rem;"
+          @scroll="tagListVisible = true"
         >
-          {{ user.name }}
-        </li>
-      </ul>
-      <Editor
-        slot="reference"
-        ref="mdEditor"
-        initial-edit-type="wysiwyg"
-        :options="editorOptions"
-        class="mx-3"
-        height="18rem"
-        @change="onChange"
-        @keydown.native="onKeydown"
-      />
-    </el-popover>
-  </div>
+          <li
+            v-for="(user,index) in assigned_to"
+            :key="user.id"
+            :class="{ 'mt-2': index !== 0}"
+            class="cursor-pointer"
+            @click="addTag"
+          >
+            {{ user.name }}
+          </li>
+        </ul>
+        <Editor
+          slot="reference"
+          ref="mdEditor"
+          initial-edit-type="wysiwyg"
+          :options="editorOptions"
+          class="mx-3"
+          height="12rem"
+          @change="onChange"
+          @keydown.native="onKeydown"
+        />
+      </el-popover>
+    </el-col>
+    <el-col v-else>
+      <div
+        class="p-3 mr-1"
+        :class="isButtonDisabled ? 'cursor-not-allowed' : 'cursor-text notes'"
+      >
+        <el-input
+          :placeholder="$t('general.Input', { item: $t('Issue.Notes') })"
+          @focus="edit = !isButtonDisabled"
+        />
+      </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { getProjectAssignable } from '@/api/projects'
+import { updateIssue } from '@/api/issue'
 import '@toast-ui/editor/dist/toastui-editor.css'
 import '@toast-ui/editor/dist/i18n/zh-tw'
 import { Editor } from '@toast-ui/vue-editor'
@@ -47,6 +82,14 @@ export default {
   name: 'IssueNotesEditor',
   components: { Editor },
   props: {
+    issueId: {
+      type: [String, Number],
+      default: null
+    },
+    isButtonDisabled: {
+      type: Boolean,
+      default: false
+    },
     projectId: {
       type: Number,
       default: 0
@@ -88,6 +131,8 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
+      edit: false,
       assigned_to: [],
       tagList: [],
       editorType: 'wysiwyg',
@@ -107,9 +152,6 @@ export default {
       this.tagList = this.tagList.filter((tag) => notes.includes(tag.name))
       this.$emit('update:mentionList', this.tagList.map((tag) => tag.id))
       this.$emit('input', this.$refs.mdEditor.invoke('getHTML'))
-    },
-    onScroll() {
-      this.tagListVisible = true
     },
     onKeydown(event) {
       if (event.code === 'Digit2' && event.shiftKey) this.tagListVisible = true
@@ -132,7 +174,67 @@ export default {
       } else {
         editor.replaceSelection(outputText, [start[0], start[1] - 1], end)
       }
+    },
+    async updateNotes() {
+      this.isLoading = true
+      const sendForm = new FormData()
+      let value = this.$refs.mdEditor.invoke('getHTML')
+      if (value === '<p><br></p>') value = ''
+      else if (value !== '') {
+        this.$emit('filterImage', [value, sendForm, true])
+        value = value.replace(/<a/g, '<a target="_blank"')
+      }
+      sendForm.append('notes', value)
+      await updateIssue(this.issueId, sendForm).then(() => {
+        this.$emit('update')
+        this.edit = false
+      })
+      this.$emit('sendMentionMessage')
+      this.isLoading = false
+    },
+    cancelInput() {
+      this.$refs.mdEditor.invoke('reset')
+      this.edit = !this.issueId
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.notes:hover {
+  background-color: mix(#808080, #ffffff, 30);
+}
+
+.el-button--success{
+  color: #85ce61;
+  border: 1px solid #989898;
+  background: none;
+  -webkit-transition: all .6s ease;
+  transition: all .6s ease;
+  &:hover {
+    color: #fff;
+    border: 1px solid #67c23a;
+    background: #67c23a;
+  }
+}
+
+.el-button--danger{
+  color: #F56C6C;
+  border: 1px solid #989898;
+  background: none;
+  -webkit-transition: all .6s ease;
+  transition: all .6s ease;
+  &:hover {
+    color: #fff;
+    border: 1px solid #F56C6C;
+    background: #F56C6C;
+  }
+}
+
+.action {
+  margin: 0;
+  &.el-button--mini {
+    padding: 5px;
+  }
+}
+</style>

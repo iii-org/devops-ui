@@ -1,5 +1,24 @@
 <template>
-  <el-form-item :label="$t('Issue.Tag')" prop="tags">
+  <el-form-item prop="tags">
+    <template slot="label">
+      {{ $t('Issue.Tag') }}
+      <span v-if="isTagsChange">
+        <el-button
+          class="action"
+          type="success"
+          size="mini"
+          icon="el-icon-check"
+          @click="updateTags"
+        />
+        <el-button
+          class="action"
+          type="danger"
+          size="mini"
+          icon="el-icon-close"
+          @click="cancelInput"
+        />
+      </span>
+    </template>
     <el-select
       v-model="form.tags"
       style="width: 100%"
@@ -43,10 +62,19 @@
 import axios from 'axios'
 import { mapGetters } from 'vuex'
 import { getTagsByName, getTagsByProject } from '@/api/projects'
+import { updateIssue } from '@/api/issue'
 
 export default {
   name: 'Tags',
   props: {
+    issueId: {
+      type: Number,
+      default: 0
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    },
     form: {
       type: Object,
       default: () => ({})
@@ -58,14 +86,24 @@ export default {
       tag_name: '',
       tagsList: [],
       isRepeated: false,
-      cancelToken: null
+      cancelToken: null,
+      originTags: []
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId'])
+    ...mapGetters(['selectedProjectId']),
+    isTagsChange() {
+      if (!this.form.tags) return false
+      if (this.form.tags.length !== this.originTags.length) return true
+      return !this.originTags.every((item) => this.form.tags.includes(item))
+    }
   },
   mounted() {
     this.getSearchTags()
+    const unwatch = this.$watch('form.tags', (value) => {
+      this.originTags = JSON.parse(JSON.stringify(value))
+      unwatch()
+    })
   },
   methods: {
     checkToken() {
@@ -130,7 +168,56 @@ export default {
           showTags = tags
       }
       return showTags
+    },
+    async updateTags() {
+      this.$emit('update:loading', true)
+      const sendForm = new FormData()
+      sendForm.append('tags', this.form.tags)
+      await updateIssue(this.issueId, sendForm).then(() => {
+        this.$emit('update')
+      }).then(() => {
+        this.originTags = JSON.parse(JSON.stringify(this.form.tags))
+      })
+      this.$emit('update:loading', false)
+    },
+    cancelInput() {
+      this.form.tags = JSON.parse(JSON.stringify(this.originTags))
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.el-button--success{
+  color: #85ce61;
+  border: 1px solid #989898;
+  background: none;
+  -webkit-transition: all .6s ease;
+  transition: all .6s ease;
+  &:hover {
+    color: #fff;
+    border: 1px solid #67c23a;
+    background: #67c23a;
+  }
+}
+
+.el-button--danger{
+  color: #F56C6C;
+  border: 1px solid #989898;
+  background: none;
+  -webkit-transition: all .6s ease;
+  transition: all .6s ease;
+  &:hover {
+    color: #fff;
+    border: 1px solid #F56C6C;
+    background: #F56C6C;
+  }
+}
+
+.action {
+  margin: 0;
+  &.el-button--mini {
+    padding: 5px;
+  }
+}
+</style>
