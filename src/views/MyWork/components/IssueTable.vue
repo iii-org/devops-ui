@@ -200,7 +200,13 @@ import { Status, Tracker, Priority, IssueExpand } from '@/components/Issue'
 
 export default {
   name: 'MyWorkIssueTable',
-  components: { Status, Tracker, Priority, IssueExpand, QuickAddIssue: () => import('@/views/MyWork/components/QuickAddIssue') },
+  components: {
+    Status,
+    Tracker,
+    Priority,
+    IssueExpand,
+    QuickAddIssue: () => import('@/views/MyWork/components/QuickAddIssue')
+  },
   mixins: [ContextMenu, Pagination, CancelRequest],
   props: {
     from: {

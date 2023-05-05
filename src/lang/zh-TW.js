@@ -278,7 +278,8 @@ export default {
     AddExistingIssue: '加入已有議題',
     GenerateExcel: '產生Excel報表',
     DownloadExcel: '下載Excel報表',
-    ChildrenProject: '子專案'
+    ChildrenProject: '子專案',
+    SearchTag: '搜尋標籤名'
   },
   Notify: {
     Updated: '已更新',

@@ -278,7 +278,8 @@ export default {
     AddExistingIssue: 'Add Existing Issue',
     GenerateExcel: 'Generate Excel',
     DownloadExcel: 'Download Excel',
-    ChildrenProject: 'Children Projects'
+    ChildrenProject: 'Children Projects',
+    SearchTag: 'Search Tag'
   },
   Notify: {
     Updated: 'update successful',

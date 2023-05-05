@@ -456,12 +456,6 @@ export default {
           tag: true
         },
         {
-          id: 3,
-          label: this.$t('Issue.FilterDimensions.tags'),
-          value: 'tags',
-          placeholder: 'Tag'
-        },
-        {
           id: 4,
           label: this.$t('Issue.FilterDimensions.assigned_to'),
           value: 'assigned_to',

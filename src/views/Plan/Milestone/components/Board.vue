@@ -347,12 +347,6 @@ export default {
         tag: true
       },
       {
-        id: 2,
-        label: this.$t('Issue.FilterDimensions.tags'),
-        value: 'tags',
-        placeholder: 'Tag'
-      },
-      {
         id: 3,
         label: this.$t('Issue.FilterDimensions.tracker'),
         value: 'tracker',
