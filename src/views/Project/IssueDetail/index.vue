@@ -180,6 +180,7 @@
                     :parent="parent"
                     :relations.sync="relations"
                     :children-issue="children.length"
+                    @update="historyUpdate"
                   />
                 </el-collapse-item>
               </el-collapse>
@@ -270,6 +271,7 @@
             :parent="parent"
             :relations.sync="relations"
             :children-issue="children.length"
+            @update="historyUpdate"
           />
         </el-col>
       </el-row>
@@ -915,6 +917,7 @@ export default {
       const issue = await getIssue(this.issueId)
       data = issue.data
       this.initIssueDetails(data)
+      await this.getIssueFamilyData(data)
       this.historyLoading = false
     },
     async handleUpdated(issue_id) {

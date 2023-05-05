@@ -73,10 +73,10 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getProjectAssignable } from '@/api/projects'
+import { updateIssue } from '@/api/issue'
 import '@toast-ui/editor/dist/toastui-editor.css'
 import '@toast-ui/editor/dist/i18n/zh-tw'
 import { Editor } from '@toast-ui/vue-editor'
-import { updateIssue } from '@/api/issue'
 
 export default {
   name: 'IssueNotesEditor',
