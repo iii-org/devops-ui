@@ -651,6 +651,7 @@ export default {
     },
     'form.project_id': {
       handler(newPId, oldPId) {
+        if (this.$route.name === 'Milestone') return
         if (this.storagePId && newPId !== this.storagePId) {
           this.isShowDialog = true
         }

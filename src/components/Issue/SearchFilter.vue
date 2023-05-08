@@ -312,7 +312,7 @@ export default {
     },
     async getFilterOptions(hasSon) {
       this.filterOptionsWithProject = hasSon ? [{
-        id: this.filterOptions.length + 1,
+        id: 9,
         value: 'project',
         placeholder: 'Project'
       }].concat(this.filterOptions) : this.filterOptions
