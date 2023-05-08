@@ -100,10 +100,10 @@ export default {
   },
   mounted() {
     this.getSearchTags()
-    const unwatch = this.$watch('form.tags', (value) => {
-      this.originTags = JSON.parse(JSON.stringify(value))
+    const unwatch = this.$watch('form', (value) => {
+      this.originTags = JSON.parse(JSON.stringify(value.tags))
       unwatch()
-    })
+    }, { deep: true })
   },
   methods: {
     checkToken() {

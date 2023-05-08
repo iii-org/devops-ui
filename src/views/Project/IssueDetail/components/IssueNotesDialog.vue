@@ -65,9 +65,9 @@ export default {
           case 'all':
             return note
           case 'status':
-            return note.details.length > 0 && note.notes === ''
+            return note.details && note.details.some((item) => item.hasOwnProperty('new_value') || item.hasOwnProperty('old_value'))
           case 'message':
-            return note.notes !== ''
+            return note.details.length === 0 && note.notes !== ''
         }
       })
     }

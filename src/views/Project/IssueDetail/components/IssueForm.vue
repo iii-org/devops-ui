@@ -128,7 +128,7 @@
     <el-form-item prop="relation_ids">
       <template slot="label">
         {{ $t('Issue.RelatedIssue') }}
-        <span v-if="isRelationIssueChange">
+        <span v-if="isIssueStatusChange('relation_ids')">
           <el-button
             class="action"
             type="success"
@@ -141,7 +141,7 @@
             type="danger"
             size="mini"
             icon="el-icon-close"
-            @click="form.relation_ids = JSON.parse(JSON.stringify(originRelationIds))"
+            @click="form.relation_ids = JSON.parse(JSON.stringify(originForm.relationIds))"
           />
         </span>
       </template>
@@ -326,7 +326,7 @@
     <el-form-item prop="estimated_hours">
       <template slot="label">
         {{ $t('Issue.Estimate') }}
-        <span v-if="isEstimateChange">
+        <span v-if="isIssueStatusChange('estimated_hours')">
           <el-button
             class="action"
             type="success"
@@ -339,7 +339,7 @@
             type="danger"
             size="mini"
             icon="el-icon-close"
-            @click="form.estimated_hours = originEstimatedHours"
+            @click="form.estimated_hours = originForm.estimatedHours"
           />
         </span>
       </template>
@@ -353,7 +353,7 @@
     <el-form-item prop="done_ratio">
       <template slot="label">
         {{ $t('Issue.DoneRatio') }}
-        <span v-if="isDoneRatioChange">
+        <span v-if="isIssueStatusChange('done_ratio')">
           <el-button
             class="action"
             type="success"
@@ -366,7 +366,7 @@
             type="danger"
             size="mini"
             icon="el-icon-close"
-            @click="form.done_ratio = originDoneRatio"
+            @click="form.done_ratio = originForm.doneRatio"
           />
         </span>
       </template>
@@ -378,10 +378,26 @@
         style="width: 100%"
       />
     </el-form-item>
-    <el-form-item
-      :label="$t('Issue.StartDate')"
-      prop="start_date"
-    >
+    <el-form-item prop="start_date">
+      <template slot="label">
+        {{ $t('Issue.StartDate') }}
+        <span v-if="isIssueStatusChange('start_date')">
+          <el-button
+            class="action"
+            type="success"
+            size="mini"
+            icon="el-icon-check"
+            @click="updateSelect('start_date')"
+          />
+          <el-button
+            class="action"
+            type="danger"
+            size="mini"
+            icon="el-icon-close"
+            @click="form.start_date = originForm.startDate"
+          />
+        </span>
+      </template>
       <el-date-picker
         v-model="form.start_date"
         type="date"
@@ -392,10 +408,26 @@
         @change="checkDueDate(form.start_date)"
       />
     </el-form-item>
-    <el-form-item
-      :label="$t('Issue.EndDate')"
-      prop="due_date"
-    >
+    <el-form-item prop="due_date">
+      <template slot="label">
+        {{ $t('Issue.EndDate') }}
+        <span v-if="isIssueStatusChange('due_date')">
+          <el-button
+            class="action"
+            type="success"
+            size="mini"
+            icon="el-icon-check"
+            @click="updateSelect('due_date')"
+          />
+          <el-button
+            class="action"
+            type="danger"
+            size="mini"
+            icon="el-icon-close"
+            @click="form.due_date = originForm.endDate"
+          />
+        </span>
+      </template>
       <el-date-picker
         v-model="form.due_date"
         type="date"
@@ -529,13 +561,26 @@ export default {
       },
       allRelation: [],
       hasRelations: false,
-      originRelationIds: [],
-      originEstimatedHours: 0,
-      originDoneRatio: 0
+      originForm: {
+        relationIds: [],
+        estimatedHours: 0,
+        doneRatio: 0,
+        startDate: '',
+        endDate: ''
+      }
     }
   },
   computed: {
-    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'forceTracker', 'enableForceTracker', 'selectedProject', 'selectedProjectId']),
+    ...mapGetters([
+      'userId',
+      'tracker',
+      'status',
+      'priority',
+      'forceTracker',
+      'enableForceTracker',
+      'selectedProject', 
+      'selectedProjectId'
+    ]),
     isParentIssueClosed() {
       if (Object.keys(this.parent).length <= 0) return false
       return this.parent.status.name === 'Closed'
@@ -573,17 +618,6 @@ export default {
         return { id: null, name: null }
       }
       return getFilter
-    },
-    isRelationIssueChange() {
-      if (!this.form.relation_ids) return false
-      if (this.form.relation_ids.length !== this.originRelationIds.length) return true
-      return !this.originRelationIds.every((item) => this.form.relation_ids.includes(item))
-    },
-    isEstimateChange() {
-      return this.form.estimated_hours !== this.originEstimatedHours
-    },
-    isDoneRatioChange() {
-      return this.form.done_ratio !== this.originDoneRatio
     }
   },
   watch: {
@@ -623,61 +657,16 @@ export default {
     if (this.form.project_id > 0) {
       this.onChangePId()
     }
-    this.unwatch()
+    const unwatchForm = this.$watch('form', (value) => {
+      this.originForm.relationIds = JSON.parse(JSON.stringify(value.relation_ids))
+      this.originForm.estimatedHours = value.estimated_hours
+      this.originForm.doneRatio = value.done_ratio
+      this.originForm.startDate = value.start_date
+      this.originForm.endDate = value.due_date
+      unwatchForm()
+    }, { deep: true })
   },
   methods: {
-    unwatch() {
-      const unwatchRelation = this.$watch('form.relation_ids', (value) => {
-        this.originRelationIds = JSON.parse(JSON.stringify(value))
-        unwatchRelation()
-      })
-      const unwatchEstimatedHours = this.$watch('form.estimated_hours', (value) => {
-        this.originEstimatedHours = value
-        unwatchEstimatedHours()
-      })
-      const unwatchDoneRatio = this.$watch('form.done_ratio', (value) => {
-        this.originDoneRatio = value
-        unwatchDoneRatio()
-      })
-    },
-    async updateRelationIssue() {
-      if (this.form.relation_ids) {
-        const data = {
-          issue_id: this.issueId,
-          issue_to_ids: this.form.relation_ids
-        }
-        this.isLoading = true
-        await putIssueRelation(data).then(() => {
-          this.$emit('update')
-        }).then(() => {
-          this.originRelationIds = JSON.parse(JSON.stringify(this.form.relation_ids))
-        })
-        this.isLoading = false
-      }
-    },
-    updateSelect(type) {
-      this.$refs.form.validate(async(valid) => {
-        if (valid) {
-          this.isLoading = true
-          const sendForm = new FormData()
-          if (!this.form[type]) this.form[type] = 0
-          sendForm.append(type, this.form[type])
-          await updateIssue(this.issueId, sendForm).then(() => {
-            this.$emit('update')
-          }).then(() => {
-            switch (type) {
-              case 'estimated_hours' :
-                this.originEstimatedHours = this.form.estimated_hours
-                break
-              case 'done_ratio' :
-                this.originDoneRatio = this.form.done_ratio
-                break
-            }
-          })
-          this.isLoading = false
-        }
-      })
-    },
     async fetchData(pId) {
       this.isLoading = true
       const projectId = pId || this.form.project_id
@@ -879,6 +868,69 @@ export default {
     },
     hasSelectedProject(project) {
       return !(!project.id || !project.display || !project.name)
+    },
+    isIssueStatusChange(type) {
+      switch (type) {
+        case 'relation_ids':
+          if (!this.form.relation_ids) return false
+          if (this.form.relation_ids.length !== this.originForm.relationIds.length) return true
+          return !this.originForm.relationIds.every((item) => this.form.relation_ids.includes(item))
+        case 'estimated_hours':
+          return this.form.estimated_hours !== this.originForm.estimatedHours
+        case 'done_ratio':
+          return this.form.done_ratio !== this.originForm.doneRatio
+        case 'start_date':
+          return this.form.start_date !== this.originForm.startDate
+        case 'due_date':
+          return this.form.due_date !== this.originForm.endDate
+      }
+    },
+    async updateRelationIssue() {
+      if (this.form.relation_ids) {
+        const data = {
+          issue_id: this.issueId,
+          issue_to_ids: this.form.relation_ids
+        }
+        this.isLoading = true
+        await putIssueRelation(data).then(() => {
+          this.$emit('update')
+        }).then(() => {
+          this.originForm.relationIds = JSON.parse(JSON.stringify(this.form.relation_ids))
+        })
+        this.isLoading = false
+      }
+    },
+    updateSelect(type) {
+      this.$refs.form.validate(async(valid) => {
+        if (valid) {
+          this.isLoading = true
+          const sendForm = new FormData()
+          if (!this.form[type]) {
+            if (type === 'estimated_hours' || type === 'done_ratio') this.form[type] = 0
+            if (type === 'start_date' || type === 'due_date') this.form[type] = ''
+          }
+          sendForm.append(type, this.form[type])
+          await updateIssue(this.issueId, sendForm).then(() => {
+            this.$emit('update')
+          }).then(() => {
+            switch (type) {
+              case 'estimated_hours' :
+                this.originForm.estimatedHours = this.form.estimated_hours
+                break
+              case 'done_ratio' :
+                this.originForm.doneRatio = this.form.done_ratio
+                break
+              case 'start_date' :
+                this.originForm.startDate = this.form.start_date
+                break
+              case 'due_date' :
+                this.originForm.endDate = this.form.due_date
+                break
+            }
+          })
+          this.isLoading = false
+        }
+      })
     },
     onChangePId() {
       this.fetchData()

@@ -1052,34 +1052,26 @@ export default {
     filterImage(object) {
       const [value, sendForm, checkDuplicate] = object
       // Prevent the previous description is markdown format and detect the image will report an error
-      if (!value.includes('<p>') && !value.includes('</p>')) {
-        const arr = value.split(/!\[(.+?)\)/g).filter((item) => (/(.+?)\]\(data:.+/g).test(item))
-        if (arr.length === 0) return
-        arr.forEach((item) => {
-          const fileArray = item.split('](')
-          const file = this.dataURLtoFile(fileArray[0], fileArray[1])
-          if (
-            checkDuplicate &&
-            this.files.some((element) => file.name === element.filename && file.size === element.filesize)
-          ) {
-            return
-          }
-          sendForm.append('upload_files', file)
-        })
+      const isMarkdown = !value.includes('<p>') && !value.includes('</p>')
+      let [array, fileArray, file] = [[], [], '']
+      if (isMarkdown) {
+        array = value.split(/!\[(.+?)\)/g).filter((item) => (/(.+?)\]\(data:.+/g).test(item))
       } else {
-        const arr = value.split(/src="(.+?)>/g).filter((item) => (/data:.+/g).test(item))
-        if (arr.length === 0) return
-        arr.forEach((item) => {
-          const fileArray = item.split(/" alt="(.+?)"/)
-          const file = this.dataURLtoFile(fileArray[1], fileArray[0])
-          if (
-            checkDuplicate &&
-            this.files.some((element) => file.name === element.filename && file.size === element.filesize)
-          ) {
-            return sendForm.append('upload_files', file)
-          }
-        })
+        array = value.split(/src="(.+?)>/g).filter((item) => (/data:.+/g).test(item))
       }
+      if (array.length === 0) return
+      array.forEach((item) => {
+        if (isMarkdown) {
+          fileArray = item.split('](')
+          file = this.dataURLtoFile(fileArray[0], fileArray[1])
+        } else {
+          fileArray = item.split(/" alt="(.+?)"/)
+          file = this.dataURLtoFile(fileArray[1], fileArray[0])
+        }
+        const hasSameFile = this.files.some((element) => file.name === element.filename && file.size === element.filesize)
+        if (checkDuplicate && hasSameFile) return
+        sendForm.append('upload_files', file)
+      })
     },
     async submitIssue() {
       this.tagsString = ''
