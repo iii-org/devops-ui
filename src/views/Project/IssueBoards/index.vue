@@ -477,6 +477,7 @@ export default {
   beforeDestroy() {
     this.socket.disconnect()
     window.clearInterval(this.intervalTimer)
+    this.onSaveFilter()
   },
   methods: {
     ...mapActions('projects', [
@@ -508,8 +509,8 @@ export default {
     async fetchInitData() {
       this.groupBy = await this.getGroupBy()
       await this.checkProjectHasChildren()
-      await this.getInitStoredData()
       await this.loadSelectionList()
+      await this.getInitStoredData()
       await this.loadData()
       await this.syncLoadFilterData()
     },
@@ -804,21 +805,23 @@ export default {
       this.$refs.customFilter.resetApplyFilter()
     },
     async onChangeFilter() {
-      const storedData = await this.fetchStoredData()
-      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
       if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
         this.$delete(this.filterValue, 'tags')
       }
       if (Object.prototype.hasOwnProperty.call(this.filterValue, this.groupBy.dimension)) {
         this.$delete(this.filterValue, this.groupBy.dimension)
       }
+      await this.loadData()
+    },
+    async onSaveFilter() {
+      const storedData = await this.fetchStoredData()
+      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
       storedFilterValue['board'] = this.filterValue
       storedKeyword['board'] = this.keyword
       storedDisplayClosed['board'] = this.displayClosed
       await this.setIssueFilter(storedFilterValue)
       await this.setKeyword(storedKeyword)
       await this.setDisplayClosed(storedDisplayClosed)
-      await this.loadData()
     },
     onChangeGroupByDimension(value) {
       this.$set(this.groupBy, 'dimension', value)
