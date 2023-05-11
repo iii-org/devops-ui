@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-3">
+  <div class="mb-1">
     <div class="flex justify-between items-center">
       <div>
         <template v-if="issueId">

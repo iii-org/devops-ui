@@ -1,44 +1,25 @@
 <template>
   <div>
-    <el-row
-      slot="title"
-      type="flex"
-      align="middle"
-    >
-      <el-col
-        :xs="24"
-        :md="16"
-      >
+    <div class="flex justify-between items-center">
+      <h3>
+        {{ $t('Test.TestFile.ManageTestFile') }}
+      </h3>
+      <span>
         <el-button
-          type="text"
           size="medium"
-          icon="el-icon-arrow-left"
-          class="previous text-h6 linkTextColor"
-          @click="onBack"
+          class="buttonPrimary"
+          @click="handleConfirm"
         >
-          {{ $t('general.Back') }}
+          {{ $t('general.Save') }}
         </el-button>
-        <span class="text-h6">{{ issueName }}</span>
-      </el-col>
-      <el-col
-        :xs="24"
-        :md="8"
-        class="text-right"
-      >
         <el-button
           class="buttonSecondaryReverse"
-          :loading="btnConfirmLoading"
-          @click="handleAddConfirm"
+          @click="handleClose"
         >
           {{ $t('general.Close') }}
         </el-button>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col>
-        <h2>管理測試檔案</h2>
-      </el-col>
-    </el-row>
+      </span>
+    </div>
     <el-row class="el-card">
       <el-col class="el-card__header">
         <el-row>
@@ -56,12 +37,13 @@
       <el-col class="el-card__body">
         <el-table
           ref="collectionTable"
+          v-loading="isLoading"
           :element-loading-text="$t('Loading')"
-          fit
-          highlight-current-row
           :data="pagedData"
-          height="40vh"
           :cell-style="{ height: rowHeight + 'px' }"
+          height="40vh"
+          highlight-current-row
+          fit
           @cell-click="handleClick"
         >
           <el-table-column
@@ -110,52 +92,20 @@
           @pagination="onPagination"
         />
       </el-col>
-      <el-col
-        v-if="selectedList.length > 0"
-        class="el-card__footer"
-      >
-        <el-col
-          :xs="8"
-          :md="2"
-        >
-          <div class="selected_count">
-            {{ $t('User.Selected') }}<span class="value">{{ selectedList.length }}</span>
-          </div>
-        </el-col>
-        <el-col
-          :xs="16"
-          :md="22"
-          class="scroll-x"
-        >
-          <el-tag
-            v-for="(item, idx) in selectedList"
-            :key="idx"
-            class="item"
-            closable
-            @close="onRemoveCollection(item)"
-          >
-            <strong>{{ idx + 1 }}</strong>.{{ item.name }}
-          </el-tag>
-        </el-col>
-      </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { BasicData, Pagination, SearchBar, Table } from '@/mixins'
+import { Pagination, SearchBar } from '@/mixins'
 import Fuse from 'fuse.js'
 import { getTestFileList } from '@/api/qa'
 
 export default {
   name: 'RelatedCollectionDialog',
-  mixins: [BasicData, Pagination, SearchBar, Table],
+  mixins: [Pagination, SearchBar],
   props: {
-    issueName: {
-      type: String,
-      default: null
-    },
     selectedCollections: {
       type: Array,
       default: () => []
@@ -163,20 +113,15 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false,
       collectionList: [],
       selectedList: [],
       search: [],
       isLoading: false,
-      btnConfirmLoading: false,
-      selectorQuery: '',
-      focusRoleName: '',
       rowHeight: 20,
       listQuery: {
         page: 1,
         limit: 5
       },
-      inputVisible: false,
       searchValue: '',
       form: {}
     }
@@ -199,16 +144,11 @@ export default {
   },
   watch: {
     selectedCollections: {
-      deep: true,
       handler(value) {
-        this.selectedList = value
-      }
-    },
-    selectedList: {
+        this.selectedList = JSON.parse(JSON.stringify(value))
+      },
       deep: true,
-      handler(value) {
-        this.$emit('update', value)
-      }
+      immediate: true
     },
     selectedProjectId() {
       this.fetchData()
@@ -222,8 +162,9 @@ export default {
     }
   },
   async mounted() {
+    this.isLoading = true
     this.collectionList = await this.fetchData()
-    this.selectedList = this.selectedCollections
+    this.isLoading = false
   },
   methods: {
     fetchData() {
@@ -235,17 +176,6 @@ export default {
           return Promise.reject(e)
         })
     },
-    toggleSelectAllCollection(event) {
-      if (event) {
-        this.$refs['collectionTable'].data.forEach((item) => {
-          this.onAddCollection(item)
-        })
-      } else {
-        this.$refs['collectionTable'].data.forEach((item) => {
-          this.onRemoveCollection(item)
-        })
-      }
-    },
     toggleCollection(row) {
       if (this.isSelectedCollection(row)) {
         this.onRemoveCollection(row)
@@ -254,14 +184,10 @@ export default {
       }
     },
     onAddCollection(row) {
-      this.selectedList.push({ ...row, edit: true })
+      this.selectedList.push(row)
     },
     onRemoveCollection(row) {
       this.selectedList.splice(this.selectedList.indexOf(row), 1)
-    },
-    onBack() {
-      this.selectedList = this.selectedCollections
-      this.handleAddConfirm()
     },
     isSelectedCollection(row) {
       return this.selectedList.map((item) => item.file_name).indexOf(row.file_name) >= 0
@@ -274,7 +200,12 @@ export default {
         this.toggleCollection(row)
       }
     },
-    handleAddConfirm() {
+    handleConfirm() {
+      this.$emit('update:selected-collections', JSON.parse(JSON.stringify(this.selectedList)))
+      this.$emit('update')
+      this.handleClose()
+    },
+    handleClose() {
       this.$emit('close-dialog', 'relatedCollection')
     }
   }
@@ -282,59 +213,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
->>> .el-card {
-  &__footer {
-    padding: 18px 20px;
-    border-top: 1px solid #ebeef5;
-    box-sizing: border-box;
-    width: 100%;
-    height: 75px;
-
-    .selected_count {
-      @apply bg-white;
-      display: inline-block;
-      line-height: 1;
-      white-space: nowrap;
-      border: 1px solid #dcdfe6;
-      color: #606266;
-      -webkit-appearance: none;
-      text-align: center;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      outline: 0;
-      margin: 0;
-      -webkit-transition: 0.1s;
-      transition: 0.1s;
-      font-weight: 500;
-      padding: 12px 10px;
-      font-size: 14px;
-      border-radius: 4px;
-
-      .value {
-        @apply text-white bg-danger;
-        padding: 2px 5px;
-        margin-left: 5px;
-        border-radius: 50%;
-      }
-    }
-
-    .scroll-x {
-      overflow-x: auto;
-      overflow-y: hidden;
-      white-space: nowrap;
-    }
-
-    .item {
-      font-size: 16px;
-      margin: 0 10px;
-    }
-  }
-}
-
->>> .pagination-container {
-  padding: 10px 0;
-}
-
 >>> .el-table .el-button {
   @apply text-white #{!important};
 
@@ -355,26 +233,7 @@ export default {
   }
 }
 
->>> .el-tag {
-  &.el-tag {
-    margin-left: 10px;
-  }
-}
-
-.button-new-tag {
-  margin-left: 10px;
-  height: 32px;
-  line-height: 30px;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
->>> .el-form {
-  display: inline;
-  margin: 0 0 0 10px;
-
-  .el-form-item {
-    margin: 0;
-  }
+>>> .pagination-container {
+  padding: 10px 0;
 }
 </style>

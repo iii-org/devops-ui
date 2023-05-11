@@ -11,13 +11,13 @@
         size="mini"
       >
         <el-radio-button label="all">
-          全部
+          {{ $t('Issue.All') }}
         </el-radio-button>
         <el-radio-button label="status">
-          狀態
+          {{ $t('Issue.status') }}
         </el-radio-button>
         <el-radio-button label="message">
-          訊息
+          {{ $t('Issue.Message') }}
         </el-radio-button>
       </el-radio-group>
       <DialogContent
@@ -65,9 +65,9 @@ export default {
           case 'all':
             return note
           case 'status':
-            return note.details && note.details.some((item) => item.hasOwnProperty('new_value') || item.hasOwnProperty('old_value'))
+            return note.details.length > 0 || this.filterObject(note)
           case 'message':
-            return note.details.length === 0 && note.notes !== ''
+            return note.details.length === 0 && note.notes !== '' && !this.filterObject(note)
         }
       })
     }
@@ -89,6 +89,13 @@ export default {
     // })
   },
   methods: {
+    filterObject(note) {
+      try {
+        return typeof JSON.parse(note.notes) === 'object'
+      } catch (e) {
+        return false
+      }
+    },
     filterAuthor(note) {
       return (note.user.id === this.userId)
     },

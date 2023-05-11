@@ -1,7 +1,13 @@
 <template>
-  <el-row v-loading="isLoading">
-    <el-col>
-      <el-row class="text-sm mt-2 mb-3">
+  <el-row>
+    <el-row
+      v-loading="isLoading"
+      class="px-5"
+      :class="!edit ? 'description' : ''"
+      :style="{ cursor: isButtonDisabled ? 'not-allowed' : 'text' }"
+      @click.native.capture="edit = !isButtonDisabled"
+    >
+      <el-row class="text-sm py-3">
         {{ $t('Issue.Description') }}
         <span v-if="edit">
           <el-button
@@ -55,35 +61,30 @@
           />
         </el-popover>
       </el-col>
-      <template v-else>
-        <el-col
-          class="px-3 mr-1"
-          :class="isButtonDisabled ? 'cursor-not-allowed' : 'cursor-text description'"
-        >
-          <Viewer
-            ref="mdViewer"
-            :key="componentKey"
-            :initial-value="value ? value : '<p><br></p>'"
-            :class="ellipsisStatus ? 'break-word whitespace-normal overflow-hidden text-ellipsis' : null"
-            :style="ellipsisStatus ? 'display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;' : null"
-            @load="isFolded"
-            @click.native="edit = !isButtonDisabled"
-          />
-        </el-col>
-        <el-col>
-          <el-link
-            v-if="isViewerFolded"
-            :icon="ellipsisStatus ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"
-            class="table m-auto mt-1 mb-3"
-            type="info"
-            :underline="false"
-            @click="ellipsisStatus = !ellipsisStatus"
-          >
-            {{ ellipsisStatus ? $t('general.Expand') : $t('general.Fold') }}
-          </el-link>
-        </el-col>
-      </template>
-    </el-col>
+      <el-col v-else>
+        <Viewer
+          ref="mdViewer"
+          :key="componentKey"
+          :initial-value="value ? value : '<p><br></p>'"
+          class="pb-3"
+          :class="ellipsisStatus ? 'break-word whitespace-normal overflow-hidden text-ellipsis' : null"
+          :style="ellipsisStatus ? 'display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;' : null"
+          @load="isFolded"
+        />
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-link
+        v-if="isViewerFolded && !edit"
+        :icon="ellipsisStatus ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"
+        class="table m-auto my-3"
+        type="info"
+        :underline="false"
+        @click="ellipsisStatus = !ellipsisStatus"
+      >
+        {{ ellipsisStatus ? $t('general.Expand') : $t('general.Fold') }}
+      </el-link>
+    </el-row>
   </el-row>
 </template>
 

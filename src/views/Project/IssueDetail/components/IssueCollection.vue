@@ -1,7 +1,7 @@
 <template>
   <el-row class="el-upload-list">
     <el-row
-      v-for="(file,idx) in issueTest"
+      v-for="(file,idx) in selectedCollections"
       :key="idx"
       class="el-upload-list__item is-ready"
     >
@@ -13,26 +13,29 @@
           <em class="el-icon-document" />
           {{ file.software_name }} - {{ file.name }} ({{ file.file_name }})
         </span>
-        <el-tag
-          v-if="file.edit"
-          class="buttonPrimary"
-        >
-          {{ $t('Test.TestFile.MovementNotSaved') }}
-        </el-tag>
       </el-col>
       <el-col
         :span="4"
         class="text-right"
       >
-        <el-button
-          :type="isButtonDisabled ? 'info' : 'danger'"
-          :disabled="isButtonDisabled"
-          size="mini"
-          icon="el-icon-remove"
-          @click="deleteIssueFile(file)"
+        <el-popconfirm
+          :confirm-button-text="$t('general.Delete')"
+          :cancel-button-text="$t('general.Cancel')"
+          icon="el-icon-info"
+          icon-color="red"
+          :title="$t('Issue.UnlinkIssueCollection')"
+          @confirm="deleteIssueCollection(file)"
         >
-          {{ $t('Issue.Unlink') }}
-        </el-button>
+          <el-button
+            slot="reference"
+            :type="isButtonDisabled ? 'info' : 'danger'"
+            :disabled="isButtonDisabled"
+            size="mini"
+            icon="el-icon-remove"
+          >
+            {{ $t('Issue.Unlink') }}
+          </el-button>
+        </el-popconfirm>
       </el-col>
     </el-row>
   </el-row>
@@ -42,7 +45,7 @@
 export default {
   name: 'IssueCollection',
   props: {
-    issueTest: {
+    selectedCollections: {
       type: Array,
       default: () => []
     },
@@ -51,26 +54,13 @@ export default {
       default: false
     }
   },
-  data() {
-    return {
-      isLoading: false
-    }
-  },
-  watch: {
-    issueTest: {
-      deep: true,
-      handler() {
-        this.$emit('update', this.issueTest)
-      }
-    }
-  },
   methods: {
-    deleteIssueFile(row) {
-      this.removeFile(row.id)
-    },
-    removeFile(id) {
-      const idx = this.issueTest.findIndex((item) => item.id === id)
-      this.issueTest.splice(idx, 1)
+    deleteIssueCollection(row) {
+      const selectedList = JSON.parse(JSON.stringify(this.selectedCollections))
+      const idx = selectedList.findIndex((item) => item.id === row.id)
+      selectedList.splice(idx, 1)
+      this.$emit('update:selected-collections', JSON.parse(JSON.stringify(selectedList)))
+      this.$emit('update')
     }
   }
 }

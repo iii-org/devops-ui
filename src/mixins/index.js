@@ -6,10 +6,10 @@ import Columns from './Columns'
 import CancelRequest from './CancelRequest.js'
 import ContextMenu from './ContextMenu'
 import IssueExpand from './IssueExpand'
-import Table from './Table.js'
 import Checkbox from './Checkbox'
 
 // TODO not use
+// import Table from './Table.js'
 // import IssueList from './IssueList'
 
 export {
@@ -21,9 +21,9 @@ export {
   CancelRequest,
   ContextMenu,
   IssueExpand,
-  Table,
   Checkbox
 
   // TODO not use
+  // Table,
   // IssueList
 }

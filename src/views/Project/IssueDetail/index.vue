@@ -59,14 +59,6 @@
             >
               {{ $t('general.Delete') }}
             </el-button>
-            <el-button
-              size="medium"
-              :class="isButtonDisabled ? 'buttonInfo' : 'buttonPrimary'"
-              :disabled="isButtonDisabled"
-              @click="handleSave"
-            >
-              {{ $t('general.Save') }}
-            </el-button>
           </el-col>
         </el-row>
       </el-row>
@@ -94,7 +86,6 @@
             ref="mainIssue"
             :gutter="10"
             :class="isFromBoard ? 'issueHeightBoard' : 'issueHeight'"
-            @scroll.native="onScrollIssue"
           >
             <el-collapse-transition>
               <el-col v-if="isAddSubIssue" id="AddSubIssueWrapper" ref="AddSubIssueWrapper" :span="24" class="mb-3">
@@ -106,7 +97,7 @@
                 />
               </el-col>
             </el-collapse-transition>
-            <el-col ref="IssueDescriptionWrapper" :span="24" class="mb-3">
+            <el-col :span="24" class="mb-3">
               <IssueDescription
                 ref="IssueDescription"
                 v-model="form.description"
@@ -120,7 +111,7 @@
                 @update="historyUpdate"
               />
             </el-col>
-            <el-col ref="IssueCollapseWrapper" :span="24">
+            <el-col :span="24">
               <el-collapse
                 v-if="files.length > 0 || test_files.length > 0 || countRelationIssue > 0 || isFromBoard"
                 v-model="relationVisible"
@@ -135,12 +126,13 @@
                 </el-collapse-item>
                 <el-collapse-item
                   v-if="test_files.length > 0"
+                  v-loading="isLoadingTestFile"
                   :title="$t('Test.TestPlan.file_name') + '(' + test_files.length + ')'"
                   name="testFiles"
                 >
                   <IssueCollection
+                    :selected-collections.sync="test_files"
                     :is-button-disabled="isButtonDisabled"
-                    :issue-test.sync="test_files"
                     @update="updateTestCollection"
                   />
                 </el-collapse-item>
@@ -205,7 +197,6 @@
             </el-col>
             <el-col :span="24">
               <el-tabs
-                ref="IssueNotesDialog"
                 v-model="issueTabs"
                 type="border-card"
                 class="mx-3"
@@ -305,11 +296,13 @@
       :close-on-click-modal="false"
       width="80%"
       :show-close="false"
+      custom-class="relatedCollectionDialog"
       append-to-body
       destroy-on-close
     >
       <RelatedCollectionDialog
-        :selected-collections="test_files"
+        ref="relatedCollectionDialog"
+        :selected-collections.sync="test_files"
         @update="updateTestCollection"
         @close-dialog="toggleDialogVisible"
       />
@@ -540,6 +533,7 @@ export default {
       errorMsg: [],
       showAlert: false,
       isLoadingFamily: false,
+      isLoadingTestFile: false,
       projectRelationList: [],
       isShowDialog: false,
       storagePId: '',
@@ -662,15 +656,11 @@ export default {
     },
     scrollType(val) {
       const elCollapseItemHeader = Array.from(
-        this.$refs['mainIssueWrapper'].$el.getElementsByClassName('el-collapse-item__header')
+        this.$refs['mainIssueWrapper']
+          .$el.getElementsByClassName('el-collapse-item__header')
       )
-      if (val === 'top') {
-        elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = ''
-        // this.issueNotesEditorVisible = 'issueNotesEditor'
-      } else {
-        elCollapseItemHeader[elCollapseItemHeader.length - 1].style['justify-content'] = 'center'
-        // this.issueNotesEditorVisible = ''
-      }
+      elCollapseItemHeader[elCollapseItemHeader.length - 1]
+        .style['justify-content'] = val === 'top' ? '' : 'center'
     }
   },
   async mounted() {
@@ -834,8 +824,7 @@ export default {
       else if (this.$route.params.issueId) this.issueId = parseInt(this.$route.params.issueId)
     },
     async getRootProject(projectId) {
-      const res = await getRootProjectId(projectId)
-      this.rootProjectId = res.root_project_id
+      this.rootProjectId = (await getRootProjectId(projectId)).root_project_id
     },
     async getGitCommitLogData() {
       await this.getRootProject(this.formProjectId)
@@ -922,11 +911,6 @@ export default {
       this.historyLoading = false
     },
     async handleUpdated(issue_id) {
-      // this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
-      this.$refs.IssueTitle.edit = false
-      this.$refs.IssueDescription.edit = false
-      this.test_files = []
-      this.relations = []
       if (!this.issueId) {
         this.$router.push({ name: 'IssueDetail', params: { issueId: issue_id }})
       } else {
@@ -959,84 +943,6 @@ export default {
         this.isLoading = status.status
         this.handleUpdated()
       }
-    },
-    handleSave() {
-      this.$refs.IssueForm.$refs.form.validate((valid) => {
-        // const propParentLength = Object.keys(this.parent).length
-        if (valid) {
-          // const changeRequest = this.$refs.IssueForm.tracker.find((item) => (item.name === 'Change Request'))
-          // if (this.form.tracker_id === changeRequest.id && propParentLength === 0) {
-          //   const message = '尚未設定本變更議之原由議題單(父議題），請先行設定後再存檔'
-          //   this.setWarningMessage(message)
-          // } else
-          const foundTracker = this.forceTracker.find((tracker) => tracker.id === this.form.tracker_id)
-          if (this.enableForceTracker && foundTracker && !this.form.parent_id) {
-            const tracker_name = this.$t(`Issue.${foundTracker.name}`)
-            const message = this.$t('Notify.NoParentIssueWarning', { tracker_name })
-            if (foundTracker.hasOwnProperty('id')) this.setWarningMessage(message)
-          } else if (this.form.name && this.form.name !== '') {
-            this.handleUpdateTags()
-          } else {
-            const message = '請輸入標題'
-            this.setWarningMessage(message)
-          }
-        }
-      })
-    },
-    setWarningMessage(message) {
-      this.$message({
-        type: 'warning',
-        message
-      })
-    },
-    async handleUpdateTags() {
-      const tags = this.form.tags
-      const tagsLength = tags.length
-      const addTags = []
-      const originTags = []
-      if (Array.isArray(tags)) {
-        tags.forEach((tag) => {
-          if (typeof tag === 'string') {
-            addTags.push(tag)
-          } else if (typeof tag === 'number') originTags.push(tag)
-        })
-      }
-      if (addTags.length > 0) {
-        await this.handleAddProjectTags(addTags, originTags, tagsLength)
-      } else {
-        this.tagsArrayToString(originTags, tagsLength)
-      }
-    },
-    async handleAddProjectTags(addTags, originTags, tagsLength) {
-      addTags.map(async (tag) => {
-        const tagValue = tag.split('__')[1]
-        const formData = this.getAddTagsFormData(tagValue)
-        await this.addProjectTags(formData, originTags, tagsLength)
-      })
-    },
-    async addProjectTags(formData, originTags, tagsLength) {
-      await addProjectTags(formData).then(async (res) => {
-        const id = res.data.tags.id
-        originTags.push(id)
-        this.tagsArrayToString(originTags, tagsLength)
-      })
-    },
-    tagsArrayToString(tags, tagsLength) {
-      this.tagsString = tags.length > 0 ? tags.join() : null
-      if (this.tagsString === null) {
-        this.form.tags = ''
-      } else {
-        this.form.tags = this.tagsString
-      }
-      if (tags.length === tagsLength) this.submitIssue()
-    },
-    getAddTagsFormData(tag) {
-      const formData = new FormData()
-      formData.delete('name')
-      formData.delete('project_id')
-      formData.append('name', tag)
-      formData.append('project_id', this.formProjectId)
-      return formData
     },
     dataURLtoFile(fileName, dataUrl) {
       const arr = dataUrl.split(',')
@@ -1073,38 +979,6 @@ export default {
         sendForm.append('upload_files', file)
       })
     },
-    async submitIssue() {
-      this.tagsString = ''
-      const sendData = Object.assign({}, this.form)
-      // Object.keys(sendData).map(item => {
-      //   if (sendData[item] === '' || !sendData[item]) delete sendData[item]
-      // })
-      const sendForm = new FormData()
-      // if (sendData['notes'] === '<p><br></p>') sendData['notes'] = ''
-      // else if (sendData['notes'] !== '') {
-      //   this.filterImage({ value: sendData['notes'], sendForm, checkDuplicate: false })
-      //   sendData['notes'] = sendData['notes'].replace(/<a/g, '<a target="_blank"')
-      // }
-      // if (sendData['description'] === '<p><br></p>') sendData['description'] = ''
-      // else if (sendData['description'] !== '') {
-      //   this.filterImage({ value: sendData['description'], sendForm, checkDuplicate: true })
-      //   sendData['description'] = sendData['description'].replace(/<a/g, '<a target="_blank"')
-      // }
-      Object.keys(sendData).forEach((objKey) => {
-        if ((objKey === 'start_date' || objKey === 'end_date') && !sendData[objKey]) {
-          sendForm.append(objKey, '')
-        } else {
-          sendForm.append(objKey, sendData[objKey])
-        }
-      })
-      if (sendData.assigned_to_id && sendData.status_id === 1) {
-        const error = 'assignedError'
-        this.handleErrorAlert(error)
-        this.showErrorAlert(this.errorMsg)
-        return
-      }
-      await this.updateIssueForm(sendForm)
-    },
     async sendMentionMessage() {
       const mentionList = [...new Set(this.noteMentionList.concat(this.descriptionMentionList))]
       if (mentionList.length === 0) return
@@ -1120,55 +994,6 @@ export default {
         alert_level: '1'
       }
       await createMessage(data)
-    },
-    async updateIssueForm(sendForm) {
-      this.isLoading = true
-      await this.sendMentionMessage()
-      const { issueId } = this
-      let issueApi = null
-      if (!this.issueId) {
-        issueApi = addIssue(sendForm)
-      } else {
-        issueApi = updateIssue(issueId, sendForm)
-      }
-      try {
-        const res = await issueApi
-        let issue_id = this.issueId
-        if (res.hasOwnProperty('data')) {
-          if (res.data.hasOwnProperty('id')) {
-            issue_id = res.data.id
-          } else {
-            issue_id = res.data.issue_id
-          }
-        }
-        if (this.test_files) {
-          const data = {
-            issue_id: issue_id,
-            test_files: this.test_files.map((item) => ({
-              software_name: item.software_name,
-              file_name: item.file_name
-            }))
-          }
-          await putTestPlanWithTestFile(this.form.project_id, data)
-        }
-        if (this.form.relation_ids) {
-          const data = {
-            issue_id: issue_id,
-            issue_to_ids: this.form.relation_ids
-          }
-          await putIssueRelation(data)
-        }
-        // await this.$message({
-        //   title: this.$t('general.Success'),
-        //   message: this.$t('Notify.Updated'),
-        //   type: 'success'
-        // })
-        await this.handleUpdated(issue_id)
-        this.$emit('update')
-      } catch (e) {
-        console.error(e)
-      }
-      this.isLoading = false
     },
     handleErrorAlert(key) {
       const { title, content } = this[key]
@@ -1273,28 +1098,6 @@ export default {
       this.$set(this.relationIssue, 'visible', false)
       this.$set(this.relationIssue, 'id', null)
     },
-    onScrollIssue() {
-      this.$nextTick(() => {
-        const editorHeight =
-          this.$refs['IssueNotesDialog'].$el.getBoundingClientRect().top -
-          this.$refs['IssueDescriptionWrapper'].$el.getBoundingClientRect().height -
-          this.$refs['IssueCollapseWrapper'].$el.getBoundingClientRect().height
-        if (editorHeight < 0) {
-          // if (
-          //   this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options &&
-          //   this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options
-          //     .name === 'IssueNotesEditor'
-          // ) {
-          //   this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
-          // }
-        } else {
-          //   this.$refs['mainIssue'].$el.insertBefore(
-          //     this.$refs['mainIssueWrapper'].$el.getElementsByClassName('moveEditor')[0],
-          //     this.$refs['mainIssue'].$el.children[this.$refs['mainIssue'].$el.children.length - 1]
-          //   )
-        }
-      })
-    },
     async getIssueFamilyData(row) {
       try {
         this.isLoadingFamily = true
@@ -1344,8 +1147,17 @@ export default {
     toggleDialogVisible(value) {
       this[value + 'DialogVisible'] = !this[value + 'DialogVisible']
     },
-    updateTestCollection(value) {
-      this.test_files = value
+    async updateTestCollection() {
+      this.isLoadingTestFile = true
+      const data = {
+        issue_id: this.issueId,
+        test_files: this.test_files.map((item) => ({
+          software_name: item.software_name,
+          file_name: item.file_name
+        }))
+      }
+      await putTestPlanWithTestFile(this.form.project_id, data)
+      this.isLoadingTestFile = false
     },
     onContextMenu({ row, column, event }) {
       this.handleContextMenu(row, column, event)
@@ -1367,9 +1179,6 @@ export default {
     },
     getRelativeTime(value) {
       return getRelativeTime(value)
-    },
-    onResetPId(pId) {
-      this.form.project_id = pId
     },
     onCancel() {
       this.form.project_id = this.storagePId
@@ -1496,5 +1305,15 @@ export default {
 
 >>> .el-collapse-item__arrow {
   margin: 0 8px 0 8px;
+}
+
+>>> .relatedCollectionDialog.el-dialog {
+  .el-dialog__header {
+    display: none;
+  }
+
+  .el-dialog__body {
+    padding: 10px 20px;
+  }
 }
 </style>

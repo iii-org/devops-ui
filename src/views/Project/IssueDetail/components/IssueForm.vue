@@ -578,7 +578,7 @@ export default {
       'priority',
       'forceTracker',
       'enableForceTracker',
-      'selectedProject', 
+      'selectedProject',
       'selectedProjectId'
     ]),
     isParentIssueClosed() {
@@ -912,7 +912,6 @@ export default {
           sendForm.append(type, this.form[type])
           await updateIssue(this.issueId, sendForm).then(() => {
             this.$emit('update')
-          }).then(() => {
             switch (type) {
               case 'estimated_hours' :
                 this.originForm.estimatedHours = this.form.estimated_hours

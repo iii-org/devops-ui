@@ -309,7 +309,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'
 import { syncProject, getHasSon, getProjectRelation } from '@/api_v2/projects'
-import { BasicData, SearchBar, Pagination, Table } from '@/mixins'
+import { BasicData, SearchBar, Pagination } from '@/mixins'
 import { ElTableColumnTime, ElTableColumnTag } from '@/components'
 import {
   CreateProjectDialog,
@@ -348,7 +348,7 @@ export default {
       return statusMap[status]
     }
   },
-  mixins: [BasicData, SearchBar, Pagination, Table],
+  mixins: [BasicData, SearchBar, Pagination],
   data() {
     return {
       editProjectObject: {},

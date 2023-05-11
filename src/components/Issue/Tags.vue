@@ -8,7 +8,7 @@
           type="success"
           size="mini"
           icon="el-icon-check"
-          @click="updateTags"
+          @click="handleUpdateTags"
         />
         <el-button
           class="action"
@@ -61,7 +61,7 @@
 <script>
 import axios from 'axios'
 import { mapGetters } from 'vuex'
-import { getTagsByName, getTagsByProject } from '@/api/projects'
+import { addProjectTags, getTagsByName, getTagsByProject } from '@/api/projects'
 import { updateIssue } from '@/api/issue'
 
 export default {
@@ -92,6 +92,9 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProjectId']),
+    formProjectId() {
+      return this.form.project_id || this.selectedProjectId
+    },
     isTagsChange() {
       if (!this.form.tags) return false
       if (this.form.tags.length !== this.originTags.length) return true
@@ -169,13 +172,61 @@ export default {
       }
       return showTags
     },
+    async handleUpdateTags() {
+      const tags = this.form.tags
+      const tagsLength = tags.length
+      const addTags = []
+      const originTags = []
+      if (Array.isArray(tags)) {
+        tags.forEach((tag) => {
+          if (typeof tag === 'string') {
+            addTags.push(tag)
+          } else if (typeof tag === 'number') originTags.push(tag)
+        })
+      }
+      if (addTags.length > 0) {
+        await this.handleAddProjectTags(addTags, originTags, tagsLength)
+      } else {
+        this.tagsArrayToString(originTags, tagsLength)
+      }
+    },
+    async handleAddProjectTags(addTags, originTags, tagsLength) {
+      addTags.map(async (tag) => {
+        const tagValue = tag.split('__')[1]
+        const formData = this.getAddTagsFormData(tagValue)
+        await this.addProjectTags(formData, originTags, tagsLength)
+      })
+    },
+    async addProjectTags(formData, originTags, tagsLength) {
+      await addProjectTags(formData).then(async (res) => {
+        const id = res.data.tags.id
+        originTags.push(id)
+        this.tagsArrayToString(originTags, tagsLength)
+      })
+    },
+    tagsArrayToString(tags, tagsLength) {
+      this.tagsString = tags.length > 0 ? tags.join() : null
+      if (this.tagsString === null) {
+        this.form.tags = ''
+      } else {
+        this.form.tags = this.tagsString
+      }
+      if (tags.length === tagsLength) this.updateTags()
+    },
+    getAddTagsFormData(tag) {
+      const formData = new FormData()
+      formData.delete('name')
+      formData.delete('project_id')
+      formData.append('name', tag)
+      formData.append('project_id', this.formProjectId)
+      return formData
+    },
     async updateTags() {
       this.$emit('update:loading', true)
       const sendForm = new FormData()
       sendForm.append('tags', this.form.tags)
       await updateIssue(this.issueId, sendForm).then(() => {
         this.$emit('update')
-      }).then(() => {
         this.originTags = JSON.parse(JSON.stringify(this.form.tags))
       })
       this.$emit('update:loading', false)
