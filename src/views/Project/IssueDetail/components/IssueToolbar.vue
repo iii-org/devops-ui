@@ -3,46 +3,61 @@
     <div class="flex justify-between items-center">
       <div>
         <template v-if="issueId">
-          <el-link
-            class="linkTextColor"
-            :underline="false"
-            :disabled="isButtonDisabled"
-            @click="uploadDialogVisible = true"
+          <el-tooltip
+            :content="$t('Issue.UploadFiles')"
+            placement="bottom"
           >
-            <em class="el-icon-upload" />
-            {{ $t('Issue.UploadFiles') }}
-          </el-link>
-          <el-link
-            slot="reference"
-            class="linkTextColor ml-3"
-            :underline="false"
-            :disabled="isButtonDisabled"
-            @click="$emit('add-sub-issue')"
+            <el-button
+              size="mini"
+              class="px-2 py-1 m-0 icon"
+              :disabled="isButtonDisabled"
+              @click="uploadDialogVisible = true"
+            >
+              <em class="el-icon-upload content" />
+            </el-button>
+          </el-tooltip>
+          <el-tooltip
+            :content="$t('Issue.AddSubIssue')"
+            placement="bottom"
           >
-            <em class="el-icon-plus" />
-            {{ $t('Issue.AddSubIssue') }}
-          </el-link>
+            <el-button
+              size="mini"
+              class="px-2 py-1 m-0 icon"
+              :disabled="isButtonDisabled"
+              @click="$emit('add-sub-issue')"
+            >
+              <em class="el-icon-document-add content" />
+            </el-button>
+          </el-tooltip>
         </template>
-        <el-link
+        <el-tooltip
           v-if="isExcalidrawEnable"
-          class="linkTextColor ml-3"
-          :underline="false"
-          :disabled="isButtonDisabled"
-          @click="toggleExcalidrawDialog"
+          :content="$t('Excalidraw.CreateBoard')"
+          placement="bottom"
         >
-          <em class="el-icon-data-board" />
-          {{ $t('Excalidraw.CreateBoard') }}
-        </el-link>
-        <el-link
-          v-if="issueTracker==='Test Plan'"
-          class="linkTextColor ml-3"
-          :underline="false"
-          :disabled="isButtonDisabled"
-          @click="handleCollectionDialog"
+          <el-button
+            size="mini"
+            class="px-2 py-1 m-0 icon"
+            :disabled="isButtonDisabled"
+            @click="toggleExcalidrawDialog"
+          >
+            <em class="el-icon-data-board content" />
+          </el-button>
+        </el-tooltip>
+        <el-tooltip
+          v-if="issueTracker === 'Test Plan'"
+          :content="$t('Test.TestFile.ManageTestFile')"
+          placement="bottom"
         >
-          <em class="el-icon-upload" />
-          管理測試檔案
-        </el-link>
+          <el-button
+            size="mini"
+            class="px-2 py-1 m-0 icon"
+            :disabled="isButtonDisabled"
+            @click="handleCollectionDialog"
+          >
+            <em class="el-icon-folder content" />
+          </el-button>
+        </el-tooltip>
       </div>
       <div class="text-right">
         <el-link
@@ -62,11 +77,8 @@
           class="ml-3 is-panel"
         >
           <div
-            class="handle-button p-3"
-            :style="{
-              'background-color':'#85c1e9',
-              'display': 'inline',
-            }"
+            class="handle-button inline p-3"
+            style="background-color: #85c1e9;"
             @click="$emit('changeIssueFormOpened')"
           >
             <em :class="isIssueFormOpened ? 'el-icon-d-arrow-right' : 'el-icon-setting'" />
@@ -282,5 +294,18 @@ export default {
   font-size: 24px;
   line-height: 50px;
   }
+}
+
+.icon {
+  background-color: #85c1e9;
+
+  .content {
+    color: white;
+    font-size: 1.25rem;
+  }
+}
+
+.icon:hover {
+  box-shadow: 0 0 10px rgba(33,33,33,.2);
 }
 </style>

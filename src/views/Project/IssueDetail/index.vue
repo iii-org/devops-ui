@@ -31,11 +31,38 @@
                 :is-button-disabled="isButtonDisabled"
                 @update="historyUpdate"
               />
-              <span v-if="!isLoading && issueId" class="text-base mr-3">
+            </el-col>
+          </el-row>
+          <el-col :span="6" class="text-right">
+            <el-row class="mb-3">
+              <span v-if="!isLoading && issueId" class="text-sm">
                 {{ $t('Issue.AddBy', { user: author, created_date: getRelativeTime(created_date) }) }}
               </span>
+            </el-row>
+            <el-row>
+              <!--              <span class="star">-->
+              <!--                <span-->
+              <!--                  v-if="isWatched"-->
+              <!--                  class="star-content"-->
+              <!--                  @click="setStar(false)"-->
+              <!--                >-->
+              <!--                  <em class="el-icon-star-on star-on" />-->
+              <!--                </span>-->
+              <!--                <span-->
+              <!--                  v-else-->
+              <!--                  class="star-content"-->
+              <!--                  @click="setStar(true)"-->
+              <!--                >-->
+              <!--                  <em class="el-icon-star-off star-off" />-->
+              <!--                </span>-->
+              <!--                <el-link>-->
+              <!--                  {{ watchers }}-->
+              <!--                </el-link>-->
+              <!--              </span>-->
               <el-tooltip class="item" :content="$t('general.CopyUrl')" placement="bottom">
-                <el-button class="el-icon-copy-document" circle size="small" @click="copyUrl" />
+                <el-button circle size="small" @click="copyUrl">
+                  <em class="el-icon-copy-document" />
+                </el-button>
               </el-tooltip>
               <el-tooltip v-if="isFromBoard" :content="$t('general.PopUp')" placement="bottom">
                 <el-button circle size="small" @click="$emit('popup')">
@@ -46,19 +73,18 @@
                 :issue-id="issueId"
                 :form="form"
               />
-            </el-col>
-          </el-row>
-          <el-col :span="6" class="text-right">
-            <el-button
-              v-if="!isFromBoard"
-              size="medium"
-              :type="isButtonDisabled ? 'info' : 'danger'"
-              plain
-              :disabled="isButtonDisabled"
-              @click="isDeleteIssueDialog = true"
-            >
-              {{ $t('general.Delete') }}
-            </el-button>
+              <el-tooltip v-if="!isFromBoard" :content="$t('general.Delete')" placement="bottom">
+                <el-button
+                  circle
+                  size="small"
+                  :type="isButtonDisabled ? 'info' : 'danger'"
+                  :disabled="isButtonDisabled"
+                  @click="isDeleteIssueDialog = true"
+                >
+                  <em class="el-icon-delete" />
+                </el-button>
+              </el-tooltip>
+            </el-row>
           </el-col>
         </el-row>
       </el-row>
@@ -97,7 +123,7 @@
                 />
               </el-col>
             </el-collapse-transition>
-            <el-col :span="24" class="mb-3">
+            <el-col :span="24">
               <IssueDescription
                 ref="IssueDescription"
                 v-model="form.description"
@@ -119,17 +145,21 @@
               >
                 <el-collapse-item
                   v-if="files.length > 0"
-                  :title="$t('Issue.Files') + '(' + files.length + ')'"
                   name="files"
                 >
+                  <div slot="title" class="text-sm font-bold">
+                    {{ $t('Issue.Files') + `(${files.length})` }}
+                  </div>
                   <IssueFiles :is-button-disabled="isButtonDisabled" :issue-file.sync="files" />
                 </el-collapse-item>
                 <el-collapse-item
                   v-if="test_files.length > 0"
                   v-loading="isLoadingTestFile"
-                  :title="$t('Test.TestPlan.file_name') + '(' + test_files.length + ')'"
                   name="testFiles"
                 >
+                  <div slot="title" class="text-sm font-bold">
+                    {{ $t('Test.TestPlan.file_name') + `(${test_files.length})` }}
+                  </div>
                   <IssueCollection
                     :selected-collections.sync="test_files"
                     :is-button-disabled="isButtonDisabled"
@@ -137,8 +167,8 @@
                   />
                 </el-collapse-item>
                 <el-collapse-item v-if="countRelationIssue > 0" v-loading="isLoadingFamily" name="relatedIssue">
-                  <div slot="title">
-                    {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
+                  <div slot="title" class="text-sm font-bold">
+                    {{ $t('Issue.RelatedIssue') + `(${countRelationIssue})` }}
                     <el-button
                       size="mini"
                       :class="isOpenMatrix ? 'buttonInfo' : 'buttonPrimary'"
@@ -160,7 +190,10 @@
                     @popup-dialog="onRelationIssueDialog"
                   />
                 </el-collapse-item>
-                <el-collapse-item v-if="isFromBoard" :title="$t('general.AdvancedSettings')" name="issueForm">
+                <el-collapse-item v-if="isFromBoard" name="issueForm">
+                  <div slot="title" class="text-sm font-bold">
+                    {{ $t('general.AdvancedSettings') }}
+                  </div>
                   <IssueForm
                     ref="IssueForm"
                     class="mx-3 text-xs"
@@ -398,18 +431,17 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { getLocalTime, getRelativeTime } from '@/utils/handleTime'
-import { addProjectTags, getRootProjectId } from '@/api/projects'
+import { getRootProjectId } from '@/api/projects'
 import { getHasSon, getProjectRelation } from '@/api_v2/projects'
 import {
   getIssue,
   updateIssue,
   deleteIssue,
-  addIssue,
-  putIssueRelation,
   deleteIssueRelation,
   getIssueGitCommitLog,
   getIssueFamily
 } from '@/api/issue'
+// import { addWatcher, removeWatcher } from '@/api_v2/issue'
 import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import { createMessage } from '@/api_v2/monitoring'
 import { atob } from '@/utils/base64'
@@ -589,6 +621,7 @@ export default {
       'userProjectList',
       'selectedProjectId',
       'test_filename',
+      // 'userId',
       'userName',
       'userRole',
       'forceTracker',
@@ -629,6 +662,13 @@ export default {
     },
     isHasWhiteBoard() {
       return this.issue.excalidraw && this.issue.excalidraw.length > 0
+    // },
+    // isWatched() {
+    //   console.log(this.issue.watchers)
+    //   return this.issue.watchers?.some((watcher) => watcher.id === this.userId)
+    // },
+    // watchers() {
+    //   return this.issue.watchers?.length || 0
     }
   },
   watch: {
@@ -1245,6 +1285,14 @@ export default {
         const element = document.getElementById('AddSubIssueWrapper')
         element.scrollIntoView({ behavior: 'smooth' })
       })
+    // },
+    // async setStar(status) {
+    //   if (status) {
+    //     await addWatcher(this.issueId)
+    //   } else {
+    //     await removeWatcher(this.issueId)
+    //   }
+    //   this.issue = (await getIssue(this.issueId)).data
     }
   }
 }
@@ -1252,6 +1300,10 @@ export default {
 
 <style lang="scss" scoped>
 @import 'src/styles/theme/variables.scss';
+
+>>> .el-row--flex.is-align-bottom {
+  align-items: center;
+}
 
 .issueHeight {
   height: calc(95vh - 50px - 81px - 40px - 32px);
@@ -1316,4 +1368,18 @@ export default {
     padding: 10px 20px;
   }
 }
+
+//.star {
+//  @apply align-middle p-2 min-w-max max-w-max;
+//  .star-content {
+//    @apply align-middle inline-block cursor-pointer;
+//    .star-on {
+//      @apply text-yellow-500 text-xl rounded-md;
+//    }
+//
+//    .star-off {
+//      @apply text-xl text-gray-400;
+//    }
+//  }
+//}
 </style>

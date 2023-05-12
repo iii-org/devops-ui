@@ -1,7 +1,7 @@
 <template>
   <el-row v-loading="isLoading">
     <el-col>
-      <el-row class="text-sm mt-2 mb-3">
+      <el-row class="text-sm font-bold py-3">
         {{ $t('Issue.Notes') }}
         <span v-if="edit">
           <el-button

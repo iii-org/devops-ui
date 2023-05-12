@@ -2,14 +2,17 @@
   <el-row>
     <el-row
       v-loading="isLoading"
-      class="px-5"
       :class="!edit ? 'description' : ''"
       :style="{ cursor: isButtonDisabled ? 'not-allowed' : 'text' }"
       @click.native.capture="edit = !isButtonDisabled"
     >
-      <el-row class="text-sm py-3">
+      <el-row class="text-sm font-bold py-3">
         {{ $t('Issue.Description') }}
-        <span v-if="edit">
+        <em
+          v-if="!edit"
+          class="el-icon-edit-outline align-middle text-xl"
+        />
+        <span v-else>
           <el-button
             class="action"
             type="success"
@@ -61,12 +64,12 @@
           />
         </el-popover>
       </el-col>
-      <el-col v-else>
+      <el-col v-else-if="value && value !== '<p><br></p>'">
         <Viewer
           ref="mdViewer"
           :key="componentKey"
           :initial-value="value ? value : '<p><br></p>'"
-          class="pb-3"
+          class="px-5"
           :class="ellipsisStatus ? 'break-word whitespace-normal overflow-hidden text-ellipsis' : null"
           :style="ellipsisStatus ? 'display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;' : null"
           @load="isFolded"
