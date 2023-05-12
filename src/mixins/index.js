@@ -7,9 +7,9 @@ import CancelRequest from './CancelRequest.js'
 import ContextMenu from './ContextMenu'
 import IssueExpand from './IssueExpand'
 import Checkbox from './Checkbox'
+import Table from './Table.js'
 
 // TODO not use
-// import Table from './Table.js'
 // import IssueList from './IssueList'
 
 export {
@@ -21,9 +21,9 @@ export {
   CancelRequest,
   ContextMenu,
   IssueExpand,
-  Checkbox
+  Checkbox,
+  Table
 
   // TODO not use
-  // Table,
   // IssueList
 }
