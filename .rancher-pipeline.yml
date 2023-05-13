@@ -7,7 +7,7 @@ stages:
       sourceName: nexus
       targetKey: api_origin
     runScriptConfig:
-      image: iiiorg/iiidevops-cli:0.0.4
+      image: iiiorg/iiidevops-cli:0.0.5
       shellScript: curl --location -s --request POST ${api_origin}/rancher/delete_app
         --form project_name=${CICD_GIT_REPO_NAME} --form branch_name=${CICD_GIT_BRANCH}
         && curl --location -s --request POST ${api_origin}/project/issues_commit_by_name
@@ -33,7 +33,6 @@ stages:
       - master
       - echart
       - develop
-      - bugquickaddissueonboard
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -87,7 +86,6 @@ stages:
       - tablelayout
       - projectlist
       - bugquickaddissueonboard
-      - feature29
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -115,7 +113,6 @@ stages:
       - tablelayout
       - projectlist
       - bugquickaddissueonboard
-      - feature29
 - name: Build--Scan docker image
   iiidevops: deployed-environments
   steps:
@@ -139,7 +136,6 @@ stages:
       - tablelayout
       - projectlist
       - bugquickaddissueonboard
-      - feature29
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -179,7 +175,6 @@ stages:
       - tablelayout
       - projectlist
       - bugquickaddissueonboard
-      - feature29
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -212,7 +207,6 @@ stages:
       - tablelayout
       - projectlist
       - bugquickaddissueonboard
-      - feature29
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -243,7 +237,6 @@ stages:
       - tablelayout
       - projectlist
       - bugquickaddissueonboard
-      - feature29
 - name: Test--Anchore SBOM
   iiidevops: anchore
   steps:
